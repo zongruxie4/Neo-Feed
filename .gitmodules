@@ -1,6 +1,0 @@
-[submodule "homefeeder-sdk"]
-	path = homefeeder-sdk
-	url = https://github.com/iTaysonLab/homefeeder-sdk/
-[submodule "homefeeder-rss"]
-	path = homefeeder-rss
-	url = https://github.com/iTaysonLab/homefeeder-rss
