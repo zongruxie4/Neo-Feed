@@ -51,9 +51,9 @@ class FeedManagerActivity: AppCompatActivity(), CoroutineScope by MainScope() {
                         Toast.makeText(this@FeedManagerActivity, "URL is not a RSS feed!", Toast.LENGTH_LONG).show()
                         return@launch
                     }
-
+                    val title = data!!.title ?: "Unknown"
                     HFPluginPreferences.add(SavedFeedModel(
-                        data!!.title!!,
+                        title,
                         data!!.description ?: "",
                         url,
                         data!!.image?.url ?: ""
