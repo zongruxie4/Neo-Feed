@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name" translatable="false">OmegaFeeder</string>
+    <string name="app_name" translatable="false">Omega Feeder</string>
 
     <string name="title_settings">Settings</string>
     <string name="title_about">About</string>
