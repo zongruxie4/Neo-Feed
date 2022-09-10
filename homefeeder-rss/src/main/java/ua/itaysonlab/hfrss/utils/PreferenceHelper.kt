@@ -23,9 +23,9 @@ object PreferenceHelper {
     fun setSet(key: String, set: MutableSet<String>) {
         prefs.edit().apply {
             remove(key)
-            commit()
+            apply()
             putStringSet(key, set)
-            commit()
+            apply()
         }
     }
 
