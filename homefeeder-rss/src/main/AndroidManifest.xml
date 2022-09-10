@@ -29,7 +29,7 @@
         </activity>
 
         <service android:name="ua.itaysonlab.hfrss.HFPluginService"
-            android:exported="false">
+            android:exported="true">
             <intent-filter>
                 <action android:name="ua.itaysonlab.hfsdk.HOMEFEEDER_PLUGIN_SERVICE" />
             </intent-filter>
