@@ -1,2 +1,7 @@
-include ':app', ':homefeeder-sdk', ':homefeeder-rss'
-rootProject.name='HomeFeeder'
+include ':app'
+
+include ':homefeeder-sdk'
+project(':homefeeder-sdk').projectDir = new File(rootDir, 'homefeeder-sdk')
+
+include ':homefeeder-rss'
+project(':homefeeder-rss').projectDir = new File(rootDir, 'homefeeder-rss')
