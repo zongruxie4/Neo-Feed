@@ -5,8 +5,8 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.preference.Preference
-import ua.itaysonlab.homefeeder.BuildConfig
-import ua.itaysonlab.homefeeder.R
+import com.saulhdev.feeder.BuildConfig
+import com.saulhdev.feeder.R
 import ua.itaysonlab.homefeeder.fragments.base.FixedPreferencesFragment
 
 class AboutFragment : FixedPreferencesFragment() {

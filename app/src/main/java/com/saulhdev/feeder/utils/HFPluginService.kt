@@ -1,21 +1,16 @@
-package ua.itaysonlab.hfrss
+package com.saulhdev.feeder.utils
 
 import android.app.Service
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.os.IBinder
-import android.util.Log
-import androidx.core.os.bundleOf
 import com.prof.rssparser.Parser
+import com.saulhdev.feeder.preference.HFPluginPreferences
 import kotlinx.coroutines.*
 import okhttp3.OkHttpClient
-import ua.itaysonlab.hfrss.pref.HFPluginPreferences
 import ua.itaysonlab.hfsdk.*
-import ua.itaysonlab.hfsdk.actions.ActionType
-import ua.itaysonlab.hfsdk.actions.CardAction
 import ua.itaysonlab.hfsdk.content.StoryCardContent
-import ua.itaysonlab.hfsdk.content.TextCardContent
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -23,10 +18,10 @@ import java.util.*
  * Your most important class (maybe)
  * This defines which data does the plugin send to HomeFeeder.
  */
-class HFPluginService: Service(), CoroutineScope by MainScope() {
+class HFPluginService : Service(), CoroutineScope by MainScope() {
     val sourceSdf = SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z", Locale.ENGLISH)
 
-    private val mBinder = object: IFeedInterface.Stub() {
+    private val mBinder = object : IFeedInterface.Stub() {
         override fun getFeed(
             callback: IFeedInterfaceCallback?,
             page: Int,
@@ -43,18 +38,25 @@ class HFPluginService: Service(), CoroutineScope by MainScope() {
 
                     HFPluginPreferences.parsedFeedList.forEach { model ->
                         parser.getChannel(model.feedUrl).articles.forEach { article ->
-                            list.add(FeedItem(
-                                "${model.name} [RSS]",
-                                FeedItemType.STORY_CARD,
-                                StoryCardContent(
-                                    title = article.title!!,
-                                    text = article.description!!,
-                                    background_url = article.image ?: "",
-                                    link = article.link ?: "",
-                                    source = FeedCategory(model.feedUrl, model.name, Color.GREEN, model.feedImage)
-                                ),
-                                sourceSdf.parse(article.pubDate!!)!!.time
-                            ))
+                            list.add(
+                                FeedItem(
+                                    "${model.name} [RSS]",
+                                    FeedItemType.STORY_CARD,
+                                    StoryCardContent(
+                                        title = article.title!!,
+                                        text = article.description!!,
+                                        background_url = article.image ?: "",
+                                        link = article.link ?: "",
+                                        source = FeedCategory(
+                                            model.feedUrl,
+                                            model.name,
+                                            Color.GREEN,
+                                            model.feedImage
+                                        )
+                                    ),
+                                    sourceSdf.parse(article.pubDate!!)!!.time
+                                )
+                            )
                         }
                     }
                 }

@@ -1,7 +1,7 @@
 package ua.itaysonlab.homefeeder.utils
 
 import android.util.Log
-import ua.itaysonlab.homefeeder.BuildConfig
+import com.saulhdev.feeder.BuildConfig
 
 /**
  * This class wraps [android.util.Log].

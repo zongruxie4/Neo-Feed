@@ -51,14 +51,14 @@ class PopupContentAnimator(private val g: View) {
         val ofFloat2 = ObjectAnimator.ofFloat(this.g, View.TRANSLATION_Y, h, 0.0f)
         this.b = AnimatorSet().apply {
             addListener(object: AnimatorListenerAdapter() {
-                override fun onAnimationEnd(animation: Animator?) {
+                override fun onAnimationEnd(animation: Animator) {
                     b = null
                     c = null
                     g.visibility = View.VISIBLE
                 }
             })
             addListener(object: AnimatorListenerAdapter() {
-                override fun onAnimationEnd(animation: Animator?) {
+                override fun onAnimationEnd(animation: Animator) {
                     b = null
                     c = null
                     e?.invoke()
@@ -110,14 +110,14 @@ class PopupContentAnimator(private val g: View) {
         val ofFloat2 = ObjectAnimator.ofFloat(this.g, View.TRANSLATION_Y, 0.0f, j)
         this.c = AnimatorSet().apply {
             addListener(object: AnimatorListenerAdapter() {
-                override fun onAnimationEnd(animation: Animator?) {
+                override fun onAnimationEnd(animation: Animator) {
                     b = null
                     c = null
                     g.visibility = View.INVISIBLE
                 }
             })
             addListener(object: AnimatorListenerAdapter() {
-                override fun onAnimationEnd(animation: Animator?) {
+                override fun onAnimationEnd(animation: Animator) {
                     b = null
                     c = null
                     f?.invoke()

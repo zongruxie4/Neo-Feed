@@ -4,7 +4,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import ua.itaysonlab.homefeeder.R
+import com.saulhdev.feeder.R
 
 class ActionAdapter(private val e: Context, private val f: ActionStyle): RecyclerView.Adapter<ActionVh>() {
     private val f2972a = LayoutInflater.from(this.e)

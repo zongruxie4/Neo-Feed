@@ -12,7 +12,7 @@ import androidx.annotation.UiThread
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import ua.itaysonlab.homefeeder.R
+import com.saulhdev.feeder.R
 import kotlin.math.ceil
 
 @UiThread

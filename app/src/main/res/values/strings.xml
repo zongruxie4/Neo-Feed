@@ -55,4 +55,16 @@
 
     <string name="pm_empty">No sources installed</string>
     <string name="pm_desc">HomeFeeder uses them to display data</string>
+
+    <string name="manager_title">Feed manager</string>
+    <string name="manager_add">Add</string>
+
+    <string name="add_title">Add a feed source</string>
+    <string name="add_input_hint">URL</string>
+    <string name="add_input_desc">Supported formats: RSS, Atom</string>
+
+    <string name="remove_title">Confirm action</string>
+    <string name="remove_desc">Do you really want to remove %s from feed sources?</string>
+    <string name="remove_action_yes">Yes</string>
+    <string name="remove_action_nope">Cancel</string>
 </resources>

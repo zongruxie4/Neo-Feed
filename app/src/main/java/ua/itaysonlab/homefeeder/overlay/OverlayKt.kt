@@ -13,9 +13,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.libraries.gsa.d.a.OverlayController
+import com.saulhdev.feeder.R
 import ua.itaysonlab.hfsdk.FeedItem
 import ua.itaysonlab.homefeeder.HFApplication
-import ua.itaysonlab.homefeeder.R
 import ua.itaysonlab.homefeeder.activites.MainActivity
 import ua.itaysonlab.homefeeder.kt.clearLightFlags
 import ua.itaysonlab.homefeeder.kt.isDark

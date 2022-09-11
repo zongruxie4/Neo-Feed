@@ -1,4 +1,4 @@
-package com.saulhdev.ofrss.theme
+package com.saulhdev.feeder.theme
 
 import androidx.compose.material3.MaterialTheme
 

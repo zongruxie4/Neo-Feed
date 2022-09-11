@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.saulhdev.ofrss.compose
+package com.saulhdev.feeder.compose.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -32,30 +32,30 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import coil.compose.rememberAsyncImagePainter
-import com.saulhdev.ofrss.R
+import com.saulhdev.feeder.R
 
 @Composable
 fun FeedItem(
-    feedTitle:String ="",
-    feedURL:String ="",
-    feedImage:String = "",
-    description:String ="",
+    feedTitle: String = "",
+    feedURL: String = "",
+    feedImage: String = "",
+    description: String = "",
     onRemoveAction: () -> Unit = {}
-){
+) {
     Column(
         modifier = Modifier
             .padding(
-            16.dp)
+                16.dp
+            )
     ) {
         Row(modifier = Modifier.fillMaxWidth()) {
-            if(feedImage.isNotEmpty()){
+            if (feedImage.isNotEmpty()) {
                 Image(
                     painter = rememberAsyncImagePainter(feedImage.toUri()),
                     contentDescription = null,
                     modifier = Modifier.size(36.dp)
                 )
-            }
-            else{
+            } else {
                 Image(
                     painter = painterResource(id = R.mipmap.ic_launcher),
                     contentDescription = null,
@@ -86,7 +86,7 @@ fun FeedItem(
 
 @Preview
 @Composable
-fun FeedItemPreview(){
+fun FeedItemPreview() {
     FeedItem(
         feedTitle = "Feed Title",
         feedURL = "https://www.feedurl.com",

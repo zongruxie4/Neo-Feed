@@ -17,9 +17,9 @@ import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.preference.Preference
 import androidx.preference.PreferenceViewHolder
+import com.saulhdev.feeder.R
+import com.saulhdev.feeder.databinding.FeedCardTextBinding
 import ua.itaysonlab.homefeeder.HFApplication
-import ua.itaysonlab.homefeeder.R
-import ua.itaysonlab.homefeeder.databinding.FeedCardTextBinding
 import ua.itaysonlab.homefeeder.kt.isDark
 import ua.itaysonlab.homefeeder.overlay.launcherapi.OverlayThemeHolder
 import ua.itaysonlab.homefeeder.preferences.HFPreferences
@@ -134,7 +134,11 @@ class HFElementPreview @JvmOverloads constructor(
         if (!::layoutInflater.isInitialized) layoutInflater = LayoutInflater.from(holder.itemView.context)
 
         if (ContextCompat.checkSelfPermission(view.context, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-            view.findViewById<ImageView>(R.id.wallpaper_preview).setImageDrawable(WallpaperManager.getInstance(HFApplication.instance).drawable)
+            view.findViewById<ImageView>(R.id.wallpaper_preview).setImageDrawable(
+                WallpaperManager.getInstance(
+                    HFApplication.instance
+                ).drawable
+            )
         }
 
         theme = getHFTheme(null)

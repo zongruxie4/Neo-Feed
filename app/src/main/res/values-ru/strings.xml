@@ -51,4 +51,16 @@
 
     <string name="pm_empty">Источники не обнаружены</string>
     <string name="pm_desc">HomeFeeder использует их для получения данных</string>
+
+    <string name="manager_title">Менеджер лент</string>
+    <string name="manager_add">Добавить</string>
+
+    <string name="add_title">Добавить источник ленты</string>
+    <string name="add_input_hint">URL</string>
+    <string name="add_input_desc">Поддерживаемые форматы: RSS, Atom</string>
+
+    <string name="remove_title">Подтвердите действие</string>
+    <string name="remove_desc">Вы дейстительно хотите удалить %s из списка лент?</string>
+    <string name="remove_action_yes">Да</string>
+    <string name="remove_action_nope">Отменить</string>
 </resources>

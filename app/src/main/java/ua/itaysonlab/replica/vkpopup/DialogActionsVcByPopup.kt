@@ -6,7 +6,7 @@ import android.graphics.Rect
 import android.view.LayoutInflater
 import android.view.View
 import androidx.annotation.UiThread
-import ua.itaysonlab.homefeeder.R
+import com.saulhdev.feeder.R
 import kotlin.math.ceil
 
 @UiThread

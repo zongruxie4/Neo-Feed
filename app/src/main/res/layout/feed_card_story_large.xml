@@ -75,7 +75,6 @@
                 android:id="@+id/story_desc"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="?android:textColorSecondary"
                 android:textSize="14sp"
                 tools:text="Story Text" />
         </LinearLayout>

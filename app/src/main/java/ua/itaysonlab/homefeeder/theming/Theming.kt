@@ -4,8 +4,8 @@ import android.content.Context
 import android.content.res.Configuration
 import android.util.SparseIntArray
 import androidx.core.content.ContextCompat
+import com.saulhdev.feeder.R
 import ua.itaysonlab.homefeeder.HFApplication
-import ua.itaysonlab.homefeeder.R
 
 object Theming {
     val defaultLightThemeColors = createLightTheme()

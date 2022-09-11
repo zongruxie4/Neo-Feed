@@ -6,9 +6,9 @@ import android.text.Html
 import android.util.SparseIntArray
 import android.view.View
 import coil.load
+import com.saulhdev.feeder.databinding.FeedCardStoryLargeBinding
 import ua.itaysonlab.hfsdk.FeedItem
 import ua.itaysonlab.hfsdk.content.StoryCardContent
-import ua.itaysonlab.homefeeder.databinding.FeedCardStoryLargeBinding
 import ua.itaysonlab.homefeeder.kt.isDark
 import ua.itaysonlab.homefeeder.theming.Theming
 

@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import ua.itaysonlab.homefeeder.R
+import com.saulhdev.feeder.R
 
 class ActionVh(private val f: View, private val g: ActionStyle): RecyclerView.ViewHolder(f) {
     private val b: ImageView = this.f.findViewById(R.id.icon)

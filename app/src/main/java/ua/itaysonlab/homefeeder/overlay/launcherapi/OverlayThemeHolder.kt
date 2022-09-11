@@ -8,8 +8,8 @@ import android.os.Build
 import android.util.SparseIntArray
 import androidx.annotation.ColorInt
 import androidx.core.content.ContextCompat
+import com.saulhdev.feeder.R
 import ua.itaysonlab.homefeeder.HFApplication
-import ua.itaysonlab.homefeeder.R
 import ua.itaysonlab.homefeeder.kt.clearLightFlags
 import ua.itaysonlab.homefeeder.kt.isLight
 import ua.itaysonlab.homefeeder.kt.toInt

@@ -5,9 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import com.saulhdev.feeder.R
 import ua.itaysonlab.hfsdk.FeedItem
 import ua.itaysonlab.hfsdk.content.TextCardContent
-import ua.itaysonlab.homefeeder.R
 
 object TextCardWithActionsBinder: FeedBinder {
     override fun bind(theme: SparseIntArray?, item: FeedItem, view: View) {

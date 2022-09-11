@@ -1,9 +1,8 @@
 package ua.itaysonlab.homefeeder.utils
 
 import android.content.Context
-import ua.itaysonlab.homefeeder.R
-import java.util.Calendar
-import java.util.Locale
+import com.saulhdev.feeder.R
+import java.util.*
 import kotlin.math.min
 
 object RelativeTimeHelper {

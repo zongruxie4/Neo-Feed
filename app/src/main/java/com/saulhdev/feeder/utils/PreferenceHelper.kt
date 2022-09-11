@@ -2,11 +2,11 @@ package ua.itaysonlab.hfrss.utils
 
 import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
-import ua.itaysonlab.hfrss.Plugin
 import ua.itaysonlab.hfsdk.HFPluginApplication
 
 object PreferenceHelper {
-    private val prefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(HFPluginApplication.instance)
+    private val prefs: SharedPreferences =
+        PreferenceManager.getDefaultSharedPreferences(HFPluginApplication.instance)
 
     fun get(key: String, default: Boolean): Boolean {
         return prefs.getBoolean(key, default)

@@ -15,9 +15,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.card.MaterialCardView
+import com.saulhdev.feeder.R
+import com.saulhdev.feeder.databinding.PluginManagerEntryBinding
 import ua.itaysonlab.homefeeder.HFApplication
-import ua.itaysonlab.homefeeder.R
-import ua.itaysonlab.homefeeder.databinding.PluginManagerEntryBinding
 import ua.itaysonlab.homefeeder.pluginsystem.PluginFetcher
 import ua.itaysonlab.homefeeder.preferences.HFPluginPreferences
 import kotlin.math.ceil

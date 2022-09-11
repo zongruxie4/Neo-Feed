@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.saulhdev.ofrss
+package com.saulhdev.feeder
 
 import android.os.Bundle
 import android.widget.Toast
@@ -46,15 +46,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.prof.rssparser.Channel
 import com.prof.rssparser.Parser
-import com.saulhdev.ofrss.compose.ComposeBottomSheet
-import com.saulhdev.ofrss.compose.FeedItem
-import com.saulhdev.ofrss.theme.AppTheme
+import com.saulhdev.feeder.compose.components.ComposeBottomSheet
+import com.saulhdev.feeder.compose.components.FeedItem
+import com.saulhdev.feeder.models.SavedFeedModel
+import com.saulhdev.feeder.preference.HFPluginPreferences
+import com.saulhdev.feeder.theme.AppTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
-import ua.itaysonlab.hfrss.data.SavedFeedModel
-import ua.itaysonlab.hfrss.pref.HFPluginPreferences
 
 class FeedManagerActivity : AppCompatActivity() {
 
@@ -85,7 +85,7 @@ fun MainFeedView() {
         sheetContent = {
             ComposeBottomSheet(
                 onSaveAction = {
-                    coroutineScope.launch{
+                    coroutineScope.launch {
                         var data: Channel? = null
                         withContext(Dispatchers.Default) {
                             val parser = Parser.Builder()
@@ -98,11 +98,17 @@ fun MainFeedView() {
                             }
                         }
                         data ?: run {
-                            Toast.makeText(context, "URL is not a RSS feed!", Toast.LENGTH_LONG).show()
+                            Toast.makeText(context, "URL is not a RSS feed!", Toast.LENGTH_LONG)
+                                .show()
                             return@launch
                         }
                         val title = data!!.title ?: "Unknown"
-                        val savedFeedModel = SavedFeedModel(title, data!!.description ?: "", it,data!!.image?.url ?: "")
+                        val savedFeedModel = SavedFeedModel(
+                            title,
+                            data!!.description ?: "",
+                            it,
+                            data!!.image?.url ?: ""
+                        )
 
                         HFPluginPreferences.add(savedFeedModel)
                         rssList.value = HFPluginPreferences.parsedFeedList
@@ -158,7 +164,12 @@ fun MainFeedView() {
                         onRemoveAction = {
                             androidx.appcompat.app.AlertDialog.Builder(context).apply {
                                 setTitle(R.string.remove_title)
-                                setMessage(context.resources.getString(R.string.remove_desc, item.name))
+                                setMessage(
+                                    context.resources.getString(
+                                        R.string.remove_desc,
+                                        item.name
+                                    )
+                                )
                                 setNeutralButton(R.string.remove_action_nope, null)
                                 setPositiveButton(R.string.remove_action_yes) { _, _ ->
                                     HFPluginPreferences.remove(item)

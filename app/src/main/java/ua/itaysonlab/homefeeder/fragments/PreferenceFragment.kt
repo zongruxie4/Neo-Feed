@@ -3,11 +3,13 @@ package ua.itaysonlab.homefeeder.fragments
 import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
-import androidx.preference.*
-import ua.itaysonlab.homefeeder.BuildConfig
+import androidx.preference.ListPreference
+import androidx.preference.Preference
+import androidx.preference.PreferenceCategory
+import androidx.preference.SwitchPreference
+import com.saulhdev.feeder.BuildConfig
+import com.saulhdev.feeder.R
 import ua.itaysonlab.homefeeder.HFApplication
-import ua.itaysonlab.homefeeder.R
-import ua.itaysonlab.homefeeder.activites.MainActivity
 import ua.itaysonlab.homefeeder.fragments.base.FixedPreferencesFragment
 import ua.itaysonlab.homefeeder.prefui.HFElementPreview
 

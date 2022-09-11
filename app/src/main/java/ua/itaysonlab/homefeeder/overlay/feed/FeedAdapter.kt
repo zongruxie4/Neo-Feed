@@ -5,13 +5,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.saulhdev.feeder.R
 import ua.itaysonlab.hfsdk.FeedItem
 import ua.itaysonlab.hfsdk.FeedItemType
-import ua.itaysonlab.homefeeder.R
 import ua.itaysonlab.homefeeder.overlay.feed.binders.StoryCardBinder
 import ua.itaysonlab.homefeeder.overlay.feed.binders.TextCardBinder
 import ua.itaysonlab.homefeeder.overlay.feed.binders.TextCardWithActionsBinder
-import ua.itaysonlab.homefeeder.utils.Logger
 
 class FeedAdapter: RecyclerView.Adapter<FeedAdapter.FeedViewHolder>() {
     private var list = listOf<FeedItem>()
