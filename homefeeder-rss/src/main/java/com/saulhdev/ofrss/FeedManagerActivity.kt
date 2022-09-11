@@ -18,29 +18,42 @@
 
 package com.saulhdev.ofrss
 
-import android.annotation.SuppressLint
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.FloatingActionButton
-import androidx.compose.material.TopAppBar
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.*
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FabPosition
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.prof.rssparser.Channel
+import com.prof.rssparser.Parser
+import com.saulhdev.ofrss.compose.ComposeBottomSheet
 import com.saulhdev.ofrss.compose.FeedItem
 import com.saulhdev.ofrss.theme.AppTheme
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import okhttp3.OkHttpClient
 import ua.itaysonlab.hfrss.data.SavedFeedModel
 import ua.itaysonlab.hfrss.pref.HFPluginPreferences
+
 
 class FeedManagerActivity : AppCompatActivity() {
 
@@ -54,34 +67,102 @@ class FeedManagerActivity : AppCompatActivity() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun MainFeedView() {
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(text =  stringResource(id = R.string.manager_title)) },
-                backgroundColor = MaterialTheme.colorScheme.primary
+    val coroutineScope = rememberCoroutineScope()
+    val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
+        bottomSheetState = BottomSheetState(BottomSheetValue.Collapsed)
+    )
+    val context = LocalContext.current
+    BottomSheetScaffold(
+        scaffoldState = bottomSheetScaffoldState,
+        sheetPeekHeight = 0.dp,
+        sheetContent = {
+            ComposeBottomSheet(
+                onSaveAction = {
+                    coroutineScope.launch{
+                        var data: Channel? = null
+                        withContext(Dispatchers.Default) {
+                            val parser = Parser.Builder()
+                                .okHttpClient(OkHttpClient())
+                                .build()
+                            try {
+                                data = parser.getChannel(it)
+                            } catch (_: Exception) {
+
+                            }
+                        }
+                        data ?: run {
+                            Toast.makeText(context, "URL is not a RSS feed!", Toast.LENGTH_LONG).show()
+                            return@launch
+                        }
+                        val title = data!!.title ?: "Unknown"
+                        val savedFeedModel = SavedFeedModel(title, data!!.description ?: "", it,data!!.image?.url ?: "")
+
+                        HFPluginPreferences.add(savedFeedModel)
+                        bottomSheetScaffoldState.bottomSheetState.collapse()
+                    }
+                },
+                onCloseAction = {
+                    coroutineScope.launch {
+                        bottomSheetScaffoldState.bottomSheetState.collapse()
+                    }
+                }
             )
-        },
-        floatingActionButtonPosition = FabPosition.End,
-        floatingActionButton = {
-            FloatingActionButton(
-                modifier = Modifier
-                    .padding(all = 16.dp),
-                    onClick = {}
-            ) {
-                Icon(imageVector = Icons.Filled.Add, contentDescription = "Add")
-            }
         }
-    ){
-        LazyColumn(modifier = Modifier.padding(paddingValues = it)) {
-            val list  = HFPluginPreferences.parsedFeedList
-            items(list) { item ->
-                FeedItem(
-                    feedImage = item.feedImage,
-                    description =  item.description
+    ) {
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = {
+                        Text(
+                            text = stringResource(id = R.string.manager_title),
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                    },
+                    backgroundColor = MaterialTheme.colorScheme.background
                 )
+            },
+            floatingActionButtonPosition = FabPosition.End,
+            floatingActionButton = {
+                FloatingActionButton(
+                    modifier = Modifier
+                        .padding(all = 16.dp),
+                    onClick = {
+                        coroutineScope.launch {
+                            if (bottomSheetScaffoldState.bottomSheetState.isCollapsed) {
+                                bottomSheetScaffoldState.bottomSheetState.expand()
+                            } else {
+                                bottomSheetScaffoldState.bottomSheetState.collapse()
+                            }
+                        }
+                    }
+                ) {
+                    Icon(imageVector = Icons.Filled.Add, contentDescription = "Add")
+                }
+            }
+        ) {
+            LazyColumn(modifier = Modifier.padding(paddingValues = it)) {
+                val list = HFPluginPreferences.parsedFeedList
+                items(list) { item ->
+                    FeedItem(
+                        feedTitle = item.name,
+                        feedURL = item.feedUrl,
+                        feedImage = item.feedImage,
+                        description = item.description,
+                        onRemoveAction = {
+                            androidx.appcompat.app.AlertDialog.Builder(context).apply {
+                                setTitle(R.string.remove_title)
+                                setMessage(context.resources.getString(R.string.remove_desc, item.name))
+                                setNeutralButton(R.string.remove_action_nope, null)
+                                setPositiveButton(R.string.remove_action_yes) { _, _ ->
+                                    HFPluginPreferences.remove(item)
+                                }
+                            }.show()
+                        }
+                    )
+                }
             }
         }
     }
