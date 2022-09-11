@@ -1,6 +1,5 @@
 package ua.itaysonlab.homefeeder
 
-import android.app.Application
 import android.app.Notification
 import android.content.pm.PackageManager
 import android.graphics.drawable.BitmapDrawable
@@ -8,11 +7,22 @@ import android.graphics.drawable.Drawable
 import android.os.Build
 import androidx.core.graphics.drawable.toDrawable
 import com.saulhdev.feeder.BuildConfig
+import ua.itaysonlab.hfsdk.HFPluginApplication
 import ua.itaysonlab.homefeeder.pluginsystem.PluginFetcher
 import ua.itaysonlab.homefeeder.utils.Logger
 import ua.itaysonlab.homefeeder.utils.OverlayBridge
 
-class HFApplication: Application() {
+class HFApplication : HFPluginApplication() {
+    override fun onCreate() {
+        super.onCreate()
+        Logger.log(
+            "Application",
+            "Starting HomeFeeder ${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})..."
+        )
+        instance = this
+        PluginFetcher.init(instance)
+    }
+
     companion object {
         const val ACTION_MANAGE_LISTENERS = "android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"
 
@@ -56,12 +66,5 @@ class HFApplication: Application() {
                 null
             }
         }
-    }
-
-    override fun onCreate() {
-        super.onCreate()
-        Logger.log("Application", "Starting HomeFeeder ${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})...")
-        instance = this
-        PluginFetcher.init(instance)
     }
 }
