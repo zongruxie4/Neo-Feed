@@ -19,8 +19,8 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceViewHolder
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.databinding.FeedCardTextBinding
+import com.saulhdev.feeder.utils.isDark
 import ua.itaysonlab.homefeeder.HFApplication
-import ua.itaysonlab.homefeeder.kt.isDark
 import ua.itaysonlab.homefeeder.overlay.launcherapi.OverlayThemeHolder
 import ua.itaysonlab.homefeeder.preferences.HFPreferences
 import ua.itaysonlab.homefeeder.theming.Theming
