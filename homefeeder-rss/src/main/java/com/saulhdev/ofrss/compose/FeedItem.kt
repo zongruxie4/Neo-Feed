@@ -41,7 +41,11 @@ fun FeedItem(
     feedImage:String = "",
     description:String =""
 ){
-    Column(modifier = Modifier.padding(vertical = 8.dp)) {
+    Column(
+        modifier = Modifier
+            .padding(
+            16.dp)
+    ) {
         Row(modifier = Modifier.fillMaxWidth()) {
             if(feedImage.isNotEmpty()){
                 Image(
