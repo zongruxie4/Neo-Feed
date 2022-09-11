@@ -4,9 +4,9 @@ import org.json.JSONObject
 
 data class SavedFeedModel (
     val name: String,
-    val desc: String,
-    val feed_url: String,
-    val pic_url: String
+    val description: String,
+    val feedUrl: String,
+    val feedImage: String
 ) {
     constructor(obj: JSONObject): this(
         obj.getString("name"),
@@ -17,8 +17,8 @@ data class SavedFeedModel (
 
     fun asJson() = JSONObject().apply {
         put("name", name)
-        put("desc", desc)
-        put("feed_url", feed_url)
-        put("pic_url", pic_url)
+        put("desc", description)
+        put("feed_url", feedUrl)
+        put("pic_url", feedImage)
     }
 }
