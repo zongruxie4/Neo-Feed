@@ -6,8 +6,8 @@ apply plugin: 'kotlin-parcelize'
 
 android {
     compileSdkVersion 33
-    def name = "1.3"
-    def code = 33
+    def name = "1.4"
+    def code = 35
 
     defaultConfig {
         applicationId "com.saulhdev.omegafeeder"
@@ -17,7 +17,7 @@ android {
         versionCode code
     }
 
-    applicationVariants.all{variant ->
+    applicationVariants.all { variant ->
         variant.outputs.each { output ->
             output.outputFileName = "Omega_Feeder_v" + variant.versionName + "_Build_" + variant.versionCode + ".apk"
         }
