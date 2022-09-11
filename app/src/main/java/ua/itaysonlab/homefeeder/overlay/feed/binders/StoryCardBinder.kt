@@ -2,18 +2,15 @@ package ua.itaysonlab.homefeeder.overlay.feed.binders
 
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
 import android.text.Html
 import android.util.SparseIntArray
 import android.view.View
-import androidx.annotation.RequiresApi
 import coil.load
 import com.saulhdev.feeder.databinding.FeedCardStoryLargeBinding
 import ua.itaysonlab.hfsdk.FeedItem
 import ua.itaysonlab.hfsdk.content.StoryCardContent
 
 object StoryCardBinder: FeedBinder {
-    @RequiresApi(Build.VERSION_CODES.N)
     override fun bind(theme: SparseIntArray?, item: FeedItem, view: View) {
         val content = item.content as StoryCardContent
         val binding = FeedCardStoryLargeBinding.bind(view)
