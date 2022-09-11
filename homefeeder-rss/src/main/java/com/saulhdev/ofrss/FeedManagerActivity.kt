@@ -36,6 +36,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -53,7 +55,6 @@ import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import ua.itaysonlab.hfrss.data.SavedFeedModel
 import ua.itaysonlab.hfrss.pref.HFPluginPreferences
-
 
 class FeedManagerActivity : AppCompatActivity() {
 
@@ -75,6 +76,9 @@ fun MainFeedView() {
         bottomSheetState = BottomSheetState(BottomSheetValue.Collapsed)
     )
     val context = LocalContext.current
+
+    val rssList = remember { mutableStateOf(HFPluginPreferences.parsedFeedList) }
+
     BottomSheetScaffold(
         scaffoldState = bottomSheetScaffoldState,
         sheetPeekHeight = 0.dp,
@@ -101,6 +105,7 @@ fun MainFeedView() {
                         val savedFeedModel = SavedFeedModel(title, data!!.description ?: "", it,data!!.image?.url ?: "")
 
                         HFPluginPreferences.add(savedFeedModel)
+                        rssList.value = HFPluginPreferences.parsedFeedList
                         bottomSheetScaffoldState.bottomSheetState.collapse()
                     }
                 },
@@ -144,8 +149,7 @@ fun MainFeedView() {
             }
         ) {
             LazyColumn(modifier = Modifier.padding(paddingValues = it)) {
-                val list = HFPluginPreferences.parsedFeedList
-                items(list) { item ->
+                items(rssList.value) { item ->
                     FeedItem(
                         feedTitle = item.name,
                         feedURL = item.feedUrl,
@@ -158,6 +162,7 @@ fun MainFeedView() {
                                 setNeutralButton(R.string.remove_action_nope, null)
                                 setPositiveButton(R.string.remove_action_yes) { _, _ ->
                                     HFPluginPreferences.remove(item)
+                                    rssList.value = HFPluginPreferences.parsedFeedList
                                 }
                             }.show()
                         }
