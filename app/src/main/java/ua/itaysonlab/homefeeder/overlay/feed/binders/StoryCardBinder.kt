@@ -7,6 +7,7 @@ import android.util.SparseIntArray
 import android.view.View
 import coil.load
 import com.saulhdev.feeder.databinding.FeedCardStoryLargeBinding
+import com.saulhdev.feeder.utils.convertLongToTime
 import ua.itaysonlab.hfsdk.FeedItem
 import ua.itaysonlab.hfsdk.content.StoryCardContent
 
@@ -17,7 +18,7 @@ object StoryCardBinder: FeedBinder {
 
         binding.storyTitle.text = content.title
         binding.storySource.text = content.source.title
-        binding.storyDate.text = item.time.toString()
+        binding.storyDate.text = convertLongToTime(item.time)
 
         if (content.text.isEmpty()) {
             binding.storyDesc.visibility = View.GONE
