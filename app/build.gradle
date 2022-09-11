@@ -11,7 +11,7 @@ android {
 
     defaultConfig {
         applicationId "com.saulhdev.omegafeeder"
-        minSdkVersion 21
+        minSdkVersion 24
         targetSdkVersion 32
         versionName name
         versionCode code
