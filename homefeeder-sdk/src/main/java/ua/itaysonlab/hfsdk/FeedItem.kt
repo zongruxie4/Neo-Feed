@@ -7,9 +7,16 @@ import ua.itaysonlab.hfsdk.content.BaseContent
 
 @Parcelize
 data class FeedItem(
-    // That "Application name" string
     val title: String,
     val type: FeedItemType,
     val content: BaseContent,
     val time: Long
-): Parcelable
+) : Parcelable {
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    override fun writeToParcel(dest: Parcel?, flags: Int) {
+
+    }
+}
