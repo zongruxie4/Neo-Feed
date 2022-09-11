@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name" translatable="false">HomeFeeder / RSS plugin</string>
+    <string name="app_name" translatable="false">Omega Feeder / RSS plugin</string>
 
     <string name="manager_title">Feed manager</string>
     <string name="manager_add">Add</string>
