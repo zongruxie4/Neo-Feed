@@ -1,9 +1,21 @@
 <resources>
+
     <style name="HFBaseTheme" parent="Theme.Material3.DynamicColors.DayNight">
         <item name="toolbarStyle">@style/Widget.MaterialComponents.Toolbar.Surface</item>
         <item name="materialCardViewStyle">@style/HFMaterialCard</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+        <item name="alertDialogTheme">@style/AlertDialogTheme</item>
+    </style>
+
+    <style name="AlertDialogTheme" parent="MaterialAlertDialog.Material3">
+        <item name="shapeAppearanceMediumComponent">@style/RoundShapeAppearance</item>
+    </style>
+
+    <style name="RoundShapeAppearance" parent="ShapeAppearance.MaterialComponents.MediumComponent">
+
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">16dp</item>
     </style>
 
     <style name="HFMaterialCard" parent="Widget.Material3.CardView.Filled">
