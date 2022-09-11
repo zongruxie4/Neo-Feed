@@ -42,7 +42,7 @@ class HFPluginService: Service(), CoroutineScope by MainScope() {
                     val parser = Parser(OkHttpClient())
 
                     HFPluginPreferences.parsedFeedList.forEach { model ->
-                        parser.getChannel(model.feed_url).articles.forEach { article ->
+                        parser.getChannel(model.feedUrl).articles.forEach { article ->
                             list.add(FeedItem(
                                 "${model.name} [RSS]",
                                 FeedItemType.STORY_CARD,
@@ -51,7 +51,7 @@ class HFPluginService: Service(), CoroutineScope by MainScope() {
                                     text = article.description!!,
                                     background_url = article.image ?: "",
                                     link = article.link ?: "",
-                                    source = FeedCategory(model.feed_url, model.name, Color.GREEN, model.pic_url)
+                                    source = FeedCategory(model.feedUrl, model.name, Color.GREEN, model.feedImage)
                                 ),
                                 sourceSdf.parse(article.pubDate!!)!!.time
                             ))
@@ -65,7 +65,7 @@ class HFPluginService: Service(), CoroutineScope by MainScope() {
 
         override fun getCategories(callback: IFeedInterfaceCallback) {
             callback.onCategoriesReceive(HFPluginPreferences.parsedFeedList.map {
-                FeedCategory(it.feed_url, it.name, Color.GREEN, it.pic_url)
+                FeedCategory(it.feedUrl, it.name, Color.GREEN, it.feedImage)
             })
         }
     }
