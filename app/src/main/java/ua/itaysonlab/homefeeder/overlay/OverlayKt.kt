@@ -14,12 +14,12 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.libraries.gsa.d.a.OverlayController
 import com.saulhdev.feeder.R
+import com.saulhdev.feeder.utils.clearLightFlags
+import com.saulhdev.feeder.utils.isDark
+import com.saulhdev.feeder.utils.setLightFlags
 import ua.itaysonlab.hfsdk.FeedItem
 import ua.itaysonlab.homefeeder.HFApplication
 import ua.itaysonlab.homefeeder.activites.MainActivity
-import ua.itaysonlab.homefeeder.kt.clearLightFlags
-import ua.itaysonlab.homefeeder.kt.isDark
-import ua.itaysonlab.homefeeder.kt.setLightFlags
 import ua.itaysonlab.homefeeder.overlay.feed.FeedAdapter
 import ua.itaysonlab.homefeeder.overlay.launcherapi.LauncherAPI
 import ua.itaysonlab.homefeeder.overlay.launcherapi.OverlayThemeHolder

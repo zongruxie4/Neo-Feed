@@ -1,10 +1,8 @@
-package ua.itaysonlab.homefeeder.kt
+package com.saulhdev.feeder.utils
 
-import android.content.Context
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
-import android.provider.Settings
 import android.view.View
 import androidx.annotation.ColorInt
 import androidx.core.graphics.ColorUtils
@@ -24,26 +22,21 @@ fun Bundle.dump(tag: String) {
 }
 
 fun View.setLightFlags() {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-        var flags = systemUiVisibility
-        flags = flags or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-        systemUiVisibility = flags
-    }
+    var flags = systemUiVisibility
+    flags = flags or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+    systemUiVisibility = flags
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        var flags = systemUiVisibility
         flags = flags or View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
         systemUiVisibility = flags
     }
 }
 
 fun View.clearLightFlags() {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-        var flags = systemUiVisibility
-        flags = flags xor View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-        systemUiVisibility = flags
-    }
+    var flags = systemUiVisibility
+    flags = flags xor View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+    systemUiVisibility = flags
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        var flags = systemUiVisibility
+        flags = systemUiVisibility
         flags = flags xor View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
         systemUiVisibility = flags
     }

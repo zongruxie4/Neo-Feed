@@ -3,7 +3,7 @@ package ua.itaysonlab.homefeeder.overlay.launcherapi
 import android.graphics.Color
 import android.os.Bundle
 import androidx.annotation.ColorInt
-import ua.itaysonlab.homefeeder.kt.dump
+import com.saulhdev.feeder.utils.dump
 import ua.itaysonlab.homefeeder.preferences.HFPreferences
 
 /**

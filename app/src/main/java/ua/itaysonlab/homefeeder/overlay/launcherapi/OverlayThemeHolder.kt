@@ -9,10 +9,10 @@ import android.util.SparseIntArray
 import androidx.annotation.ColorInt
 import androidx.core.content.ContextCompat
 import com.saulhdev.feeder.R
+import com.saulhdev.feeder.utils.clearLightFlags
+import com.saulhdev.feeder.utils.isLight
+import com.saulhdev.feeder.utils.toInt
 import ua.itaysonlab.homefeeder.HFApplication
-import ua.itaysonlab.homefeeder.kt.clearLightFlags
-import ua.itaysonlab.homefeeder.kt.isLight
-import ua.itaysonlab.homefeeder.kt.toInt
 import ua.itaysonlab.homefeeder.overlay.OverlayKt
 import ua.itaysonlab.homefeeder.preferences.HFPreferences
 import ua.itaysonlab.homefeeder.theming.Theming
