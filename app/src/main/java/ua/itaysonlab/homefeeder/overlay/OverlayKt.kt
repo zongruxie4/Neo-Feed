@@ -179,6 +179,7 @@ class OverlayKt(val context: Context): OverlayController(context, R.style.AppThe
         PluginConnector.getFeedAsItLoads(0, { feed ->
             list.addAll(feed)
         }) {
+            list.sortByDescending { it.time }
             adapter.replace(list)
             rootView.findViewById<SwipeRefreshLayout>(R.id.swipe_to_refresh).isRefreshing = false
         }
