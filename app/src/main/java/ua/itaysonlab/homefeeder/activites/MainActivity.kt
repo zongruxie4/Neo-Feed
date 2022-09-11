@@ -3,6 +3,7 @@ package ua.itaysonlab.homefeeder.activites
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -11,7 +12,6 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.saulhdev.feeder.R
 
 class MainActivity : AppCompatActivity() {
@@ -56,13 +56,17 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showStorageAlert() {
-        MaterialAlertDialogBuilder(this).apply {
-            setTitle(R.string.storage_alert)
-            setMessage(R.string.storage_desc)
-            setPositiveButton(R.string.storage_action) { _, _ ->
-                ActivityCompat.requestPermissions(this@MainActivity, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 1)
-            }
-            setNeutralButton(R.string.cancel, null)
-        }.show()
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle(R.string.storage_alert)
+        builder.setMessage(R.string.storage_desc)
+        builder.setPositiveButton(R.string.storage_action) { _, _ ->
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+                1
+            )
+        }
+        builder.setNegativeButton(android.R.string.cancel, null)
+        builder.show()
     }
 }
