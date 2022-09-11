@@ -1,6 +1,5 @@
 package ua.itaysonlab.hfsdk.content
 
-import android.os.Parcel
 import kotlinx.android.parcel.Parcelize
 import ua.itaysonlab.hfsdk.FeedCategory
 
@@ -14,9 +13,5 @@ data class StoryCardContent(
 ) : BaseContent() {
     override fun describeContents(): Int {
         return 0
-    }
-
-    override fun writeToParcel(dest: Parcel?, flags: Int) {
-
     }
 }

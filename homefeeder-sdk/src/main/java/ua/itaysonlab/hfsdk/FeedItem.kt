@@ -1,6 +1,5 @@
 package ua.itaysonlab.hfsdk
 
-import android.os.Parcel
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
 import ua.itaysonlab.hfsdk.content.BaseContent
@@ -14,9 +13,5 @@ data class FeedItem(
 ) : Parcelable {
     override fun describeContents(): Int {
         return 0
-    }
-
-    override fun writeToParcel(dest: Parcel?, flags: Int) {
-
     }
 }

@@ -1,6 +1,5 @@
 package ua.itaysonlab.hfsdk
 
-import android.os.Parcel
 import android.os.Parcelable
 import androidx.annotation.ColorInt
 import kotlinx.android.parcel.Parcelize
@@ -14,9 +13,5 @@ data class FeedCategory(
 ) : Parcelable {
     override fun describeContents(): Int {
         return 0
-    }
-
-    override fun writeToParcel(dest: Parcel?, flags: Int) {
-
     }
 }
