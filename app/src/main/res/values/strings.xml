@@ -67,4 +67,6 @@
     <string name="remove_desc">Do you really want to remove %s from feed sources?</string>
     <string name="remove_action_yes">Yes</string>
     <string name="remove_action_nope">Cancel</string>
+
+    <string name="news_image_text">news story image</string>
 </resources>
