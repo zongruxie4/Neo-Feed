@@ -39,7 +39,8 @@ fun FeedItem(
     feedTitle:String ="",
     feedURL:String ="",
     feedImage:String = "",
-    description:String =""
+    description:String ="",
+    onRemoveAction: () -> Unit = {}
 ){
     Column(
         modifier = Modifier
@@ -73,7 +74,7 @@ fun FeedItem(
 
             IconButton(
                 modifier = Modifier.size(36.dp),
-                onClick = { /*TODO*/ }
+                onClick = { onRemoveAction() }
             ) {
                 Icon(imageVector = Icons.Filled.Close, contentDescription = "Close")
             }
