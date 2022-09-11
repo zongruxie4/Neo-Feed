@@ -1,9 +1,7 @@
 package ua.itaysonlab.homefeeder.fragments
 
 import android.animation.ValueAnimator
-import android.content.ComponentName
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -15,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.card.MaterialCardView
+import com.saulhdev.feeder.FeedManagerActivity
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.databinding.PluginManagerEntryBinding
 import ua.itaysonlab.homefeeder.HFApplication
@@ -23,19 +22,6 @@ import ua.itaysonlab.homefeeder.preferences.HFPluginPreferences
 import kotlin.math.ceil
 
 class PluginsFragment : Fragment() {
-    companion object {
-        private fun intToDp(dp: Float): Int {
-            return ceil((dp * Resources.getSystem().displayMetrics.density).toDouble()).toInt()
-        }
-
-        private fun floatToDp(dp: Float): Float {
-            return (dp * Resources.getSystem().displayMetrics.density)
-        }
-
-        val STROKE_MAX_WIDTH = intToDp(2f)
-        val MAX_ELEVATION = floatToDp(16f)
-    }
-
     private lateinit var rv: RecyclerView
     private lateinit var srl: SwipeRefreshLayout
 
@@ -134,15 +120,8 @@ class PluginsFragment : Fragment() {
                 binding.pluginToSettings.setOnClickListener(null)
             } else {
                 binding.pluginToSettings.setOnClickListener {
-                    var data: ComponentName? = null
-
-                    requireContext().packageManager.queryIntentActivities(Intent(PluginFetcher.INTENT_ACTION_SETTINGS), PackageManager.MATCH_DEFAULT_ONLY).forEach {
-                        if (it.activityInfo.packageName == block.info.pkg) data = ComponentName(it.activityInfo.applicationInfo.packageName, it.activityInfo.name)
-                    }
-
-                    data ?: return@setOnClickListener
-
-                    startActivity(Intent(Intent.ACTION_MAIN).setComponent(data).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED))
+                    val intent = Intent(context, FeedManagerActivity::class.java)
+                    startActivity(intent)
                 }
             }
         }
@@ -170,7 +149,21 @@ class PluginsFragment : Fragment() {
         }
     }
 
-    data class PluginItem (
+    companion object {
+        private fun intToDp(dp: Float): Int {
+            return ceil((dp * Resources.getSystem().displayMetrics.density).toDouble()).toInt()
+        }
+
+        private fun floatToDp(dp: Float): Float {
+            return (dp * Resources.getSystem().displayMetrics.density)
+        }
+
+        val STROKE_MAX_WIDTH = intToDp(2f)
+        val MAX_ELEVATION = floatToDp(16f)
+    }
+
+
+    data class PluginItem(
         val isEnabled: Boolean,
         val info: PluginFetcher.SlimPluginInfo
     )

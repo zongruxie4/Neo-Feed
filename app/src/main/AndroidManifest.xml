@@ -33,14 +33,8 @@
 
         <activity
             android:exported="true"
-            android:name="com.saulhdev.feeder.FeedManagerActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.DEFAULT" />
-
-                <action android:name="ua.itaysonlab.hfsdk.HOMEFEEDER_PLUGIN_ENTRYPOINT" />
-            </intent-filter>
-        </activity>
+            android:name="com.saulhdev.feeder.FeedManagerActivity"
+            android:theme="@style/AppTheme"></activity>
 
         <service
             android:name="ua.itaysonlab.homefeeder.overlay.DrawerOverlayService"
