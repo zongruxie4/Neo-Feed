@@ -29,7 +29,6 @@
     <string name="allow_notify_pref_revoked">Нету, нажмите сюда для подробной информации</string>
     <string name="allow_notify_desc">HomeFeeder нужно разрешение \"Доступ к уведомлениям\" для показа уведомлений в ленте. Данные обрабатываются на устройстве и только на нем.\n\nВозможно, некоторые функции HomeFeeder могут быть недоступными до выдачи разрешения.</string>
     <string name="allow_notify_to_settings">Настройки</string>
-    <string name="cancel">Отменить</string>
 
     <string name="storage_alert">Доступ к памяти</string>
     <string name="storage_desc">HomeFeeder нужно разрешение \"Память\" для точного предпросмотра и сохранения данных.\n\nДанное разрешение необязательно, но рекомендуется для нормального использования.</string>

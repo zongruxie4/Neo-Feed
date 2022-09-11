@@ -33,7 +33,6 @@
     <string name="allow_notify_pref_revoked">Not granted, click here to allow</string>
     <string name="allow_notify_desc">HomeFeeder needs \"Notification access\" permission to show your notifications in a overlay. Data is processed only on-device and won\'t be sent from it.\n\nPlease note that some features of HomeFeeder might be unavailable until you grant the permission.</string>
     <string name="allow_notify_to_settings">Open settings</string>
-    <string name="cancel">Cancel</string>
 
     <string name="storage_alert">Storage permission</string>
     <string name="storage_desc">HomeFeeder needs \"Read external storage\" permission to save various data and show accurate previews.\n\nThis permission is not needed, but recommended for using.</string>
