@@ -56,6 +56,31 @@
                 android:name="service.api.version"
                 android:value="7" />
         </service>
+        <service
+            android:name="com.saulhdev.feeder.utils.HFPluginService"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="ua.itaysonlab.hfsdk.HOMEFEEDER_PLUGIN_SERVICE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="HF_PluginSDK_Version"
+                android:value="2" />
+            <meta-data
+                android:name="HF_Plugin_Name"
+                android:value="@string/app_name" />
+            <meta-data
+                android:name="HF_Plugin_Description"
+                android:value="RSS client for HomeFeeder" />
+            <meta-data
+                android:name="HF_Plugin_Author"
+                android:value="saulhdev" />
+
+            <!-- <action android:name="ua.itaysonlab.hfsdk.HOMEFEEDER_PLUGIN_ENTRYPOINT"/> is still required! -->
+            <meta-data
+                android:name="HF_Plugin_HasSettingsActivity"
+                android:value="true" />
+        </service>
     </application>
 
 </manifest>
