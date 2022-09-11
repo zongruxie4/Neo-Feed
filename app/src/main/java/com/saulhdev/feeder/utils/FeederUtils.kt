@@ -23,6 +23,6 @@ import java.util.*
 
 fun convertLongToTime(time: Long): String {
     val date = Date(time)
-    val format = SimpleDateFormat("HH:mm", Locale.getDefault())
+    val format = SimpleDateFormat("dd-mm-yy HH:mm", Locale.getDefault())
     return format.format(date)
 }
