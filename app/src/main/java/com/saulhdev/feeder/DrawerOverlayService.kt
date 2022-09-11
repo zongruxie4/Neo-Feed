@@ -1,14 +1,10 @@
-package ua.itaysonlab.homefeeder.overlay
+package com.saulhdev.feeder
 
 import android.app.Service
 import android.content.Intent
 import android.os.IBinder
-
 import com.google.android.apps.gsa.nowoverlayservice.ConfigurationOverlayController
 import com.google.android.libraries.gsa.d.a.OverlaysController
-
-import java.io.FileDescriptor
-import java.io.PrintWriter
 
 class DrawerOverlayService : Service() {
     private lateinit var overlaysController: OverlaysController
@@ -29,12 +25,4 @@ class DrawerOverlayService : Service() {
         this.overlaysController.unUnbind(intent)
         return false
     }
-
-    /*override fun dump(
-        fileDescriptor: FileDescriptor,
-        printWriter: PrintWriter,
-        strArr: Array<String>
-    ) {
-        //this.overlaysController.dump(printWriter)
-    }*/
 }
