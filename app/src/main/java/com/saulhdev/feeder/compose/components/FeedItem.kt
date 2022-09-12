@@ -18,69 +18,53 @@
 
 package com.saulhdev.feeder.compose.components
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
-import coil.compose.rememberAsyncImagePainter
-import com.saulhdev.feeder.R
 
 @Composable
 fun FeedItem(
     feedTitle: String = "",
     feedURL: String = "",
-    feedImage: String = "",
     description: String = "",
     onRemoveAction: () -> Unit = {}
 ) {
-    Column(
+    Card(
         modifier = Modifier
-            .padding(
-                16.dp
-            )
+            .padding(8.dp)
     ) {
-        Row(modifier = Modifier.fillMaxWidth()) {
-            if (feedImage.isNotEmpty()) {
-                Image(
-                    painter = rememberAsyncImagePainter(feedImage.toUri()),
-                    contentDescription = null,
-                    modifier = Modifier.size(36.dp)
-                )
-            } else {
-                Image(
-                    painter = painterResource(id = R.mipmap.ic_launcher),
-                    contentDescription = null,
-                    modifier = Modifier.size(36.dp)
-                )
-            }
-            Spacer(modifier = Modifier.padding(horizontal = 8.dp))
-            Column(
-                modifier = Modifier.weight(1f)
-            ) {
-                Text(text = feedTitle)
-                Text(text = feedURL)
-            }
+        Column(
+            modifier = Modifier
+                .padding(16.dp)
+        ) {
+            Row(modifier = Modifier.fillMaxWidth()) {
+                Column(
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text(text = feedTitle)
+                    Text(text = feedURL)
+                }
 
-            Spacer(modifier = Modifier.padding(horizontal = 8.dp))
+                Spacer(modifier = Modifier.padding(horizontal = 8.dp))
 
-            IconButton(
-                modifier = Modifier.size(36.dp),
-                onClick = { onRemoveAction() }
-            ) {
-                Icon(imageVector = Icons.Filled.Close, contentDescription = "Close")
+                IconButton(
+                    modifier = Modifier.size(36.dp),
+                    onClick = { onRemoveAction() }
+                ) {
+                    Icon(imageVector = Icons.Filled.Close, contentDescription = "Close")
+                }
             }
+            Spacer(modifier = Modifier.padding(vertical = 8.dp))
+            Text(text = description)
         }
-        Spacer(modifier = Modifier.padding(vertical = 8.dp))
-        Text(text = description)
     }
 }
 
