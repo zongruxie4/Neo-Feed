@@ -68,4 +68,7 @@
     <string name="remove_action_nope">Cancel</string>
 
     <string name="news_image_text">news story image</string>
+
+    <string name="title_feed_list">Feed List</string>
+    <string name="summary_feed_list">Add or remove RSS sources</string>
 </resources>

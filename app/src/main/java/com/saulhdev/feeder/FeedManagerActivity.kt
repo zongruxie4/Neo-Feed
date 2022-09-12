@@ -49,12 +49,14 @@ import com.prof.rssparser.Parser
 import com.saulhdev.feeder.compose.components.ComposeBottomSheet
 import com.saulhdev.feeder.compose.components.FeedItem
 import com.saulhdev.feeder.models.SavedFeedModel
+import com.saulhdev.feeder.preference.FeedPreferences
 import com.saulhdev.feeder.preference.HFPluginPreferences
 import com.saulhdev.feeder.theme.AppTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
+import org.json.JSONObject
 
 class FeedManagerActivity : AppCompatActivity() {
 
@@ -76,8 +78,9 @@ fun MainFeedView() {
         bottomSheetState = BottomSheetState(BottomSheetValue.Collapsed)
     )
     val context = LocalContext.current
-
-    val rssList = remember { mutableStateOf(HFPluginPreferences.parsedFeedList) }
+    val prefs = FeedPreferences(context)
+    val feedList = prefs.feedList.onGetValue().map { SavedFeedModel(JSONObject(it)) }
+    val rssList = remember { mutableStateOf(feedList) }
 
     BottomSheetScaffold(
         scaffoldState = bottomSheetScaffoldState,
@@ -172,7 +175,6 @@ fun MainFeedView() {
                                 setNeutralButton(R.string.remove_action_nope, null)
                                 setPositiveButton(R.string.remove_action_yes) { _, _ ->
                                     HFPluginPreferences.remove(item)
-                                    rssList.value = HFPluginPreferences.parsedFeedList
                                 }
                             }.show()
                         }
