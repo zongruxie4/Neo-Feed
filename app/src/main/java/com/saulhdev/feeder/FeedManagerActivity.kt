@@ -159,7 +159,6 @@ fun MainFeedView() {
                     FeedItem(
                         feedTitle = item.name,
                         feedURL = item.feedUrl,
-                        feedImage = item.feedImage,
                         description = item.description,
                         onRemoveAction = {
                             androidx.appcompat.app.AlertDialog.Builder(context).apply {
