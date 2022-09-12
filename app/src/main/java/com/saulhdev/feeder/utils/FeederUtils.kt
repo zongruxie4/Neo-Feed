@@ -18,11 +18,10 @@
 
 package com.saulhdev.feeder.utils
 
-import java.text.SimpleDateFormat
-import java.util.*
+import androidx.compose.ui.Modifier
 
-fun convertLongToTime(time: Long): String {
-    val date = Date(time)
-    val format = SimpleDateFormat("dd-mm-yy HH:mm", Locale.getDefault())
-    return format.format(date)
-}
+inline fun Modifier.addIf(
+    condition: Boolean,
+    crossinline factory: Modifier.() -> Modifier
+): Modifier =
+    if (condition) factory() else this
