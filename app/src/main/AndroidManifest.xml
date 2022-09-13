@@ -32,6 +32,11 @@
             android:name=".FeedManagerActivity"
             android:theme="@style/AppTheme" />
 
+        <activity
+            android:name=".compose.ComposeActivity"
+            android:exported="true"
+            android:theme="@style/AppTheme" />
+
         <service
             android:name=".DrawerOverlayService"
             android:enabled="true"
