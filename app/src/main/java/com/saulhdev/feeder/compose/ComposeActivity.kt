@@ -27,7 +27,6 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.core.net.toUri
 import androidx.navigation.NavHostController
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
-import com.saulhdev.feeder.compose.navigation.DefaultComposeView
 import com.saulhdev.feeder.theme.AppTheme
 
 class ComposeActivity : AppCompatActivity() {
@@ -39,7 +38,6 @@ class ComposeActivity : AppCompatActivity() {
         setContent {
             AppTheme {
                 navController = rememberAnimatedNavController()
-                DefaultComposeView(navController)
             }
         }
     }
