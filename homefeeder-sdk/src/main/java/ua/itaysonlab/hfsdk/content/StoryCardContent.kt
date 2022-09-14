@@ -1,6 +1,6 @@
 package ua.itaysonlab.hfsdk.content
 
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 import ua.itaysonlab.hfsdk.FeedCategory
 
 @Parcelize

@@ -2,7 +2,7 @@ package ua.itaysonlab.hfsdk.actions
 
 import android.os.Bundle
 import android.os.Parcelable
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 @Parcelize
 class CardAction (
