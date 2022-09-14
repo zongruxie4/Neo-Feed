@@ -19,6 +19,7 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceViewHolder
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.databinding.FeedCardTextBinding
+import com.saulhdev.feeder.preference.FeedPreferences
 import com.saulhdev.feeder.utils.isDark
 import ua.itaysonlab.homefeeder.HFApplication
 import ua.itaysonlab.homefeeder.overlay.launcherapi.OverlayThemeHolder
@@ -92,7 +93,8 @@ class HFElementPreview @JvmOverloads constructor(
     }
 
     private fun getHFTheme(force: String?): SparseIntArray {
-        val theme = when (force ?: HFPreferences.overlayTheme) {
+        val prefs = FeedPreferences(context)
+        val theme = when (prefs.overlayTheme.onGetValue()) {
             "auto_system" -> Theming.getThemeBySystem(context)
             "dark" -> Theming.defaultDarkThemeColors
             else -> Theming.defaultLightThemeColors

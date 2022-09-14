@@ -15,6 +15,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.libraries.gsa.d.a.OverlayController
 import com.saulhdev.feeder.MainActivity
 import com.saulhdev.feeder.R
+import com.saulhdev.feeder.preference.FeedPreferences
 import com.saulhdev.feeder.utils.clearLightFlags
 import com.saulhdev.feeder.utils.isDark
 import com.saulhdev.feeder.utils.setLightFlags
@@ -45,17 +46,19 @@ class OverlayKt(val context: Context): OverlayController(context, R.style.AppThe
     private val list = mutableListOf<FeedItem>()
 
     private fun setTheme(force: String?) {
-        themeHolder.setTheme(when (force ?: HFPreferences.overlayTheme) {
-            "auto_launcher" -> {
-                if (apiInstance.darkTheme) {
-                    Theming.defaultDarkThemeColors
-                } else {
-                    Theming.defaultLightThemeColors
+        val prefs = FeedPreferences(context)
+        themeHolder.setTheme(
+            when (force ?: prefs.overlayTheme.onGetValue()) {
+                "auto_launcher" -> {
+                    if (apiInstance.darkTheme) {
+                        Theming.defaultDarkThemeColors
+                    } else {
+                        Theming.defaultLightThemeColors
+                    }
                 }
-            }
-            "auto_system" -> Theming.getThemeBySystem(context)
-            "dark" -> Theming.defaultDarkThemeColors
-            else -> Theming.defaultLightThemeColors
+                "auto_system" -> Theming.getThemeBySystem(context)
+                "dark" -> Theming.defaultDarkThemeColors
+                else -> Theming.defaultLightThemeColors
         })
     }
 
