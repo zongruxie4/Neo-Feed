@@ -24,3 +24,4 @@ local.properties
 
 # IntelliJ
 *.iml
+.idea
