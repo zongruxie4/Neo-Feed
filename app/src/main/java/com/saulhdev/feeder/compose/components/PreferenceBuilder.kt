@@ -21,11 +21,18 @@ package com.saulhdev.feeder.compose.components
 import androidx.compose.runtime.Composable
 import com.saulhdev.feeder.preference.FeedPreferences
 
-val PreferenceBuilder = @Composable { pref: Any, index: Int, size: Int ->
-    when (pref) {
-        is FeedPreferences.StringSetPref ->
-            StringSetPreference(pref = pref, index = index, groupSize = size)
-        is FeedPreferences.StringPref ->
-            ActionPreference(pref = pref, index = index, groupSize = size)
-    }
+val PreferenceBuilder =
+    @Composable { pref: Any, onDialogPref: (Any) -> Unit, index: Int, size: Int ->
+        when (pref) {
+            is FeedPreferences.StringSetPref ->
+                StringSetPreference(pref = pref, index = index, groupSize = size)
+            is FeedPreferences.StringPref ->
+                ActionPreference(pref = pref, index = index, groupSize = size)
+            is FeedPreferences.StringSelectionPref ->
+                StringSelectionPreference(
+                    pref = pref,
+                    index = index,
+                    groupSize = size
+                ) { onDialogPref(pref) }
+        }
 }

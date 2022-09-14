@@ -22,6 +22,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.annotation.StringRes
 import com.saulhdev.feeder.R
+import com.saulhdev.feeder.utils.getThemes
 import kotlin.reflect.KProperty
 
 class FeedPreferences(val context: Context) {
@@ -35,6 +36,14 @@ class FeedPreferences(val context: Context) {
         titleId = R.string.title_feed_list,
         summaryId = R.string.summary_feed_list,
         defaultValue = setOf(),
+        onChange = doNothing
+    )
+
+    var overlayTheme = StringSelectionPref(
+        key = "pref_overlay_theme",
+        titleId = R.string.pref_ovr_theme,
+        defaultValue = "",
+        entries = getThemes(),
         onChange = doNothing
     )
 
@@ -60,7 +69,6 @@ class FeedPreferences(val context: Context) {
     )
 
     /*HELPER CLASSES FOR PREFERENCES*/
-
     inner class StringPref(
         key: String,
         @StringRes titleId: Int,
@@ -77,7 +85,6 @@ class FeedPreferences(val context: Context) {
         }
     }
 
-
     inner class StringSetPref(
         key: String,
         @StringRes titleId: Int,
@@ -90,6 +97,20 @@ class FeedPreferences(val context: Context) {
 
         override fun onSetValue(value: Set<String>) {
             edit { putStringSet(getKey(), value) }
+        }
+    }
+
+    open inner class StringSelectionPref(
+        key: String,
+        @StringRes titleId: Int,
+        @StringRes summaryId: Int = -1,
+        defaultValue: String = "",
+        val entries: Map<String, String>,
+        onChange: () -> Unit = doNothing
+    ) : PrefDelegate<String>(key, titleId, summaryId, defaultValue, onChange) {
+        override fun onGetValue(): String = sharedPrefs.getString(getKey(), defaultValue)!!
+        override fun onSetValue(value: String) {
+            edit { putString(getKey(), value) }
         }
     }
 

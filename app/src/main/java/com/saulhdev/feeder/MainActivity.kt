@@ -14,7 +14,7 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.TopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -31,6 +31,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.navigation.compose.rememberNavController
 import com.saulhdev.feeder.compose.components.BottomNavigationBar
 import com.saulhdev.feeder.compose.components.PreferenceGroup
+import com.saulhdev.feeder.compose.components.StringSelectionPrefDialogUI
 import com.saulhdev.feeder.compose.navigation.NavigationManager
 import com.saulhdev.feeder.preference.FeedPreferences
 import com.saulhdev.feeder.theme.AppTheme
@@ -157,20 +158,40 @@ fun SourcesScreen() {
 
 @Composable
 fun SettingsScreen() {
-    Column(
+    val prefs = FeedPreferences(LocalContext.current)
+    val themePrefs = listOf(
+        prefs.overlayTheme
+    )
+    val openDialog = remember { mutableStateOf(false) }
+    var dialogPref by remember { mutableStateOf<Any?>(null) }
+    val onPrefDialog = { pref: Any ->
+        dialogPref = pref
+        openDialog.value = true
+    }
+
+    LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .wrapContentSize(Alignment.Center)
+            .padding(horizontal = 8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Text(
-            text = "Home View",
-            fontWeight = FontWeight.Bold,
-            color = Color.Green,
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-            textAlign = TextAlign.Center,
-            fontSize = 25.sp
-        )
+        item {
+            PreferenceGroup(
+                stringResource(id = R.string.pref_cat_overlay),
+                prefs = themePrefs,
+                onPrefDialog = onPrefDialog
+            )
+        }
+    }
+
+    if (openDialog.value) {
+        when (dialogPref) {
+            is FeedPreferences.StringSelectionPref -> StringSelectionPrefDialogUI(
+                pref = dialogPref as FeedPreferences.StringSelectionPref,
+                openDialogCustom = openDialog
+            )
+        }
     }
 }
 
@@ -257,7 +278,6 @@ fun InfoScreen() {
                 )
             }
         }
-
     }
 }
 
