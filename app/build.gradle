@@ -10,7 +10,7 @@ android {
     def code = 35
 
     defaultConfig {
-        applicationId "com.saulhdev.omegafeeder"
+        applicationId "com.saulhdev.neofeed"
         minSdkVersion 24
         targetSdkVersion 32
         versionName name
