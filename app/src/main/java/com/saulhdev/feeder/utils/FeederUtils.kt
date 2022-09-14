@@ -25,3 +25,12 @@ inline fun Modifier.addIf(
     crossinline factory: Modifier.() -> Modifier
 ): Modifier =
     if (condition) factory() else this
+
+fun getThemes(): Map<String, String> {
+    return mapOf(
+        "auto_launcher" to "Automatically (from launcher)",
+        "auto_system" to "Automatically (from system)",
+        "light" to "Light",
+        "dark" to "Dark"
+    )
+}
