@@ -20,4 +20,5 @@
     <color name="text_color_secondary_dark">#a0FFFFFF</color>
 
     <color name="remove_bg_color">#ff453a</color>
+    <color name="ic_launcher_background">#F9FCF6</color>
 </resources>
