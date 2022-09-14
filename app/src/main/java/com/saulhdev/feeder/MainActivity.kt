@@ -3,6 +3,7 @@ package com.saulhdev.feeder
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.Image
@@ -10,31 +11,41 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Scaffold
 import androidx.compose.material.TopAppBar
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.res.ResourcesCompat
 import androidx.navigation.compose.rememberNavController
+import com.prof.rssparser.Channel
+import com.prof.rssparser.Parser
 import com.saulhdev.feeder.compose.components.BottomNavigationBar
 import com.saulhdev.feeder.compose.components.PreferenceGroup
 import com.saulhdev.feeder.compose.components.StringSelectionPrefDialogUI
 import com.saulhdev.feeder.compose.navigation.NavigationManager
+import com.saulhdev.feeder.models.SavedFeedModel
 import com.saulhdev.feeder.preference.FeedPreferences
 import com.saulhdev.feeder.theme.AppTheme
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import okhttp3.OkHttpClient
+import org.json.JSONObject
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -111,9 +122,10 @@ class MainActivity : AppCompatActivity() {
 @Composable
 fun MainScreen() {
     val navController = rememberNavController()
-
+    val title = stringResource(id = R.string.app_name)
+    val pageTitle = remember { mutableStateOf(title) }
     Scaffold(
-        topBar = { TopBar() },
+        topBar = { TopBar(pageTitle) },
         bottomBar = { BottomNavigationBar(navController) },
         content = { padding ->
             Box(modifier = Modifier.padding(padding)) {
@@ -125,11 +137,11 @@ fun MainScreen() {
 }
 
 @Composable
-fun TopBar() {
+fun TopBar(pageTitle: MutableState<String>) {
     TopAppBar(
         title = {
             Text(
-                text = stringResource(id = R.string.app_name),
+                text = pageTitle.value,
                 fontSize = 18.sp,
             )
         },
@@ -137,6 +149,7 @@ fun TopBar() {
     )
 }
 
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun SourcesScreen() {
     Column(
@@ -145,14 +158,69 @@ fun SourcesScreen() {
             .background(MaterialTheme.colorScheme.background)
             .wrapContentSize(Alignment.Center)
     ) {
-        Text(
-            text = "Sources",
-            fontWeight = FontWeight.Bold,
-            color = Color.Black,
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-            textAlign = TextAlign.Center,
-            fontSize = 25.sp
+        var rssURL by remember { mutableStateOf("") }
+        val keyboardController = LocalSoftwareKeyboardController.current
+        val coroutineScope = rememberCoroutineScope()
+        val context = LocalContext.current
+        val prefs = FeedPreferences(context)
+        val feedList = prefs.feedList.onGetValue().map { SavedFeedModel(JSONObject(it)) }
+        val rssList = remember { mutableStateOf(feedList) }
+
+        OutlinedTextField(
+            value = rssURL,
+            onValueChange = { rssURL = it },
+            modifier = Modifier
+                .fillMaxWidth(),
+            singleLine = false,
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12F),
+                textColor = MaterialTheme.colorScheme.onSurface
+            ),
+            keyboardOptions = KeyboardOptions.Default.copy(
+                imeAction = ImeAction.Done
+            ),
+            keyboardActions = KeyboardActions(
+                onDone = {
+                    keyboardController?.hide()
+                }
+            ),
+            shape = MaterialTheme.shapes.large,
+            label = { androidx.compose.material.Text(text = stringResource(id = R.string.add_input_hint)) }
         )
+
+        Button(
+            onClick = {
+                coroutineScope.launch {
+                    var data: Channel? = null
+                    withContext(Dispatchers.Default) {
+                        val parser = Parser.Builder()
+                            .okHttpClient(OkHttpClient())
+                            .build()
+                        try {
+                            data = parser.getChannel(rssURL)
+                        } catch (_: Exception) {
+
+                        }
+                    }
+                    data ?: run {
+                        Toast.makeText(context, "URL is not a RSS feed!", Toast.LENGTH_LONG)
+                            .show()
+                        return@launch
+                    }
+                    val title = data!!.title ?: "Unknown"
+                    val savedFeedModel = SavedFeedModel(
+                        title,
+                        data!!.description ?: "",
+                        rssURL,
+                        data!!.image?.url ?: ""
+                    )
+                    rssList.value.plus(savedFeedModel)
+                    prefs.feedList.onSetValue(rssList.value.map { it.asJson().toString() }.toSet())
+                }
+            }
+        ) {
+            androidx.compose.material.Text(text = stringResource(id = R.string.manager_add))
+        }
     }
 }
 
