@@ -10,7 +10,7 @@ android {
     def code = 35
 
     defaultConfig {
-        applicationId "com.saulhdev.omegafeeder"
+        applicationId "com.saulhdev.feeder"
         minSdkVersion 24
         targetSdkVersion 32
         versionName name
@@ -19,7 +19,7 @@ android {
 
     applicationVariants.all { variant ->
         variant.outputs.each { output ->
-            output.outputFileName = "Omega_Feeder_v" + variant.versionName + "_Build_" + variant.versionCode + ".apk"
+            output.outputFileName = "Neo_Feeder_v" + variant.versionName + "_Build_" + variant.versionCode + ".apk"
         }
     }
 
@@ -72,7 +72,7 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.5.1'
     implementation 'androidx.appcompat:appcompat-resources:1.5.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'androidx.core:core-ktx:1.8.0'
+    implementation 'androidx.core:core-ktx:1.9.0'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     implementation 'androidx.navigation:navigation-fragment-ktx:2.5.2'
     implementation 'androidx.navigation:navigation-ui-ktx:2.5.2'
@@ -88,7 +88,7 @@ dependencies {
     implementation 'androidx.compose.ui:ui-tooling:1.2.1'
     implementation 'androidx.compose.ui:ui-tooling-preview:1.2.1'
     implementation 'androidx.compose.animation:animation:1.2.1'
-    implementation 'androidx.compose.material3:material3:1.0.0-beta01'
+    implementation 'androidx.compose.material3:material3:1.0.0-beta02'
     implementation 'androidx.compose.material:material:1.2.1'
     implementation 'androidx.navigation:navigation-compose:2.6.0-alpha01'
 
@@ -96,7 +96,7 @@ dependencies {
     implementation("com.google.accompanist:accompanist-navigation-animation:0.25.0")
 
     implementation 'io.coil-kt:coil:2.2.1'
-    implementation 'io.coil-kt:coil-compose:2.2.0'
+    implementation 'io.coil-kt:coil-compose:2.2.1'
     implementation 'com.prof18.rssparser:rssparser:4.0.2'
     implementation 'io.github.fornewid:material-motion-compose-core:0.8.4'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
