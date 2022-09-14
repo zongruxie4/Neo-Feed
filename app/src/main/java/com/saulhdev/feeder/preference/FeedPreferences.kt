@@ -31,19 +31,59 @@ class FeedPreferences(val context: Context) {
 
     /*PREFERENCES*/
     var feedList = StringSetPref(
-        key = "feed_list",
+        key = "pref_feed_list",
         titleId = R.string.title_feed_list,
         summaryId = R.string.summary_feed_list,
         defaultValue = setOf(),
         onChange = doNothing
     )
 
+    var developer = StringPref(
+        key = "pref_developer",
+        titleId = R.string.pref_tg_author,
+        summaryId = R.string.about_developer,
+        onChange = doNothing
+    )
+
+    var telegramChannel = StringPref(
+        key = "pref_channel",
+        titleId = R.string.pref_tg,
+        summaryId = R.string.telegram_channel,
+        onChange = doNothing
+    )
+
+    var sourceCode = StringPref(
+        key = "pref_source_code",
+        titleId = R.string.pref_git,
+        summaryId = R.string.source_code_url,
+        onChange = doNothing
+    )
+
     /*HELPER CLASSES FOR PREFERENCES*/
+
+    inner class StringPref(
+        key: String,
+        @StringRes titleId: Int,
+        @StringRes summaryId: Int = -1,
+        defaultValue: String = "",
+        val onClick: (() -> Unit)? = null,
+        onChange: () -> Unit = doNothing,
+        val navRoute: String = ""
+    ) : PrefDelegate<String>(key, titleId, summaryId, defaultValue, onChange) {
+        override fun onGetValue(): String = sharedPrefs.getString(key, defaultValue)!!
+
+        override fun onSetValue(value: String) {
+            edit { putString(key, value) }
+        }
+    }
+
+
     inner class StringSetPref(
         key: String,
         @StringRes titleId: Int,
         @StringRes summaryId: Int = -1,
         defaultValue: Set<String>,
+        val onClick: (() -> Unit)? = null,
         onChange: () -> Unit = doNothing
     ) : PrefDelegate<Set<String>>(key, titleId, summaryId, defaultValue, onChange) {
         override fun onGetValue(): Set<String> = sharedPrefs.getStringSet(getKey(), defaultValue)!!
@@ -54,7 +94,7 @@ class FeedPreferences(val context: Context) {
     }
 
     abstract inner class PrefDelegate<T : Any>(
-        private val key: String,
+        val key: String,
         @StringRes val titleId: Int,
         @StringRes var summaryId: Int = -1,
         val defaultValue: T,
