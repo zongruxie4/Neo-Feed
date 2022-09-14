@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name" translatable="false">Omega Feeder</string>
+    <string name="app_name" translatable="false">Neo Feeder</string>
     <string name="app_id" translatable="false">Package</string>
     <string name="app_version" translatable="false">Version</string>
     <string name="app_build" translatable="false">Build</string>
