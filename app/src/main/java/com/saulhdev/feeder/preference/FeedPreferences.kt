@@ -104,7 +104,7 @@ class FeedPreferences(val context: Context) {
 
     var contentDebugging = BooleanPref(
         key = "pref_content_debugging",
-        titleId = R.string.pref_cat_debug,
+        titleId = R.string.debug_content_printing,
         defaultValue = false,
         onChange = doNothing
     )
