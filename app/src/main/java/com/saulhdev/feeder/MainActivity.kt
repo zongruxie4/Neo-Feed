@@ -347,7 +347,8 @@ fun SettingsScreen() {
 fun InfoScreen() {
     val prefs = FeedPreferences(LocalContext.current)
     val aboutInfo = listOf(
-        prefs.developer,
+        prefs.developer1,
+        prefs.developer2,
         prefs.telegramChannel,
         prefs.sourceCode
     )

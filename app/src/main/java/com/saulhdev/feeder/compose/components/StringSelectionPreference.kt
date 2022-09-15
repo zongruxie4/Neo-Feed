@@ -30,7 +30,8 @@ fun StringSelectionPreference(
         summaryId = pref.summaryId,
         summary = pref.entries[pref.onGetValue()],
         index = index,
-        groupSize = groupSize,startWidget = {
+        groupSize = groupSize,
+        startWidget = {
             if (pref.icon is String) {
                 Image(
                     painter = rememberAsyncImagePainter(

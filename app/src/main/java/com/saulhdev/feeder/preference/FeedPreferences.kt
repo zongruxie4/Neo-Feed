@@ -100,6 +100,7 @@ class FeedPreferences(val context: Context) {
         key = "pref_debugging",
         titleId = R.string.debug_logcat_printing,
         defaultValue = false,
+        icon = R.drawable.ic_debug,
         onChange = doNothing
     )
 
@@ -107,14 +108,23 @@ class FeedPreferences(val context: Context) {
         key = "pref_content_debugging",
         titleId = R.string.debug_content_printing,
         defaultValue = false,
+        icon = R.drawable.ic_debug,
         onChange = doNothing
     )
 
-    var developer = StringPref(
+    var developer1 = StringPref(
         key = "pref_developer",
         titleId = R.string.pref_tg_author,
         summaryId = R.string.about_developer,
         icon = "https://avatars.githubusercontent.com/u/6044050",
+        onChange = doNothing
+    )
+
+    var developer2 = StringPref(
+        key = "pref_developer",
+        titleId = R.string.pref_tg_author,
+        summaryId = R.string.about_developer2,
+        icon = "https://avatars.githubusercontent.com/u/40302595",
         onChange = doNothing
     )
 
@@ -187,6 +197,7 @@ class FeedPreferences(val context: Context) {
         @StringRes titleId: Int,
         @StringRes summaryId: Int = -1,
         defaultValue: Boolean = false,
+        val icon: Any? = null,
         onChange: () -> Unit = doNothing
     ) : PrefDelegate<Boolean>(key, titleId, summaryId, defaultValue, onChange) {
         override fun onGetValue(): Boolean = sharedPrefs.getBoolean(getKey(), defaultValue)
