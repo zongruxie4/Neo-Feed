@@ -22,8 +22,8 @@
 Translations are handled via Weblate. If want to help,
 visit <a href="https://hosted.weblate.org/projects/neo-feed/">Hosted Weblate</a>.
 
-#### **Translation
-stats:** [<img align="right" src="https://hosted.weblate.org/widgets/neo-feed/-/287x66-white.png" alt="Übersetzungsstatus" />](https://hosted.weblate.org/engage/neo-feed/?utm_source=widget)
+#### **Translation stats:** 
+[<img align="right" src="https://hosted.weblate.org/widgets/neo-feed/-/287x66-white.png" alt="Übersetzungsstatus" />](https://hosted.weblate.org/engage/neo-feed/?utm_source=widget)
 
 <img src="https://hosted.weblate.org/widgets/neo-feed/-/multi-red.svg" />
 
