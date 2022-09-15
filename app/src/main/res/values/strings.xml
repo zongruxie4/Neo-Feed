@@ -81,8 +81,8 @@
     <string name="debug_content_printing">Log notification content</string>
 
     <string name="summary_feed_list">Add or remove RSS sources</string>
-    <string name="source_code_url">https://github.com/NeoApplications/Neo-Feeder</string>
-    <string name="telegram_channel">t.me/neo_launcher</string>
-    <string name="about_developer">Saul Henriquez</string>
+    <string name="source_code_url" translatable="false">https://github.com/NeoApplications/Neo-Feed</string>
+    <string name="telegram_channel" translatable="false">t.me/neo_launcher</string>
+    <string name="about_developer" translatable="false">Saul Henriquez</string>
     <string name="title_plugin_list">Plugin List</string>
 </resources>
