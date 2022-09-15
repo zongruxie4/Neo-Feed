@@ -1,8 +1,8 @@
 package com.saulhdev.feeder.preference
 
 import com.saulhdev.feeder.models.SavedFeedModel
+import com.saulhdev.feeder.utils.PreferenceHelper
 import org.json.JSONObject
-import ua.itaysonlab.hfrss.utils.PreferenceHelper
 
 object HFPluginPreferences {
     private const val KEY = "HFFeedList"

@@ -1,4 +1,4 @@
-package ua.itaysonlab.hfrss.utils
+package com.saulhdev.feeder.utils
 
 import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
