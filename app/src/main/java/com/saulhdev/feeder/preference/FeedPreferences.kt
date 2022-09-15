@@ -53,6 +53,7 @@ class FeedPreferences(val context: Context) {
         titleId = R.string.pref_ovr_theme,
         defaultValue = "auto_launcher",
         entries = getThemes(context),
+        icon = R.drawable.ic_style,
         onChange = doNothing
     )
 
@@ -172,6 +173,7 @@ class FeedPreferences(val context: Context) {
         @StringRes summaryId: Int = -1,
         defaultValue: String = "",
         val entries: Map<String, String>,
+        val icon: Any? = null,
         onChange: () -> Unit = doNothing
     ) : PrefDelegate<String>(key, titleId, summaryId, defaultValue, onChange) {
         override fun onGetValue(): String = sharedPrefs.getString(getKey(), defaultValue)!!
