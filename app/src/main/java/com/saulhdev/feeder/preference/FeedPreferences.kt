@@ -113,6 +113,7 @@ class FeedPreferences(val context: Context) {
         key = "pref_developer",
         titleId = R.string.pref_tg_author,
         summaryId = R.string.about_developer,
+        icon = "https://avatars.githubusercontent.com/u/6044050",
         onChange = doNothing
     )
 
@@ -138,7 +139,8 @@ class FeedPreferences(val context: Context) {
         defaultValue: String = "",
         val onClick: (() -> Unit)? = null,
         onChange: () -> Unit = doNothing,
-        val navRoute: String = ""
+        val navRoute: String = "",
+        val icon:Any = {}
     ) : PrefDelegate<String>(key, titleId, summaryId, defaultValue, onChange) {
         override fun onGetValue(): String = sharedPrefs.getString(key, defaultValue)!!
 
