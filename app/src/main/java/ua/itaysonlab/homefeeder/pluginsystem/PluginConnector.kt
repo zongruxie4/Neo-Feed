@@ -7,14 +7,12 @@ import android.content.ServiceConnection
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
-import androidx.core.os.bundleOf
-import androidx.recyclerview.widget.RecyclerView
+import com.saulhdev.feeder.preference.FeedPreferences
 import ua.itaysonlab.hfsdk.FeedCategory
 import ua.itaysonlab.hfsdk.FeedItem
 import ua.itaysonlab.hfsdk.IFeedInterface
 import ua.itaysonlab.hfsdk.IFeedInterfaceCallback
 import ua.itaysonlab.homefeeder.HFApplication
-import ua.itaysonlab.homefeeder.preferences.HFPluginPreferences
 import ua.itaysonlab.homefeeder.utils.Logger
 
 object PluginConnector {
@@ -97,8 +95,9 @@ object PluginConnector {
 
     private fun chainLoad(cb: IFeedInterfaceCallback) {
         index = 0
-        serviceSize = HFPluginPreferences.enabledList.size
-        HFPluginPreferences.enabledList.forEach {
+        val prefs = FeedPreferences(HFApplication.instance)
+        serviceSize = prefs.enabledPlugins.onGetValue().size
+        prefs.enabledPlugins.onGetValue().forEach {
             callbacks[it] = cb
             connectTo(it)
         }

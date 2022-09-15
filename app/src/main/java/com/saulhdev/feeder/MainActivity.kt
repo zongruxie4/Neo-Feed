@@ -1,3 +1,21 @@
+/*
+ * This file is part of Neo Feed
+ * Copyright (c) 2022   Saul Henriquez <henriquez.saul@gmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package com.saulhdev.feeder
 
 import android.graphics.Bitmap
@@ -31,7 +49,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -53,10 +70,17 @@ import org.json.JSONObject
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val prefs = FeedPreferences(this)
         setContent {
             AppTheme {
                 MainScreen()
             }
+        }
+
+        if (prefs.enabledPlugins.onGetValue().isEmpty()) {
+            val list: ArrayList<String> = ArrayList()
+            list.add(BuildConfig.APPLICATION_ID)
+            prefs.enabledPlugins.onSetValue(list.toSet())
         }
     }
 }
@@ -387,10 +411,4 @@ fun InfoScreen() {
             }
         }
     }
-}
-
-@Preview
-@Composable
-fun InfoScreenPreview() {
-    InfoScreen()
 }

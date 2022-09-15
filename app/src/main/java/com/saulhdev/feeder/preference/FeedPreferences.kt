@@ -39,6 +39,13 @@ class FeedPreferences(val context: Context) {
         onChange = doNothing
     )
 
+    var enabledPlugins = StringSetPref(
+        key = "pref_enabled_plugins",
+        titleId = R.string.title_plugin_list,
+        defaultValue = setOf(),
+        onChange = doNothing
+    )
+
     var overlayTheme = StringSelectionPref(
         key = "pref_overlay_theme",
         titleId = R.string.pref_ovr_theme,

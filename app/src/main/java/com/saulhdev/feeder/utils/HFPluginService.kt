@@ -6,9 +6,11 @@ import android.graphics.Color
 import android.os.Bundle
 import android.os.IBinder
 import com.prof.rssparser.Parser
-import com.saulhdev.feeder.preference.HFPluginPreferences
+import com.saulhdev.feeder.models.SavedFeedModel
+import com.saulhdev.feeder.preference.FeedPreferences
 import kotlinx.coroutines.*
 import okhttp3.OkHttpClient
+import org.json.JSONObject
 import ua.itaysonlab.hfsdk.*
 import ua.itaysonlab.hfsdk.content.StoryCardContent
 import java.text.SimpleDateFormat
@@ -35,8 +37,10 @@ class HFPluginService : Service(), CoroutineScope by MainScope() {
 
                 withContext(Dispatchers.IO) {
                     val parser = Parser(OkHttpClient())
-
-                    HFPluginPreferences.parsedFeedList.forEach { model ->
+                    val prefs = FeedPreferences(this@HFPluginService)
+                    val feedList =
+                        prefs.feedList.onGetValue().map { SavedFeedModel(JSONObject(it)) }
+                    feedList.forEach { model ->
                         parser.getChannel(model.feedUrl).articles.forEach { article ->
                             list.add(
                                 FeedItem(
@@ -66,7 +70,9 @@ class HFPluginService : Service(), CoroutineScope by MainScope() {
         }
 
         override fun getCategories(callback: IFeedInterfaceCallback) {
-            callback.onCategoriesReceive(HFPluginPreferences.parsedFeedList.map {
+            val prefs = FeedPreferences(this@HFPluginService)
+            val feedList = prefs.feedList.onGetValue().map { SavedFeedModel(JSONObject(it)) }
+            callback.onCategoriesReceive(feedList.map {
                 FeedCategory(it.feedUrl, it.name, Color.GREEN, it.feedImage)
             })
         }

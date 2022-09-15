@@ -77,4 +77,5 @@
     <string name="source_code_url">https://github.com/NeoApplications/Neo-Feeder</string>
     <string name="telegram_channel">t.me/neo_launcher</string>
     <string name="about_developer">Saul Henriquez</string>
+    <string name="title_plugin_list">Plugin List</string>
 </resources>
