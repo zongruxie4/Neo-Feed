@@ -1,74 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <array name="pref_overlay_theme_desc">
-        <item>Automatically (from launcher)</item>
-        <item>Automatically (from system)</item>
-        <item>Light</item>
-        <item>Dark</item>
-    </array>
-
-    <array name="pref_overlay_transparency_desc">
-        <item>Non-transparent</item>
-        <item>75\uff05</item>
-        <item>50\uff05</item>
-        <item>25\uff05</item>
-        <item>Transparent</item>
-    </array>
-
-    <array name="pref_overlay_transparency_values">
-        <item>non_transparent</item>
-        <item>more_half</item>
-        <item>half</item>
-        <item>less_half</item>
-        <item>transparent</item>
-    </array>
-
-    <array name="pref_color_variations">
-        <item>Theme-based</item>
-        <item>White</item>
-        <item>Dark</item>
-        <item>AMOLED</item>
-        <item>Launcher: Primary color</item>
-        <item>Launcher: Secondary color</item>
-        <item>Launcher: Tertiary color</item>
-    </array>
-
-    <array name="pref_color_variations_values">
-        <item>theme</item>
-        <item>white</item>
-        <item>dark</item>
-        <item>amoled</item>
-        <item>launcher_primary</item>
-        <item>launcher_secondary</item>
-        <item>launcher_tertiary</item>
-    </array>
-
-    <array name="pref_overlay_theme_values">
-        <item>auto_launcher</item>
-        <item>auto_system</item>
-        <item>light</item>
-        <item>dark</item>
-    </array>
-
     <array name="date_ago_hrs">
         <item>an hour ago</item>
         <item>two hours ago</item>
         <item>three hours ago</item>
-    </array>
-
-    <array name="date_fullmonths">
-        <item>January</item>
-        <item>February</item>
-        <item>March</item>
-        <item>April</item>
-        <item>May</item>
-        <item>June</item>
-        <item>July</item>
-        <item>August</item>
-        <item>September</item>
-        <item>October</item>
-        <item>November</item>
-        <item>December</item>
     </array>
 
     <array name="date_shortmonths">
