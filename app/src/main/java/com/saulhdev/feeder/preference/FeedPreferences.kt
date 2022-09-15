@@ -51,7 +51,7 @@ class FeedPreferences(val context: Context) {
         key = "pref_overlay_theme",
         titleId = R.string.pref_ovr_theme,
         defaultValue = "auto_launcher",
-        entries = getThemes(),
+        entries = getThemes(context),
         onChange = doNothing
     )
 
@@ -59,7 +59,7 @@ class FeedPreferences(val context: Context) {
         key = "pref_overlay_transparency",
         titleId = R.string.pref_transparency,
         defaultValue = "non_transparent",
-        entries = getTransparencyOptions(),
+        entries = getTransparencyOptions(context),
         onChange = doNothing
     )
 

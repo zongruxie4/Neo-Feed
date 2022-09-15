@@ -1,5 +1,5 @@
 /*
- * This file is part of Omega Feeder
+ * This file is part of Neo Feed
  * Copyright (c) 2022   Saul Henriquez <henriquez.saul@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -18,7 +18,9 @@
 
 package com.saulhdev.feeder.utils
 
+import android.content.Context
 import androidx.compose.ui.Modifier
+import com.saulhdev.feeder.R
 
 inline fun Modifier.addIf(
     condition: Boolean,
@@ -26,21 +28,21 @@ inline fun Modifier.addIf(
 ): Modifier =
     if (condition) factory() else this
 
-fun getThemes(): Map<String, String> {
+fun getThemes(context: Context): Map<String, String> {
     return mapOf(
-        "auto_launcher" to "Automatically (from launcher)",
-        "auto_system" to "Automatically (from system)",
-        "light" to "Light",
-        "dark" to "Dark"
+        "auto_launcher" to context.resources.getString(R.string.theme_auto_launcher),
+        "auto_system" to context.resources.getString(R.string.theme_auto_system),
+        "light" to context.resources.getString(R.string.theme_light),
+        "dark" to context.resources.getString(R.string.theme_dark)
     )
 }
 
-fun getTransparencyOptions(): Map<String, String> {
+fun getTransparencyOptions(context: Context): Map<String, String> {
     return mapOf(
-        "non_transparent" to "Non-transparent",
-        "more_half" to "75% transparent",
-        "half" to "50% transparent",
-        "less_half" to "25% transparent",
-        "transparent" to "Transparent"
+        "non_transparent" to context.resources.getString(R.string.transparency_non_transparent),
+        "more_half" to context.resources.getString(R.string.transparency_low_transparency),
+        "half" to context.resources.getString(R.string.transparency_mid_transparency),
+        "less_half" to context.resources.getString(R.string.transparency_high_transparency),
+        "transparent" to context.resources.getString(R.string.transparency_transparent)
     )
 }
