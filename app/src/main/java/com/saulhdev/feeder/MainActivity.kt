@@ -327,7 +327,7 @@ fun SettingsScreen() {
             )
             PreferenceGroup(
                 stringResource(id = R.string.pref_cat_overlay),
-                prefs = themePrefs,
+                prefs = debugPrefs,
                 onPrefDialog = onPrefDialog
             )
         }
