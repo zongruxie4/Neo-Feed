@@ -22,15 +22,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.core.content.res.ResourcesCompat
 import androidx.navigation.compose.rememberNavController
 import com.prof.rssparser.Channel
@@ -39,7 +43,6 @@ import com.saulhdev.feeder.compose.components.*
 import com.saulhdev.feeder.compose.navigation.NavigationManager
 import com.saulhdev.feeder.models.SavedFeedModel
 import com.saulhdev.feeder.preference.FeedPreferences
-import com.saulhdev.feeder.preference.HFPluginPreferences
 import com.saulhdev.feeder.theme.AppTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -56,67 +59,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-
-/*
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        setSupportActionBar(findViewById(R.id.toolbar))
-        val navView: BottomNavigationView = findViewById(R.id.nav_view)
-
-        val navController = findNavController(R.id.nav_host_fragment)
-        val appBarConfiguration = AppBarConfiguration(
-            setOf(
-                R.id.navigation_plugins, R.id.navigation_settings, R.id.navigation_about
-            )
-        )
-
-        setupActionBarWithNavController(navController, appBarConfiguration)
-        navView.setupWithNavController(navController)
-
-        checkStoragePermission()
-    }
-
-    private fun checkStoragePermission() {
-        if (ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.READ_EXTERNAL_STORAGE
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            showStorageAlert()
-        }
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == 1) {
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                findNavController(R.id.nav_host_fragment).navigate(R.id.navigation_settings)
-            } else {
-                showStorageAlert()
-            }
-        }
-    }
-
-    private fun showStorageAlert() {
-        MaterialAlertDialogBuilder(this)
-            .setTitle(R.string.storage_alert)
-            .setMessage(R.string.storage_desc)
-            .setPositiveButton(R.string.storage_action) { _, _ ->
-                ActivityCompat.requestPermissions(
-                    this,
-                    arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
-                    1
-                )
-            }
-            .setNegativeButton(android.R.string.cancel, null)
-            .setCancelable(false)
-            .show()
-    }*/
 }
 
 @Composable
@@ -165,7 +107,7 @@ fun SourcesScreen() {
         val prefs = FeedPreferences(context)
         val feedList = prefs.feedList.onGetValue().map { SavedFeedModel(JSONObject(it)) }
         val rssList = remember { mutableStateOf(feedList) }
-
+        val showDialog = remember { mutableStateOf(false) }
         OutlinedTextField(
             value = rssURL,
             onValueChange = { rssURL = it },
@@ -235,21 +177,88 @@ fun SourcesScreen() {
                     feedURL = item.feedUrl,
                     description = item.description,
                     onRemoveAction = {
-                        androidx.appcompat.app.AlertDialog.Builder(context).apply {
-                            setTitle(R.string.remove_title)
-                            setMessage(
-                                context.resources.getString(
-                                    R.string.remove_desc,
-                                    item.name
-                                )
-                            )
-                            setNeutralButton(R.string.remove_action_nope, null)
-                            setPositiveButton(R.string.remove_action_yes) { _, _ ->
-                                HFPluginPreferences.remove(item)
-                            }
-                        }.show()
+                        showDialog.value = true
                     }
                 )
+
+                if (showDialog.value) {
+                    CustomDialog(
+                        item = item,
+                        setShowDialog = {
+                            showDialog.value = it
+                        }
+                    ) {
+                        rssList.value = rssList.value - item
+                        val stringSet = rssList.value.map {
+                            it.asJson().toString()
+                        }.toSet()
+                        prefs.feedList.onSetValue(stringSet)
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun CustomDialog(
+    item: SavedFeedModel,
+    setShowDialog: (Boolean) -> Unit,
+    onPositiveClick: () -> Unit
+) {
+    Dialog(onDismissRequest = { setShowDialog(false) }) {
+        Surface(
+            shape = RoundedCornerShape(16.dp),
+            color = Color.White
+        ) {
+            Box(
+                contentAlignment = Alignment.Center
+            ) {
+                Column(modifier = Modifier.padding(20.dp)) {
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.remove_title),
+                            style = TextStyle(
+                                fontSize = 20.sp,
+                                fontFamily = FontFamily.Default,
+                                fontWeight = FontWeight.Bold
+                            )
+                        )
+
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        text = stringResource(id = R.string.remove_desc, item.name),
+                        style = TextStyle(
+                            fontSize = 16.sp,
+                            fontFamily = FontFamily.Default
+                        )
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Row(modifier = Modifier.fillMaxWidth()) {
+                        DialogNegativeButton(
+                            textId = R.string.remove_action_nope,
+                        ) {
+                            setShowDialog(false)
+                        }
+                        Spacer(Modifier.weight(1f))
+                        DialogPositiveButton(
+                            textId = R.string.remove_action_yes,
+                            onClick = {
+                                onPositiveClick()
+                                setShowDialog(false)
+                            }
+                        )
+                    }
+                }
             }
         }
     }
