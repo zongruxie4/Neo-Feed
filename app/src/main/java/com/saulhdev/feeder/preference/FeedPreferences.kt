@@ -1,5 +1,5 @@
 /*
- * This file is part of Omega Feeder
+ * This file is part of Neo Feed
  * Copyright (c) 2022   Saul Henriquez <henriquez.saul@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -52,6 +52,13 @@ class FeedPreferences(val context: Context) {
         titleId = R.string.pref_ovr_theme,
         defaultValue = "auto_launcher",
         entries = getThemes(context),
+        onChange = doNothing
+    )
+
+    var overlayCompact = BooleanPref(
+        key = "pref_overlay_compact",
+        titleId = R.string.pref_compact,
+        defaultValue = false,
         onChange = doNothing
     )
 
@@ -127,6 +134,20 @@ class FeedPreferences(val context: Context) {
         override fun onGetValue(): String = sharedPrefs.getString(getKey(), defaultValue)!!
         override fun onSetValue(value: String) {
             edit { putString(getKey(), value) }
+        }
+    }
+
+    open inner class BooleanPref(
+        key: String,
+        @StringRes titleId: Int,
+        @StringRes summaryId: Int = -1,
+        defaultValue: Boolean = false,
+        onChange: () -> Unit = doNothing
+    ) : PrefDelegate<Boolean>(key, titleId, summaryId, defaultValue, onChange) {
+        override fun onGetValue(): Boolean = sharedPrefs.getBoolean(getKey(), defaultValue)
+
+        override fun onSetValue(value: Boolean) {
+            edit { putBoolean(getKey(), value) }
         }
     }
 

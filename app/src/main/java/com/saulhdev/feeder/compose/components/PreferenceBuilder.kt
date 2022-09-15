@@ -1,5 +1,5 @@
 /*
- * This file is part of Neo Feeder
+ * This file is part of Neo Feed
  * Copyright (c) 2022   Saul Henriquez <henriquez.saul@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -24,6 +24,8 @@ import com.saulhdev.feeder.preference.FeedPreferences
 val PreferenceBuilder =
     @Composable { pref: Any, onDialogPref: (Any) -> Unit, index: Int, size: Int ->
         when (pref) {
+            is FeedPreferences.BooleanPref ->
+                SwitchPreference(pref = pref, index = index, groupSize = size)
             is FeedPreferences.StringSetPref ->
                 StringSetPreference(pref = pref, index = index, groupSize = size)
             is FeedPreferences.StringPref ->

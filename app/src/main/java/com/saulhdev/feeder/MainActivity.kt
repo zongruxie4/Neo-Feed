@@ -293,7 +293,8 @@ fun SettingsScreen() {
     val prefs = FeedPreferences(LocalContext.current)
     val themePrefs = listOf(
         prefs.overlayTheme,
-        prefs.overlayTransparency
+        prefs.overlayTransparency,
+        prefs.overlayCompact,
     )
     val openDialog = remember { mutableStateOf(false) }
     var dialogPref by remember { mutableStateOf<Any?>(null) }

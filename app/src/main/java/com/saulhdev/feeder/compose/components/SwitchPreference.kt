@@ -1,5 +1,5 @@
 /*
- * This file is part of Omega Feeder
+ * This file is part of Neo Feed
  * Copyright (c) 2022   Saul Henriquez <henriquez.saul@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -18,74 +18,49 @@
 
 package com.saulhdev.feeder.compose.components
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Switch
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.saulhdev.feeder.utils.addIf
+import com.saulhdev.feeder.preference.FeedPreferences
 
 @Composable
 fun SwitchPreference(
-    title: String,
     modifier: Modifier = Modifier,
-    summary: String = "",
-    startIcon: (@Composable () -> Unit)? = null,
-    isChecked: Boolean = false,
+    pref: FeedPreferences.BooleanPref,
+    index: Int = 1,
+    groupSize: Int = 1,
     isEnabled: Boolean = true,
-    onCheckedChange: ((Boolean) -> Unit)
+    onCheckedChange: ((Boolean) -> Unit) = {},
 ) {
-    val itemIsChecked = remember { mutableStateOf(isChecked) }
-
-    Row(modifier = modifier
-        .fillMaxWidth()
-        .padding(16.dp)
-        .clickable(enabled = isEnabled) {
-            itemIsChecked.value = !itemIsChecked.value
-        }
-    ) {
-        startIcon?.let {
-            startIcon()
-            Spacer(modifier = Modifier.requiredWidth(16.dp))
-        }
-
-        Column(
-            modifier = Modifier
-                .weight(1f)
-                .addIf(!isEnabled) {
-                    alpha(0.3f)
-                }
-        ) {
-            Text(
-                text = title,
-                color = MaterialTheme.colorScheme.onPrimary,
-                style = MaterialTheme.typography.titleMedium,
-                fontSize = 16.sp
+    val (checked, check) = remember(pref) { mutableStateOf(pref.onGetValue()) }
+    BasePreference(
+        modifier = modifier,
+        titleId = pref.titleId,
+        summaryId = pref.summaryId,
+        index = index,
+        groupSize = groupSize,
+        isEnabled = isEnabled,
+        onClick = {
+            onCheckedChange(!checked)
+            pref.onSetValue(!checked)
+            check(!checked)
+        },
+        endWidget = {
+            Switch(
+                modifier = Modifier
+                    .height(24.dp),
+                checked = checked,
+                onCheckedChange = {
+                    onCheckedChange(it)
+                    pref.onSetValue(it)
+                    check(it)
+                },
+                enabled = isEnabled,
             )
-            if (summary != "") {
-                Text(
-                    text = summary,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-            }
         }
-
-        Switch(
-            modifier = Modifier
-                .height(24.dp),
-            checked = itemIsChecked.value,
-            onCheckedChange = {
-                onCheckedChange(it)
-            },
-            enabled = isEnabled,
-        )
-    }
+    )
 }
