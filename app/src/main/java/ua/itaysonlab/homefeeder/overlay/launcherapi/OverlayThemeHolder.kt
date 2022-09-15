@@ -9,6 +9,7 @@ import android.util.SparseIntArray
 import androidx.annotation.ColorInt
 import androidx.core.content.ContextCompat
 import com.saulhdev.feeder.R
+import com.saulhdev.feeder.preference.FeedPreferences
 import com.saulhdev.feeder.utils.clearLightFlags
 import com.saulhdev.feeder.utils.isLight
 import com.saulhdev.feeder.utils.toInt
@@ -22,6 +23,9 @@ import ua.itaysonlab.homefeeder.utils.Logger
  * A class which manages overlay styling.
  * */
 class OverlayThemeHolder(private val context: Context, private val overlay: OverlayKt) {
+
+    val prefs = FeedPreferences(context)
+
     /**
      * Current theme colors mapping
      */
@@ -40,7 +44,7 @@ class OverlayThemeHolder(private val context: Context, private val overlay: Over
     /**
      * Overlay transparency
      */
-    var transparencyBgPref = HFPreferences.overlayTransparency
+    var transparencyBgPref = prefs.overlayTransparency.onGetValue()
 
     /**
      * If we should apply light statusbar/navbar

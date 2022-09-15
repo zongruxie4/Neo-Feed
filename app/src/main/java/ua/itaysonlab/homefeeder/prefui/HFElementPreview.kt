@@ -39,10 +39,11 @@ class HFElementPreview @JvmOverloads constructor(
     private lateinit var view: View
     private lateinit var layoutInflater: LayoutInflater
 
+    private val prefs = FeedPreferences(context)
     private var overlayBgColorChoice = HFPreferences.overlayBackground
     private var cardBgColorChoice = HFPreferences.cardBackground
     private var isCompact = HFPreferences.overlayCompact
-    private var transparency = HFPreferences.overlayTransparency
+    private var transparency = prefs.overlayTransparency.onGetValue()
     private var theme = SparseIntArray()
 
     fun applyNewTheme(value: String?) {

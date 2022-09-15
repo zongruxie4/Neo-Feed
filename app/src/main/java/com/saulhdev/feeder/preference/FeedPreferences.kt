@@ -23,6 +23,7 @@ import android.content.SharedPreferences
 import androidx.annotation.StringRes
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.utils.getThemes
+import com.saulhdev.feeder.utils.getTransparencyOptions
 import kotlin.reflect.KProperty
 
 class FeedPreferences(val context: Context) {
@@ -49,8 +50,16 @@ class FeedPreferences(val context: Context) {
     var overlayTheme = StringSelectionPref(
         key = "pref_overlay_theme",
         titleId = R.string.pref_ovr_theme,
-        defaultValue = "",
+        defaultValue = "auto_launcher",
         entries = getThemes(),
+        onChange = doNothing
+    )
+
+    var overlayTransparency = StringSelectionPref(
+        key = "pref_overlay_transparency",
+        titleId = R.string.pref_transparency,
+        defaultValue = "non_transparent",
+        entries = getTransparencyOptions(),
         onChange = doNothing
     )
 

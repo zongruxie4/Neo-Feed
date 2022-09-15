@@ -34,3 +34,13 @@ fun getThemes(): Map<String, String> {
         "dark" to "Dark"
     )
 }
+
+fun getTransparencyOptions(): Map<String, String> {
+    return mapOf(
+        "non_transparent" to "Non-transparent",
+        "more_half" to "75% transparent",
+        "half" to "50% transparent",
+        "less_half" to "25% transparent",
+        "transparent" to "Transparent"
+    )
+}
