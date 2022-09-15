@@ -1,7 +1,6 @@
 package ua.itaysonlab.homefeeder.fragments
 
 import android.animation.ValueAnimator
-import android.content.Intent
 import android.content.res.Resources
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -13,7 +12,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.card.MaterialCardView
-import com.saulhdev.feeder.FeedManagerActivity
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.databinding.PluginManagerEntryBinding
 import ua.itaysonlab.homefeeder.HFApplication
@@ -120,8 +118,8 @@ class PluginsFragment : Fragment() {
                 binding.pluginToSettings.setOnClickListener(null)
             } else {
                 binding.pluginToSettings.setOnClickListener {
-                    val intent = Intent(context, FeedManagerActivity::class.java)
-                    startActivity(intent)
+                    //val intent = Intent(context, FeedManagerActivity::class.java)
+                    //startActivity(intent)
                 }
             }
         }
