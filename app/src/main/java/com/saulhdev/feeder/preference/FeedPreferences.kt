@@ -121,6 +121,7 @@ class FeedPreferences(val context: Context) {
         key = "pref_channel",
         titleId = R.string.pref_tg,
         summaryId = R.string.telegram_channel,
+        icon = R.drawable.ic_telegram,
         onChange = doNothing
     )
 
@@ -128,6 +129,7 @@ class FeedPreferences(val context: Context) {
         key = "pref_source_code",
         titleId = R.string.pref_git,
         summaryId = R.string.source_code_url,
+        icon = R.drawable.ic_code,
         onChange = doNothing
     )
 
@@ -140,7 +142,7 @@ class FeedPreferences(val context: Context) {
         val onClick: (() -> Unit)? = null,
         onChange: () -> Unit = doNothing,
         val navRoute: String = "",
-        val icon:Any = {}
+        val icon:Any? = null
     ) : PrefDelegate<String>(key, titleId, summaryId, defaultValue, onChange) {
         override fun onGetValue(): String = sharedPrefs.getString(key, defaultValue)!!
 
