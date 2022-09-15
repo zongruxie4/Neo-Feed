@@ -292,7 +292,8 @@ fun CustomDialog(
 fun SettingsScreen() {
     val prefs = FeedPreferences(LocalContext.current)
     val themePrefs = listOf(
-        prefs.overlayTheme
+        prefs.overlayTheme,
+        prefs.overlayTransparency
     )
     val openDialog = remember { mutableStateOf(false) }
     var dialogPref by remember { mutableStateOf<Any?>(null) }
