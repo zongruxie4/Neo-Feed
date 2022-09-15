@@ -10,6 +10,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -34,12 +35,11 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.navigation.compose.rememberNavController
 import com.prof.rssparser.Channel
 import com.prof.rssparser.Parser
-import com.saulhdev.feeder.compose.components.BottomNavigationBar
-import com.saulhdev.feeder.compose.components.PreferenceGroup
-import com.saulhdev.feeder.compose.components.StringSelectionPrefDialogUI
+import com.saulhdev.feeder.compose.components.*
 import com.saulhdev.feeder.compose.navigation.NavigationManager
 import com.saulhdev.feeder.models.SavedFeedModel
 import com.saulhdev.feeder.preference.FeedPreferences
+import com.saulhdev.feeder.preference.HFPluginPreferences
 import com.saulhdev.feeder.theme.AppTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -156,7 +156,7 @@ fun SourcesScreen() {
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .wrapContentSize(Alignment.Center)
+            .padding(8.dp)
     ) {
         var rssURL by remember { mutableStateOf("") }
         val keyboardController = LocalSoftwareKeyboardController.current
@@ -188,7 +188,9 @@ fun SourcesScreen() {
             label = { androidx.compose.material.Text(text = stringResource(id = R.string.add_input_hint)) }
         )
 
-        Button(
+        Spacer(modifier = Modifier.height(8.dp))
+        DialogPositiveButton(
+            textId = R.string.manager_add,
             onClick = {
                 coroutineScope.launch {
                     var data: Channel? = null
@@ -214,12 +216,41 @@ fun SourcesScreen() {
                         rssURL,
                         data!!.image?.url ?: ""
                     )
-                    rssList.value.plus(savedFeedModel)
-                    prefs.feedList.onSetValue(rssList.value.map { it.asJson().toString() }.toSet())
+                    rssList.value = rssList.value + savedFeedModel
+                    rssURL = ""
+                    val stringSet = rssList.value.map {
+                        it.asJson().toString()
+                    }.toSet()
+                    prefs.feedList.onSetValue(stringSet)
                 }
             }
-        ) {
-            androidx.compose.material.Text(text = stringResource(id = R.string.manager_add))
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        LazyColumn {
+            items(rssList.value) { item ->
+                FeedItem(
+                    feedTitle = item.name,
+                    feedURL = item.feedUrl,
+                    description = item.description,
+                    onRemoveAction = {
+                        androidx.appcompat.app.AlertDialog.Builder(context).apply {
+                            setTitle(R.string.remove_title)
+                            setMessage(
+                                context.resources.getString(
+                                    R.string.remove_desc,
+                                    item.name
+                                )
+                            )
+                            setNeutralButton(R.string.remove_action_nope, null)
+                            setPositiveButton(R.string.remove_action_yes) { _, _ ->
+                                HFPluginPreferences.remove(item)
+                            }
+                        }.show()
+                    }
+                )
+            }
         }
     }
 }

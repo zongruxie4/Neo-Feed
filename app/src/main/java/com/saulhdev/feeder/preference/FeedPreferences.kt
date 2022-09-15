@@ -96,7 +96,7 @@ class FeedPreferences(val context: Context) {
         override fun onGetValue(): Set<String> = sharedPrefs.getStringSet(getKey(), defaultValue)!!
 
         override fun onSetValue(value: Set<String>) {
-            edit { putStringSet(getKey(), value) }
+            edit { putStringSet(key, value) }
         }
     }
 
@@ -144,7 +144,7 @@ class FeedPreferences(val context: Context) {
         protected inline fun edit(body: SharedPreferences.Editor.() -> Unit) {
             val editor = sharedPrefs.edit()
             body(editor)
-            commitOrApply(editor, false)
+            editor.apply()
         }
 
         internal fun getKey() = key
@@ -162,13 +162,5 @@ class FeedPreferences(val context: Context) {
         }
 
         open fun disposeOldValue(oldValue: T) {}
-    }
-
-    fun commitOrApply(editor: SharedPreferences.Editor, commit: Boolean) {
-        if (commit) {
-            editor.commit()
-        } else {
-            editor.apply()
-        }
     }
 }
