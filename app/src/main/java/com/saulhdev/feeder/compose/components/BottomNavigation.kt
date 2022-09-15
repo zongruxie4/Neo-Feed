@@ -39,7 +39,7 @@ fun BottomNavigationBar(navController: NavController) {
         backgroundColor = MaterialTheme.colorScheme.background,
         contentColor = Color.White
     ) {
-        var selectedIndex by remember { mutableStateOf(0) }
+        var selectedIndex by remember { mutableStateOf(1) }
 
         items.forEachIndexed { index, item ->
             BottomNavigationItem(
