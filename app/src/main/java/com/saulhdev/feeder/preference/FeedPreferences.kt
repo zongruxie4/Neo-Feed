@@ -22,6 +22,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.annotation.StringRes
 import com.saulhdev.feeder.R
+import com.saulhdev.feeder.utils.getBackgroundOptions
 import com.saulhdev.feeder.utils.getThemes
 import com.saulhdev.feeder.utils.getTransparencyOptions
 import kotlin.reflect.KProperty
@@ -55,6 +56,14 @@ class FeedPreferences(val context: Context) {
         onChange = doNothing
     )
 
+    var overlayTransparency = StringSelectionPref(
+        key = "pref_overlay_transparency",
+        titleId = R.string.pref_transparency,
+        defaultValue = "non_transparent",
+        entries = getTransparencyOptions(context),
+        onChange = doNothing
+    )
+
     var overlayCompact = BooleanPref(
         key = "pref_overlay_compact",
         titleId = R.string.pref_compact,
@@ -62,11 +71,41 @@ class FeedPreferences(val context: Context) {
         onChange = doNothing
     )
 
-    var overlayTransparency = StringSelectionPref(
-        key = "pref_overlay_transparency",
-        titleId = R.string.pref_transparency,
-        defaultValue = "non_transparent",
-        entries = getTransparencyOptions(context),
+    var systemColors = BooleanPref(
+        key = "pref_overlay_system_colors",
+        titleId = R.string.pref_syscolors,
+        summaryId = R.string.pref_syscolors_desc,
+        defaultValue = false,
+        onChange = doNothing
+    )
+
+    var overlayBackground = StringSelectionPref(
+        key = "pref_overlay_background",
+        titleId = R.string.pref_bg_color,
+        defaultValue = "theme",
+        entries = getBackgroundOptions(context),
+        onChange = doNothing
+    )
+
+    var cardBackground = StringSelectionPref(
+        key = "pref_overlay_card_background",
+        titleId = R.string.pref_card_bg,
+        defaultValue = "theme",
+        entries = getBackgroundOptions(context),
+        onChange = doNothing
+    )
+
+    var debugging = BooleanPref(
+        key = "pref_debugging",
+        titleId = R.string.debug_logcat_printing,
+        defaultValue = false,
+        onChange = doNothing
+    )
+
+    var contentDebugging = BooleanPref(
+        key = "pref_content_debugging",
+        titleId = R.string.pref_cat_debug,
+        defaultValue = false,
         onChange = doNothing
     )
 

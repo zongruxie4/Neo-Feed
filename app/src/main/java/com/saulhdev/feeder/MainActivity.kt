@@ -295,7 +295,16 @@ fun SettingsScreen() {
         prefs.overlayTheme,
         prefs.overlayTransparency,
         prefs.overlayCompact,
+        prefs.systemColors,
+        prefs.overlayBackground,
+        prefs.cardBackground
     )
+
+    val debugPrefs = listOf(
+        prefs.debugging,
+        prefs.contentDebugging
+    )
+
     val openDialog = remember { mutableStateOf(false) }
     var dialogPref by remember { mutableStateOf<Any?>(null) }
     val onPrefDialog = { pref: Any ->
@@ -311,6 +320,11 @@ fun SettingsScreen() {
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         item {
+            PreferenceGroup(
+                stringResource(id = R.string.pref_cat_overlay),
+                prefs = themePrefs,
+                onPrefDialog = onPrefDialog
+            )
             PreferenceGroup(
                 stringResource(id = R.string.pref_cat_overlay),
                 prefs = themePrefs,

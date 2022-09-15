@@ -3,8 +3,9 @@ package ua.itaysonlab.homefeeder.overlay.launcherapi
 import android.graphics.Color
 import android.os.Bundle
 import androidx.annotation.ColorInt
+import com.saulhdev.feeder.preference.FeedPreferences
 import com.saulhdev.feeder.utils.dump
-import ua.itaysonlab.homefeeder.preferences.HFPreferences
+import ua.itaysonlab.hfsdk.HFPluginApplication
 
 /**
  * A class which parses data from launcher's options [android.os.Bundle].
@@ -48,7 +49,8 @@ class LauncherAPI(bundle: Bundle = Bundle()) {
     var backgroundColorHintTertiary = Color.BLACK
 
     init {
-        if (HFPreferences.contentDebugging) {
+        val prefs = FeedPreferences(HFPluginApplication.instance)
+        if (prefs.contentDebugging.onGetValue()) {
             bundle.dump(LOG_TAG)
         }
 

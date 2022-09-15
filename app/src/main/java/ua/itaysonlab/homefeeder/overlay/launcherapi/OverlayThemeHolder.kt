@@ -15,7 +15,6 @@ import com.saulhdev.feeder.utils.isLight
 import com.saulhdev.feeder.utils.toInt
 import ua.itaysonlab.homefeeder.HFApplication
 import ua.itaysonlab.homefeeder.overlay.OverlayKt
-import ua.itaysonlab.homefeeder.preferences.HFPreferences
 import ua.itaysonlab.homefeeder.theming.Theming
 import ua.itaysonlab.homefeeder.utils.Logger
 
@@ -34,12 +33,12 @@ class OverlayThemeHolder(private val context: Context, private val overlay: Over
     /**
      * Card background
      */
-    var cardBgPref = HFPreferences.cardBackground
+    var cardBgPref = prefs.cardBackground.onGetValue()
 
     /**
      * Overlay background
      */
-    var overlayBgPref = HFPreferences.overlayBackground
+    var overlayBgPref = prefs.overlayBackground.onGetValue()
 
     /**
      * Overlay transparency
@@ -67,9 +66,9 @@ class OverlayThemeHolder(private val context: Context, private val overlay: Over
     private val cardBackground: Int get() = when (cardBgPref) {
         "white" -> ContextCompat.getColor(context, R.color.card_bg)
         "dark" -> ContextCompat.getColor(context, R.color.card_bg_dark)
-        "launcher_primary" -> if (HFPreferences.systemColors) primaryWallColor() else overlay.apiInstance.backgroundColorHint
-        "launcher_secondary" -> if (HFPreferences.systemColors) secondaryWallColor() else overlay.apiInstance.backgroundColorHintSecondary
-        "launcher_tertiary" -> if (HFPreferences.systemColors) tertiaryWallColor() else overlay.apiInstance.backgroundColorHintTertiary
+        "launcher_primary" -> if (prefs.systemColors.onGetValue()) primaryWallColor() else overlay.apiInstance.backgroundColorHint
+        "launcher_secondary" -> if (prefs.systemColors.onGetValue()) secondaryWallColor() else overlay.apiInstance.backgroundColorHintSecondary
+        "launcher_tertiary" -> if (prefs.systemColors.onGetValue()) tertiaryWallColor() else overlay.apiInstance.backgroundColorHintTertiary
         else -> Color.BLACK
     }
 
@@ -79,9 +78,9 @@ class OverlayThemeHolder(private val context: Context, private val overlay: Over
     private val overlayBackground: Int get() = when (overlayBgPref) {
         "white" -> Color.WHITE
         "dark" -> ContextCompat.getColor(context, R.color.bg_dark)
-        "launcher_primary" -> if (HFPreferences.systemColors) primaryWallColor() else overlay.apiInstance.backgroundColorHint
-        "launcher_secondary" -> if (HFPreferences.systemColors) secondaryWallColor() else overlay.apiInstance.backgroundColorHintSecondary
-        "launcher_tertiary" -> if (HFPreferences.systemColors) tertiaryWallColor() else overlay.apiInstance.backgroundColorHintTertiary
+        "launcher_primary" -> if (prefs.systemColors.onGetValue()) primaryWallColor() else overlay.apiInstance.backgroundColorHint
+        "launcher_secondary" -> if (prefs.systemColors.onGetValue()) secondaryWallColor() else overlay.apiInstance.backgroundColorHintSecondary
+        "launcher_tertiary" -> if (prefs.systemColors.onGetValue()) tertiaryWallColor() else overlay.apiInstance.backgroundColorHintTertiary
         else -> Color.BLACK
     }
 

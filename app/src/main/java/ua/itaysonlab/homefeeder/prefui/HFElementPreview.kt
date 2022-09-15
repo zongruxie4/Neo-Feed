@@ -23,7 +23,6 @@ import com.saulhdev.feeder.preference.FeedPreferences
 import com.saulhdev.feeder.utils.isDark
 import ua.itaysonlab.homefeeder.HFApplication
 import ua.itaysonlab.homefeeder.overlay.launcherapi.OverlayThemeHolder
-import ua.itaysonlab.homefeeder.preferences.HFPreferences
 import ua.itaysonlab.homefeeder.theming.Theming
 
 class HFElementPreview @JvmOverloads constructor(
@@ -40,9 +39,9 @@ class HFElementPreview @JvmOverloads constructor(
     private lateinit var layoutInflater: LayoutInflater
 
     private val prefs = FeedPreferences(context)
-    private var overlayBgColorChoice = HFPreferences.overlayBackground
-    private var cardBgColorChoice = HFPreferences.cardBackground
-    private var isCompact = HFPreferences.overlayCompact
+    private var overlayBgColorChoice = prefs.overlayBackground.onGetValue()
+    private var cardBgColorChoice = prefs.cardBackground.onGetValue()
+    private var isCompact = prefs.overlayCompact.onGetValue()
     private var transparency = prefs.overlayTransparency.onGetValue()
     private var theme = SparseIntArray()
 

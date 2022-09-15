@@ -3,7 +3,8 @@ package ua.itaysonlab.homefeeder.pluginsystem
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import ua.itaysonlab.homefeeder.preferences.HFPreferences
+import com.saulhdev.feeder.preference.FeedPreferences
+import ua.itaysonlab.homefeeder.HFApplication
 import ua.itaysonlab.homefeeder.utils.Logger
 
 object PluginFetcher {
@@ -39,7 +40,8 @@ object PluginFetcher {
             Pair(it.serviceInfo.packageName, it.serviceInfo.metaData)
         }
 
-        if (HFPreferences.debugging) {
+        val prefs = FeedPreferences(HFApplication.instance)
+        if (prefs.debugging.onGetValue()) {
             Logger.log("PluginFetcher", "Packages that has service: $hasService")
         }
 

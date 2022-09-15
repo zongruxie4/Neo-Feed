@@ -23,6 +23,7 @@
     <string name="pref_git">Source code</string>
 
     <string name="pref_cat_overlay">Appearance</string>
+    <string name="pref_cat_debug">Debug</string>
     <string name="pref_transparency">Overlay background transparency</string>
     <string name="pref_ovr_theme">Overlay theme</string>
     <string name="pref_compact">Compact item layout</string>
@@ -77,11 +78,22 @@
     <string name="theme_auto_system">Automatically (from system)</string>
     <string name="theme_light">Light</string>
     <string name="theme_dark">Dark</string>
+
     <string name="transparency_non_transparent">Non Transparent</string>
     <string name="transparency_low_transparency">75% transparent</string>
     <string name="transparency_mid_transparency">50% transparent</string>
     <string name="transparency_high_transparency">25% transparent</string>
     <string name="transparency_transparent">Transparent</string>
+
+    <string name="background_theme_option">Theme based</string>
+    <string name="background_white">White</string>
+    <string name="background_amoled">AMOLED</string>
+    <string name="background_primary_color">Launcher: Primary color</string>
+    <string name="background_secondary_color">Launcher: Secondary color</string>
+    <string name="background_tertiary_color">Launcher: Tertiary color</string>
+
+    <string name="debug_logcat_printing">Extensive logcat printing</string>
+    <string name="debug_content_printing">Log notification content</string>
 
     <string name="summary_feed_list">Add or remove RSS sources</string>
     <string name="source_code_url">https://github.com/NeoApplications/Neo-Feeder</string>

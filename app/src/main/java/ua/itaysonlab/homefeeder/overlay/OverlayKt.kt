@@ -25,7 +25,6 @@ import ua.itaysonlab.homefeeder.overlay.feed.FeedAdapter
 import ua.itaysonlab.homefeeder.overlay.launcherapi.LauncherAPI
 import ua.itaysonlab.homefeeder.overlay.launcherapi.OverlayThemeHolder
 import ua.itaysonlab.homefeeder.pluginsystem.PluginConnector
-import ua.itaysonlab.homefeeder.preferences.HFPreferences
 import ua.itaysonlab.homefeeder.theming.Theming
 import ua.itaysonlab.homefeeder.utils.Logger
 import ua.itaysonlab.homefeeder.utils.OverlayBridge
@@ -44,9 +43,9 @@ class OverlayKt(val context: Context): OverlayController(context, R.style.AppThe
     private lateinit var adapter: FeedAdapter
 
     private val list = mutableListOf<FeedItem>()
+    val prefs = FeedPreferences(context)
 
     private fun setTheme(force: String?) {
-        val prefs = FeedPreferences(context)
         themeHolder.setTheme(
             when (force ?: prefs.overlayTheme.onGetValue()) {
                 "auto_launcher" -> {
@@ -217,7 +216,7 @@ class OverlayKt(val context: Context): OverlayController(context, R.style.AppThe
     }
 
     override fun onClientMessage(action: String) {
-        if (HFPreferences.debugging) {
+        if (prefs.debugging.onGetValue()) {
             Logger.log(LOG_TAG, "New message by OverlayBridge: $action")
         }
     }
