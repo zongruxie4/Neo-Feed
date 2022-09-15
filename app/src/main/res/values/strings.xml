@@ -31,24 +31,12 @@
     <string name="pref_card_bg">Card background</string>
     <string name="pref_bg_color">Overlay background</string>
 
-    <string name="service_label">Notification feed category</string>
-    <string name="allow_notify_pref">Notification permission</string>
-    <string name="allow_notify_pref_granted">Granted</string>
-    <string name="allow_notify_pref_revoked">Not granted, click here to allow</string>
-    <string name="allow_notify_desc">HomeFeeder needs \"Notification access\" permission to show your notifications in a overlay. Data is processed only on-device and won\'t be sent from it.\n\nPlease note that some features of HomeFeeder might be unavailable until you grant the permission.</string>
     <string name="allow_notify_to_settings">Open settings</string>
-
-    <string name="storage_alert">Storage permission</string>
-    <string name="storage_desc">HomeFeeder needs \"Read external storage\" permission to save various data and show accurate previews.\n\nThis permission is not needed, but recommended for using.</string>
-    <string name="storage_action">Request</string>
 
     <string name="overlay_no_permission">No permission granted</string>
     <string name="overlay_reload">Click here to reload</string>
     <string name="overlay_no_permission_desc">HomeFeeder needs \"Notification access\" permission to show your notifications in a overlay.</string>
     <string name="overlay_no_permission_snackbar">Please verify you have allowed \"Notification access\" permission and try again.</string>
-
-    <string name="fsource_notifications">Notifications</string>
-    <string name="fsource_weather">Weather</string>
 
     <string name="pref_syscolors">Use system wallpaper colors</string>
     <string name="pref_syscolors_desc">instead of \"Launcher:\" options</string>
@@ -59,12 +47,9 @@
     <string name="pm_empty">No sources installed</string>
     <string name="pm_desc">HomeFeeder uses them to display data</string>
 
-    <string name="manager_title">Feed manager</string>
     <string name="manager_add">Add</string>
 
-    <string name="add_title">Add a feed source</string>
     <string name="add_input_hint">URL</string>
-    <string name="add_input_desc">Supported formats: RSS, Atom</string>
 
     <string name="remove_title">Confirm action</string>
     <string name="remove_desc">Do you really want to remove %s from feed sources?</string>
