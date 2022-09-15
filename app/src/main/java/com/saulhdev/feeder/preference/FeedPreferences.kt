@@ -27,7 +27,7 @@ import kotlin.reflect.KProperty
 
 class FeedPreferences(val context: Context) {
     var sharedPrefs: SharedPreferences =
-        context.getSharedPreferences("com.saulhdev.feeder.prefs", Context.MODE_PRIVATE)
+        context.getSharedPreferences("com.saulhdev.neofeed.prefs", Context.MODE_PRIVATE)
     private var doNothing = {}
 
     /*PREFERENCES*/
