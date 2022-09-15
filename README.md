@@ -1,4 +1,4 @@
-# Neo Feeder
+# Neo Feed
 
 **Custom Google Now Feed replacement for launchers.**
 
@@ -15,9 +15,20 @@
 - Neo Launcher
 - LibreChair
 - Shade Launcher
-- And any launcher with custom feed provider support…
+- And any launcher with custom feed provider support.
+
+## Translation
+
+Translations are handled via Weblate. If want to help,
+visit <a href="https://hosted.weblate.org/projects/neo-feed/">Hosted Weblate</a>.
+
+#### **Translation
+stats:** [<img align="right" src="https://hosted.weblate.org/widgets/neo-feed/-/287x66-white.png" alt="Übersetzungsstatus" />](https://hosted.weblate.org/engage/neo-feed/?utm_source=widget)
+
+<img src="https://hosted.weblate.org/widgets/neo-feed/-/multi-red.svg" />
 
 ## Credits
 
 [iTaysonLab](https://github.com/iTaysonLab) as the project is a fork of his HomeFeeder.<br/>
-[DrawerOverlayService](https://github.com/FabianTerhorst/DrawerOverlayService) as base for overlay service.
+[DrawerOverlayService](https://github.com/FabianTerhorst/DrawerOverlayService) as base for overlay
+service.
