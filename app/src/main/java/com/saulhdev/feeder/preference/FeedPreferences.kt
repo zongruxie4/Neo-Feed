@@ -62,6 +62,7 @@ class FeedPreferences(val context: Context) {
         titleId = R.string.pref_transparency,
         defaultValue = "non_transparent",
         entries = getTransparencyOptions(context),
+        icon = R.drawable.ic_circle, //TODO: Change icon
         onChange = doNothing
     )
 
@@ -69,6 +70,7 @@ class FeedPreferences(val context: Context) {
         key = "pref_overlay_compact",
         titleId = R.string.pref_compact,
         defaultValue = false,
+        icon = R.drawable.ic_circle, //TODO: Change icon
         onChange = doNothing
     )
 
@@ -76,6 +78,7 @@ class FeedPreferences(val context: Context) {
         key = "pref_overlay_system_colors",
         titleId = R.string.pref_syscolors,
         summaryId = R.string.pref_syscolors_desc,
+        icon = R.drawable.ic_wallpaper,
         defaultValue = false,
         onChange = doNothing
     )
@@ -85,6 +88,7 @@ class FeedPreferences(val context: Context) {
         titleId = R.string.pref_bg_color,
         defaultValue = "theme",
         entries = getBackgroundOptions(context),
+        icon = R.drawable.ic_circle, //TODO: Change icon
         onChange = doNothing
     )
 
@@ -93,6 +97,7 @@ class FeedPreferences(val context: Context) {
         titleId = R.string.pref_card_bg,
         defaultValue = "theme",
         entries = getBackgroundOptions(context),
+        icon = R.drawable.ic_card,
         onChange = doNothing
     )
 
