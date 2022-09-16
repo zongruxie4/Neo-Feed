@@ -31,4 +31,9 @@
     <string name="pref_git">Codice sorgente</string>
     <string name="pref_cat_debug">Debug</string>
     <string name="pref_cat_contact">Contatti</string>
+    <string name="overlay_reload">Clicca qui per ricaricare</string>
+    <string name="pref_syscolors">Utilizza i colori di sfondo di sistema</string>
+    <string name="remove_action_yes">Sì</string>
+    <string name="remove_action_nope">Annulla</string>
+    <string name="news_image_text">immagine della notizia</string>
 </resources>
