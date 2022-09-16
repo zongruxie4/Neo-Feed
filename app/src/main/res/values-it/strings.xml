@@ -14,4 +14,21 @@
     <string name="pref_transparency">Sovrapponi trasparenza sfondo</string>
     <string name="pref_ovr_theme">Tema di sovrapposizione</string>
     <string name="pref_compact">Disposizione compatta oggetto</string>
+    <string name="date_at_1am">\@string/date_at</string>
+    <string name="yesterday">ieri</string>
+    <string name="pref_tg">Canale Telegram</string>
+    <string name="allow_notify_to_settings">Apri le impostazioni</string>
+    <string name="overlay_no_permission_desc">HomeFeeder ha bisogno dell\'autorizzazione «Accesso alle notifiche» per mostrare le notifiche in sovrimpressione.</string>
+    <string name="overlay_no_permission_snackbar">Verificare di aver consentito l\'autorizzazione «Accesso alle notifiche» e riprovare.</string>
+    <string name="pm_desc">HomeFeeder li utilizza per visualizzare i dati</string>
+    <string name="remove_desc">Vuoi davvero eliminare %s dalle fonti di flussi\?</string>
+    <string name="title_feed_list">Lista dei flussi</string>
+    <string name="today">oggi</string>
+    <string name="pref_cat_overlay">Aspetto</string>
+    <string name="pref_tg_author">Sviluppatore</string>
+    <string name="summary_feed_list">Aggiungi o rimuovi fonti RSS</string>
+    <string name="tomorrow">domani</string>
+    <string name="pref_git">Codice sorgente</string>
+    <string name="pref_cat_debug">Debug</string>
+    <string name="pref_cat_contact">Contatti</string>
 </resources>
