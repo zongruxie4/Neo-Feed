@@ -21,17 +21,17 @@
     android:viewportWidth="32"
     android:viewportHeight="32">
     <path
-        android:fillAlpha="0.10"
-        android:fillColor="?colorAccent"
+        android:fillAlpha="0.30"
+        android:fillColor="#001970"
         android:pathData="M16,16m-16,0a16,16 0,1 1,32 0a16,16 0,1 1,-32 0"
-        android:strokeAlpha="0.10" />
+        android:strokeAlpha="0.30" />
     <group
         android:scaleX="0.09"
         android:scaleY="0.09"
         android:translateX="4.5"
         android:translateY="4.5">
         <path
-            android:fillColor="?colorAccent"
+            android:fillColor="#001970"
             android:pathData="M95.972,72.969 L34.063,128l61.91,55.031a12,12 0,1 1,-15.944 17.938l-72,-64a11.999,11.999 0,0 1,0 -17.938l72,-64a12,12 0,1 1,15.944 17.938ZM247.972,119.031 L175.972,55.031a12,12 0,1 0,-15.944 17.938L221.938,128l-61.91,55.031a12,12 0,1 0,15.944 17.938l72,-64a11.999,11.999 0,0 0,0 -17.938Z" />
     </group>
 </vector>
