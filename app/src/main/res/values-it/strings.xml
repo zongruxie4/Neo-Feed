@@ -1,2 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="title_settings">Impostazioni</string>
+    <string name="pref_syscolors_disabled">Richiede Android 8.1 o superiore</string>
+    <string name="action_reload">Ricarica</string>
+    <string name="pm_empty">Nessuna fonte installata</string>
+    <string name="manager_add">Aggiungi</string>
+    <string name="add_input_hint">URL</string>
+    <string name="remove_title">Conferma azione</string>
+</resources>
