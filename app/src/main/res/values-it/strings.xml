@@ -7,8 +7,11 @@
     <string name="manager_add">Aggiungi</string>
     <string name="add_input_hint">URL</string>
     <string name="remove_title">Conferma azione</string>
-    <string name="title_about">Infomarzioni</string>
+    <string name="title_about">Informazioni</string>
     <string name="title_sources">Fonti dei dati</string>
     <string name="date_ago_now">ora</string>
     <string name="date_at">alle</string>
+    <string name="pref_transparency">Sovrapponi trasparenza sfondo</string>
+    <string name="pref_ovr_theme">Tema di sovrapposizione</string>
+    <string name="pref_compact">Disposizione compatta oggetto</string>
 </resources>
