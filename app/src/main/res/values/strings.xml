@@ -11,13 +11,13 @@
     <string name="date_format_day_month_year" translatable="false">%1$d %2$s %3$d</string>
     <string name="date_ago_now">now</string>
     <string name="date_at">at</string>
-    <string name="date_at_1am">@string/date_at</string>
+    <string name="date_at_1am" translatable="false">@string/date_at</string>
     <string name="today">today</string>
     <string name="tomorrow">tomorrow</string>
     <string name="yesterday">yesterday</string>
     <string name="pref_cat_contact">Contacts</string>
     <string name="pref_tg">Telegram channel</string>
-    <string name="pref_tg_author">Developer</string>
+    <string name="pref_tg_author" translatable="false">Developer</string>
     <string name="pref_git">Source code</string>
     <string name="pref_cat_overlay">Appearance</string>
     <string name="pref_cat_debug">Debug</string>
@@ -38,7 +38,7 @@
     <string name="pm_empty">No sources installed</string>
     <string name="pm_desc">HomeFeeder uses them to display data</string>
     <string name="manager_add">Add</string>
-    <string name="add_input_hint">URL</string>
+    <string name="add_input_hint" translatable="false">URL</string>
     <string name="remove_title">Confirm action</string>
     <string name="remove_desc">Do you really want to remove %s from feed sources?</string>
     <string name="remove_action_yes">Yes</string>
