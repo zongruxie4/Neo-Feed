@@ -6,8 +6,8 @@ apply plugin: 'kotlin-parcelize'
 
 android {
     compileSdkVersion 33
-    def name = "1.4"
-    def code = 35
+    def name = "1.4.1"
+    def code = 37
 
     defaultConfig {
         applicationId "com.saulhdev.neofeed"
