@@ -18,6 +18,8 @@
 
 package com.saulhdev.feeder.compose.components
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.size
@@ -41,6 +43,7 @@ fun ActionPreference(
     groupSize: Int = 1,
     isEnabled: Boolean = true,
 ) {
+    val context = LocalContext.current
     BasePreference(
         modifier = modifier,
         titleId = pref.titleId,
@@ -76,7 +79,12 @@ fun ActionPreference(
             }
         },
         onClick = {
-            pref.onClick?.invoke()
+            if (pref.url != "") {
+                val webpage = Uri.parse(pref.url)
+                context.startActivity(Intent(Intent.ACTION_VIEW, webpage))
+            } else {
+                pref.onClick?.invoke()
+            }
         }
     )
 }
