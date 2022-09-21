@@ -18,6 +18,7 @@
 
 package com.saulhdev.feeder
 
+import android.content.SharedPreferences
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.os.Bundle
@@ -67,20 +68,45 @@ import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import org.json.JSONObject
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceChangeListener {
+    lateinit var prefs: FeedPreferences
+    private val prefsToWatch = arrayOf(
+        "pref_overlay_theme",
+        "pref_overlay_transparency",
+        "pref_overlay_compact",
+        "pref_overlay_system_colors",
+        "pref_overlay_background",
+        "pref_overlay_card_background"
+    )
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val prefs = FeedPreferences(this)
         setContent {
             AppTheme {
                 MainScreen()
             }
         }
-
+        prefs = FeedPreferences(this)
         if (prefs.enabledPlugins.onGetValue().isEmpty()) {
             val list: ArrayList<String> = ArrayList()
             list.add(BuildConfig.APPLICATION_ID)
             prefs.enabledPlugins.onSetValue(list.toSet())
+        }
+    }
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        prefs.sharedPrefs.registerOnSharedPreferenceChangeListener(this)
+    }
+
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        prefs.sharedPrefs.unregisterOnSharedPreferenceChangeListener(this)
+    }
+
+    override fun onSharedPreferenceChanged(prefs: SharedPreferences, key: String) {
+        if (prefsToWatch.contains(key)) {
+            recreate()
         }
     }
 }

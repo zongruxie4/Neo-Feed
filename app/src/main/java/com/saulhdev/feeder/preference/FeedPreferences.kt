@@ -30,7 +30,16 @@ import kotlin.reflect.KProperty
 class FeedPreferences(val context: Context) {
     var sharedPrefs: SharedPreferences =
         context.getSharedPreferences("com.saulhdev.neofeed.prefs", Context.MODE_PRIVATE)
+
     private var doNothing = {}
+    private var recreate = { recreate() }
+    private var restart = { restart() }
+
+    private fun recreate() {
+    }
+
+    private fun restart() {
+    }
 
     /*PREFERENCES*/
     var feedList = StringSetPref(
@@ -38,7 +47,7 @@ class FeedPreferences(val context: Context) {
         titleId = R.string.title_feed_list,
         summaryId = R.string.summary_feed_list,
         defaultValue = setOf(),
-        onChange = doNothing
+        onChange = restart
     )
 
     var enabledPlugins = StringSetPref(
@@ -54,7 +63,7 @@ class FeedPreferences(val context: Context) {
         defaultValue = "auto_launcher",
         entries = getThemes(context),
         icon = R.drawable.ic_style,
-        onChange = doNothing
+        onChange = recreate
     )
 
     var overlayTransparency = StringSelectionPref(
@@ -63,7 +72,7 @@ class FeedPreferences(val context: Context) {
         defaultValue = "non_transparent",
         entries = getTransparencyOptions(context),
         icon = R.drawable.ic_circle, //TODO: Change icon
-        onChange = doNothing
+        onChange = recreate
     )
 
     var overlayCompact = BooleanPref(
@@ -80,7 +89,7 @@ class FeedPreferences(val context: Context) {
         summaryId = R.string.pref_syscolors_desc,
         icon = R.drawable.ic_wallpaper,
         defaultValue = false,
-        onChange = doNothing
+        onChange = recreate
     )
 
     var overlayBackground = StringSelectionPref(
@@ -89,7 +98,7 @@ class FeedPreferences(val context: Context) {
         defaultValue = "theme",
         entries = getBackgroundOptions(context),
         icon = R.drawable.ic_circle, //TODO: Change icon
-        onChange = doNothing
+        onChange = recreate
     )
 
     var cardBackground = StringSelectionPref(
@@ -98,7 +107,7 @@ class FeedPreferences(val context: Context) {
         defaultValue = "theme",
         entries = getBackgroundOptions(context),
         icon = R.drawable.ic_card,
-        onChange = doNothing
+        onChange = recreate
     )
 
     var debugging = BooleanPref(
