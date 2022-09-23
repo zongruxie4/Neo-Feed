@@ -3,7 +3,6 @@
     <string name="date_at">a las</string>
     <string name="title_about">Acerca de</string>
     <string name="allow_notify_to_settings">Abrir configuraciones</string>
-    <string name="remove_action_nope">Cancelar</string>
     <string name="theme_light">Claro</string>
     <string name="theme_dark">Oscuro</string>
     <string name="transparency_non_transparent">No transparent</string>

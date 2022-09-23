@@ -34,7 +34,6 @@
     <string name="overlay_reload">Clicca qui per ricaricare</string>
     <string name="pref_syscolors">Usa i colori dello sfondo del sistema</string>
     <string name="remove_action_yes">Sì</string>
-    <string name="remove_action_nope">Annulla</string>
     <string name="news_image_text">immagine della notizia</string>
     <string name="pref_card_bg">Sfondo carta</string>
     <string name="pref_bg_color">Sfondo sovrapposto</string>

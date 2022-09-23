@@ -27,61 +27,46 @@ import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredSize
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.BottomSheetScaffold
+import androidx.compose.material.BottomSheetState
+import androidx.compose.material.BottomSheetValue
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.FloatingActionButton
+import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.rememberBottomSheetScaffoldState
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.core.content.res.ResourcesCompat
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.prof.rssparser.Channel
 import com.prof.rssparser.Parser
-import com.saulhdev.feeder.compose.components.BottomNavigationBar
-import com.saulhdev.feeder.compose.components.DialogNegativeButton
-import com.saulhdev.feeder.compose.components.DialogPositiveButton
-import com.saulhdev.feeder.compose.components.FeedItem
-import com.saulhdev.feeder.compose.components.PreferenceGroup
-import com.saulhdev.feeder.compose.components.StringSelectionPrefDialogUI
-import com.saulhdev.feeder.compose.components.TopBar
+import com.saulhdev.feeder.compose.components.*
+import com.saulhdev.feeder.compose.navigation.NavigationItem
 import com.saulhdev.feeder.compose.navigation.NavigationManager
 import com.saulhdev.feeder.models.SavedFeedModel
 import com.saulhdev.feeder.preference.FeedPreferences
@@ -135,24 +120,110 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun MainScreen() {
     val navController = rememberNavController()
     val title = stringResource(id = R.string.app_name)
     val pageTitle = remember { mutableStateOf(title) }
-    Scaffold(
-        topBar = { TopBar(pageTitle) },
-        bottomBar = { BottomNavigationBar(navController) },
-        content = { padding ->
-            Box(modifier = Modifier.padding(padding)) {
-                NavigationManager(navController = navController)
-            }
-        },
-        backgroundColor = MaterialTheme.colorScheme.background
+    val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
+        bottomSheetState = BottomSheetState(BottomSheetValue.Collapsed)
     )
+    var rssURL by remember { mutableStateOf("") }
+    val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
+    val prefs = FeedPreferences(context)
+    val feedList = prefs.feedList.onGetValue().map { SavedFeedModel(JSONObject(it)) }
+    val rssList = remember { mutableStateOf(feedList) }
+    val currentRoute = navController.currentBackStackEntry?.destination?.route
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    BottomSheetScaffold(
+        scaffoldState = bottomSheetScaffoldState,
+        sheetPeekHeight = 0.dp,
+        sheetContent = {
+            AddFeedBottomSheet(
+                onSaveAction = {
+                    coroutineScope.launch {
+                        var data: Channel? = null
+                        rssURL = it
+                        withContext(Dispatchers.Default) {
+                            val parser = Parser.Builder()
+                                .okHttpClient(OkHttpClient())
+                                .build()
+                            try {
+                                data = parser.getChannel(rssURL)
+                            } catch (_: Exception) {
+
+                            }
+                        }
+                        data ?: run {
+                            Toast.makeText(context, "URL is not a RSS feed!", Toast.LENGTH_LONG)
+                                .show()
+                            return@launch
+                        }
+                        val feedTitle = data!!.title ?: "Unknown"
+                        val savedFeedModel = SavedFeedModel(
+                            feedTitle,
+                            data!!.description ?: "",
+                            rssURL,
+                            data!!.image?.url ?: ""
+                        )
+                        rssList.value = rssList.value + savedFeedModel
+                        rssURL = ""
+                        val stringSet = rssList.value.map {
+                            it.asJson().toString()
+                        }.toSet()
+                        prefs.feedList.onSetValue(stringSet)
+                        bottomSheetScaffoldState.bottomSheetState.collapse()
+                    }
+                },
+                onCloseAction = {
+                    coroutineScope.launch {
+                        bottomSheetScaffoldState.bottomSheetState.collapse()
+                    }
+                }
+            )
+        }
+    )
+    {
+        Scaffold(
+            topBar = { TopBar(pageTitle) },
+            bottomBar = { BottomNavigationBar(navController) },
+            content = { padding ->
+                Box(modifier = Modifier.padding(padding)) {
+                    NavigationManager(navController = navController)
+                }
+            },
+            floatingActionButton = {
+
+                if (navBackStackEntry?.destination?.route == NavigationItem.Sources.route) {
+                    FloatingActionButton(
+                        onClick = {
+                            coroutineScope.launch {
+                                if (bottomSheetScaffoldState.bottomSheetState.isCollapsed) {
+                                    bottomSheetScaffoldState.bottomSheetState.expand()
+                                } else {
+                                    bottomSheetScaffoldState.bottomSheetState.collapse()
+                                }
+                            }
+                        },
+                        modifier = Modifier.padding(16.dp),
+                        backgroundColor = MaterialTheme.colorScheme.primary
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = stringResource(id = R.string.manager_add),
+                            tint = MaterialTheme.colorScheme.onPrimary
+                        )
+                    }
+                }
+
+            },
+            backgroundColor = MaterialTheme.colorScheme.background
+        )
+    }
 }
 
-@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun SourcesScreen() {
     Column(
@@ -161,73 +232,11 @@ fun SourcesScreen() {
             .background(MaterialTheme.colorScheme.background)
             .padding(8.dp)
     ) {
-        var rssURL by remember { mutableStateOf("") }
-        val keyboardController = LocalSoftwareKeyboardController.current
-        val coroutineScope = rememberCoroutineScope()
         val context = LocalContext.current
         val prefs = FeedPreferences(context)
         val feedList = prefs.feedList.onGetValue().map { SavedFeedModel(JSONObject(it)) }
         val rssList = remember { mutableStateOf(feedList) }
         val showDialog = remember { mutableStateOf(false) }
-        OutlinedTextField(
-            value = rssURL,
-            onValueChange = { rssURL = it },
-            modifier = Modifier
-                .fillMaxWidth(),
-            singleLine = false,
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12F),
-                textColor = MaterialTheme.colorScheme.onSurface
-            ),
-            keyboardOptions = KeyboardOptions.Default.copy(
-                imeAction = ImeAction.Done
-            ),
-            keyboardActions = KeyboardActions(
-                onDone = {
-                    keyboardController?.hide()
-                }
-            ),
-            shape = MaterialTheme.shapes.large,
-            label = { androidx.compose.material.Text(text = stringResource(id = R.string.add_input_hint)) }
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-        DialogPositiveButton(
-            textId = R.string.manager_add,
-            onClick = {
-                coroutineScope.launch {
-                    var data: Channel? = null
-                    withContext(Dispatchers.Default) {
-                        val parser = Parser.Builder()
-                            .okHttpClient(OkHttpClient())
-                            .build()
-                        try {
-                            data = parser.getChannel(rssURL)
-                        } catch (_: Exception) {
-
-                        }
-                    }
-                    data ?: run {
-                        Toast.makeText(context, "URL is not a RSS feed!", Toast.LENGTH_LONG)
-                            .show()
-                        return@launch
-                    }
-                    val title = data!!.title ?: "Unknown"
-                    val savedFeedModel = SavedFeedModel(
-                        title,
-                        data!!.description ?: "",
-                        rssURL,
-                        data!!.image?.url ?: ""
-                    )
-                    rssList.value = rssList.value + savedFeedModel
-                    rssURL = ""
-                    val stringSet = rssList.value.map {
-                        it.asJson().toString()
-                    }.toSet()
-                    prefs.feedList.onSetValue(stringSet)
-                }
-            }
-        )
 
         Spacer(modifier = Modifier.height(8.dp))
 
@@ -241,83 +250,95 @@ fun SourcesScreen() {
                         showDialog.value = true
                     }
                 )
-
                 if (showDialog.value) {
-                    CustomDialog(
-                        item = item,
-                        setShowDialog = {
-                            showDialog.value = it
-                        }
+                    Dialog(
+                        onDismissRequest = { showDialog.value = false },
+                        DialogProperties(dismissOnBackPress = true, dismissOnClickOutside = true)
                     ) {
-                        rssList.value = rssList.value - item
-                        val stringSet = rssList.value.map {
-                            it.asJson().toString()
-                        }.toSet()
-                        prefs.feedList.onSetValue(stringSet)
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun CustomDialog(
-    item: SavedFeedModel,
-    setShowDialog: (Boolean) -> Unit,
-    onPositiveClick: () -> Unit
-) {
-    Dialog(onDismissRequest = { setShowDialog(false) }) {
-        Surface(
-            shape = RoundedCornerShape(16.dp),
-            color = Color.White
-        ) {
-            Box(
-                contentAlignment = Alignment.Center
-            ) {
-                Column(modifier = Modifier.padding(20.dp)) {
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = stringResource(id = R.string.remove_title),
-                            style = TextStyle(
-                                fontSize = 20.sp,
-                                fontFamily = FontFamily.Default,
-                                fontWeight = FontWeight.Bold
-                            )
-                        )
-
-                    }
-
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Text(
-                        text = stringResource(id = R.string.remove_desc, item.name),
-                        style = TextStyle(
-                            fontSize = 16.sp,
-                            fontFamily = FontFamily.Default
-                        )
-                    )
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    Row(modifier = Modifier.fillMaxWidth()) {
-                        DialogNegativeButton(
-                            textId = R.string.remove_action_nope,
+                        Surface(
+                            shape = RoundedCornerShape(16.dp),
+                            color = MaterialTheme.colorScheme.background
                         ) {
-                            setShowDialog(false)
-                        }
-                        Spacer(Modifier.weight(1f))
-                        DialogPositiveButton(
-                            textId = R.string.remove_action_yes,
-                            onClick = {
-                                onPositiveClick()
-                                setShowDialog(false)
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .wrapContentHeight(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Column(modifier = Modifier.padding(16.dp)) {
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.Center,
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Text(
+                                            text = stringResource(id = R.string.remove_title),
+                                            style = TextStyle(
+                                                fontSize = 20.sp,
+                                                fontFamily = FontFamily.Default,
+                                                fontWeight = FontWeight.Bold
+                                            )
+                                        )
+                                    }
+
+                                    Spacer(modifier = Modifier.height(16.dp))
+                                    Text(
+                                        text = stringResource(id = R.string.remove_desc, item.name),
+                                        style = TextStyle(
+                                            fontSize = 16.sp,
+                                            fontFamily = FontFamily.Default
+                                        )
+                                    )
+                                    Spacer(Modifier.height(16.dp))
+                                    Row(modifier = Modifier.fillMaxWidth()) {
+                                        TextButton(
+                                            shape = RoundedCornerShape(16.dp),
+                                            onClick = {
+                                                showDialog.value = false
+                                            }
+                                        ) {
+                                            Text(
+                                                text = stringResource(id = android.R.string.cancel),
+                                                fontWeight = FontWeight.ExtraBold,
+                                                modifier = Modifier.padding(
+                                                    vertical = 5.dp,
+                                                    horizontal = 8.dp
+                                                )
+                                            )
+                                        }
+
+                                        Spacer(Modifier.weight(1f))
+
+                                        TextButton(
+                                            shape = RoundedCornerShape(16.dp),
+                                            onClick = {
+                                                rssList.value = rssList.value - item
+                                                val stringSet = rssList.value.map {
+                                                    it.asJson().toString()
+                                                }.toSet()
+                                                prefs.feedList.onSetValue(stringSet)
+                                                showDialog.value = false
+                                            },
+                                            colors = ButtonDefaults.buttonColors(
+                                                containerColor = MaterialTheme.colorScheme.primary.copy(
+                                                    0.65f
+                                                ),
+                                                contentColor = MaterialTheme.colorScheme.onPrimary
+                                            )
+                                        ) {
+                                            Text(
+                                                text = stringResource(id = android.R.string.ok),
+                                                fontWeight = FontWeight.ExtraBold,
+                                                modifier = Modifier.padding(
+                                                    top = 5.dp,
+                                                    bottom = 5.dp
+                                                )
+                                            )
+                                        }
+                                    }
+                                }
                             }
-                        )
+                        }
                     }
                 }
             }

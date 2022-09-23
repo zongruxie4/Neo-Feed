@@ -21,7 +21,6 @@
     <string name="pref_syscolors_desc">istedenfor «Oppstarter:»-alternativer</string>
     <string name="remove_desc">Vil du fjerne %s fra informasjonskanalkilder\?</string>
     <string name="remove_action_yes">Ja</string>
-    <string name="remove_action_nope">Avbryt</string>
     <string name="title_feed_list">Informasjonkanalsliste</string>
     <string name="theme_auto_system">Automatisk (fra systemet)</string>
     <string name="theme_light">Lys</string>

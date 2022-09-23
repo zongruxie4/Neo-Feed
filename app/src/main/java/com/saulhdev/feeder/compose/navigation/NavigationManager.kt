@@ -25,6 +25,7 @@ import androidx.navigation.compose.composable
 import com.saulhdev.feeder.InfoScreen
 import com.saulhdev.feeder.SettingsScreen
 import com.saulhdev.feeder.SourcesScreen
+import com.saulhdev.feeder.compose.pages.WebViewPage
 
 @Composable
 fun NavigationManager(navController: NavHostController) {
@@ -37,6 +38,12 @@ fun NavigationManager(navController: NavHostController) {
         }
         composable(NavigationItem.Info.route) {
             InfoScreen()
+        }
+        composable("web_view_page/{url}") {
+            val url = it.arguments?.getString("url")
+            if (url != null) {
+                WebViewPage(url = url)
+            }
         }
     }
 }

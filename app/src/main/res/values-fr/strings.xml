@@ -5,7 +5,6 @@
     <string name="date_ago_now">maintenant</string>
     <string name="title_about">À propos</string>
     <string name="yesterday">hier</string>
-    <string name="remove_action_nope">Annuler</string>
     <string name="title_sources">Sources de données</string>
     <string name="pref_cat_overlay">Apparence</string>
     <string name="pref_syscolors">Utiliser les couleurs du fond d’écran du système</string>

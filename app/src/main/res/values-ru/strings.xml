@@ -46,5 +46,4 @@
     <string name="remove_title">Подтвердите действие</string>
     <string name="remove_desc">Вы дейстительно хотите удалить %s из списка лент?</string>
     <string name="remove_action_yes">Да</string>
-    <string name="remove_action_nope">Отменить</string>
 </resources>

@@ -38,11 +38,11 @@
     <string name="pm_empty">No sources installed</string>
     <string name="pm_desc">HomeFeeder uses them to display data</string>
     <string name="manager_add">Add</string>
+    <string name="add_rss">Add new RSS</string>
     <string name="add_input_hint" translatable="false">URL</string>
     <string name="remove_title">Confirm action</string>
     <string name="remove_desc">Do you really want to remove %s from feed sources?</string>
     <string name="remove_action_yes">Yes</string>
-    <string name="remove_action_nope">Cancel</string>
     <string name="news_image_text">news story image</string>
     <string name="title_feed_list">Feed List</string>
     <string name="theme_auto_launcher">Automatically (from launcher)</string>
