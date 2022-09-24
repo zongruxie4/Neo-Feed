@@ -102,5 +102,9 @@ dependencies {
     implementation 'io.github.fornewid:material-motion-compose-core:0.8.4'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.6.4'
+    implementation 'com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.10'
+
     implementation project(':homefeeder-sdk')
 }
