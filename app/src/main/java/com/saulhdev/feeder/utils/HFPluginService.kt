@@ -8,13 +8,21 @@ import android.os.IBinder
 import com.prof.rssparser.Parser
 import com.saulhdev.feeder.models.SavedFeedModel
 import com.saulhdev.feeder.preference.FeedPreferences
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import org.json.JSONObject
-import ua.itaysonlab.hfsdk.*
+import ua.itaysonlab.hfsdk.FeedCategory
+import ua.itaysonlab.hfsdk.FeedItem
+import ua.itaysonlab.hfsdk.FeedItemType
+import ua.itaysonlab.hfsdk.IFeedInterface
+import ua.itaysonlab.hfsdk.IFeedInterfaceCallback
 import ua.itaysonlab.hfsdk.content.StoryCardContent
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Locale
 
 /**
  * Your most important class (maybe)
@@ -36,7 +44,7 @@ class HFPluginService : Service(), CoroutineScope by MainScope() {
                 val list = mutableListOf<FeedItem>()
 
                 withContext(Dispatchers.IO) {
-                    val parser = Parser(OkHttpClient())
+                    val parser = Parser.Builder().okHttpClient(OkHttpClient()).build()
                     val prefs = FeedPreferences(this@HFPluginService)
                     val feedList =
                         prefs.feedList.onGetValue().map { SavedFeedModel(JSONObject(it)) }
