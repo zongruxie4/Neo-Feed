@@ -1,8 +1,8 @@
 package ua.itaysonlab.homefeeder
 
+import com.saulhdev.feeder.utils.OverlayBridge
 import ua.itaysonlab.hfsdk.HFPluginApplication
 import ua.itaysonlab.homefeeder.pluginsystem.PluginFetcher
-import ua.itaysonlab.homefeeder.utils.OverlayBridge
 
 class HFApplication : HFPluginApplication() {
     override fun onCreate() {

@@ -7,13 +7,13 @@ import android.content.ServiceConnection
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
+import android.util.Log
 import com.saulhdev.feeder.preference.FeedPreferences
 import ua.itaysonlab.hfsdk.FeedCategory
 import ua.itaysonlab.hfsdk.FeedItem
 import ua.itaysonlab.hfsdk.IFeedInterface
 import ua.itaysonlab.hfsdk.IFeedInterfaceCallback
 import ua.itaysonlab.homefeeder.HFApplication
-import ua.itaysonlab.homefeeder.utils.Logger
 
 object PluginConnector {
     const val TAG = "PluginConnector"
@@ -29,19 +29,25 @@ object PluginConnector {
 
     private val serviceConnection: ServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(componentName: ComponentName, iBinder: IBinder) {
-            Logger.log(TAG, "Connected to service ${componentName.packageName} / ${componentName.className}")
+            Log.d(
+                TAG,
+                "Connected to service ${componentName.packageName} / ${componentName.className}"
+            )
             interfaces[componentName.packageName] = IFeedInterface.Stub.asInterface(iBinder)
             interfaces[componentName.packageName]!!.getFeed(callbacks[componentName.packageName], 0, "default", null)
         }
 
         override fun onServiceDisconnected(componentName: ComponentName) {
-            Logger.log(TAG, "Disconnected from service ${componentName.packageName} / ${componentName.className}")
+            Log.d(
+                TAG,
+                "Disconnected from service ${componentName.packageName} / ${componentName.className}"
+            )
             interfaces[componentName.packageName] = null
         }
     }
 
     private fun connectTo(pkg: String) {
-        Logger.log(TAG, "Connecting to: $pkg")
+        Log.d(TAG, "Connecting to: $pkg")
         val intent = Intent("$pkg.HFPluginService")
         intent.action = PluginFetcher.INTENT_ACTION_SERVICE
         intent.setPackage(pkg)
@@ -57,7 +63,7 @@ object PluginConnector {
     }
 
     fun getFeedAsItLoads(page: Int, onNewFeed: (List<FeedItem>) -> Unit, onLoadFinished: () -> Unit) {
-        Logger.log(TAG, "getFeedAsItLoads")
+        Log.d(TAG, "getFeedAsItLoads")
 
         val stub = object: IFeedInterfaceCallback.Stub() {
             override fun onCategoriesReceive(categories: MutableList<FeedCategory>?) {
@@ -67,13 +73,13 @@ object PluginConnector {
             override fun onFeedReceive(feed: MutableList<FeedItem>?) {
                 feed ?: return
 
-                Logger.log(TAG, "Received feed: $feed")
+                Log.d(TAG, "Received feed: $feed")
 
                 onNewFeed(feed)
 
                 index++
                 if (index >= serviceSize) {
-                    Logger.log(TAG, "Finished chain!")
+                    Log.d(TAG, "Finished chain!")
                     handler.post {
                         onLoadFinished()
                     }

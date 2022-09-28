@@ -5,23 +5,23 @@ import android.app.WallpaperManager
 import android.content.Context
 import android.graphics.Color
 import android.os.Build
+import android.util.Log
 import android.util.SparseIntArray
 import androidx.annotation.ColorInt
 import androidx.core.content.ContextCompat
 import com.saulhdev.feeder.R
+import com.saulhdev.feeder.overlay.OverlayView
 import com.saulhdev.feeder.preference.FeedPreferences
 import com.saulhdev.feeder.utils.clearLightFlags
 import com.saulhdev.feeder.utils.isLight
 import com.saulhdev.feeder.utils.toInt
 import ua.itaysonlab.homefeeder.HFApplication
-import ua.itaysonlab.homefeeder.overlay.OverlayKt
 import ua.itaysonlab.homefeeder.theming.Theming
-import ua.itaysonlab.homefeeder.utils.Logger
 
 /**
  * A class which manages overlay styling.
  * */
-class OverlayThemeHolder(private val context: Context, private val overlay: OverlayKt) {
+class OverlayThemeHolder(private val context: Context, private val overlay: OverlayView) {
 
     val prefs = FeedPreferences(context)
 
@@ -124,7 +124,7 @@ class OverlayThemeHolder(private val context: Context, private val overlay: Over
             currentTheme.put(Theming.Colors.CARD_BG.ordinal, cardBackground)
         }
 
-        Logger.log("OTH", currentTheme.toString())
+        Log.d("OTH", currentTheme.toString())
     }
 
     companion object {

@@ -1,10 +1,11 @@
-package ua.itaysonlab.homefeeder.overlay
+package com.saulhdev.feeder.overlay
 
 import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -16,6 +17,7 @@ import com.google.android.libraries.gsa.d.a.OverlayController
 import com.saulhdev.feeder.MainActivity
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.preference.FeedPreferences
+import com.saulhdev.feeder.utils.OverlayBridge
 import com.saulhdev.feeder.utils.clearLightFlags
 import com.saulhdev.feeder.utils.isDark
 import com.saulhdev.feeder.utils.setLightFlags
@@ -26,16 +28,12 @@ import ua.itaysonlab.homefeeder.overlay.launcherapi.LauncherAPI
 import ua.itaysonlab.homefeeder.overlay.launcherapi.OverlayThemeHolder
 import ua.itaysonlab.homefeeder.pluginsystem.PluginConnector
 import ua.itaysonlab.homefeeder.theming.Theming
-import ua.itaysonlab.homefeeder.utils.Logger
-import ua.itaysonlab.homefeeder.utils.OverlayBridge
 import ua.itaysonlab.replica.vkpopup.DialogActionsVcByPopup
 import ua.itaysonlab.replica.vkpopup.PopupItem
 
-class OverlayKt(val context: Context): OverlayController(context, R.style.AppTheme, R.style.WindowTheme), OverlayBridge.OverlayBridgeCallback {
-    companion object {
-        const val LOG_TAG = "OverlayKt"
-    }
-
+class OverlayView(val context: Context) :
+    OverlayController(context, R.style.AppTheme, R.style.WindowTheme),
+    OverlayBridge.OverlayBridgeCallback {
     var apiInstance = LauncherAPI()
     private lateinit var themeHolder: OverlayThemeHolder
 
@@ -55,10 +53,12 @@ class OverlayKt(val context: Context): OverlayController(context, R.style.AppThe
                         Theming.defaultLightThemeColors
                     }
                 }
+
                 "auto_system" -> Theming.getThemeBySystem(context)
                 "dark" -> Theming.defaultDarkThemeColors
                 else -> Theming.defaultLightThemeColors
-        })
+            }
+        )
     }
 
     override fun onOptionsUpdated(bundle: Bundle) {
@@ -74,19 +74,17 @@ class OverlayKt(val context: Context): OverlayController(context, R.style.AppThe
     }
 
     private fun updateStubUi() {
-        // TODO: make stub for no datasources
-        /*if (!this.isNotificationServiceGranted()) {
-            rootView.nas_title.setTextColor(themeHolder.currentTheme.get(Theming.Colors.TEXT_COLOR_PRIMARY.ordinal))
-            rootView.nas_text.setTextColor(themeHolder.currentTheme.get(Theming.Colors.TEXT_COLOR_SECONDARY.ordinal))
-            rootView.nas_icon.imageTintList = ColorStateList.valueOf(themeHolder.currentTheme.get(Theming.Colors.TEXT_COLOR_PRIMARY.ordinal))
-            rootView.nas_reload.setTextColor(themeHolder.currentTheme.get(Theming.Colors.TEXT_COLOR_PRIMARY.ordinal))
-            rootView.nas_action.setBackgroundColor(themeHolder.currentTheme.get(Theming.Colors.TEXT_COLOR_PRIMARY.ordinal))
-            rootView.nas_action.setTextColor(themeHolder.currentTheme.get(Theming.Colors.CARD_BG.ordinal))
-        }*/
-
-        val theme = if (themeHolder.currentTheme.get(Theming.Colors.OVERLAY_BG.ordinal).isDark()) Theming.defaultDarkThemeColors else Theming.defaultLightThemeColors
-        rootView.findViewById<ImageView>(R.id.header_preferences).imageTintList = ColorStateList.valueOf(theme.get(Theming.Colors.TEXT_COLOR_PRIMARY.ordinal))
-        rootView.findViewById<TextView>(R.id.header_title).setTextColor(theme.get(Theming.Colors.TEXT_COLOR_PRIMARY.ordinal))
+        val theme = if (themeHolder.currentTheme.get(Theming.Colors.OVERLAY_BG.ordinal)
+                .isDark()
+        ) Theming.defaultDarkThemeColors else Theming.defaultLightThemeColors
+        rootView.findViewById<ImageView>(R.id.header_preferences).imageTintList =
+            ColorStateList.valueOf(
+                theme.get(
+                    Theming.Colors.TEXT_COLOR_PRIMARY.ordinal
+                )
+            )
+        rootView.findViewById<TextView>(R.id.header_title)
+            .setTextColor(theme.get(Theming.Colors.TEXT_COLOR_PRIMARY.ordinal))
     }
 
     private fun initRecyclerView() {
@@ -97,17 +95,8 @@ class OverlayKt(val context: Context): OverlayController(context, R.style.AppThe
         adapter = FeedAdapter()
         rootView.findViewById<RecyclerView>(R.id.recycler).apply {
             layoutManager = LinearLayoutManager(context)
-            adapter = this@OverlayKt.adapter
+            adapter = this@OverlayView.adapter
         }
-
-        /*val callback = object: SwipeToDeleteCallback(object: RecyclerItemTouchHelperListener {
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int, position: Int) {
-                val notifyID = adapter.removeItem(position)
-                mService.requestNotificationDismiss(notifyID)
-            }
-        }) {}
-        val helper = ItemTouchHelper(callback)
-        helper.attachToRecyclerView(rootView.recycler)*/
     }
 
     private fun initHeader() {
@@ -119,7 +108,11 @@ class OverlayKt(val context: Context): OverlayController(context, R.style.AppThe
     private fun callMenuPopup(view: View) {
         val popup = DialogActionsVcByPopup(view)
         popup.a(createMenuList(), {
-            it.first.backgroundTintList = ColorStateList.valueOf(themeHolder.currentTheme.get(Theming.Colors.OVERLAY_BG.ordinal))
+            it.first.backgroundTintList = ColorStateList.valueOf(
+                themeHolder.currentTheme.get(
+                    Theming.Colors.OVERLAY_BG.ordinal
+                )
+            )
             it.second.apply {
                 setActionLabelTextColor(themeHolder.currentTheme.get(Theming.Colors.TEXT_COLOR_PRIMARY.ordinal))
                 setDividerColor(themeHolder.currentTheme.get(Theming.Colors.TEXT_COLOR_SECONDARY.ordinal))
@@ -129,8 +122,13 @@ class OverlayKt(val context: Context): OverlayController(context, R.style.AppThe
             popup.dismiss()
             when (it.id) {
                 "config" -> {
-                    HFApplication.instance.startActivity(Intent(HFApplication.instance, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+                    HFApplication.instance.startActivity(
+                        Intent(HFApplication.instance, MainActivity::class.java).addFlags(
+                            Intent.FLAG_ACTIVITY_NEW_TASK
+                        )
+                    )
                 }
+
                 "reload" -> {
                     refreshNotifications()
                 }
@@ -145,29 +143,17 @@ class OverlayKt(val context: Context): OverlayController(context, R.style.AppThe
         )
     }
 
-    /*private fun initPermissionStub() {
-        rootView.overlay_root.visibility = View.GONE
-        rootView.no_access_stub.visibility = View.VISIBLE
-        rootView.nas_action.setOnClickListener {
-            startActivity(Intent(HFApplication.ACTION_MANAGE_LISTENERS))
-        }
-        rootView.nas_reload.setOnClickListener {
-            /*if (this.isNotificationServiceGranted()) {
-                //bindService()
-                rootView.overlay_root.visibility = View.VISIBLE
-                rootView.no_access_stub.visibility = View.GONE
-            } else {
-                Snackbar.make(rootView.user_root, R.string.overlay_no_permission_snackbar, Snackbar.LENGTH_LONG).show()
-            }*/
-        }
-    }*/
-
     override fun onCreate(bundle: Bundle?) {
         super.onCreate(bundle)
-        getWindow().decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-        rootView = View.inflate(ContextThemeWrapper(this, R.style.AppTheme), R.layout.overlay_layout, this.container)
+        getWindow().decorView.systemUiVisibility =
+            View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+        rootView = View.inflate(
+            ContextThemeWrapper(this, R.style.AppTheme),
+            R.layout.overlay_layout,
+            this.container
+        )
 
-        themeHolder = OverlayThemeHolder(context,this)
+        themeHolder = OverlayThemeHolder(context, this)
 
         initRecyclerView()
         initHeader()
@@ -211,13 +197,14 @@ class OverlayKt(val context: Context): OverlayController(context, R.style.AppThe
         }
 
         val bgColor = themeHolder.currentTheme.get(Theming.Colors.OVERLAY_BG.ordinal)
-        val color = (themeHolder.getScrollAlpha(float) * 255.0f).toInt() shl 24 or (bgColor and 0x00ffffff)
+        val color =
+            (themeHolder.getScrollAlpha(float) * 255.0f).toInt() shl 24 or (bgColor and 0x00ffffff)
         getWindow().setBackgroundDrawable(ColorDrawable(color))
     }
 
     override fun onClientMessage(action: String) {
         if (prefs.debugging.onGetValue()) {
-            Logger.log(LOG_TAG, "New message by OverlayBridge: $action")
+            Log.d("OverlayView", "New message by OverlayBridge: $action")
         }
     }
 
@@ -241,7 +228,6 @@ class OverlayKt(val context: Context): OverlayController(context, R.style.AppThe
 
     override fun applyCompactCard(value: Boolean) {
         adapter = FeedAdapter()
-        //adapter.setCompact(value)
         adapter.setTheme(themeHolder.currentTheme)
         rootView.findViewById<RecyclerView>(R.id.recycler).adapter = adapter
         refreshNotifications()

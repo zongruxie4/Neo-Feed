@@ -1,4 +1,4 @@
-package ua.itaysonlab.homefeeder.utils
+package com.saulhdev.feeder.utils
 
 class OverlayBridge {
     private var callback: OverlayBridgeCallback? = null
@@ -24,7 +24,6 @@ class OverlayBridge {
         fun applyCompactCard(value: Boolean)
         fun applySysColors(value: Boolean)
         fun applyNewTransparency(value: String)
-
         fun onClientMessage(action: String)
     }
 }

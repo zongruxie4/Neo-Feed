@@ -3,10 +3,10 @@ package com.saulhdev.feeder.utils
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.annotation.ColorInt
 import androidx.core.graphics.ColorUtils
-import ua.itaysonlab.homefeeder.utils.Logger
 
 const val LIGHT_BORDER = 0.5f
 
@@ -17,7 +17,7 @@ fun Bundle.dump(tag: String) {
     keySet().forEach {
         val item = get(it)
         item ?: return@forEach
-        Logger.log(tag, "[$it] $item")
+        Log.d(tag, "[$it] $item")
     }
 }
 
