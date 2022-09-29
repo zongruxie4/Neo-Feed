@@ -157,7 +157,7 @@ class OverlayView(val context: Context) :
 
         initRecyclerView()
         initHeader()
-
+        refreshNotifications()
         HFApplication.bridge.setCallback(this)
     }
 
