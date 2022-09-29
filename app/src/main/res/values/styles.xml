@@ -8,6 +8,11 @@
         <item name="alertDialogTheme">@style/AlertDialogTheme</item>
     </style>
 
+    <style name="roundedCorner" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">16dp</item>
+    </style>
+
     <style name="AlertDialogTheme" parent="MaterialAlertDialog.Material3">
         <item name="shapeAppearanceMediumComponent">@style/RoundShapeAppearance</item>
     </style>
