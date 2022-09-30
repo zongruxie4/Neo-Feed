@@ -19,14 +19,7 @@
 package com.saulhdev.feeder.utils
 
 import android.content.Context
-import androidx.compose.ui.Modifier
 import com.saulhdev.feeder.R
-
-inline fun Modifier.addIf(
-    condition: Boolean,
-    crossinline factory: Modifier.() -> Modifier
-): Modifier =
-    if (condition) factory() else this
 
 fun getThemes(context: Context): Map<String, String> {
     return mapOf(
