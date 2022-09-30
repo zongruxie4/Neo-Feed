@@ -1,5 +1,5 @@
 /*
- * This file is part of Omega Feeder
+ * This file is part of Neo Feed
  * Copyright (c) 2022   Saul Henriquez <henriquez.saul@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -18,32 +18,45 @@
 
 package com.saulhdev.feeder.compose.navigation
 
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.LayoutDirection
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
+import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.saulhdev.feeder.InfoScreen
 import com.saulhdev.feeder.SettingsScreen
 import com.saulhdev.feeder.SourcesScreen
-import com.saulhdev.feeder.compose.pages.WebViewPage
+import soup.compose.material.motion.materialSharedAxisX
 
+val LocalNavController = staticCompositionLocalOf<NavController> {
+    error("CompositionLocal LocalNavController not present")
+}
+
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun NavigationManager(navController: NavHostController) {
-    NavHost(navController, startDestination = NavigationItem.Settings.route) {
-        composable(NavigationItem.Sources.route) {
-            SourcesScreen()
-        }
-        composable(NavigationItem.Settings.route) {
-            SettingsScreen()
-        }
-        composable(NavigationItem.Info.route) {
-            InfoScreen()
-        }
-        composable("web_view_page/{url}") {
-            val url = it.arguments?.getString("url")
-            if (url != null) {
-                WebViewPage(url = url)
-            }
+    val isRtl = LocalLayoutDirection.current == LayoutDirection.Rtl
+    val motionSpec = materialSharedAxisX()
+    val density = LocalDensity.current
+    CompositionLocalProvider(
+        LocalNavController provides navController
+    ) {
+        AnimatedNavHost(
+            navController = navController,
+            startDestination = NavigationItem.Settings.route,
+            enterTransition = { motionSpec.enter.transition(!isRtl, density) },
+            exitTransition = { motionSpec.exit.transition(!isRtl, density) },
+            popEnterTransition = { motionSpec.enter.transition(isRtl, density) },
+            popExitTransition = { motionSpec.exit.transition(isRtl, density) },
+        ) {
+            preferenceGraph(NavigationItem.Sources.route, { SourcesScreen() })
+            preferenceGraph(NavigationItem.Settings.route, { SettingsScreen() })
+            preferenceGraph(NavigationItem.Info.route, { InfoScreen() })
         }
     }
 }
