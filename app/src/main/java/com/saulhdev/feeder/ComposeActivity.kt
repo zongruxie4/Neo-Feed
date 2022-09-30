@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.saulhdev.feeder.compose
+package com.saulhdev.feeder
 
 import android.content.Context
 import android.content.Intent
@@ -27,6 +27,7 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.core.net.toUri
 import androidx.navigation.NavHostController
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
+import com.saulhdev.feeder.compose.anim.navigation.NavigationManager2
 import com.saulhdev.feeder.theme.AppTheme
 
 class ComposeActivity : AppCompatActivity() {
@@ -35,9 +36,13 @@ class ComposeActivity : AppCompatActivity() {
     @OptIn(ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (supportActionBar != null) {
+            supportActionBar?.hide()
+        }
         setContent {
             AppTheme {
                 navController = rememberAnimatedNavController()
+                NavigationManager2(navController = navController)
             }
         }
     }
