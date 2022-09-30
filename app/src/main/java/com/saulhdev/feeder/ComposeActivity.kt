@@ -1,5 +1,5 @@
 /*
- * This file is part of Omega Feeder
+ * This file is part of Neo Feed
  * Copyright (c) 2022   Saul Henriquez <henriquez.saul@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -27,7 +27,7 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.core.net.toUri
 import androidx.navigation.NavHostController
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
-import com.saulhdev.feeder.compose.anim.navigation.NavigationManager2
+import com.saulhdev.feeder.compose.navigation.NavigationManager2
 import com.saulhdev.feeder.theme.AppTheme
 
 class ComposeActivity : AppCompatActivity() {
