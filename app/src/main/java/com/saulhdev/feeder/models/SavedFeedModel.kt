@@ -3,10 +3,10 @@ package com.saulhdev.feeder.models
 import org.json.JSONObject
 
 data class SavedFeedModel(
-    val name: String,
+    val title: String,
     val description: String,
-    val feedUrl: String,
-    val feedImage: String
+    val url: String,
+    val feedImage: String = ""
 ) {
     constructor(obj: JSONObject) : this(
         obj.getString("name"),
@@ -16,9 +16,9 @@ data class SavedFeedModel(
     )
 
     fun asJson() = JSONObject().apply {
-        put("name", name)
+        put("name", title)
         put("desc", description)
-        put("feed_url", feedUrl)
+        put("feed_url", url)
         put("pic_url", feedImage)
     }
 }
