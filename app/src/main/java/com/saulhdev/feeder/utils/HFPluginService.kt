@@ -49,10 +49,10 @@ class HFPluginService : Service(), CoroutineScope by MainScope() {
                     val feedList =
                         prefs.feedList.onGetValue().map { SavedFeedModel(JSONObject(it)) }
                     feedList.forEach { model ->
-                        parser.getChannel(model.feedUrl).articles.forEach { article ->
+                        parser.getChannel(model.url).articles.forEach { article ->
                             list.add(
                                 FeedItem(
-                                    "${model.name} [RSS]",
+                                    "${model.title} [RSS]",
                                     FeedItemType.STORY_CARD,
                                     StoryCardContent(
                                         title = article.title!!,
@@ -60,8 +60,8 @@ class HFPluginService : Service(), CoroutineScope by MainScope() {
                                         background_url = article.image ?: "",
                                         link = article.link ?: "",
                                         source = FeedCategory(
-                                            model.feedUrl,
-                                            model.name,
+                                            model.url,
+                                            model.title,
                                             Color.GREEN,
                                             model.feedImage
                                         )
@@ -81,7 +81,7 @@ class HFPluginService : Service(), CoroutineScope by MainScope() {
             val prefs = FeedPreferences(this@HFPluginService)
             val feedList = prefs.feedList.onGetValue().map { SavedFeedModel(JSONObject(it)) }
             callback.onCategoriesReceive(feedList.map {
-                FeedCategory(it.feedUrl, it.name, Color.GREEN, it.feedImage)
+                FeedCategory(it.url, it.title, Color.GREEN, it.feedImage)
             })
         }
     }
