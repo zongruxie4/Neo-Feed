@@ -12,7 +12,6 @@
     <string name="add_input_hint">URL</string>
     <string name="remove_desc">Wollen Sie %s wirklich aus den Feedquellen entfernen\?</string>
     <string name="remove_action_yes">Ja</string>
-    <string name="remove_action_nope">Abbrechen</string>
     <string name="title_about">Über</string>
     <string name="title_sources">Datenquellen</string>
     <string name="date_ago_now">jetzt</string>
