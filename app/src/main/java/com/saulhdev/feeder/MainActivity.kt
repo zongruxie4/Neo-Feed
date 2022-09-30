@@ -22,31 +22,39 @@ import android.content.SharedPreferences
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredSize
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.BottomSheetScaffold
-import androidx.compose.material.BottomSheetState
-import androidx.compose.material.BottomSheetValue
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.FloatingActionButton
-import androidx.compose.material.Icon
-import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.rememberBottomSheetScaffoldState
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -62,19 +70,21 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.core.content.res.ResourcesCompat
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
-import com.prof.rssparser.Channel
-import com.prof.rssparser.Parser
-import com.saulhdev.feeder.compose.components.*
+import com.google.accompanist.navigation.animation.rememberAnimatedNavController
+import com.saulhdev.feeder.compose.components.BottomNavigationBar
+import com.saulhdev.feeder.compose.components.FeedItem
+import com.saulhdev.feeder.compose.components.PreferenceGroup
+import com.saulhdev.feeder.compose.components.StringSelectionPrefDialogUI
+import com.saulhdev.feeder.compose.components.ViewWithActionBar
 import com.saulhdev.feeder.compose.navigation.NavigationItem
 import com.saulhdev.feeder.compose.navigation.NavigationManager
+import com.saulhdev.feeder.compose.navigation.subRoute
 import com.saulhdev.feeder.models.SavedFeedModel
 import com.saulhdev.feeder.preference.FeedPreferences
 import com.saulhdev.feeder.theme.AppTheme
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import okhttp3.OkHttpClient
 import org.json.JSONObject
 
 class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceChangeListener {
@@ -120,107 +130,48 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun MainScreen() {
-    val navController = rememberNavController()
+    val navController = rememberAnimatedNavController()
     val title = stringResource(id = R.string.app_name)
-    val pageTitle = remember { mutableStateOf(title) }
-    val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
-        bottomSheetState = BottomSheetState(BottomSheetValue.Collapsed)
-    )
-    var rssURL by remember { mutableStateOf("") }
-    val coroutineScope = rememberCoroutineScope()
-    val context = LocalContext.current
-    val prefs = FeedPreferences(context)
-    val feedList = prefs.feedList.onGetValue().map { SavedFeedModel(JSONObject(it)) }
-    val rssList = remember { mutableStateOf(feedList) }
-    val currentRoute = navController.currentBackStackEntry?.destination?.route
     val navBackStackEntry by navController.currentBackStackEntryAsState()
-    BottomSheetScaffold(
-        scaffoldState = bottomSheetScaffoldState,
-        sheetPeekHeight = 0.dp,
-        sheetContent = {
-            AddFeedBottomSheet(
-                onSaveAction = {
-                    coroutineScope.launch {
-                        var data: Channel? = null
-                        rssURL = it
-                        withContext(Dispatchers.Default) {
-                            val parser = Parser.Builder()
-                                .okHttpClient(OkHttpClient())
-                                .build()
-                            try {
-                                data = parser.getChannel(rssURL)
-                            } catch (_: Exception) {
-
-                            }
+    val context = LocalContext.current
+    val scope = CoroutineScope(Dispatchers.Main)
+    val destination = subRoute(name = "add_feed")
+    ViewWithActionBar(
+        title = title,
+        bottomBar = { BottomNavigationBar(navController) },
+        floatingActionButton = {
+            if (navBackStackEntry?.destination?.route == NavigationItem.Sources.route) {
+                FloatingActionButton(
+                    onClick = {
+                        scope.launch {
+                            context.startActivity(
+                                ComposeActivity.createIntent(
+                                    context,
+                                    destination
+                                )
+                            )
                         }
-                        data ?: run {
-                            Toast.makeText(context, "URL is not a RSS feed!", Toast.LENGTH_LONG)
-                                .show()
-                            return@launch
-                        }
-                        val feedTitle = data!!.title ?: "Unknown"
-                        val savedFeedModel = SavedFeedModel(
-                            feedTitle,
-                            data!!.description ?: "",
-                            rssURL,
-                            data!!.image?.url ?: ""
-                        )
-                        rssList.value = rssList.value + savedFeedModel
-                        rssURL = ""
-                        val stringSet = rssList.value.map {
-                            it.asJson().toString()
-                        }.toSet()
-                        prefs.feedList.onSetValue(stringSet)
-                        bottomSheetScaffoldState.bottomSheetState.collapse()
-                    }
-                },
-                onCloseAction = {
-                    coroutineScope.launch {
-                        bottomSheetScaffoldState.bottomSheetState.collapse()
-                    }
+                    },
+                    modifier = Modifier.padding(16.dp),
+                    backgroundColor = MaterialTheme.colorScheme.primary
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = stringResource(id = R.string.manager_add),
+                        tint = MaterialTheme.colorScheme.onPrimary
+                    )
                 }
-            )
+            }
+
+        },
+        showBackButton = false,
+    ) { padding ->
+        Box(modifier = Modifier.padding(padding)) {
+            NavigationManager(navController = navController)
         }
-    )
-    {
-        Scaffold(
-            topBar = { TopBar(pageTitle) },
-            bottomBar = { BottomNavigationBar(navController) },
-            content = { padding ->
-                Box(modifier = Modifier.padding(padding)) {
-                    NavigationManager(navController = navController)
-                }
-            },
-            floatingActionButton = {
-
-                if (navBackStackEntry?.destination?.route == NavigationItem.Sources.route) {
-                    FloatingActionButton(
-                        onClick = {
-                            coroutineScope.launch {
-                                if (bottomSheetScaffoldState.bottomSheetState.isCollapsed) {
-                                    bottomSheetScaffoldState.bottomSheetState.expand()
-                                } else {
-                                    bottomSheetScaffoldState.bottomSheetState.collapse()
-                                }
-                            }
-                        },
-                        modifier = Modifier.padding(16.dp),
-                        backgroundColor = MaterialTheme.colorScheme.primary
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Add,
-                            contentDescription = stringResource(id = R.string.manager_add),
-                            tint = MaterialTheme.colorScheme.onPrimary
-                        )
-                    }
-                }
-
-            },
-            backgroundColor = MaterialTheme.colorScheme.background
-        )
     }
 }
 
@@ -243,8 +194,8 @@ fun SourcesScreen() {
         LazyColumn {
             items(rssList.value) { item ->
                 FeedItem(
-                    feedTitle = item.name,
-                    feedURL = item.feedUrl,
+                    feedTitle = item.title,
+                    feedURL = item.url,
                     description = item.description,
                     onRemoveAction = {
                         showDialog.value = true
@@ -283,7 +234,10 @@ fun SourcesScreen() {
 
                                     Spacer(modifier = Modifier.height(16.dp))
                                     Text(
-                                        text = stringResource(id = R.string.remove_desc, item.name),
+                                        text = stringResource(
+                                            id = R.string.remove_desc,
+                                            item.title
+                                        ),
                                         style = TextStyle(
                                             fontSize = 16.sp,
                                             fontFamily = FontFamily.Default
