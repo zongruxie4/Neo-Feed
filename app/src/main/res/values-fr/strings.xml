@@ -8,7 +8,6 @@
     <string name="title_sources">Sources de données</string>
     <string name="pref_cat_overlay">Apparence</string>
     <string name="pref_syscolors">Utiliser les couleurs du fond d’écran du système</string>
-    <string name="manager_add">Ajouter</string>
     <string name="title_settings">Paramètres</string>
     <string name="pref_tg">Canal Telegram</string>
     <string name="pref_tg_author">Développeur</string>

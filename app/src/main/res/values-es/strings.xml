@@ -24,7 +24,6 @@
     <string name="pref_cat_contact">Contactos</string>
     <string name="title_plugin_list">Lista de plugins</string>
     <string name="remove_title">Confirmar accion</string>
-    <string name="manager_add">Agregar</string>
     <string name="pref_syscolors_disabled">Requiere Android 8.1</string>
     <string name="action_reload">Recargar</string>
     <string name="remove_action_yes">Si</string>

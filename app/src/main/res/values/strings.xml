@@ -37,11 +37,13 @@
     <string name="action_reload">Reload</string>
     <string name="pm_empty">No sources installed</string>
     <string name="pm_desc">HomeFeeder uses them to display data</string>
-    <string name="manager_add">Add</string>
     <string name="add_rss">Add new RSS</string>
     <string name="failed_to_parse">Could not parse %1$s</string>
     <string name="edit_rss">Edit Feed Item</string>
-    <string name="add_input_hint">Feed URL</string>
+    <string name="add_input_hint">URL</string>
+    <string name="title">Title</string>
+    <string name="description">Description</string>
+    <string name="add_feed_search_hint">Feed URL</string>
     <string name="invalid_url">Not a valid URL</string>
     <string name="go_back">Go back</string>
     <string name="remove_title">Confirm action</string>

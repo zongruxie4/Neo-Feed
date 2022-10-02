@@ -8,7 +8,6 @@
     <string name="pm_empty">Keine Quellen installiert</string>
     <string name="pm_desc">HomeFeeder verwendet sie zur Anzeige von Daten</string>
     <string name="remove_title">Aktion bestätigen</string>
-    <string name="manager_add">Hinzufügen</string>
     <string name="add_input_hint">URL</string>
     <string name="remove_desc">Wollen Sie %s wirklich aus den Feedquellen entfernen\?</string>
     <string name="remove_action_yes">Ja</string>
