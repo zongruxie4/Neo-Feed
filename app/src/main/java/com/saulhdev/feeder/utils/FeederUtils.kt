@@ -22,6 +22,8 @@ import android.content.Context
 import com.saulhdev.feeder.R
 import java.net.MalformedURLException
 import java.net.URL
+import java.net.URLDecoder
+import java.net.URLEncoder
 
 fun getThemes(context: Context): Map<String, String> {
     return mapOf(
@@ -122,3 +124,9 @@ fun naiveFindImageLink(text: String?): String? =
     } else {
         null
     }
+
+fun String.urlEncode(): String =
+    URLEncoder.encode(this, "UTF-8")
+
+fun String.urlDecode(): String =
+    URLDecoder.decode(this, "UTF-8")
