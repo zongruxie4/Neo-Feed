@@ -42,6 +42,7 @@
     <string name="failed_to_parse">Could not parse %1$s</string>
     <string name="edit_rss">Edit Feed Item</string>
     <string name="add_input_hint">Feed URL</string>
+    <string name="invalid_url">Not a valid URL</string>
     <string name="go_back">Go back</string>
     <string name="remove_title">Confirm action</string>
     <string name="remove_desc">Do you really want to remove %s from feed sources?</string>
