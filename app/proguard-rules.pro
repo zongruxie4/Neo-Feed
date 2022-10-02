@@ -26,3 +26,6 @@
 }
 
 -repackageclasses "hfcore"
+
+# For Rome
+-keep class com.rometools.** { *; }
