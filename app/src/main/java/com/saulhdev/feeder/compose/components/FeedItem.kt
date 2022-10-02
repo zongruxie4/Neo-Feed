@@ -18,12 +18,19 @@
 
 package com.saulhdev.feeder.compose.components
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -39,18 +46,21 @@ fun FeedItem(
 ) {
     Card(
         modifier = Modifier
+            .fillMaxWidth()
             .padding(8.dp)
     ) {
         Column(
             modifier = Modifier
-                .padding(16.dp)
+                .fillMaxWidth()
+                .padding(8.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             Row(modifier = Modifier.fillMaxWidth()) {
                 Column(
                     modifier = Modifier.weight(1f)
                 ) {
-                    Text(text = feedTitle)
-                    Text(text = feedURL)
+                    Text(text = feedTitle, style = MaterialTheme.typography.titleSmall)
+                    Text(text = feedURL, style = MaterialTheme.typography.bodyMedium)
                 }
 
                 Spacer(modifier = Modifier.padding(horizontal = 8.dp))
@@ -62,8 +72,11 @@ fun FeedItem(
                     Icon(imageVector = Icons.Filled.Close, contentDescription = "Close")
                 }
             }
-            Spacer(modifier = Modifier.padding(vertical = 8.dp))
-            Text(text = description)
+            Spacer(modifier = Modifier.padding(vertical = 4.dp))
+            Text(
+                text = description,
+                style = MaterialTheme.typography.bodyMedium
+            )
         }
     }
 }
