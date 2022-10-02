@@ -30,12 +30,12 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
-import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.google.accompanist.navigation.animation.AnimatedNavHost
+import com.google.accompanist.navigation.animation.composable
 import com.saulhdev.feeder.compose.pages.AddFeedPage
-import com.saulhdev.feeder.compose.pages.EditFeedPage
 import com.saulhdev.feeder.compose.pages.WebViewPage
+import com.saulhdev.feeder.compose.pages.editFeedGraph
 import soup.compose.material.motion.materialSharedAxisX
 
 @OptIn(ExperimentalAnimationApi::class)
@@ -57,8 +57,8 @@ fun NavigationManager2(navController: NavHostController) {
         ) {
             preferenceGraph(route = "/", { BlankScreen() }) { subRoute ->
                 preferenceGraph(route = subRoute(Routes.ADD_FEED), { AddFeedPage() })
-                preferenceGraph(route = Routes.EDIT_FEED, { EditFeedPage() })
-                preferenceGraph(route = Routes.WEB_VIEW, {}) { it ->
+                editFeedGraph(route = subRoute(Routes.EDIT_FEED))
+                preferenceGraph(route = Routes.WEB_VIEW, {}) {
                     composable(
                         route = subRoute("{url}"),
                         arguments = listOf(navArgument("url") { type = NavType.StringType })

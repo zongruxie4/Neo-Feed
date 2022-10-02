@@ -18,14 +18,19 @@
 
 package com.saulhdev.feeder.compose.pages
 
-import android.webkit.URLUtil.isValidUrl
-import android.widget.Toast
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
+import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -42,57 +47,62 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester.Companion.createRefs
+import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.input.key.Key
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.prof.rssparser.Channel
-import com.prof.rssparser.Parser
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.compose.components.ViewWithActionBar
+import com.saulhdev.feeder.compose.navigation.LocalNavController
+import com.saulhdev.feeder.compose.util.StableHolder
 import com.saulhdev.feeder.compose.util.interceptKey
+import com.saulhdev.feeder.compose.util.safeSemantics
 import com.saulhdev.feeder.models.SavedFeedModel
-import com.saulhdev.feeder.preference.FeedPreferences
-import kotlinx.coroutines.Dispatchers
+import com.saulhdev.feeder.utils.sloppyLinkToStrictURLNoThrows
+import com.saulhdev.feeder.viewmodel.SearchFeedViewModel
+import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import okhttp3.OkHttpClient
-import org.json.JSONObject
+import java.net.MalformedURLException
+import java.net.URL
+import java.net.URLEncoder
 
-@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun AddFeedPage() {
-    val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
+    val navController = LocalNavController.current
     val title = stringResource(id = R.string.add_rss)
+    //val context = LocalContext.current
+    //val prefs  = FeedPreferences(context)
 
-    var currentlySearching by rememberSaveable {
-        mutableStateOf(false)
-    }
-    var results by rememberSaveable {
-        mutableStateOf(listOf<SavedFeedModel>())
-    }
-    var errors by rememberSaveable {
-        mutableStateOf(listOf<SavedFeedModel>())
-    }
-    val prefs = FeedPreferences(context)
-    val feedList = prefs.feedList.onGetValue().map { SavedFeedModel(JSONObject(it)) }
-    val rssList = remember { mutableStateOf(feedList) }
-    var rssURL by remember { mutableStateOf("") }
+    //var feedList = prefs.feedList.onGetValue()
 
-    ViewWithActionBar(title = title) { paddingValues ->
-        val keyboardController = LocalSoftwareKeyboardController.current
-        val focusManager = LocalFocusManager.current
-        val (focusTitle, focusTag) = createRefs()
-
+    ViewWithActionBar(
+        title = title,
+        onBackAction = {
+            /*feedList = feedList + results.map { it.asJson().toString() }.toSet()
+            prefs.feedList.onSetValue(feedList)*/
+        }
+    ) { paddingValues ->
+        var results by rememberSaveable {
+            mutableStateOf(listOf<SavedFeedModel>())
+        }
+        var currentlySearching by rememberSaveable {
+            mutableStateOf(false)
+        }
+        var errors by rememberSaveable {
+            mutableStateOf(listOf<SavedFeedModel>())
+        }
         var feedUrl by remember { mutableStateOf("") }
+        val searchFeedViewModel = remember { SearchFeedViewModel() }
+
         Column(
             modifier = Modifier.padding(
                 top = paddingValues.calculateTopPadding(),
@@ -100,95 +110,289 @@ fun AddFeedPage() {
             ),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            val isNotValidUrl by remember(feedUrl) {
-                derivedStateOf {
-                    feedUrl.isNotEmpty() && isNotValidUrl(feedUrl)
-                }
-            }
-            val isValidUrl by remember(feedUrl) {
-                derivedStateOf {
-                    isValidUrl(feedUrl)
-                }
-            }
-
-            OutlinedTextField(
-                value = feedUrl,
-                onValueChange = { feedUrl = it },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .interceptKey(Key.Enter) {
-                        focusTitle.requestFocus()
-                    }
-                    .interceptKey(Key.Escape) {
-                        focusManager.clearFocus()
-                    },
-                singleLine = true,
-                colors = TextFieldDefaults.outlinedTextFieldColors(
-                    unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12F),
-                    textColor = MaterialTheme.colorScheme.onSurface
-                ),
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    capitalization = KeyboardCapitalization.None,
-                    autoCorrect = false,
-                    keyboardType = KeyboardType.Uri,
-                    imeAction = ImeAction.Search
-                ),
-                keyboardActions = KeyboardActions(
-                    onSearch = {
-                        if (isValidUrl) {
-                            //onSearch(sloppyLinkToStrictURLNoThrows(feedUrl))
-                            keyboardController?.hide()
-                        }
-                    }
-                ),
-                shape = MaterialTheme.shapes.medium,
-                label = { Text(text = stringResource(id = R.string.add_input_hint)) }
-            )
-
-            OutlinedButton(
-                enabled = isValidUrl,
-                onClick = {
+            AddFeedView(
+                feedUrl = feedUrl,
+                onUrlChanged = {
+                    feedUrl = it
+                },
+                onSearch = { url ->
                     results = emptyList()
                     errors = emptyList()
                     currentlySearching = true
                     coroutineScope.launch {
-                        var data: Channel? = null
-                        withContext(Dispatchers.Default) {
-                            val parser = Parser.Builder()
-                                .okHttpClient(OkHttpClient())
-                                .build()
-                            try {
-                                data = parser.getChannel(rssURL)
-                            } catch (_: Exception) {
-
+                        searchFeedViewModel.searchForFeeds(url)
+                            .onCompletion {
+                                currentlySearching = false
                             }
-                        }
-                        data ?: run {
-                            Toast.makeText(context, "URL is not a RSS feed!", Toast.LENGTH_LONG)
-                                .show()
-                            return@launch
-                        }
-                        val feedTitle = data!!.title ?: "Unknown"
-                        val savedFeedModel = SavedFeedModel(
-                            feedTitle,
-                            data!!.description ?: "",
-                            rssURL,
-                            data!!.image?.url ?: ""
-                        )
-                        rssList.value = rssList.value + savedFeedModel
-                        rssURL = ""
-                        val stringSet = rssList.value.map {
-                            it.asJson().toString()
-                        }.toSet()
-                        prefs.feedList.onSetValue(stringSet)
+                            .collect {
+                                if (it.isError) {
+                                    errors = errors + it
+                                } else {
+                                    results = results + it
+                                }
+                            }
                     }
+                },
+                results = StableHolder(results),
+                errors = if (currentlySearching) StableHolder(emptyList()) else StableHolder(errors),
+                currentlySearching = currentlySearching,
+                onClick = {
+                    navController.navigate("/edit_feed/${it.url.urlEncode()}/${it.title.urlEncode()}/")
                 }
-            ) {
-                Text(
-                    stringResource(android.R.string.search_go)
-                )
+            )
+        }
+    }
+}
+
+fun String.urlEncode(): String =
+    URLEncoder.encode(this, "UTF-8")
+
+@OptIn(ExperimentalComposeUiApi::class)
+@Composable
+fun AddFeedView(
+    feedUrl: String = "",
+    onUrlChanged: (String) -> Unit,
+    onSearch: (URL) -> Unit,
+    results: StableHolder<List<SavedFeedModel>>,
+    errors: StableHolder<List<SavedFeedModel>>,
+    currentlySearching: Boolean,
+    onClick: (SavedFeedModel) -> Unit,
+) {
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
+
+    val scrollState = rememberScrollState()
+    Box(
+        contentAlignment = Alignment.TopCenter,
+        modifier = Modifier
+            .fillMaxWidth()
+            .verticalScroll(scrollState)
+    ) {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .padding(8.dp)
+        ) {
+            SearchFeedUI(
+                feedUrl = feedUrl,
+                onUrlChanged = onUrlChanged,
+                onSearch = onSearch,
+                focusManager = focusManager,
+                keyboardController = keyboardController
+            )
+            SearchResult(
+                results = results,
+                errors = errors,
+                currentlySearching = currentlySearching,
+                onClick = onClick
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
+@Composable
+fun SearchFeedUI(
+    feedUrl: String,
+    onUrlChanged: (String) -> Unit,
+    onSearch: (URL) -> Unit,
+    focusManager: FocusManager,
+    keyboardController: SoftwareKeyboardController?
+) {
+    val isNotValidUrl by remember(feedUrl) {
+        derivedStateOf {
+            feedUrl.isNotEmpty() && isNotValidUrl(feedUrl)
+        }
+    }
+    val isValidUrl by remember(feedUrl) {
+        derivedStateOf {
+            isValidUrl(feedUrl)
+        }
+    }
+    OutlinedTextField(
+        value = feedUrl,
+        onValueChange = onUrlChanged,
+        modifier = Modifier
+            .fillMaxWidth()
+            .interceptKey(Key.Enter) {
+                if (isValidUrl(feedUrl)) {
+                    onSearch(sloppyLinkToStrictURLNoThrows(feedUrl))
+                    keyboardController?.hide()
+                }
+            }
+            .interceptKey(Key.Escape) {
+                focusManager.clearFocus()
+            },
+        singleLine = true,
+        colors = TextFieldDefaults.outlinedTextFieldColors(
+            unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12F),
+            textColor = MaterialTheme.colorScheme.onSurface
+        ),
+        isError = isNotValidUrl,
+        keyboardOptions = KeyboardOptions.Default.copy(
+            capitalization = KeyboardCapitalization.None,
+            autoCorrect = false,
+            keyboardType = KeyboardType.Uri,
+            imeAction = ImeAction.Search
+        ),
+        keyboardActions = KeyboardActions(
+            onSearch = {
+                if (isValidUrl) {
+                    onSearch(sloppyLinkToStrictURLNoThrows(feedUrl))
+                    keyboardController?.hide()
+                }
+            }
+        ),
+        shape = MaterialTheme.shapes.medium,
+        label = { Text(text = stringResource(id = R.string.add_input_hint)) }
+    )
+
+    OutlinedButton(
+        enabled = isValidUrl,
+        onClick = {
+            if (isValidUrl) {
+                onSearch(sloppyLinkToStrictURLNoThrows(feedUrl))
+                focusManager.clearFocus()
             }
         }
+    ) {
+        Text(
+            stringResource(android.R.string.search_go)
+        )
+    }
+}
+
+@Composable
+fun SearchResult(
+    results: StableHolder<List<SavedFeedModel>>,
+    errors: StableHolder<List<SavedFeedModel>>,
+    currentlySearching: Boolean,
+    onClick: (SavedFeedModel) -> Unit,
+) {
+    if (results.item.isEmpty()) {
+        for (error in errors.item) {
+            val title = stringResource(
+                R.string.failed_to_parse,
+                error.url
+            )
+            ErrorResultView(
+                title = title,
+                description = error.description
+            )
+        }
+    }
+    for (result in results.item) {
+        SearchResultView(
+            title = result.title,
+            url = result.url,
+            description = result.description
+        ) {
+            onClick(result)
+        }
+    }
+    AnimatedVisibility(visible = currentlySearching) {
+        SearchingIndicator()
+    }
+}
+
+@Composable
+fun SearchingIndicator() {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier
+            .fillMaxWidth()
+            .safeSemantics {
+                testTag = "searchingIndicator"
+            }
+    ) {
+        CircularProgressIndicator()
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SearchResultView(
+    title: String,
+    url: String,
+    description: String,
+    onClick: () -> Unit,
+) {
+    Card(
+        onClick = onClick,
+        modifier = Modifier
+            .fillMaxWidth()
+            .safeSemantics {
+                testTag = "searchResult"
+            }
+    ) {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp)
+        ) {
+            Text(
+                title,
+                style = MaterialTheme.typography.titleSmall
+            )
+            Text(
+                url,
+                style = MaterialTheme.typography.bodyMedium
+            )
+            Text(
+                description,
+                style = MaterialTheme.typography.bodyMedium
+            )
+        }
+    }
+}
+
+@Composable
+fun ErrorResultView(
+    title: String,
+    description: String,
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .safeSemantics {
+                testTag = "errorResult"
+            }
+    ) {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp)
+        ) {
+            Text(
+                title,
+                style = MaterialTheme.typography.titleSmall
+                    .copy(color = MaterialTheme.colorScheme.error)
+            )
+            Text(
+                description,
+                style = MaterialTheme.typography.bodyMedium
+            )
+        }
+    }
+}
+
+private fun isValidUrl(url: String): Boolean {
+    if (url.isBlank()) {
+        return false
+    }
+    return try {
+        try {
+            URL(url)
+            true
+        } catch (_: MalformedURLException) {
+            URL("http://$url")
+            true
+        }
+    } catch (e: Exception) {
+        false
     }
 }
 
