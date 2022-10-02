@@ -39,6 +39,7 @@
     <string name="pm_desc">HomeFeeder uses them to display data</string>
     <string name="manager_add">Add</string>
     <string name="add_rss">Add new RSS</string>
+    <string name="failed_to_parse">Could not parse %1$s</string>
     <string name="edit_rss">Edit Feed Item</string>
     <string name="add_input_hint">Feed URL</string>
     <string name="go_back">Go back</string>
