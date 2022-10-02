@@ -61,6 +61,11 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = "1.2.0"
     }
+    packagingOptions {
+        // Rome incorrectly bundles stuff in its jar
+        pickFirst "rome-utils-1.18.0.jar"
+    }
+
     lintOptions {
         disable 'MissingTranslation'
     }
@@ -106,5 +111,15 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.6.4'
     implementation 'com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.10'
 
+    implementation "com.jakewharton.threetenabp:threetenabp:1.2.4"
+    implementation "org.jsoup:jsoup:1.14.2"
+    implementation "org.ccil.cowan.tagsoup:tagsoup:1.2.1"
+
     implementation project(':homefeeder-sdk')
+    // RSS
+    implementation("com.rometools:rome:1.18.0") {
+        exclude group: 'com.rometools', module: 'rome-utils'
+    }
+    implementation "com.rometools:rome-modules:1.18.0"
+    implementation project(':jsonfeed-parser')
 }
