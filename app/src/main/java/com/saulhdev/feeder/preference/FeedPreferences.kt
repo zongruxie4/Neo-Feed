@@ -22,6 +22,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.annotation.StringRes
 import com.saulhdev.feeder.R
+import com.saulhdev.feeder.compose.navigation.Routes
 import com.saulhdev.feeder.utils.getBackgroundOptions
 import com.saulhdev.feeder.utils.getThemes
 import com.saulhdev.feeder.utils.getTransparencyOptions
@@ -42,6 +43,22 @@ class FeedPreferences(val context: Context) {
     }
 
     /*PREFERENCES*/
+    var sources = StringPref(
+        key = "pref_sources",
+        titleId = R.string.title_sources,
+        summaryId = R.string.summary_sources,
+        icon = R.drawable.ic_services_outline_28,
+        route = "/${Routes.SOURCES}/",
+        onChange = doNothing
+    )
+    var about = StringPref(
+        key = "pref_about",
+        titleId = R.string.title_about,
+        icon = R.drawable.ic_info_outline_28,
+        route = "/${Routes.ABOUT}/",
+        onChange = doNothing
+    )
+
     var feedList = StringSetPref(
         key = "pref_feed_list",
         titleId = R.string.title_feed_list,
@@ -170,6 +187,7 @@ class FeedPreferences(val context: Context) {
         defaultValue: String = "",
         val onClick: (() -> Unit)? = null,
         onChange: () -> Unit = doNothing,
+        val route: String = "",
         val url: String = "",
         val icon: Any? = null
     ) : PrefDelegate<String>(key, titleId, summaryId, defaultValue, onChange) {

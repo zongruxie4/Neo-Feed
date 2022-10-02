@@ -1,5 +1,5 @@
 /*
- * This file is part of Omega Feeder
+ * This file is part of Neo Feed
  * Copyright (c) 2022   Saul Henriquez <henriquez.saul@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -18,6 +18,7 @@
 
 package com.saulhdev.feeder.compose.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -42,10 +43,12 @@ fun FeedItem(
     feedTitle: String = "",
     feedURL: String = "",
     description: String = "",
+    onClickAction: () -> Unit = {},
     onRemoveAction: () -> Unit = {}
 ) {
     Card(
         modifier = Modifier
+            .clickable { onClickAction() }
             .fillMaxWidth()
             .padding(8.dp)
     ) {

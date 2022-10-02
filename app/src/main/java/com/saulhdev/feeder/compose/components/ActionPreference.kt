@@ -1,5 +1,5 @@
 /*
- * This file is part of Omega Feeder
+ * This file is part of Neo Feed
  * Copyright (c) 2022   Saul Henriquez <henriquez.saul@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -33,6 +33,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
+import com.saulhdev.feeder.compose.navigation.LocalNavController
 import com.saulhdev.feeder.preference.FeedPreferences
 
 @Composable
@@ -44,6 +45,7 @@ fun ActionPreference(
     isEnabled: Boolean = true,
 ) {
     val context = LocalContext.current
+    val navController = LocalNavController.current
     BasePreference(
         modifier = modifier,
         titleId = pref.titleId,
@@ -79,7 +81,9 @@ fun ActionPreference(
             }
         },
         onClick = {
-            if (pref.url != "") {
+            if (pref.route != "") {
+                navController.navigate(pref.route)
+            } else if (pref.url != "") {
                 val webpage = Uri.parse(pref.url)
                 context.startActivity(Intent(Intent.ACTION_VIEW, webpage))
             } else {

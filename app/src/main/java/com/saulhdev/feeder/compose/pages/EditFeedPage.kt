@@ -70,7 +70,6 @@ import org.json.JSONObject
 @Composable
 fun EditFeedPage(
     feedTitle: String,
-    feedDescription: String,
     feedUrl: String
 ) {
     val title = stringResource(id = R.string.edit_rss)
@@ -87,7 +86,6 @@ fun EditFeedPage(
         ) {
             EditFeedView(
                 title = feedTitle.urlDecode(),
-                description = feedDescription.urlDecode(),
                 url = feedUrl.urlDecode(),
             )
         }
@@ -98,13 +96,11 @@ fun EditFeedPage(
 @Composable
 fun EditFeedView(
     title: String,
-    description: String,
     url: String
 ) {
     val (focusTitle, focusTag) = createRefs()
     val focusManager = LocalFocusManager.current
     var feedTitle by rememberSaveable { mutableStateOf(title) }
-    var feedDescription by rememberSaveable { mutableStateOf(description) }
     var feedUrl by rememberSaveable { mutableStateOf(url) }
     val prefs = FeedPreferences(LocalContext.current)
 
@@ -167,36 +163,6 @@ fun EditFeedView(
                     focusManager.clearFocus()
                 }
         )
-        Spacer(modifier = Modifier.height(16.dp))
-        OutlinedTextField(
-            value = feedDescription,
-            onValueChange = { feedDescription = it },
-            label = {
-                Text(stringResource(id = R.string.description))
-            },
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(
-                capitalization = KeyboardCapitalization.Words,
-                autoCorrect = true,
-                keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Next
-            ),
-            keyboardActions = KeyboardActions(
-                onNext = {
-                    focusTag.requestFocus()
-                }
-            ),
-            modifier = Modifier
-                .focusRequester(focusTitle)
-                .fillMaxWidth()
-                .heightIn(min = 64.dp)
-                .interceptKey(Key.Enter) {
-                    focusTag.requestFocus()
-                }
-                .interceptKey(Key.Escape) {
-                    focusManager.clearFocus()
-                }
-        )
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -222,10 +188,9 @@ fun EditFeedView(
                         if (it.url == url.urlDecode()) {
                             it.title = feedTitle
                             it.url = feedUrl
-                            it.description = feedDescription
                         } else {
                             feedList =
-                                feedList + SavedFeedModel(feedTitle, feedDescription, feedUrl)
+                                feedList + SavedFeedModel(feedTitle, "", feedUrl)
                         }
                         prefs.feedList.onSetValue(feedList.map { feedItem ->
                             feedItem.asJson().toString()
@@ -245,27 +210,24 @@ fun EditFeedView(
 @Preview
 @Composable
 fun EditFeedPagePreview() {
-    EditFeedPage("Android Police", "Item Description", "https://www.androidpolice.com/feed/")
+    EditFeedPage("Android Police", "https://www.androidpolice.com/feed/")
 }
 
 @OptIn(ExperimentalAnimationApi::class)
 fun NavGraphBuilder.editFeedGraph(route: String) {
     preferenceGraph(route, { }) { subRoute ->
         composable(
-            route = subRoute("{feedTitle}/{feedDescription}/{feedUrl}"),
+            route = subRoute("{feedTitle}/{feedUrl}"),
             arguments = listOf(
                 navArgument("feedTitle") { type = NavType.StringType },
-                navArgument("feedDescription") { type = NavType.StringType },
                 navArgument("feedUrl") { type = NavType.StringType }
             )
         ) { backStackEntry ->
             val args = backStackEntry.arguments!!
             val feedUrl = args.getString("feedUrl")!!
             val feedTitle = args.getString("feedTitle")!!
-            val feedDescription = args.getString("feedDescription")!!
             EditFeedPage(
                 feedTitle = feedTitle,
-                feedDescription = feedDescription,
                 feedUrl = feedUrl
             )
         }

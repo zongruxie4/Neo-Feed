@@ -69,12 +69,12 @@ import com.saulhdev.feeder.compose.util.safeSemantics
 import com.saulhdev.feeder.models.SavedFeedModel
 import com.saulhdev.feeder.preference.FeedPreferences
 import com.saulhdev.feeder.utils.sloppyLinkToStrictURLNoThrows
+import com.saulhdev.feeder.utils.urlEncode
 import com.saulhdev.feeder.viewmodel.SearchFeedViewModel
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.launch
 import java.net.MalformedURLException
 import java.net.URL
-import java.net.URLEncoder
 
 @Composable
 fun AddFeedPage() {
@@ -139,15 +139,12 @@ fun AddFeedPage() {
                 errors = if (currentlySearching) StableHolder(emptyList()) else StableHolder(errors),
                 currentlySearching = currentlySearching,
                 onClick = {
-                    navController.navigate("/edit_feed/${it.url.urlEncode()}/${it.title.urlEncode()}/")
+                    navController.navigate("/edit_feed/${it.title.urlEncode()}/${it.url.urlEncode()}/")
                 }
             )
         }
     }
 }
-
-fun String.urlEncode(): String =
-    URLEncoder.encode(this, "UTF-8")
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -247,7 +244,7 @@ fun SearchFeedUI(
             }
         ),
         shape = MaterialTheme.shapes.medium,
-        label = { Text(text = stringResource(id = R.string.add_input_hint)) }
+        label = { Text(text = stringResource(id = R.string.add_feed_search_hint)) }
     )
 
     OutlinedButton(
