@@ -49,6 +49,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
@@ -66,6 +67,7 @@ import com.saulhdev.feeder.compose.util.StableHolder
 import com.saulhdev.feeder.compose.util.interceptKey
 import com.saulhdev.feeder.compose.util.safeSemantics
 import com.saulhdev.feeder.models.SavedFeedModel
+import com.saulhdev.feeder.preference.FeedPreferences
 import com.saulhdev.feeder.utils.sloppyLinkToStrictURLNoThrows
 import com.saulhdev.feeder.viewmodel.SearchFeedViewModel
 import kotlinx.coroutines.flow.onCompletion
@@ -79,21 +81,21 @@ fun AddFeedPage() {
     val coroutineScope = rememberCoroutineScope()
     val navController = LocalNavController.current
     val title = stringResource(id = R.string.add_rss)
-    //val context = LocalContext.current
-    //val prefs  = FeedPreferences(context)
+    val context = LocalContext.current
+    val prefs = FeedPreferences(context)
 
-    //var feedList = prefs.feedList.onGetValue()
+    var feedList = prefs.feedList.onGetValue()
+    var results by rememberSaveable {
+        mutableStateOf(listOf<SavedFeedModel>())
+    }
 
     ViewWithActionBar(
         title = title,
         onBackAction = {
-            /*feedList = feedList + results.map { it.asJson().toString() }.toSet()
-            prefs.feedList.onSetValue(feedList)*/
+            feedList = feedList + results.map { it.asJson().toString() }.toSet()
+            prefs.feedList.onSetValue(feedList)
         }
     ) { paddingValues ->
-        var results by rememberSaveable {
-            mutableStateOf(listOf<SavedFeedModel>())
-        }
         var currentlySearching by rememberSaveable {
             mutableStateOf(false)
         }
