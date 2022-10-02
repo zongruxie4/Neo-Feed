@@ -160,7 +160,7 @@ fun MainScreen() {
                 ) {
                     Icon(
                         imageVector = Icons.Default.Add,
-                        contentDescription = stringResource(id = R.string.manager_add),
+                        contentDescription = "",
                         tint = MaterialTheme.colorScheme.onPrimary
                     )
                 }
