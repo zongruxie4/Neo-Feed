@@ -3,9 +3,9 @@ package com.saulhdev.feeder.models
 import org.json.JSONObject
 
 data class SavedFeedModel(
-    val title: String,
-    val description: String,
-    val url: String,
+    var title: String,
+    var description: String,
+    var url: String,
     val feedImage: String = "",
     val isError: Boolean = false,
 ) {
