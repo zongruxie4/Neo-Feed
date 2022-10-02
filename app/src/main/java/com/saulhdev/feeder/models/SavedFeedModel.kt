@@ -6,19 +6,22 @@ data class SavedFeedModel(
     val title: String,
     val description: String,
     val url: String,
-    val feedImage: String = ""
+    val feedImage: String = "",
+    val isError: Boolean = false,
 ) {
     constructor(obj: JSONObject) : this(
-        obj.getString("name"),
-        obj.getString("desc"),
-        obj.getString("feed_url"),
-        obj.getString("pic_url")
+        obj.getString("title"),
+        obj.getString("description"),
+        obj.getString("url"),
+        obj.getString("feedImage"),
+        obj.getBoolean("isError")
     )
 
     fun asJson() = JSONObject().apply {
-        put("name", title)
-        put("desc", description)
-        put("feed_url", url)
-        put("pic_url", feedImage)
+        put("title", title)
+        put("description", description)
+        put("url", url)
+        put("feedImage", feedImage)
+        put("isError", isError)
     }
 }
