@@ -105,7 +105,10 @@ fun SourcesPage() {
             modifier = Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
-                .padding(8.dp)
+                .padding(
+                    top = paddingValues.calculateTopPadding(),
+                    bottom = paddingValues.calculateBottomPadding(), start = 8.dp, end = 8.dp
+                )
         ) {
             val prefs = FeedPreferences(context)
             val feedList = prefs.feedList.onGetValue().map { SavedFeedModel(JSONObject(it)) }
@@ -115,12 +118,7 @@ fun SourcesPage() {
             val navController = LocalNavController.current
             Spacer(modifier = Modifier.height(8.dp))
 
-            LazyColumn(
-                modifier = Modifier.padding(
-                    top = paddingValues.calculateTopPadding(),
-                    bottom = paddingValues.calculateBottomPadding(), start = 8.dp, end = 8.dp
-                )
-            ) {
+            LazyColumn {
                 items(rssList.value) { item ->
                     FeedItem(
                         feedTitle = item.title,
