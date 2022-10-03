@@ -107,7 +107,6 @@ fun SourcesPage() {
                 .background(MaterialTheme.colorScheme.background)
                 .padding(8.dp)
         ) {
-            val context = LocalContext.current
             val prefs = FeedPreferences(context)
             val feedList = prefs.feedList.onGetValue().map { SavedFeedModel(JSONObject(it)) }
             val rssList = remember { mutableStateOf(feedList) }
