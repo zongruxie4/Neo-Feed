@@ -55,7 +55,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import com.saulhdev.feeder.ComposeActivity
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.compose.components.FeedItem
 import com.saulhdev.feeder.compose.components.ViewWithActionBar
@@ -64,30 +63,20 @@ import com.saulhdev.feeder.compose.navigation.Routes
 import com.saulhdev.feeder.models.SavedFeedModel
 import com.saulhdev.feeder.preference.FeedPreferences
 import com.saulhdev.feeder.utils.urlEncode
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import org.json.JSONObject
 
 @Composable
 fun SourcesPage() {
-
     val title = stringResource(id = R.string.title_sources)
     val context = LocalContext.current
-    val scope = CoroutineScope(Dispatchers.Main)
+    val navController = LocalNavController.current
+
     ViewWithActionBar(
         title = title,
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    scope.launch {
-                        context.startActivity(
-                            ComposeActivity.createIntent(
-                                context,
-                                "${Routes.ADD_FEED}/"
-                            )
-                        )
-                    }
+                    navController.navigate("/${Routes.ADD_FEED}/")
                 },
                 modifier = Modifier.padding(16.dp),
                 backgroundColor = MaterialTheme.colorScheme.primary
@@ -110,12 +99,11 @@ fun SourcesPage() {
                     bottom = paddingValues.calculateBottomPadding(), start = 8.dp, end = 8.dp
                 )
         ) {
+            val showDialog = remember { mutableStateOf(false) }
+
             val prefs = FeedPreferences(context)
             val feedList = prefs.feedList.onGetValue().map { SavedFeedModel(JSONObject(it)) }
             val rssList = remember { mutableStateOf(feedList) }
-            val showDialog = remember { mutableStateOf(false) }
-
-            val navController = LocalNavController.current
             Spacer(modifier = Modifier.height(8.dp))
 
             LazyColumn {
