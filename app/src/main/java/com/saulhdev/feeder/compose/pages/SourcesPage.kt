@@ -60,6 +60,7 @@ import com.saulhdev.feeder.R
 import com.saulhdev.feeder.compose.components.FeedItem
 import com.saulhdev.feeder.compose.components.ViewWithActionBar
 import com.saulhdev.feeder.compose.navigation.LocalNavController
+import com.saulhdev.feeder.compose.navigation.Routes
 import com.saulhdev.feeder.models.SavedFeedModel
 import com.saulhdev.feeder.preference.FeedPreferences
 import com.saulhdev.feeder.utils.urlEncode
@@ -74,7 +75,6 @@ fun SourcesPage() {
     val title = stringResource(id = R.string.title_sources)
     val context = LocalContext.current
     val scope = CoroutineScope(Dispatchers.Main)
-
     ViewWithActionBar(
         title = title,
         floatingActionButton = {
@@ -84,7 +84,7 @@ fun SourcesPage() {
                         context.startActivity(
                             ComposeActivity.createIntent(
                                 context,
-                                "add_feed"
+                                "${Routes.ADD_FEED}/"
                             )
                         )
                     }
