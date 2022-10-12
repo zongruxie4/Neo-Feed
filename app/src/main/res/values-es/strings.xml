@@ -50,4 +50,17 @@
     <string name="pref_syscolors">Usar los colores del walpaper del sistema</string>
     <string name="theme_auto_launcher">Automaticamente (desde el Launcher)</string>
     <string name="theme_auto_system">Automaticamente (desde el Sistema)</string>
+    <string name="pref_transparency">Transparencia de fondo superpuesta</string>
+    <string name="pref_ovr_theme">tema de superposición</string>
+    <string name="pref_bg_color">Fondo superpuesto</string>
+    <string name="pref_card_bg">Fondo de la tarjeta</string>
+    <string name="pref_compact">Disposición compacta de los artículos</string>
+    <string name="pref_syscolors_desc">en lugar de las opciones \"Launcher:\"</string>
+    <string name="pm_desc">HomeFeeder los usa para mostrar datos</string>
+    <string name="add_input_hint">URL</string>
+    <string name="remove_desc">¿Realmente quieres eliminar %s de las fuentes\?</string>
+    <string name="news_image_text">imagen de la noticia</string>
+    <string name="title_feed_list">Lista de feed</string>
+    <string name="debug_logcat_printing">Muestra ampliada del registro de los mensajes del sistema</string>
+    <string name="debug_content_printing">Registrar el contenido de la notificación</string>
 </resources>
