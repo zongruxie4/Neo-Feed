@@ -41,7 +41,7 @@
     <string name="add_rss">Add new RSS</string>
     <string name="failed_to_parse">Could not parse %1$s</string>
     <string name="edit_rss">Edit Feed Item</string>
-    <string name="add_input_hint">URL</string>
+    <string name="add_input_hint" translatable="false">URL</string>
     <string name="title">Title</string>
     <string name="description">Description</string>
     <string name="add_feed_search_hint">Feed URL</string>
