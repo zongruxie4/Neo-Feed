@@ -18,6 +18,7 @@
 
 package com.saulhdev.feeder.compose.pages
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -87,6 +88,12 @@ fun AddFeedPage() {
     var feedList = prefs.feedList.onGetValue()
     var results by rememberSaveable {
         mutableStateOf(listOf<SavedFeedModel>())
+    }
+
+    BackHandler {
+        feedList = feedList + results.map { it.asJson().toString() }.toSet()
+        prefs.feedList.onSetValue(feedList)
+        navController.popBackStack()
     }
 
     ViewWithActionBar(
