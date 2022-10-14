@@ -56,4 +56,13 @@
     <string name="background_primary_color">Launcher: colore primario</string>
     <string name="background_secondary_color">Launcher: colore secondario</string>
     <string name="background_tertiary_color">Launcher: colore terziario</string>
+    <string name="summary_sources">Aggiungi o rimuovi fonti</string>
+    <string name="edit_rss">Modifica elemento feed</string>
+    <string name="title">Titolo</string>
+    <string name="invalid_url">URL non valido</string>
+    <string name="add_rss">Aggiungi nuovo RSS</string>
+    <string name="description">Descrizione</string>
+    <string name="failed_to_parse">Impossibile analizzare %1$s</string>
+    <string name="add_feed_search_hint">URL del feed</string>
+    <string name="go_back">Torna indietro</string>
 </resources>
