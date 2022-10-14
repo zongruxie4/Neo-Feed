@@ -17,6 +17,9 @@
     <string name="tomorrow">tomorrow</string>
     <string name="yesterday">yesterday</string>
     <string name="pref_cat_contact">Contacts</string>
+    <string name="about_licenses">License</string>
+    <string name="about_changelog">Changelog</string>
+    <string name="about_open_source">Open Source Libraries</string>
     <string name="pref_tg">Telegram channel</string>
     <string name="pref_tg_author" translatable="false">Developer</string>
     <string name="pref_git">Source code</string>
