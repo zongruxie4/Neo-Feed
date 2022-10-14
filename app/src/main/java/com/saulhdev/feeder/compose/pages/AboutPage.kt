@@ -18,8 +18,15 @@
 
 package com.saulhdev.feeder.compose.pages
 
+import android.content.ActivityNotFoundException
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.util.Base64
+import android.view.ViewGroup
+import android.webkit.WebResourceRequest
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -28,6 +35,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -43,12 +51,19 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.net.toUri
+import androidx.navigation.NavGraphBuilder
 import com.saulhdev.feeder.BuildConfig
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.compose.components.PreferenceGroup
 import com.saulhdev.feeder.compose.components.ViewWithActionBar
+import com.saulhdev.feeder.compose.navigation.Routes
+import com.saulhdev.feeder.compose.navigation.preferenceGraph
 import com.saulhdev.feeder.preference.FeedPreferences
+import java.io.InputStream
 
 @Composable
 fun AboutPage() {
@@ -138,8 +153,101 @@ fun AboutPage() {
                         stringResource(id = R.string.pref_cat_contact),
                         prefs = aboutInfo
                     )
+
+                    PreferenceGroup(
+                        heading = stringResource(id = R.string.about_licenses),
+                        prefs = listOf(prefs.aboutLicense, prefs.aboutChangelog)
+                    )
                 }
             }
         }
+    }
+}
+
+@Composable
+fun LicenseScreen() {
+    ViewWithActionBar(
+        title = stringResource(R.string.about_open_source),
+    ) {
+        ComposableWebView(url = "file:///android_asset/license.htm")
+    }
+}
+
+@Composable
+fun ChangelogScreen() {
+    ViewWithActionBar(
+        title = stringResource(R.string.about_changelog),
+    ) {
+        ComposableWebView(url = "file:///android_asset/changelog.htm")
+        Spacer(modifier = Modifier.requiredHeight(50.dp))
+    }
+}
+
+@Composable
+fun ComposableWebView(url: String) {
+
+    val cssFile = "light.css"
+    AndroidView(
+        factory = { context ->
+            WebView(context).apply {
+                layoutParams = ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT
+                )
+
+                webViewClient = object : WebViewClient() {
+                    override fun onPageFinished(view: WebView, url: String) {
+                        if (url.startsWith("file:///android_asset")) {
+                            try {
+                                settings.javaScriptEnabled = true
+                                val inputStream: InputStream = context.assets.open(cssFile)
+                                val buffer = ByteArray(inputStream.available())
+                                inputStream.read(buffer)
+                                inputStream.close()
+                                val encoded = Base64.encodeToString(buffer, Base64.NO_WRAP)
+                                loadUrl(
+                                    "javascript:(function() { " +
+                                            "var head  = document.getElementsByTagName('head')[0];" +
+                                            "var style = document.createElement('style');" +
+                                            "style.type = 'text/css';" +
+                                            "style.innerHTML =  window.atob('" + encoded + "');" +
+                                            "head.appendChild(style);" +
+                                            "})()"
+                                )
+                                settings.javaScriptEnabled = false
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                            }
+                        }
+                        super.onPageFinished(view, url)
+                    }
+
+                    override fun shouldOverrideUrlLoading(
+                        view: WebView,
+                        request: WebResourceRequest
+                    ): Boolean {
+                        if (url.contains("file://")) {
+                            view.loadUrl(url)
+                        } else {
+                            val intent = Intent(Intent.ACTION_VIEW, url.toUri())
+                            try {
+                                ContextCompat.startActivity(context, intent, null)
+                            } catch (e: ActivityNotFoundException) {
+                                view.loadUrl(url)
+                            }
+                        }
+                        return true
+                    }
+                }
+            }
+        },
+        update = { webView -> webView.loadUrl(url) }
+    )
+}
+
+fun NavGraphBuilder.aboutGraph(route: String) {
+    preferenceGraph(route, { AboutPage() }) { subRoute ->
+        preferenceGraph(route = Routes.LICENSE, { LicenseScreen() })
+        preferenceGraph(route = subRoute(Routes.CHANGELOG), { ChangelogScreen() })
     }
 }
