@@ -6,8 +6,8 @@ apply plugin: 'kotlin-parcelize'
 
 android {
     compileSdkVersion 33
-    def name = "1.4.1"
-    def code = 37
+    def name = "1.4.2"
+    def code = 39
 
     defaultConfig {
         applicationId "com.saulhdev.neofeed"
@@ -32,6 +32,14 @@ android {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    sourceSets {
+        main {
+            java.srcDirs = ['src/main/java']
+            assets.srcDirs = ['assets']
+            res.srcDirs = ['src/main/res']
         }
     }
 
