@@ -42,6 +42,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -104,6 +105,8 @@ fun SourcesPage() {
             val prefs = FeedPreferences(context)
             val feedList = prefs.feedList.onGetValue().map { SavedFeedModel(JSONObject(it)) }
             val rssList = remember { mutableStateOf(feedList) }
+            val removeItem: MutableState<SavedFeedModel> =
+                remember { mutableStateOf(feedList.first()) }
             Spacer(modifier = Modifier.height(8.dp))
 
             LazyColumn {
@@ -117,6 +120,7 @@ fun SourcesPage() {
                         },
                         onRemoveAction = {
                             showDialog.value = true
+                            removeItem.value = item
                         }
                     )
                     if (showDialog.value) {
@@ -157,7 +161,7 @@ fun SourcesPage() {
                                         Text(
                                             text = stringResource(
                                                 id = R.string.remove_desc,
-                                                item.title
+                                                removeItem.value.title
                                             ),
                                             style = TextStyle(
                                                 fontSize = 16.sp,
@@ -187,7 +191,7 @@ fun SourcesPage() {
                                             TextButton(
                                                 shape = RoundedCornerShape(16.dp),
                                                 onClick = {
-                                                    rssList.value = rssList.value - item
+                                                    rssList.value = rssList.value - removeItem.value
                                                     val stringSet = rssList.value.map {
                                                         it.asJson().toString()
                                                     }.toSet()
