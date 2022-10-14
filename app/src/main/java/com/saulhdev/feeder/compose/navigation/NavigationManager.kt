@@ -19,13 +19,9 @@
 package com.saulhdev.feeder.compose.navigation
 
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.staticCompositionLocalOf
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
@@ -35,11 +31,11 @@ import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
-import com.saulhdev.feeder.compose.pages.AboutPage
 import com.saulhdev.feeder.compose.pages.AddFeedPage
 import com.saulhdev.feeder.compose.pages.PreferencesPage
 import com.saulhdev.feeder.compose.pages.SourcesPage
 import com.saulhdev.feeder.compose.pages.WebViewPage
+import com.saulhdev.feeder.compose.pages.aboutGraph
 import com.saulhdev.feeder.compose.pages.editFeedGraph
 import soup.compose.material.motion.materialSharedAxisX
 
@@ -67,7 +63,7 @@ fun NavigationManager(navController: NavHostController) {
             preferenceGraph(route = "/", { PreferencesPage() }) { subRoute ->
                 preferenceGraph(route = subRoute(Routes.SETTINGS), { PreferencesPage() })
                 preferenceGraph(route = subRoute(Routes.SOURCES), { SourcesPage() })
-                preferenceGraph(route = subRoute(Routes.ABOUT), { AboutPage() })
+                aboutGraph(route = subRoute(Routes.ABOUT))
                 preferenceGraph(route = subRoute(Routes.ADD_FEED), { AddFeedPage() })
                 editFeedGraph(route = subRoute(Routes.EDIT_FEED))
                 preferenceGraph(route = Routes.WEB_VIEW, {}) {
@@ -87,16 +83,6 @@ fun NavigationManager(navController: NavHostController) {
     }
 }
 
-@Composable
-fun BlankScreen() {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .fillMaxHeight()
-    ) {
-    }
-}
-
 object Routes {
     const val SETTINGS = "settings"
     const val SOURCES = "sources"
@@ -104,4 +90,6 @@ object Routes {
     const val ADD_FEED = "add_feed"
     const val EDIT_FEED = "edit_feed"
     const val WEB_VIEW = "web_view"
+    const val LICENSE = "license"
+    const val CHANGELOG = "changelog"
 }
