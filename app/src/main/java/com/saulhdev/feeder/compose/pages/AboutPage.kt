@@ -154,10 +154,10 @@ fun AboutPage() {
                         prefs = aboutInfo
                     )
 
-                    PreferenceGroup(
+                    /*PreferenceGroup(
                         heading = stringResource(id = R.string.about_licenses),
                         prefs = listOf(prefs.aboutLicense, prefs.aboutChangelog)
-                    )
+                    )*/
                 }
             }
         }
