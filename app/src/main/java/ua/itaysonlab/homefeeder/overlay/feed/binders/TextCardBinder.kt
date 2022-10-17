@@ -4,9 +4,9 @@ import android.util.SparseIntArray
 import android.view.View
 import com.saulhdev.feeder.NFApplication
 import com.saulhdev.feeder.databinding.NotificationGenericContentBinding
+import com.saulhdev.feeder.utils.RelativeTimeHelper
 import ua.itaysonlab.hfsdk.FeedItem
 import ua.itaysonlab.hfsdk.content.TextCardContent
-import ua.itaysonlab.homefeeder.utils.RelativeTimeHelper
 
 object TextCardBinder: FeedBinder {
     override fun bind(theme: SparseIntArray?, item: FeedItem, view: View) {

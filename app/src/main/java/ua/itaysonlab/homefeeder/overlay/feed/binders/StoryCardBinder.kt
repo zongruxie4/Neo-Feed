@@ -7,9 +7,9 @@ import android.util.SparseIntArray
 import android.view.View
 import coil.load
 import com.saulhdev.feeder.databinding.FeedCardStoryLargeBinding
+import com.saulhdev.feeder.utils.RelativeTimeHelper
 import ua.itaysonlab.hfsdk.FeedItem
 import ua.itaysonlab.hfsdk.content.StoryCardContent
-import ua.itaysonlab.homefeeder.utils.RelativeTimeHelper
 
 object StoryCardBinder: FeedBinder {
     override fun bind(theme: SparseIntArray?, item: FeedItem, view: View) {
