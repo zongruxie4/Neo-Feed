@@ -9,13 +9,13 @@ import android.util.Log
 import android.util.SparseIntArray
 import androidx.annotation.ColorInt
 import androidx.core.content.ContextCompat
+import com.saulhdev.feeder.NFApplication
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.overlay.OverlayView
 import com.saulhdev.feeder.preference.FeedPreferences
 import com.saulhdev.feeder.utils.clearLightFlags
 import com.saulhdev.feeder.utils.isLight
 import com.saulhdev.feeder.utils.toInt
-import ua.itaysonlab.homefeeder.HFApplication
 import ua.itaysonlab.homefeeder.theming.Theming
 
 /**
@@ -132,7 +132,8 @@ class OverlayThemeHolder(private val context: Context, private val overlay: Over
         @TargetApi(Build.VERSION_CODES.O_MR1)
         fun primaryWallColor(): Int {
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O_MR1) return Color.BLACK
-            val wc = WallpaperManager.getInstance(HFApplication.instance).getWallpaperColors(WallpaperManager.FLAG_SYSTEM)
+            val wc = WallpaperManager.getInstance(NFApplication.instance)
+                .getWallpaperColors(WallpaperManager.FLAG_SYSTEM)
             wc ?: Color.BLACK
             return wc!!.primaryColor.toInt()
         }
@@ -141,7 +142,8 @@ class OverlayThemeHolder(private val context: Context, private val overlay: Over
         @TargetApi(Build.VERSION_CODES.O_MR1)
         fun secondaryWallColor(): Int {
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O_MR1) return Color.BLACK
-            val wc = WallpaperManager.getInstance(HFApplication.instance).getWallpaperColors(WallpaperManager.FLAG_SYSTEM)
+            val wc = WallpaperManager.getInstance(NFApplication.instance)
+                .getWallpaperColors(WallpaperManager.FLAG_SYSTEM)
             wc ?: Color.BLACK
             return wc!!.secondaryColor.toInt()
         }
@@ -150,7 +152,8 @@ class OverlayThemeHolder(private val context: Context, private val overlay: Over
         @TargetApi(Build.VERSION_CODES.O_MR1)
         fun tertiaryWallColor(): Int {
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O_MR1) return Color.BLACK
-            val wc = WallpaperManager.getInstance(HFApplication.instance).getWallpaperColors(WallpaperManager.FLAG_SYSTEM)
+            val wc = WallpaperManager.getInstance(NFApplication.instance)
+                .getWallpaperColors(WallpaperManager.FLAG_SYSTEM)
             wc ?: Color.BLACK
             wc?.tertiaryColor ?: Color.BLACK
             return wc!!.tertiaryColor.toInt()

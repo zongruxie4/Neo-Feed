@@ -25,6 +25,10 @@
     *;
 }
 
+-keep class org.slf4j.impl.StaticLoggerBinder.** {
+    *;
+}
+
 -repackageclasses "hfcore"
 
 # For Rome

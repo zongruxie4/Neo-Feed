@@ -2,10 +2,10 @@ package ua.itaysonlab.homefeeder.overlay.feed.binders
 
 import android.util.SparseIntArray
 import android.view.View
+import com.saulhdev.feeder.NFApplication
 import com.saulhdev.feeder.databinding.NotificationGenericContentBinding
 import ua.itaysonlab.hfsdk.FeedItem
 import ua.itaysonlab.hfsdk.content.TextCardContent
-import ua.itaysonlab.homefeeder.HFApplication
 import ua.itaysonlab.homefeeder.utils.RelativeTimeHelper
 
 object TextCardBinder: FeedBinder {
@@ -30,6 +30,9 @@ object TextCardBinder: FeedBinder {
 
         binding.notAppName.text = item.title
         binding.notAppIcon.visibility = View.GONE
-        binding.notAppDate.text = RelativeTimeHelper.getDateFormattedRelative(HFApplication.instance, (item.time/1000) - 1000)
+        binding.notAppDate.text = RelativeTimeHelper.getDateFormattedRelative(
+            NFApplication.instance,
+            (item.time / 1000) - 1000
+        )
     }
 }

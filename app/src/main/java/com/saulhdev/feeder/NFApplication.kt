@@ -1,11 +1,11 @@
-package ua.itaysonlab.homefeeder
+package com.saulhdev.feeder
 
 import com.jakewharton.threetenabp.AndroidThreeTen
 import com.saulhdev.feeder.utils.OverlayBridge
 import ua.itaysonlab.hfsdk.HFPluginApplication
 import ua.itaysonlab.homefeeder.pluginsystem.PluginFetcher
 
-class HFApplication : HFPluginApplication() {
+class NFApplication : HFPluginApplication() {
     override fun onCreate() {
         super.onCreate()
         AndroidThreeTen.init(this)
@@ -15,7 +15,7 @@ class HFApplication : HFPluginApplication() {
 
     companion object {
 
-        lateinit var instance: HFApplication
+        lateinit var instance: NFApplication
         val bridge = OverlayBridge()
     }
 }

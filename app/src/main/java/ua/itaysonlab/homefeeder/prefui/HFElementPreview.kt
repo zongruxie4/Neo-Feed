@@ -17,11 +17,11 @@ import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.preference.Preference
 import androidx.preference.PreferenceViewHolder
+import com.saulhdev.feeder.NFApplication
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.databinding.FeedCardTextBinding
 import com.saulhdev.feeder.preference.FeedPreferences
 import com.saulhdev.feeder.utils.isDark
-import ua.itaysonlab.homefeeder.HFApplication
 import ua.itaysonlab.homefeeder.overlay.launcherapi.OverlayThemeHolder
 import ua.itaysonlab.homefeeder.theming.Theming
 
@@ -138,7 +138,7 @@ class HFElementPreview @JvmOverloads constructor(
         if (ContextCompat.checkSelfPermission(view.context, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
             view.findViewById<ImageView>(R.id.wallpaper_preview).setImageDrawable(
                 WallpaperManager.getInstance(
-                    HFApplication.instance
+                    NFApplication.instance
                 ).drawable
             )
         }

@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.libraries.gsa.d.a.OverlayController
 import com.saulhdev.feeder.MainActivity
+import com.saulhdev.feeder.NFApplication
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.preference.FeedPreferences
 import com.saulhdev.feeder.utils.OverlayBridge
@@ -22,7 +23,6 @@ import com.saulhdev.feeder.utils.clearLightFlags
 import com.saulhdev.feeder.utils.isDark
 import com.saulhdev.feeder.utils.setLightFlags
 import ua.itaysonlab.hfsdk.FeedItem
-import ua.itaysonlab.homefeeder.HFApplication
 import ua.itaysonlab.homefeeder.overlay.feed.FeedAdapter
 import ua.itaysonlab.homefeeder.overlay.launcherapi.LauncherAPI
 import ua.itaysonlab.homefeeder.overlay.launcherapi.OverlayThemeHolder
@@ -122,8 +122,8 @@ class OverlayView(val context: Context) :
             popup.dismiss()
             when (it.id) {
                 "config" -> {
-                    HFApplication.instance.startActivity(
-                        Intent(HFApplication.instance, MainActivity::class.java).addFlags(
+                    NFApplication.instance.startActivity(
+                        Intent(NFApplication.instance, MainActivity::class.java).addFlags(
                             Intent.FLAG_ACTIVITY_NEW_TASK
                         )
                     )
@@ -158,7 +158,7 @@ class OverlayView(val context: Context) :
         initRecyclerView()
         initHeader()
         refreshNotifications()
-        HFApplication.bridge.setCallback(this)
+        NFApplication.bridge.setCallback(this)
     }
 
     private fun refreshNotifications() {
@@ -175,7 +175,7 @@ class OverlayView(val context: Context) :
 
     override fun onDestroy() {
         super.onDestroy()
-        HFApplication.bridge.setCallback(null)
+        NFApplication.bridge.setCallback(null)
     }
 
     override fun onScroll(f: Float) {

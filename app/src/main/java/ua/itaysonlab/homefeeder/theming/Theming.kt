@@ -4,8 +4,8 @@ import android.content.Context
 import android.content.res.Configuration
 import android.util.SparseIntArray
 import androidx.core.content.ContextCompat
+import com.saulhdev.feeder.NFApplication
 import com.saulhdev.feeder.R
-import ua.itaysonlab.homefeeder.HFApplication
 
 object Theming {
     val defaultLightThemeColors = createLightTheme()
@@ -14,10 +14,22 @@ object Theming {
     private fun createLightTheme(): SparseIntArray {
         return SparseIntArray().apply {
             addBasicThings(this)
-            put(Colors.CARD_BG.ordinal, ContextCompat.getColor(HFApplication.instance, R.color.card_bg))
-            put(Colors.TEXT_COLOR_PRIMARY.ordinal, ContextCompat.getColor(HFApplication.instance, R.color.text_color_primary))
-            put(Colors.TEXT_COLOR_SECONDARY.ordinal, ContextCompat.getColor(HFApplication.instance, R.color.text_color_secondary))
-            put(Colors.OVERLAY_BG.ordinal, ContextCompat.getColor(HFApplication.instance, R.color.bg_overlay))
+            put(
+                Colors.CARD_BG.ordinal,
+                ContextCompat.getColor(NFApplication.instance, R.color.card_bg)
+            )
+            put(
+                Colors.TEXT_COLOR_PRIMARY.ordinal,
+                ContextCompat.getColor(NFApplication.instance, R.color.text_color_primary)
+            )
+            put(
+                Colors.TEXT_COLOR_SECONDARY.ordinal,
+                ContextCompat.getColor(NFApplication.instance, R.color.text_color_secondary)
+            )
+            put(
+                Colors.OVERLAY_BG.ordinal,
+                ContextCompat.getColor(NFApplication.instance, R.color.bg_overlay)
+            )
             put(Colors.IS_LIGHT.ordinal, 1)
         }
     }
@@ -25,17 +37,32 @@ object Theming {
     private fun createDarkTheme(): SparseIntArray {
         return SparseIntArray().apply {
             addBasicThings(this)
-            put(Colors.CARD_BG.ordinal, ContextCompat.getColor(HFApplication.instance, R.color.card_bg_dark))
-            put(Colors.TEXT_COLOR_PRIMARY.ordinal, ContextCompat.getColor(HFApplication.instance, R.color.text_color_primary_dark))
-            put(Colors.TEXT_COLOR_SECONDARY.ordinal, ContextCompat.getColor(HFApplication.instance, R.color.text_color_secondary_dark))
-            put(Colors.OVERLAY_BG.ordinal, ContextCompat.getColor(HFApplication.instance, R.color.bg_dark))
+            put(
+                Colors.CARD_BG.ordinal,
+                ContextCompat.getColor(NFApplication.instance, R.color.card_bg_dark)
+            )
+            put(
+                Colors.TEXT_COLOR_PRIMARY.ordinal,
+                ContextCompat.getColor(NFApplication.instance, R.color.text_color_primary_dark)
+            )
+            put(
+                Colors.TEXT_COLOR_SECONDARY.ordinal,
+                ContextCompat.getColor(NFApplication.instance, R.color.text_color_secondary_dark)
+            )
+            put(
+                Colors.OVERLAY_BG.ordinal,
+                ContextCompat.getColor(NFApplication.instance, R.color.bg_dark)
+            )
             put(Colors.IS_LIGHT.ordinal, 0)
         }
     }
 
     private fun addBasicThings(array: SparseIntArray): SparseIntArray {
         return array.apply {
-            put(Colors.ACCENT_COLOR.ordinal, ContextCompat.getColor(HFApplication.instance, R.color.globalAccent))
+            put(
+                Colors.ACCENT_COLOR.ordinal,
+                ContextCompat.getColor(NFApplication.instance, R.color.globalAccent)
+            )
         }
     }
 

@@ -4,8 +4,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.util.Log
+import com.saulhdev.feeder.NFApplication
 import com.saulhdev.feeder.preference.FeedPreferences
-import ua.itaysonlab.homefeeder.HFApplication
 
 object PluginFetcher {
     // List of available packages.
@@ -40,7 +40,7 @@ object PluginFetcher {
             Pair(it.serviceInfo.packageName, it.serviceInfo.metaData)
         }
 
-        val prefs = FeedPreferences(HFApplication.instance)
+        val prefs = FeedPreferences(NFApplication.instance)
         if (prefs.debugging.onGetValue()) {
             Log.d("PluginFetcher", "Packages that has service: $hasService")
         }

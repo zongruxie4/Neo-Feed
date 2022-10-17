@@ -8,12 +8,12 @@ import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
 import android.util.Log
+import com.saulhdev.feeder.NFApplication
 import com.saulhdev.feeder.preference.FeedPreferences
 import ua.itaysonlab.hfsdk.FeedCategory
 import ua.itaysonlab.hfsdk.FeedItem
 import ua.itaysonlab.hfsdk.IFeedInterface
 import ua.itaysonlab.hfsdk.IFeedInterfaceCallback
-import ua.itaysonlab.homefeeder.HFApplication
 
 object PluginConnector {
     const val TAG = "PluginConnector"
@@ -51,7 +51,7 @@ object PluginConnector {
         val intent = Intent("$pkg.HFPluginService")
         intent.action = PluginFetcher.INTENT_ACTION_SERVICE
         intent.setPackage(pkg)
-        HFApplication.instance.bindService(intent, serviceConnection, Service.BIND_AUTO_CREATE)
+        NFApplication.instance.bindService(intent, serviceConnection, Service.BIND_AUTO_CREATE)
     }
 
     fun clear() {
@@ -101,7 +101,7 @@ object PluginConnector {
 
     private fun chainLoad(cb: IFeedInterfaceCallback) {
         index = 0
-        val prefs = FeedPreferences(HFApplication.instance)
+        val prefs = FeedPreferences(NFApplication.instance)
         serviceSize = prefs.enabledPlugins.onGetValue().size
         prefs.enabledPlugins.onGetValue().forEach {
             callbacks[it] = cb
