@@ -55,14 +55,12 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.net.toUri
-import androidx.navigation.NavGraphBuilder
 import com.saulhdev.feeder.BuildConfig
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.compose.components.PreferenceGroup
 import com.saulhdev.feeder.compose.components.ViewWithActionBar
-import com.saulhdev.feeder.compose.navigation.Routes
-import com.saulhdev.feeder.compose.navigation.preferenceGraph
 import com.saulhdev.feeder.preference.FeedPreferences
+import com.saulhdev.feeder.utils.urlDecode
 import java.io.InputStream
 
 @Composable
@@ -154,10 +152,10 @@ fun AboutPage() {
                         prefs = aboutInfo
                     )
 
-                    /*PreferenceGroup(
+                    PreferenceGroup(
                         heading = stringResource(id = R.string.about_licenses),
                         prefs = listOf(prefs.aboutLicense, prefs.aboutChangelog)
-                    )*/
+                    )
                 }
             }
         }
@@ -219,7 +217,7 @@ fun ComposableWebView(url: String) {
                                 e.printStackTrace()
                             }
                         }
-                        super.onPageFinished(view, url)
+                        super.onPageFinished(view, url.urlDecode())
                     }
 
                     override fun shouldOverrideUrlLoading(
@@ -229,7 +227,7 @@ fun ComposableWebView(url: String) {
                         if (url.contains("file://")) {
                             view.loadUrl(url)
                         } else {
-                            val intent = Intent(Intent.ACTION_VIEW, url.toUri())
+                            val intent = Intent(Intent.ACTION_VIEW, url.urlDecode().toUri())
                             try {
                                 ContextCompat.startActivity(context, intent, null)
                             } catch (e: ActivityNotFoundException) {
@@ -241,13 +239,6 @@ fun ComposableWebView(url: String) {
                 }
             }
         },
-        update = { webView -> webView.loadUrl(url) }
+        update = { webView -> webView.loadUrl(url.urlDecode()) }
     )
-}
-
-fun NavGraphBuilder.aboutGraph(route: String) {
-    preferenceGraph(route, { AboutPage() }) { subRoute ->
-        preferenceGraph(route = Routes.LICENSE, { LicenseScreen() })
-        preferenceGraph(route = subRoute(Routes.CHANGELOG), { ChangelogScreen() })
-    }
 }

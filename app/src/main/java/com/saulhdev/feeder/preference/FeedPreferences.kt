@@ -183,14 +183,14 @@ class FeedPreferences(val context: Context) {
         key = "pref_license",
         titleId = R.string.about_licenses,
         icon = R.drawable.ic_copyright,
-        route = "/${Routes.LICENSE}/",
+        route = Routes.LICENSE,
     )
 
     var aboutChangelog = StringPref(
         key = "pref_changelog",
         titleId = R.string.about_changelog,
         icon = R.drawable.ic_list,
-        route = "/${Routes.CHANGELOG}/",
+        route = Routes.CHANGELOG,
     )
 
     /*HELPER CLASSES FOR PREFERENCES*/
