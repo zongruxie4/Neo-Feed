@@ -1,4 +1,4 @@
-package com.saulhdev.feeder
+package com.saulhdev.feeder.overlay
 
 import android.app.Service
 import android.content.Intent

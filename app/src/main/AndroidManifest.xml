@@ -119,7 +119,7 @@
         </activity>
 
         <service
-            android:name=".DrawerOverlayService"
+            android:name=".overlay.DrawerOverlayService"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
