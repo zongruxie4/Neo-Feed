@@ -1,4 +1,4 @@
-package ua.itaysonlab.homefeeder.overlay.launcherapi
+package com.saulhdev.feeder.launcherapi
 
 import android.graphics.Color
 import android.os.Bundle

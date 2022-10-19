@@ -1,4 +1,4 @@
-package ua.itaysonlab.homefeeder.overlay.feed.binders
+package com.saulhdev.feeder.feed.binders
 
 import android.util.SparseIntArray
 import android.view.View

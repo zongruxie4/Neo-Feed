@@ -1,6 +1,10 @@
-package ua.itaysonlab.replica.vkpopup
+package com.saulhdev.feeder.vkpopup
 
-import android.animation.*
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
+import android.animation.RectEvaluator
 import android.content.res.Resources
 import android.graphics.Rect
 import android.os.Handler

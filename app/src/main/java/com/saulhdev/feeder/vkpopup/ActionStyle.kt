@@ -1,4 +1,4 @@
-package ua.itaysonlab.replica.vkpopup
+package com.saulhdev.feeder.vkpopup
 
 import android.graphics.drawable.Drawable
 import androidx.annotation.UiThread

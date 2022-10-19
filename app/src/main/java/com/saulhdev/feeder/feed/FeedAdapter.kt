@@ -1,4 +1,4 @@
-package ua.itaysonlab.homefeeder.overlay.feed
+package com.saulhdev.feeder.feed
 
 import android.util.SparseIntArray
 import android.view.LayoutInflater
@@ -6,11 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.saulhdev.feeder.R
+import com.saulhdev.feeder.feed.binders.StoryCardBinder
+import com.saulhdev.feeder.feed.binders.TextCardBinder
+import com.saulhdev.feeder.feed.binders.TextCardWithActionsBinder
 import ua.itaysonlab.hfsdk.FeedItem
 import ua.itaysonlab.hfsdk.FeedItemType
-import ua.itaysonlab.homefeeder.overlay.feed.binders.StoryCardBinder
-import ua.itaysonlab.homefeeder.overlay.feed.binders.TextCardBinder
-import ua.itaysonlab.homefeeder.overlay.feed.binders.TextCardWithActionsBinder
 
 class FeedAdapter: RecyclerView.Adapter<FeedAdapter.FeedViewHolder>() {
     private var list = listOf<FeedItem>()

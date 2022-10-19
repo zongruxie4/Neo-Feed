@@ -1,4 +1,4 @@
-package ua.itaysonlab.replica.vkpopup
+package com.saulhdev.feeder.vkpopup
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes

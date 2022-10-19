@@ -9,7 +9,7 @@
     android:backgroundTint="?android:windowBackground"
     android:padding="16dp">
 
-    <ua.itaysonlab.replica.vkpopup.VkLibActionsListView
+    <com.saulhdev.feeder.vkpopup.VkLibActionsListView
         android:id="@+id/dialog_actions_list_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

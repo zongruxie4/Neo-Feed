@@ -17,6 +17,9 @@ import com.google.android.libraries.gsa.d.a.OverlayController
 import com.saulhdev.feeder.MainActivity
 import com.saulhdev.feeder.NFApplication
 import com.saulhdev.feeder.R
+import com.saulhdev.feeder.feed.FeedAdapter
+import com.saulhdev.feeder.launcherapi.LauncherAPI
+import com.saulhdev.feeder.launcherapi.OverlayThemeHolder
 import com.saulhdev.feeder.plugin.PluginConnector
 import com.saulhdev.feeder.preference.FeedPreferences
 import com.saulhdev.feeder.theme.Theming
@@ -24,12 +27,9 @@ import com.saulhdev.feeder.utils.OverlayBridge
 import com.saulhdev.feeder.utils.clearLightFlags
 import com.saulhdev.feeder.utils.isDark
 import com.saulhdev.feeder.utils.setLightFlags
+import com.saulhdev.feeder.vkpopup.DialogActionsVcByPopup
+import com.saulhdev.feeder.vkpopup.PopupItem
 import ua.itaysonlab.hfsdk.FeedItem
-import ua.itaysonlab.homefeeder.overlay.feed.FeedAdapter
-import ua.itaysonlab.homefeeder.overlay.launcherapi.LauncherAPI
-import ua.itaysonlab.homefeeder.overlay.launcherapi.OverlayThemeHolder
-import ua.itaysonlab.replica.vkpopup.DialogActionsVcByPopup
-import ua.itaysonlab.replica.vkpopup.PopupItem
 
 class OverlayView(val context: Context) :
     OverlayController(context, R.style.AppTheme, R.style.WindowTheme),

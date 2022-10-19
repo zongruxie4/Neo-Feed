@@ -1,4 +1,4 @@
-package ua.itaysonlab.replica.vkpopup
+package com.saulhdev.feeder.vkpopup
 
 import android.content.Context
 import android.graphics.Canvas
