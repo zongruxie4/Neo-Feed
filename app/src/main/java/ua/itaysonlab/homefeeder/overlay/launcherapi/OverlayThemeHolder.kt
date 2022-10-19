@@ -13,10 +13,10 @@ import com.saulhdev.feeder.NFApplication
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.overlay.OverlayView
 import com.saulhdev.feeder.preference.FeedPreferences
+import com.saulhdev.feeder.theme.Theming
 import com.saulhdev.feeder.utils.clearLightFlags
 import com.saulhdev.feeder.utils.isLight
 import com.saulhdev.feeder.utils.toInt
-import ua.itaysonlab.homefeeder.theming.Theming
 
 /**
  * A class which manages overlay styling.

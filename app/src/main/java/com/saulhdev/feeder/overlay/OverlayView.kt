@@ -19,6 +19,7 @@ import com.saulhdev.feeder.NFApplication
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.plugin.PluginConnector
 import com.saulhdev.feeder.preference.FeedPreferences
+import com.saulhdev.feeder.theme.Theming
 import com.saulhdev.feeder.utils.OverlayBridge
 import com.saulhdev.feeder.utils.clearLightFlags
 import com.saulhdev.feeder.utils.isDark
@@ -27,7 +28,6 @@ import ua.itaysonlab.hfsdk.FeedItem
 import ua.itaysonlab.homefeeder.overlay.feed.FeedAdapter
 import ua.itaysonlab.homefeeder.overlay.launcherapi.LauncherAPI
 import ua.itaysonlab.homefeeder.overlay.launcherapi.OverlayThemeHolder
-import ua.itaysonlab.homefeeder.theming.Theming
 import ua.itaysonlab.replica.vkpopup.DialogActionsVcByPopup
 import ua.itaysonlab.replica.vkpopup.PopupItem
 

@@ -1,4 +1,4 @@
-package ua.itaysonlab.homefeeder.theming
+package com.saulhdev.feeder.theme
 
 import android.content.Context
 import android.content.res.Configuration
