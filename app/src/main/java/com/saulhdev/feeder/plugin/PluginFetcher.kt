@@ -1,4 +1,4 @@
-package ua.itaysonlab.homefeeder.pluginsystem
+package com.saulhdev.feeder.plugin
 
 import android.content.Context
 import android.content.Intent

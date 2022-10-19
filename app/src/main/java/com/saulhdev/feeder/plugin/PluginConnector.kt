@@ -1,4 +1,4 @@
-package ua.itaysonlab.homefeeder.pluginsystem
+package com.saulhdev.feeder.plugin
 
 import android.app.Service
 import android.content.ComponentName
