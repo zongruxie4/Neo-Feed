@@ -42,7 +42,7 @@
     <string name="invalid_url">El URL no es valido</string>
     <string name="go_back">Regresar</string>
     <string name="summary_sources">Agregar o remover origenes</string>
-    <string name="overlay_no_permission_desc">Neo Feeder necesita permiso de \"Acceso a Notificaciones\" para mostrar las notificaciones en el overlay.</string>
+    <string name="overlay_no_permission_desc">Neo Feeder necesita permiso de \"Acceso a Notificaciones\" para mostrar las notificaciones.</string>
     <string name="pref_cat_debug">Debug</string>
     <string name="overlay_no_permission">No se han garantizados los permisos</string>
     <string name="overlay_reload">Click aqui para recargar</string>
@@ -58,9 +58,13 @@
     <string name="pref_syscolors_desc">en lugar de las opciones \"Launcher:\"</string>
     <string name="pm_desc">HomeFeeder los usa para mostrar datos</string>
     <string name="add_input_hint">URL</string>
-    <string name="remove_desc">¿Realmente quieres eliminar %s de las fuentes\?</string>
+    <string name="remove_desc">¿Eliminar %s de las fuentes\?</string>
     <string name="news_image_text">imagen de la noticia</string>
     <string name="title_feed_list">Lista de feed</string>
     <string name="debug_logcat_printing">Muestra ampliada del registro de los mensajes del sistema</string>
     <string name="debug_content_printing">Registrar el contenido de la notificación</string>
+    <string name="about_licenses">Licencia</string>
+    <string name="about_changelog">Lista de Cambios</string>
+    <string name="about_open_source">Librerias Open Source</string>
+    <string name="pref_browser_theme">Abrir en el navegador</string>
 </resources>
