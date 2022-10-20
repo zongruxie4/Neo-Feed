@@ -1,47 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="title_settings">Настройки</string>
     <string name="title_about">О приложении</string>
     <string name="title_sources">Источники данных</string>
-
     <string name="date_ago_now">сейчас</string>
     <string name="date_at">в</string>
     <string name="date_at_1am">@string/date_at</string>
     <string name="today">сегодня</string>
     <string name="tomorrow">завтра</string>
     <string name="yesterday">вчера</string>
-
     <string name="pref_cat_contact">Контакты</string>
     <string name="pref_tg">Официальный канал в Telegram</string>
     <string name="pref_tg_author">Разработчик</string>
     <string name="pref_git">Исходный код</string>
-
     <string name="pref_cat_overlay">Внешний вид</string>
     <string name="pref_transparency">Прозрачность фона</string>
     <string name="pref_ovr_theme">Тема</string>
     <string name="pref_compact">Компактные элементы списка</string>
-
     <string name="pref_card_bg">Фон карточек</string>
     <string name="pref_bg_color">Фон ленты</string>
-
     <string name="allow_notify_to_settings">Настройки</string>
-
     <string name="overlay_no_permission">Разрешение не выдано</string>
     <string name="overlay_reload">Нажмите для перезагрузки</string>
     <string name="overlay_no_permission_desc">HomeFeeder нужно разрешение \"Доступ к уведомлениям\" для показа уведомлений в ленте.</string>
-    <string name="overlay_no_permission_snackbar">Проверьте что вы выдали разрешение \"Доступ к уведомлениям\"</string>
-
+    <string name="overlay_no_permission_snackbar">Проверьте что вы выдали разрешение \"Доступ к уведомлениям\".</string>
     <string name="pref_syscolors">Использовать системные цвета обоев</string>
     <string name="pref_syscolors_desc">вместо опций \"Из лаунчера:\"</string>
     <string name="pref_syscolors_disabled">Требуется Android 8.1 или новее</string>
-
     <string name="action_reload">Перезагрузить</string>
-
     <string name="pm_empty">Источники не обнаружены</string>
     <string name="pm_desc">HomeFeeder использует их для получения данных</string>
-
     <string name="add_input_hint">URL</string>
-
     <string name="remove_title">Подтвердите действие</string>
     <string name="remove_desc">Вы дейстительно хотите удалить %s из списка лент?</string>
     <string name="remove_action_yes">Да</string>
+    <string name="background_amoled">Black</string>
 </resources>
