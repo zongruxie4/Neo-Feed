@@ -167,7 +167,7 @@ fun LicenseScreen() {
     ViewWithActionBar(
         title = stringResource(R.string.about_open_source),
     ) {
-        ComposableWebView(url = "file:///android_asset/license.htm")
+        PreferencesWebView(url = "file:///android_asset/license.htm")
     }
 }
 
@@ -176,13 +176,13 @@ fun ChangelogScreen() {
     ViewWithActionBar(
         title = stringResource(R.string.about_changelog),
     ) {
-        ComposableWebView(url = "file:///android_asset/changelog.htm")
+        PreferencesWebView(url = "file:///android_asset/changelog.htm")
         Spacer(modifier = Modifier.requiredHeight(50.dp))
     }
 }
 
 @Composable
-fun ComposableWebView(url: String) {
+fun PreferencesWebView(url: String) {
 
     val cssFile = "light.css"
     AndroidView(
