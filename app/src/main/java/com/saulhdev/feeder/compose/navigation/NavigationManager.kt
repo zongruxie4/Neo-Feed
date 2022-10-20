@@ -27,15 +27,13 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
-import androidx.navigation.navArgument
 import com.google.accompanist.navigation.animation.AnimatedNavHost
-import com.google.accompanist.navigation.animation.composable
+import com.saulhdev.feeder.compose.pages.AboutPage
 import com.saulhdev.feeder.compose.pages.AddFeedPage
+import com.saulhdev.feeder.compose.pages.ChangelogScreen
+import com.saulhdev.feeder.compose.pages.LicenseScreen
 import com.saulhdev.feeder.compose.pages.PreferencesPage
 import com.saulhdev.feeder.compose.pages.SourcesPage
-import com.saulhdev.feeder.compose.pages.WebViewPage
-import com.saulhdev.feeder.compose.pages.aboutGraph
 import com.saulhdev.feeder.compose.pages.editFeedGraph
 import soup.compose.material.motion.materialSharedAxisX
 
@@ -63,21 +61,11 @@ fun NavigationManager(navController: NavHostController) {
             preferenceGraph(route = "/", { PreferencesPage() }) { subRoute ->
                 preferenceGraph(route = subRoute(Routes.SETTINGS), { PreferencesPage() })
                 preferenceGraph(route = subRoute(Routes.SOURCES), { SourcesPage() })
-                aboutGraph(route = subRoute(Routes.ABOUT))
+                preferenceGraph(route = subRoute(Routes.ABOUT), { AboutPage() })
+                preferenceGraph(route = Routes.LICENSE, { LicenseScreen() })
+                preferenceGraph(route = Routes.CHANGELOG, { ChangelogScreen() })
                 preferenceGraph(route = subRoute(Routes.ADD_FEED), { AddFeedPage() })
                 editFeedGraph(route = subRoute(Routes.EDIT_FEED))
-                preferenceGraph(route = Routes.WEB_VIEW, {}) {
-                    composable(
-                        route = subRoute("{url}"),
-                        arguments = listOf(navArgument("url") { type = NavType.StringType })
-                    ) { backStackEntry ->
-                        val args = backStackEntry.arguments!!
-                        val url = args.getString("url")
-                        if (url != null) {
-                            WebViewPage(url = url)
-                        }
-                    }
-                }
             }
         }
     }

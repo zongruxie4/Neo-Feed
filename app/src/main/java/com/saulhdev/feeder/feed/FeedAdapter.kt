@@ -22,15 +22,6 @@ class FeedAdapter: RecyclerView.Adapter<FeedAdapter.FeedViewHolder>() {
         notifyDataSetChanged()
     }
 
-    fun append(new: List<FeedItem>) {
-        list = mutableListOf<FeedItem>().apply {
-            addAll(list)
-            addAll(new)
-        }
-
-        notifyDataSetChanged()
-    }
-
     fun setTheme(theme: SparseIntArray) {
         this.theme = theme
         notifyDataSetChanged()

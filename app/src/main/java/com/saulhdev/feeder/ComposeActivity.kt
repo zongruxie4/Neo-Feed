@@ -21,13 +21,14 @@ package com.saulhdev.feeder
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.core.net.toUri
 import androidx.navigation.NavHostController
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
-import com.saulhdev.feeder.compose.navigation.NavigationManager
+import com.saulhdev.feeder.compose.navigation.NavigationManager2
 import com.saulhdev.feeder.theme.AppTheme
 
 class ComposeActivity : AppCompatActivity() {
@@ -42,7 +43,7 @@ class ComposeActivity : AppCompatActivity() {
         setContent {
             AppTheme {
                 navController = rememberAnimatedNavController()
-                NavigationManager(navController = navController)
+                NavigationManager2(navController = navController)
             }
         }
     }
@@ -50,6 +51,7 @@ class ComposeActivity : AppCompatActivity() {
     companion object {
         fun createIntent(context: Context, destination: String): Intent {
             val uri = "android-app://androidx.navigation//$destination".toUri()
+            Log.d("ComposeActivity", "uri: $uri")
             return Intent(Intent.ACTION_VIEW, uri, context, ComposeActivity::class.java)
         }
     }
