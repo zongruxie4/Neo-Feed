@@ -17,10 +17,10 @@
     <string name="yesterday">ieri</string>
     <string name="pref_tg">Canale Telegram</string>
     <string name="allow_notify_to_settings">Apri impostazioni</string>
-    <string name="overlay_no_permission_desc">HomeFeeder necessita dell\'autorizzazione \"Accesso alle notifiche\" per mostrare le tue notifiche in sovrimpressione.</string>
+    <string name="overlay_no_permission_desc">HomeFeeder ha bisogno di \"Accesso alle notifiche\" per mostrare le notifiche su altre app.</string>
     <string name="overlay_no_permission_snackbar">Verifica di aver concesso l\'autorizzazione \"Accesso alle notifiche\" e riprova.</string>
     <string name="pm_desc">HomeFeeder li utilizza per visualizzare i dati</string>
-    <string name="remove_desc">Vuoi davvero rimuovere %s dalle fonti dei feed\?</string>
+    <string name="remove_desc">Rimuovere %s dalle fonti feed\?</string>
     <string name="title_feed_list">Elenco feed</string>
     <string name="today">oggi</string>
     <string name="pref_cat_overlay">Aspetto</string>
@@ -65,4 +65,8 @@
     <string name="failed_to_parse">Impossibile analizzare %1$s</string>
     <string name="add_feed_search_hint">URL del feed</string>
     <string name="go_back">Torna indietro</string>
+    <string name="pref_browser_theme">Apri nel browser</string>
+    <string name="about_licenses">Licenza</string>
+    <string name="about_changelog">Registro delle modifiche</string>
+    <string name="about_open_source">Librerie Open Source</string>
 </resources>
