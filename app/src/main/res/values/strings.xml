@@ -27,6 +27,7 @@
     <string name="pref_cat_debug">Debug</string>
     <string name="pref_transparency">Overlay background transparency</string>
     <string name="pref_ovr_theme">Overlay theme</string>
+    <string name="pref_browser_theme">Open in Browser</string>
     <string name="pref_compact">Compact item layout</string>
     <string name="pref_card_bg">Card background</string>
     <string name="pref_bg_color">Overlay background</string>

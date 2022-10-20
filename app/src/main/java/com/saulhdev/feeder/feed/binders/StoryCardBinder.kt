@@ -1,11 +1,14 @@
 package com.saulhdev.feeder.feed.binders
 
+import android.content.Intent
+import android.net.Uri
 import android.text.Html
 import android.util.SparseIntArray
 import android.view.View
 import coil.load
 import com.saulhdev.feeder.ComposeActivity
 import com.saulhdev.feeder.databinding.FeedCardStoryLargeBinding
+import com.saulhdev.feeder.preference.FeedPreferences
 import com.saulhdev.feeder.utils.RelativeTimeHelper
 import com.saulhdev.feeder.utils.urlEncode
 import kotlinx.coroutines.CoroutineScope
@@ -18,7 +21,7 @@ object StoryCardBinder: FeedBinder {
     override fun bind(theme: SparseIntArray?, item: FeedItem, view: View) {
         val content = item.content as StoryCardContent
         val binding = FeedCardStoryLargeBinding.bind(view)
-
+        val prefs = FeedPreferences(view.context)
         binding.storyTitle.text = content.title
         binding.storySource.text = content.source.title
         binding.storyDate.text =
@@ -33,14 +36,18 @@ object StoryCardBinder: FeedBinder {
         binding.storyPic.load(content.background_url)
 
         binding.root.setOnClickListener {
-            val scope = CoroutineScope(Dispatchers.Main)
-            scope.launch {
-                view.context.startActivity(
-                    ComposeActivity.createIntent(
-                        view.context,
-                        "web_view/${content.link.urlEncode()}/"
+            if (prefs.openInBrowser.onGetValue()) {
+                view.context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(content.link)))
+            } else {
+                val scope = CoroutineScope(Dispatchers.Main)
+                scope.launch {
+                    view.context.startActivity(
+                        ComposeActivity.createIntent(
+                            view.context,
+                            "web_view/${content.link.urlEncode()}/"
+                        )
                     )
-                )
+                }
             }
         }
     }

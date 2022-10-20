@@ -127,6 +127,13 @@ class FeedPreferences(val context: Context) {
         onChange = recreate
     )
 
+    var openInBrowser = BooleanPref(
+        key = "pref_open_browser",
+        titleId = R.string.pref_browser_theme,
+        defaultValue = false,
+        onChange = recreate
+    )
+
     var debugging = BooleanPref(
         key = "pref_debugging",
         titleId = R.string.debug_logcat_printing,

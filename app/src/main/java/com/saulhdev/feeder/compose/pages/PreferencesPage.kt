@@ -55,7 +55,7 @@ fun PreferencesPage() {
         val debugPrefs = listOf(
             prefs.about,
         )
-        val sourcePrefs = listOf(prefs.sources)
+        val sourcePrefs = listOf(prefs.sources, prefs.openInBrowser)
         val openDialog = remember { mutableStateOf(false) }
         var dialogPref by remember { mutableStateOf<Any?>(null) }
         val onPrefDialog = { pref: Any ->
