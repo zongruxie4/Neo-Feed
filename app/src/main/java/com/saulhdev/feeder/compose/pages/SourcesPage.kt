@@ -105,8 +105,8 @@ fun SourcesPage() {
             val prefs = FeedPreferences(context)
             val feedList = prefs.feedList.onGetValue().map { SavedFeedModel(JSONObject(it)) }
             val rssList = remember { mutableStateOf(feedList) }
-            val removeItem: MutableState<SavedFeedModel> =
-                remember { mutableStateOf(feedList.first()) }
+            val removeItem: MutableState<SavedFeedModel?> =
+                remember { mutableStateOf(feedList.firstOrNull()) }
             Spacer(modifier = Modifier.height(8.dp))
 
             LazyColumn {
@@ -161,7 +161,7 @@ fun SourcesPage() {
                                         Text(
                                             text = stringResource(
                                                 id = R.string.remove_desc,
-                                                removeItem.value.title
+                                                removeItem.value!!.title
                                             ),
                                             style = TextStyle(
                                                 fontSize = 16.sp,
@@ -191,7 +191,8 @@ fun SourcesPage() {
                                             TextButton(
                                                 shape = RoundedCornerShape(16.dp),
                                                 onClick = {
-                                                    rssList.value = rssList.value - removeItem.value
+                                                    rssList.value =
+                                                        rssList.value - removeItem.value!!
                                                     val stringSet = rssList.value.map {
                                                         it.asJson().toString()
                                                     }.toSet()
