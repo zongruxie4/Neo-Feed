@@ -19,7 +19,7 @@
     <string name="overlay_no_permission_snackbar">Bekreft at du har tillat «merkandstilgang» og prøv igjen.</string>
     <string name="pref_syscolors">Bruk systemets bakgrunnsbildefarger</string>
     <string name="pref_syscolors_desc">istedenfor «Oppstarter:»-alternativer</string>
-    <string name="remove_desc">Vil du fjerne %s fra informasjonskanalkilder\?</string>
+    <string name="remove_desc">Fjern %s fra informasjonkanalskilder\?</string>
     <string name="remove_action_yes">Ja</string>
     <string name="title_feed_list">Informasjonkanalsliste</string>
     <string name="theme_auto_system">Automatisk (fra systemet)</string>
@@ -56,4 +56,17 @@
     <string name="transparency_non_transparent">Ikke-gjennomsiktig</string>
     <string name="background_theme_option">Draktbasert</string>
     <string name="transparency_transparent">Gjennomsiktig</string>
+    <string name="about_open_source">Frie biblioteker</string>
+    <string name="about_changelog">Endingslogg</string>
+    <string name="about_licenses">Fri lisens</string>
+    <string name="pref_browser_theme">Åpne i nettleser</string>
+    <string name="failed_to_parse">Kunne ikke tolke %1$s</string>
+    <string name="edit_rss">Rediger informasjonkanalselement</string>
+    <string name="description">Beskrivelse</string>
+    <string name="add_feed_search_hint">Nettadresse til informasjonskanal</string>
+    <string name="invalid_url">Ikke en gyldig nettadresse</string>
+    <string name="summary_sources">Legg til eller fjern kilder</string>
+    <string name="add_rss">Legg til ny RSS-informasjonskanal</string>
+    <string name="go_back">Tilbake</string>
+    <string name="title">Navn</string>
 </resources>
