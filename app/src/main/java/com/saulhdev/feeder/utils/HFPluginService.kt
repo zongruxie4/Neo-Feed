@@ -3,9 +3,10 @@ package com.saulhdev.feeder.utils
 import android.app.Service
 import android.content.Intent
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
-import com.prof.rssparser.Parser
+import androidx.annotation.RequiresApi
 import com.saulhdev.feeder.models.SavedFeedModel
 import com.saulhdev.feeder.preference.FeedPreferences
 import kotlinx.coroutines.CoroutineScope
@@ -13,7 +14,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import okhttp3.OkHttpClient
 import org.json.JSONObject
 import ua.itaysonlab.hfsdk.FeedCategory
 import ua.itaysonlab.hfsdk.FeedItem
@@ -21,17 +21,14 @@ import ua.itaysonlab.hfsdk.FeedItemType
 import ua.itaysonlab.hfsdk.IFeedInterface
 import ua.itaysonlab.hfsdk.IFeedInterfaceCallback
 import ua.itaysonlab.hfsdk.content.StoryCardContent
-import java.text.SimpleDateFormat
-import java.util.Locale
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
+import java.util.Date
 
-/**
- * Your most important class (maybe)
- * This defines which data does the plugin send to HomeFeeder.
- */
 class HFPluginService : Service(), CoroutineScope by MainScope() {
-    val sourceSdf = SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z", Locale.ENGLISH)
 
     private val mBinder = object : IFeedInterface.Stub() {
+        @RequiresApi(Build.VERSION_CODES.O)
         override fun getFeed(
             callback: IFeedInterfaceCallback?,
             page: Int,
@@ -44,12 +41,13 @@ class HFPluginService : Service(), CoroutineScope by MainScope() {
                 val list = mutableListOf<FeedItem>()
 
                 withContext(Dispatchers.IO) {
-                    val parser = Parser.Builder().okHttpClient(OkHttpClient()).build()
                     val prefs = FeedPreferences(this@HFPluginService)
                     val feedList =
                         prefs.feedList.onGetValue().map { SavedFeedModel(JSONObject(it)) }
+
+                    val feedParser = FeedArticleParser()
                     feedList.forEach { model ->
-                        parser.getChannel(model.url).articles.forEach { article ->
+                        feedParser.getArticleList(model).forEach { article ->
                             list.add(
                                 FeedItem(
                                     "${model.title} [RSS]",
@@ -66,7 +64,12 @@ class HFPluginService : Service(), CoroutineScope by MainScope() {
                                             model.feedImage
                                         )
                                     ),
-                                    sourceSdf.parse(article.pubDate!!)!!.time
+                                    Date.from(
+                                        ZonedDateTime.parse(
+                                            article.date,
+                                            DateTimeFormatter.ISO_ZONED_DATE_TIME
+                                        ).toInstant()
+                                    ).time
                                 )
                             )
                         }
