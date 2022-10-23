@@ -8,7 +8,7 @@
 [![GitHub All Releases](https://img.shields.io/github/downloads/saulhdev/OmegaFeeder/total.svg?style=fla)](https://github.com/saulhdev/OmegaFeeder/releases/)
 [![GitHub release](https://img.shields.io/github/v/release/saulhdev/OmegaFeeder?display_name=tag)](https://github.com/saulhdev/OmegaFeeder/releases/latest)
 
-![Neo Applications Banner](neo_banner.png)
+[![Neo Applications Banner](neo_banner.png)](https://github.com/NeoApplications)
 
 ## Supported launchers
 
