@@ -68,5 +68,5 @@
     <string name="pref_browser_theme">Apri nel browser</string>
     <string name="about_licenses">Licenza</string>
     <string name="about_changelog">Registro delle modifiche</string>
-    <string name="about_open_source">Librerie codice aperto</string>
+    <string name="about_open_source">Librerie con codice aperto</string>
 </resources>
