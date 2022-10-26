@@ -9,7 +9,7 @@
     <string name="pm_desc">HomeFeeder verwendet sie zur Anzeige von Daten</string>
     <string name="remove_title">Aktion bestätigen</string>
     <string name="add_input_hint">URL</string>
-    <string name="remove_desc">Wollen Sie %s wirklich aus den Feedquellen entfernen\?</string>
+    <string name="remove_desc">%s aus Feedquellen entfernen\?</string>
     <string name="remove_action_yes">Ja</string>
     <string name="title_about">Über</string>
     <string name="title_sources">Datenquellen</string>
@@ -36,7 +36,7 @@
     <string name="pref_ovr_theme">Überlagerungsfarbenschema</string>
     <string name="pref_bg_color">Überlagerungshintergrund</string>
     <string name="allow_notify_to_settings">Einstellungen öffnen</string>
-    <string name="overlay_no_permission_desc">HomeFeeder benötigt die Berechtigung „Benachrichtigungszugriff“, um Ihre Benachrichtigungen in einer Überlagerung anzuzeigen.</string>
+    <string name="overlay_no_permission_desc">HomeFeeder benötigt „Benachrichtigungszugriff“, um Benachrichtigungen in anderen Anwendungen anzuzeigen.</string>
     <string name="transparency_transparent">Durchsichtig</string>
     <string name="overlay_reload">Klicken Sie hier, um neu zu laden</string>
     <string name="title_feed_list">Feed-Liste</string>
@@ -54,4 +54,19 @@
     <string name="background_tertiary_color">Launcher: Tertiärfarbe</string>
     <string name="summary_feed_list">RSS-Quellen hinzufügen oder entfernen</string>
     <string name="title_plugin_list">Plugin-Liste</string>
+    <string name="about_licenses">Lizenz</string>
+    <string name="about_changelog">Änderungsprotokoll</string>
+    <string name="pref_browser_theme">Im Browser öffnen</string>
+    <string name="add_feed_search_hint">Feed-URL</string>
+    <string name="invalid_url">Keine gültige URL</string>
+    <string name="summary_sources">Quellen hinzufügen oder entfernen</string>
+    <string name="go_back">Zurück</string>
+    <string name="about_open_source">Quelloffene Bibliotheken</string>
+    <string name="failed_to_parse">%1$s konnte nicht analysiert werden</string>
+    <string name="edit_rss">Feed-Element bearbeiten</string>
+    <string name="add_rss">Neue RSS hinzufügen</string>
+    <string name="title">Titel</string>
+    <string name="description">Beschreibung</string>
+    <string name="debug_logcat_printing">Umfangreicher Logcat-Druck</string>
+    <string name="debug_content_printing">Inhalt der Benachrichtigung protokollieren</string>
 </resources>
