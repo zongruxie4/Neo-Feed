@@ -1,2 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="yesterday">昨天</string>
+    <string name="pref_browser_theme">在浏览器中打开</string>
+    <string name="allow_notify_to_settings">打开设置</string>
+    <string name="date_ago_now">刚刚</string>
+    <string name="about_open_source">开源库</string>
+    <string name="pref_tg">电报频道</string>
+    <string name="pref_git">源代码</string>
+    <string name="pref_cat_overlay">外观</string>
+    <string name="pref_cat_debug">Debug</string>
+    <string name="title_sources">信息源</string>
+    <string name="title_settings">设置</string>
+    <string name="title_about">关于</string>
+    <string name="pref_ovr_theme">主题</string>
+    <string name="pref_card_bg">卡片背景</string>
+    <string name="summary_sources">添加或移除源</string>
+    <string name="tomorrow">明天</string>
+    <string name="today">今天</string>
+    <string name="about_licenses">许可证</string>
+    <string name="about_changelog">更新日志</string>
+    <string name="pref_bg_color">背景</string>
+    <string name="overlay_no_permission">未取得权限</string>
+    <string name="overlay_reload">点击刷新</string>
+</resources>
