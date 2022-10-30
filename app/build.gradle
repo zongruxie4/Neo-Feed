@@ -92,6 +92,7 @@ dependencies {
     implementation 'androidx.navigation:navigation-runtime-ktx:2.5.2'
     implementation 'androidx.preference:preference-ktx:1.2.0'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+    implementation "androidx.work:work-runtime-ktx:2.7.1"
 
     //Compose
     implementation 'androidx.compose.ui:ui:1.2.1'
