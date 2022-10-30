@@ -31,6 +31,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.saulhdev.feeder.R
+import com.saulhdev.feeder.compose.components.BaseDialog
 import com.saulhdev.feeder.compose.components.PreferenceGroup
 import com.saulhdev.feeder.compose.components.StringSelectionPrefDialogUI
 import com.saulhdev.feeder.compose.components.ViewWithActionBar
@@ -46,7 +47,6 @@ fun PreferencesPage() {
         val themePrefs = listOf(
             prefs.overlayTheme,
             prefs.overlayTransparency,
-            prefs.overlayCompact,
             prefs.systemColors,
             prefs.overlayBackground,
             prefs.cardBackground
@@ -55,7 +55,12 @@ fun PreferencesPage() {
         val debugPrefs = listOf(
             prefs.about,
         )
-        val sourcePrefs = listOf(prefs.sources, prefs.openInBrowser)
+        val sourcePrefs = listOf(
+            prefs.sources,
+            prefs.openInBrowser,
+            prefs.syncOnlyOnWifi,
+            prefs.syncFrequency
+        )
         val openDialog = remember { mutableStateOf(false) }
         var dialogPref by remember { mutableStateOf<Any?>(null) }
         val onPrefDialog = { pref: Any ->
@@ -91,11 +96,13 @@ fun PreferencesPage() {
         }
 
         if (openDialog.value) {
-            when (dialogPref) {
-                is FeedPreferences.StringSelectionPref -> StringSelectionPrefDialogUI(
-                    pref = dialogPref as FeedPreferences.StringSelectionPref,
-                    openDialogCustom = openDialog
-                )
+            BaseDialog(openDialogCustom = openDialog) {
+                when (dialogPref) {
+                    is FeedPreferences.StringSelectionPref -> StringSelectionPrefDialogUI(
+                        pref = dialogPref as FeedPreferences.StringSelectionPref,
+                        openDialogCustom = openDialog
+                    )
+                }
             }
         }
     }
