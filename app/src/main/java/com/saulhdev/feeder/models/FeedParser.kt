@@ -11,15 +11,12 @@ import com.saulhdev.jsonfeed.Feed
 import com.saulhdev.jsonfeed.JsonFeedParser
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
-import okhttp3.Authenticator
 import okhttp3.CacheControl
 import okhttp3.Credentials
-import okhttp3.MediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
 import okhttp3.ResponseBody
-import okhttp3.Route
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import java.io.IOException
@@ -38,34 +35,7 @@ class FeedParser {
         .readTimeout(30, TimeUnit.SECONDS)
         .build()
 
-    val jsonFeedParser: JsonFeedParser = JsonFeedParser()
-
-    /**
-     * Finds the preferred alternate link in the header of an HTML/XML document pointing to feeds.
-     */
-    fun findFeedUrl(
-        html: String,
-        preferRss: Boolean = false,
-        preferAtom: Boolean = false,
-        preferJSON: Boolean = false,
-    ): URL? {
-
-        val feedLinks = getAlternateFeedLinksInHtml(html)
-            .sortedBy {
-                val t = it.second.lowercase(Locale.getDefault())
-                when {
-                    preferAtom && t.contains("atom") -> "0"
-                    preferRss && t.contains("rss") -> "1"
-                    preferJSON && t.contains("json") -> "2"
-                    else -> t
-                }
-            }
-            .map {
-                sloppyLinkToStrictURL(it.first) to it.second
-            }
-
-        return feedLinks.firstOrNull()?.first
-    }
+    private val jsonFeedParser: JsonFeedParser = JsonFeedParser()
 
     private suspend fun getFeedIconAtUrl(url: URL): String? {
         return try {
@@ -80,7 +50,7 @@ class FeedParser {
         }
     }
 
-    fun getFeedIconInHtml(
+    private fun getFeedIconInHtml(
         html: String,
         baseUrl: URL? = null,
     ): String? {
@@ -123,7 +93,7 @@ class FeedParser {
     /**
      * Returns all alternate links in the HTML/XML document pointing to feeds.
      */
-    fun getAlternateFeedLinksInHtml(
+    private fun getAlternateFeedLinksInHtml(
         html: String,
         baseUrl: URL? = null,
     ): List<Pair<String, String>> {
@@ -163,7 +133,7 @@ class FeedParser {
 
                     else -> sloppyLinkToStrictURL(it.attr("href")).toString() to it.attr("type")
                 }
-            } ?: emptyList()
+            }
 
         return when {
             feeds.isNotEmpty() -> feeds
@@ -247,73 +217,11 @@ class FeedParser {
         }
     }
 
-    /**
-     * Takes body as bytes to handle encoding correctly
-     */
-    @Throws(FeedParsingError::class)
-    suspend fun parseFeedResponse(
-        url: URL,
-        body: String,
-        contentType: MediaType?,
-    ): Feed {
-        try {
-            val feed = when (contentType?.subtype?.contains("json")) {
-                true -> jsonFeedParser.parseJson(body)
-                else -> parseRssAtom(url, body)
-            }
-
-            return if (feed.feed_url == null) {
-                // Nice to return non-null value here
-                feed.copy(feed_url = url.toString())
-            } else {
-                feed
-            }
-        } catch (e: Throwable) {
-            throw FeedParsingError(url, e)
-        }
-    }
-
-    /**
-     * Takes body as bytes to handle encoding correctly
-     */
-    @Throws(FeedParsingError::class)
-    suspend fun parseFeedResponseOrFallbackToAlternateLink(response: Response): Feed? {
-        val body = response.body.string() ?: return null
-
-        val alternateFeedLink = findFeedUrl(body, preferAtom = true)
-
-        return if (alternateFeedLink != null) {
-            parseFeedUrl(alternateFeedLink)
-        } else {
-            parseFeedResponse(response.request.url.toUrl(), body, response.body.contentType())
-        }
-    }
-
     @Throws(FeedParsingError::class)
     internal suspend fun parseRssAtom(baseUrl: URL, responseBody: ResponseBody): Feed {
         try {
             responseBody.byteStream().use { bs ->
                 val feed = XmlReader(bs, true, responseBody.contentType()?.charset()?.name()).use {
-                    SyndFeedInput()
-                        .apply {
-                            isPreserveWireFeed = true
-                        }
-                        .build(it)
-                }
-                return feed.asFeed(baseUrl = baseUrl) { siteUrl ->
-                    getFeedIconAtUrl(siteUrl)
-                }
-            }
-        } catch (t: Throwable) {
-            throw FeedParsingError(baseUrl, t)
-        }
-    }
-
-    @Throws(FeedParsingError::class)
-    internal suspend fun parseRssAtom(baseUrl: URL, body: String): Feed {
-        try {
-            body.byteInputStream().use { bs ->
-                val feed = XmlReader(bs, true).use {
                     SyndFeedInput()
                         .apply {
                             isPreserveWireFeed = true
@@ -358,40 +266,40 @@ suspend fun OkHttpClient.getResponse(url: URL, forceNetwork: Boolean = false): R
         } else {
             ""
         }
-        val decodedUser = URLDecoder.decode(user, "UTF-8")
-        val decodedPass = URLDecoder.decode(pass, "UTF-8")
+        val decodedUser = withContext(IO) {
+            URLDecoder.decode(user, "UTF-8")
+        }
+        val decodedPass = withContext(IO) {
+            URLDecoder.decode(pass, "UTF-8")
+        }
         val credentials = Credentials.basic(decodedUser, decodedPass)
         newBuilder()
-            .authenticator(object : Authenticator {
-                override fun authenticate(route: Route?, response: Response): Request? {
-                    return when {
-                        response.request.header("Authorization") != null -> {
-                            null
-                        }
+            .authenticator { route, response ->
+                when {
+                    response.request.header("Authorization") != null -> {
+                        null
+                    }
 
-                        else -> {
-                            response.request.newBuilder()
-                                .header("Authorization", credentials)
-                                .build()
-                        }
+                    else -> {
+                        response.request.newBuilder()
+                            .header("Authorization", credentials)
+                            .build()
                     }
                 }
-            })
-            .proxyAuthenticator(object : Authenticator {
-                override fun authenticate(route: Route?, response: Response): Request? {
-                    return when {
-                        response.request.header("Proxy-Authorization") != null -> {
-                            null
-                        }
+            }
+            .proxyAuthenticator { _, response ->
+                when {
+                    response.request.header("Proxy-Authorization") != null -> {
+                        null
+                    }
 
-                        else -> {
-                            response.request.newBuilder()
-                                .header("Proxy-Authorization", credentials)
-                                .build()
-                        }
+                    else -> {
+                        response.request.newBuilder()
+                            .header("Proxy-Authorization", credentials)
+                            .build()
                     }
                 }
-            })
+            }
             .build()
     } else {
         this

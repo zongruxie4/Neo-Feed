@@ -28,6 +28,8 @@
     <string name="pref_transparency">Overlay background transparency</string>
     <string name="pref_ovr_theme">Overlay theme</string>
     <string name="pref_browser_theme">Open in Browser</string>
+    <string name="pref_sync_wifi">Sync on Wifi Only</string>
+    <string name="pref_sync_frequency">Sync Frequency</string>
     <string name="pref_compact">Compact item layout</string>
     <string name="pref_card_bg">Card background</string>
     <string name="pref_bg_color">Overlay background</string>
@@ -60,6 +62,10 @@
     <string name="theme_auto_system">Automatically (from system)</string>
     <string name="theme_light">Light</string>
     <string name="theme_dark">Dark</string>
+    <string name="sync_one_hour">One Hour</string>
+    <string name="sync_two_hours">Two Hours</string>
+    <string name="sync_three_hours">Three Hours</string>
+    <string name="sync_six_hours">Six Hours</string>
     <string name="transparency_non_transparent">Non Transparent</string>
     <string name="transparency_low_transparency">75% transparent</string>
     <string name="transparency_mid_transparency">50% transparent</string>

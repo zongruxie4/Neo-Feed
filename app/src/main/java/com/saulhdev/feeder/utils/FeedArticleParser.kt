@@ -18,23 +18,23 @@
 
 package com.saulhdev.feeder.utils
 
-import com.saulhdev.feeder.models.FeedArticle
+import com.saulhdev.feeder.db.Feed
+import com.saulhdev.feeder.db.FeedArticle
 import com.saulhdev.feeder.models.FeedParser
-import com.saulhdev.feeder.models.SavedFeedModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.net.URL
 
 class FeedArticleParser {
     private val parser = FeedParser()
 
-    suspend fun getArticleList(feed: SavedFeedModel): List<FeedArticle> {
+    suspend fun getArticleList(feed: Feed): List<FeedArticle> {
         val articles = arrayListOf<FeedArticle>()
         withContext(Dispatchers.IO) {
-            parser.parseFeedUrl(URL(feed.url))?.items?.forEach {
-                articles.add(
+            parser.parseFeedUrl(feed.url)?.items?.forEach {
+                /*articles.add(
                     FeedArticle(
-                        guid = it.id,
+                        id = it.id,
+                        guid = it.guid,
                         title = it.title,
                         description = it.summary,
                         content_html = it.content_html,
@@ -43,7 +43,7 @@ class FeedArticleParser {
                         date = it.date_published,
                         categories = it.tags.orEmpty()
                     )
-                )
+                )*/
             }
         }
         return articles

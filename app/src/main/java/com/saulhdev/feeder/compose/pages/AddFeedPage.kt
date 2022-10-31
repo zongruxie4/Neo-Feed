@@ -67,11 +67,13 @@ import com.saulhdev.feeder.compose.navigation.LocalNavController
 import com.saulhdev.feeder.compose.util.StableHolder
 import com.saulhdev.feeder.compose.util.interceptKey
 import com.saulhdev.feeder.compose.util.safeSemantics
-import com.saulhdev.feeder.models.SavedFeedModel
-import com.saulhdev.feeder.preference.FeedPreferences
+import com.saulhdev.feeder.db.Feed
+import com.saulhdev.feeder.db.FeedRepository
+import com.saulhdev.feeder.utils.sloppyLinkToStrictURL
 import com.saulhdev.feeder.utils.sloppyLinkToStrictURLNoThrows
 import com.saulhdev.feeder.utils.urlEncode
 import com.saulhdev.feeder.viewmodel.SearchFeedViewModel
+import com.saulhdev.feeder.viewmodel.SearchResult
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.launch
 import java.net.MalformedURLException
@@ -82,32 +84,29 @@ fun AddFeedPage() {
     val coroutineScope = rememberCoroutineScope()
     val navController = LocalNavController.current
     val title = stringResource(id = R.string.add_rss)
-    val context = LocalContext.current
-    val prefs = FeedPreferences(context)
 
-    var feedList = prefs.feedList.onGetValue()
     var results by rememberSaveable {
-        mutableStateOf(listOf<SavedFeedModel>())
+        mutableStateOf(listOf<SearchResult>())
     }
 
+    val repository = FeedRepository(LocalContext.current)
+
     BackHandler {
-        feedList = feedList + results.map { it.asJson().toString() }.toSet()
-        prefs.feedList.onSetValue(feedList)
+        saveFeed(results, repository)
         navController.popBackStack()
     }
 
     ViewWithActionBar(
         title = title,
         onBackAction = {
-            feedList = feedList + results.map { it.asJson().toString() }.toSet()
-            prefs.feedList.onSetValue(feedList)
+            saveFeed(results, repository)
         }
     ) { paddingValues ->
         var currentlySearching by rememberSaveable {
             mutableStateOf(false)
         }
         var errors by rememberSaveable {
-            mutableStateOf(listOf<SavedFeedModel>())
+            mutableStateOf(listOf<SearchResult>())
         }
         var feedUrl by remember { mutableStateOf("") }
         val searchFeedViewModel = remember { SearchFeedViewModel() }
@@ -146,10 +145,28 @@ fun AddFeedPage() {
                 errors = if (currentlySearching) StableHolder(emptyList()) else StableHolder(errors),
                 currentlySearching = currentlySearching,
                 onClick = {
+                    saveFeed(results, repository)
                     navController.navigate("/edit_feed/${it.title.urlEncode()}/${it.url.urlEncode()}/")
                 }
             )
         }
+    }
+}
+
+fun saveFeed(results: List<SearchResult>, repository: FeedRepository) {
+    results.forEach { result ->
+        if (result.isError) {
+            return@forEach
+        } else {
+            val feed = Feed(
+                title = result.title,
+                description = result.description,
+                url = sloppyLinkToStrictURL(result.url),
+                feedImage = sloppyLinkToStrictURL(result.url)
+            )
+            repository.saveFeed(feed)
+        }
+
     }
 }
 
@@ -159,10 +176,10 @@ fun AddFeedView(
     feedUrl: String = "",
     onUrlChanged: (String) -> Unit,
     onSearch: (URL) -> Unit,
-    results: StableHolder<List<SavedFeedModel>>,
-    errors: StableHolder<List<SavedFeedModel>>,
+    results: StableHolder<List<SearchResult>>,
+    errors: StableHolder<List<SearchResult>>,
     currentlySearching: Boolean,
-    onClick: (SavedFeedModel) -> Unit,
+    onClick: (SearchResult) -> Unit,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
@@ -271,10 +288,10 @@ fun SearchFeedUI(
 
 @Composable
 fun SearchResult(
-    results: StableHolder<List<SavedFeedModel>>,
-    errors: StableHolder<List<SavedFeedModel>>,
+    results: StableHolder<List<SearchResult>>,
+    errors: StableHolder<List<SearchResult>>,
     currentlySearching: Boolean,
-    onClick: (SavedFeedModel) -> Unit,
+    onClick: (SearchResult) -> Unit,
 ) {
     if (results.item.isEmpty()) {
         for (error in errors.item) {

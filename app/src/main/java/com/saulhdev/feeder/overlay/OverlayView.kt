@@ -23,6 +23,7 @@ import com.saulhdev.feeder.launcherapi.OverlayThemeHolder
 import com.saulhdev.feeder.plugin.PluginConnector
 import com.saulhdev.feeder.preference.FeedPreferences
 import com.saulhdev.feeder.theme.Theming
+import com.saulhdev.feeder.utils.LinearLayoutManagerWrapper
 import com.saulhdev.feeder.utils.OverlayBridge
 import com.saulhdev.feeder.utils.clearLightFlags
 import com.saulhdev.feeder.utils.isDark
@@ -94,7 +95,7 @@ class OverlayView(val context: Context) :
 
         adapter = FeedAdapter()
         rootView.findViewById<RecyclerView>(R.id.recycler).apply {
-            layoutManager = LinearLayoutManager(context)
+            layoutManager = LinearLayoutManagerWrapper(context, LinearLayoutManager.VERTICAL, false)
             adapter = this@OverlayView.adapter
         }
     }

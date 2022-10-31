@@ -7,14 +7,13 @@ import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
 import androidx.annotation.RequiresApi
-import com.saulhdev.feeder.models.SavedFeedModel
-import com.saulhdev.feeder.preference.FeedPreferences
+import com.saulhdev.feeder.db.Feed
+import com.saulhdev.feeder.db.FeedRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.json.JSONObject
 import ua.itaysonlab.hfsdk.FeedCategory
 import ua.itaysonlab.hfsdk.FeedItem
 import ua.itaysonlab.hfsdk.FeedItemType
@@ -41,9 +40,8 @@ class HFPluginService : Service(), CoroutineScope by MainScope() {
                 val list = mutableListOf<FeedItem>()
 
                 withContext(Dispatchers.IO) {
-                    val prefs = FeedPreferences(this@HFPluginService)
-                    val feedList =
-                        prefs.feedList.onGetValue().map { SavedFeedModel(JSONObject(it)) }
+                    val repository = FeedRepository(this@HFPluginService)
+                    val feedList: List<Feed> = repository.getAllFeeds()
 
                     val feedParser = FeedArticleParser()
                     feedList.forEach { model ->
@@ -58,10 +56,10 @@ class HFPluginService : Service(), CoroutineScope by MainScope() {
                                         background_url = article.image ?: "",
                                         link = article.link ?: "",
                                         source = FeedCategory(
-                                            model.url,
+                                            model.url.toString(),
                                             model.title,
                                             Color.GREEN,
-                                            model.feedImage
+                                            model.feedImage.toString()
                                         )
                                     ),
                                     Date.from(
@@ -81,10 +79,11 @@ class HFPluginService : Service(), CoroutineScope by MainScope() {
         }
 
         override fun getCategories(callback: IFeedInterfaceCallback) {
-            val prefs = FeedPreferences(this@HFPluginService)
-            val feedList = prefs.feedList.onGetValue().map { SavedFeedModel(JSONObject(it)) }
+            val repository = FeedRepository(this@HFPluginService)
+            val feedList: List<Feed> = repository.getAllFeeds()
+
             callback.onCategoriesReceive(feedList.map {
-                FeedCategory(it.url, it.title, Color.GREEN, it.feedImage)
+                FeedCategory(it.url.toString(), it.title, Color.GREEN, it.feedImage.toString())
             })
         }
     }

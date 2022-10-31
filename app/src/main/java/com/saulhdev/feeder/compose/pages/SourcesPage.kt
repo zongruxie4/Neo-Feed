@@ -42,6 +42,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -61,16 +62,21 @@ import com.saulhdev.feeder.compose.components.FeedItem
 import com.saulhdev.feeder.compose.components.ViewWithActionBar
 import com.saulhdev.feeder.compose.navigation.LocalNavController
 import com.saulhdev.feeder.compose.navigation.Routes
-import com.saulhdev.feeder.models.SavedFeedModel
-import com.saulhdev.feeder.preference.FeedPreferences
+import com.saulhdev.feeder.db.Feed
+import com.saulhdev.feeder.db.FeedRepository
 import com.saulhdev.feeder.utils.urlEncode
-import org.json.JSONObject
+import kotlinx.coroutines.CoroutineName
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.plus
 
 @Composable
 fun SourcesPage() {
     val title = stringResource(id = R.string.title_sources)
     val context = LocalContext.current
     val navController = LocalNavController.current
+    val repository = FeedRepository(context)
 
     ViewWithActionBar(
         title = title,
@@ -101,22 +107,31 @@ fun SourcesPage() {
                 )
         ) {
             val showDialog = remember { mutableStateOf(false) }
+            val list: List<Feed> = listOf()
+            val feedList = remember { mutableStateOf(list) }
+            val removeItem: MutableState<Feed?> =
+                remember { mutableStateOf(feedList.value.firstOrNull()) }
+            val scope = CoroutineScope(Dispatchers.IO) + CoroutineName("NeoFeedRepository")
+            LaunchedEffect(Unit) {
+                scope.launch {
+                    feedList.value = repository.getAllFeeds()
+                }
+            }
 
-            val prefs = FeedPreferences(context)
-            val feedList = prefs.feedList.onGetValue().map { SavedFeedModel(JSONObject(it)) }
-            val rssList = remember { mutableStateOf(feedList) }
-            val removeItem: MutableState<SavedFeedModel?> =
-                remember { mutableStateOf(feedList.firstOrNull()) }
             Spacer(modifier = Modifier.height(8.dp))
 
             LazyColumn {
-                items(rssList.value) { item ->
+                items(feedList.value) { item ->
                     FeedItem(
                         feedTitle = item.title,
-                        feedURL = item.url,
+                        feedURL = item.url.toString(),
                         description = item.description,
                         onClickAction = {
-                            navController.navigate("/edit_feed/${item.title.urlEncode()}/${item.url.urlEncode()}/")
+                            navController.navigate(
+                                "/edit_feed/${item.title.urlEncode()}/${
+                                    item.url.toString().urlEncode()
+                                }/"
+                            )
                         },
                         onRemoveAction = {
                             showDialog.value = true
@@ -191,12 +206,9 @@ fun SourcesPage() {
                                             TextButton(
                                                 shape = RoundedCornerShape(16.dp),
                                                 onClick = {
-                                                    rssList.value =
-                                                        rssList.value - removeItem.value!!
-                                                    val stringSet = rssList.value.map {
-                                                        it.asJson().toString()
-                                                    }.toSet()
-                                                    prefs.feedList.onSetValue(stringSet)
+                                                    feedList.value =
+                                                        feedList.value - removeItem.value!!
+                                                    repository.deleteFeed(removeItem.value!!)
                                                     showDialog.value = false
                                                 },
                                                 colors = ButtonDefaults.buttonColors(

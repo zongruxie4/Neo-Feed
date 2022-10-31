@@ -62,10 +62,9 @@ import com.saulhdev.feeder.compose.components.ViewWithActionBar
 import com.saulhdev.feeder.compose.navigation.LocalNavController
 import com.saulhdev.feeder.compose.navigation.preferenceGraph
 import com.saulhdev.feeder.compose.util.interceptKey
-import com.saulhdev.feeder.models.SavedFeedModel
-import com.saulhdev.feeder.preference.FeedPreferences
+import com.saulhdev.feeder.db.FeedRepository
+import com.saulhdev.feeder.utils.sloppyLinkToStrictURL
 import com.saulhdev.feeder.utils.urlDecode
-import org.json.JSONObject
 
 @Composable
 fun EditFeedPage(
@@ -102,7 +101,7 @@ fun EditFeedView(
     val focusManager = LocalFocusManager.current
     var feedTitle by rememberSaveable { mutableStateOf(title) }
     var feedUrl by rememberSaveable { mutableStateOf(url) }
-    val prefs = FeedPreferences(LocalContext.current)
+    val repository = FeedRepository(LocalContext.current)
 
     Column {
         OutlinedTextField(
@@ -182,7 +181,7 @@ fun EditFeedView(
             Spacer(modifier = Modifier.width(8.dp))
             OutlinedButton(
                 onClick = {
-                    var feedList =
+                    /*var feedList =
                         prefs.feedList.onGetValue().map { SavedFeedModel(JSONObject(it)) }
                     feedList.map {
                         if (it.url == url.urlDecode()) {
@@ -195,7 +194,10 @@ fun EditFeedView(
                         prefs.feedList.onSetValue(feedList.map { feedItem ->
                             feedItem.asJson().toString()
                         }.toSet())
-                    }
+
+
+                    }*/
+                    repository.updateFeed(title, sloppyLinkToStrictURL(url))
                     navController.popBackStack()
                 }
             ) {

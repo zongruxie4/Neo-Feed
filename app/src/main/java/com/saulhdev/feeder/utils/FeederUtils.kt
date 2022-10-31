@@ -34,6 +34,15 @@ fun getThemes(context: Context): Map<String, String> {
     )
 }
 
+fun getSyncFrecuency(context: Context): Map<String, String> {
+    return mapOf(
+        "1" to context.resources.getString(R.string.sync_one_hour),
+        "2" to context.resources.getString(R.string.sync_two_hours),
+        "3" to context.resources.getString(R.string.sync_three_hours),
+        "6" to context.resources.getString(R.string.sync_six_hours)
+    )
+}
+
 fun getTransparencyOptions(context: Context): Map<String, String> {
     return mapOf(
         "non_transparent" to context.resources.getString(R.string.transparency_non_transparent),
