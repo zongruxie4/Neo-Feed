@@ -21,15 +21,8 @@ package com.saulhdev.feeder.preference
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.annotation.StringRes
-import androidx.work.Constraints
-import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.NetworkType
-import androidx.work.PeriodicWorkRequestBuilder
-import androidx.work.WorkManager
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.compose.navigation.Routes
-import com.saulhdev.feeder.models.FeedSyncer
-import com.saulhdev.feeder.models.UNIQUE_PERIODIC_NAME
 import com.saulhdev.feeder.utils.getBackgroundOptions
 import com.saulhdev.feeder.utils.getSyncFrecuency
 import com.saulhdev.feeder.utils.getThemes
@@ -39,7 +32,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
-import java.util.concurrent.TimeUnit
 import kotlin.reflect.KProperty
 
 class FeedPreferences(val context: Context) {
@@ -148,7 +140,6 @@ class FeedPreferences(val context: Context) {
         defaultValue = true,
         onChange = {
             scope.launch {
-                configurePeriodicSync(replace = true)
             }
         }
     )
@@ -161,45 +152,6 @@ class FeedPreferences(val context: Context) {
         icon = R.drawable.ic_style,
         onChange = doNothing
     )
-
-    private fun configurePeriodicSync(replace: Boolean) {
-        val shouldSync = Integer.valueOf(syncFrequency.onGetValue()) > 0
-        val workManager = WorkManager.getInstance(context)
-
-        if (shouldSync) {
-            val constraints = Constraints.Builder()
-                .setRequiresCharging(false)
-
-            if (syncOnlyOnWifi.onGetValue()) {
-                constraints.setRequiredNetworkType(NetworkType.UNMETERED)
-            } else {
-                constraints.setRequiredNetworkType(NetworkType.CONNECTED)
-            }
-            val timeInterval = syncFrequency.onGetValue().toLong()
-
-            val workRequestBuilder = PeriodicWorkRequestBuilder<FeedSyncer>(
-                timeInterval,
-                TimeUnit.MINUTES,
-            )
-
-            val syncWork = workRequestBuilder
-                .setConstraints(constraints.build())
-                .addTag("feeder")
-                .build()
-
-
-            workManager.enqueueUniquePeriodicWork(
-                UNIQUE_PERIODIC_NAME,
-                when (replace) {
-                    true -> ExistingPeriodicWorkPolicy.REPLACE
-                    false -> ExistingPeriodicWorkPolicy.KEEP
-                },
-                syncWork
-            )
-        } else {
-            workManager.cancelUniqueWork(UNIQUE_PERIODIC_NAME)
-        }
-    }
 
     var debugging = BooleanPref(
         key = "pref_debugging",

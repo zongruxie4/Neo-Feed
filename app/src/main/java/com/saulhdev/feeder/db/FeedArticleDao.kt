@@ -22,12 +22,13 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
+import androidx.room.Query
 import androidx.room.Update
 
 @Dao
 interface FeedArticleDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertFeedItem(item: Feed): Long
+    suspend fun insertFeedArticle(item: FeedArticle): Long
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertFeedArticle(items: List<FeedArticle>): List<Long>
@@ -40,4 +41,15 @@ interface FeedArticleDao {
 
     @Delete
     suspend fun deleteFeedArticle(item: FeedArticle): Int
+
+    @Query(
+        """
+        DELETE FROM feedArticle WHERE id IN (:ids)
+        """
+    )
+    suspend fun deleteFeedArticle(ids: List<Long>): Int
+
+    @Query("SELECT * FROM feedArticle WHERE guid IS :guid AND feedId IS :feedId")
+    suspend fun loadFeedItem(guid: String, feedId: Long?): FeedArticle?
+
 }

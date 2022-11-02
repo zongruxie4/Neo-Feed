@@ -129,6 +129,13 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.6.4'
     implementation 'com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.10'
 
+    // For feeder-sync
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-moshi:2.9.0")
+    implementation("com.squareup.moshi:moshi:1.12.0")
+    implementation("com.squareup.moshi:moshi-kotlin:1.12.0")
+    implementation("com.squareup.moshi:moshi-adapters:1.12.0")
+
     implementation "com.jakewharton.threetenabp:threetenabp:1.2.4"
     implementation "org.jsoup:jsoup:1.14.2"
     implementation "org.ccil.cowan.tagsoup:tagsoup:1.2.1"

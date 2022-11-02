@@ -18,11 +18,13 @@
 
 package com.saulhdev.feeder.db
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.ForeignKey.CASCADE
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import org.threeten.bp.ZonedDateTime
 
 @Entity(
     tableName = "FeedArticle",
@@ -39,17 +41,20 @@ import androidx.room.PrimaryKey
         )
     ]
 )
-class FeedArticle(
+data class FeedArticle(
     @PrimaryKey(autoGenerate = true)
     var id: Long = ID_UNSET,
     var guid: String = "",
     var title: String = "",
-    var image: String = "",
+    var plainTitle: String = "",
+    var imageUrl: String? = null,
+    var enclosureLink: String? = null,
+    var plainSnippet: String = "",
     val description: String = "",
     val content_html: String = "",
-    var author: String = "",
-    val date: String?,
-    val link: String?,
+    var author: String? = "",
+    @ColumnInfo(typeAffinity = ColumnInfo.TEXT) var pubDate: ZonedDateTime? = null,
+    var link: String? = "",
     var feedId: Long = 0,
     val categories: ArrayList<String> = arrayListOf()
 )

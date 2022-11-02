@@ -36,8 +36,8 @@ fun cachingHttpClient(
     return builder.build()
 }
 
-fun feedAdapter(): JsonAdapter<Feed> =
-    Moshi.Builder().addLast(KotlinJsonAdapterFactory()).build().adapter(Feed::class.java)
+fun feedAdapter(): JsonAdapter<JsonFeed> =
+    Moshi.Builder().addLast(KotlinJsonAdapterFactory()).build().adapter(JsonFeed::class.java)
 
 /**
  * A parser for JSONFeeds. CacheDirectory and CacheSize are only relevant if feeds are downloaded. They are not used
@@ -45,7 +45,7 @@ fun feedAdapter(): JsonAdapter<Feed> =
  */
 class JsonFeedParser(
     private val httpClient: OkHttpClient,
-    private val jsonFeedAdapter: JsonAdapter<Feed>
+    private val jsonJsonFeedAdapter: JsonAdapter<JsonFeed>
 ) {
 
     constructor(
@@ -68,7 +68,7 @@ class JsonFeedParser(
     /**
      * Download a JSONFeed and parse it
      */
-    fun parseUrl(url: String): Feed {
+    fun parseUrl(url: String): JsonFeed {
         val request: Request
         try {
             request = Request.Builder()
@@ -95,17 +95,17 @@ class JsonFeedParser(
     /**
      * Parse a JSONFeed
      */
-    fun parseJson(responseBody: ResponseBody): Feed =
+    fun parseJson(responseBody: ResponseBody): JsonFeed =
         parseJson(responseBody.string())
 
     /**
      * Parse a JSONFeed
      */
-    fun parseJson(json: String): Feed = jsonFeedAdapter.fromJson(json)
+    fun parseJson(json: String): JsonFeed = jsonJsonFeedAdapter.fromJson(json)
         ?: throw IOException("Failed to parse JSONFeed")
 }
 
-data class Feed(
+data class JsonFeed(
     val version: String? = "https://jsonfeed.org/version/1.1",
     val title: String?,
     val home_page_url: String? = null,

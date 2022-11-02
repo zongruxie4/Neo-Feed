@@ -14,15 +14,15 @@ import com.rometools.rome.feed.synd.SyndPerson
 import com.saulhdev.feeder.views.HtmlToPlainTextConverter
 import com.saulhdev.jsonfeed.Attachment
 import com.saulhdev.jsonfeed.Author
-import com.saulhdev.jsonfeed.Feed
 import com.saulhdev.jsonfeed.Item
+import com.saulhdev.jsonfeed.JsonFeed
 import org.jsoup.parser.Parser.unescapeEntities
 import org.threeten.bp.Instant
 import org.threeten.bp.ZoneOffset
 import org.threeten.bp.ZonedDateTime
 import java.net.URL
 
-suspend fun SyndFeed.asFeed(baseUrl: URL, feedIconFinder: suspend (URL) -> String?): Feed {
+suspend fun SyndFeed.asFeed(baseUrl: URL, feedIconFinder: suspend (URL) -> String?): JsonFeed {
     val feedAuthor: Author? = this.authors?.firstOrNull()?.asAuthor()
 
     val siteUrl = relativeLinkIntoAbsoluteOrNull(
@@ -43,7 +43,7 @@ suspend fun SyndFeed.asFeed(baseUrl: URL, feedIconFinder: suspend (URL) -> Strin
     }
 
     try {
-        return Feed(
+        return JsonFeed(
             title = plainTitle(),
             home_page_url = siteUrl,
             feed_url = relativeLinkIntoAbsoluteOrNull(

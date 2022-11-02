@@ -47,7 +47,7 @@ class Converters {
         if (value != null) {
             try {
                 dt = ZonedDateTime.parse(value)
-            } catch (t: Throwable) {
+            } catch (_: Throwable) {
             }
         }
         return dt

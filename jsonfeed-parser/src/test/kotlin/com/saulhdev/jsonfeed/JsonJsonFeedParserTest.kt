@@ -5,7 +5,7 @@ import org.junit.Test
 import org.junit.rules.ExpectedException
 import kotlin.test.assertEquals
 
-class JsonFeedParserTest {
+class JsonJsonFeedParserTest {
 
     @Rule
     @JvmField

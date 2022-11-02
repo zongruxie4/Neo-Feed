@@ -18,10 +18,12 @@
 
 package com.saulhdev.feeder.db
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.saulhdev.feeder.utils.sloppyLinkToStrictURL
+import org.threeten.bp.Instant
 import java.net.URL
 
 @Entity(
@@ -37,5 +39,9 @@ class Feed(
     var title: String = "",
     val description: String = "",
     var url: URL = sloppyLinkToStrictURL(""),
-    val feedImage: URL = sloppyLinkToStrictURL("")
+    var feedImage: URL = sloppyLinkToStrictURL(""),
+    @ColumnInfo(typeAffinity = ColumnInfo.INTEGER) var lastSync: Instant = Instant.EPOCH,
+    var alternateId: Boolean = false,
+    var tag: String = "",
+    var currentlySyncing: Boolean = false
 )

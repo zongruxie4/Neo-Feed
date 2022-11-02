@@ -7,7 +7,7 @@ import com.saulhdev.feeder.utils.asFeed
 import com.saulhdev.feeder.utils.relativeLinkIntoAbsolute
 import com.saulhdev.feeder.utils.relativeLinkIntoAbsoluteOrThrow
 import com.saulhdev.feeder.utils.sloppyLinkToStrictURL
-import com.saulhdev.jsonfeed.Feed
+import com.saulhdev.jsonfeed.JsonFeed
 import com.saulhdev.jsonfeed.JsonFeedParser
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
@@ -168,9 +168,9 @@ class FeedParser {
         client.curlAndOnResponse(url, block)
 
     @Throws(FeedParsingError::class)
-    suspend fun parseFeedUrl(url: URL): Feed? {
+    suspend fun parseFeedUrl(url: URL): JsonFeed? {
         try {
-            var result: Feed? = null
+            var result: JsonFeed? = null
             curlAndOnResponse(url) {
                 result = parseFeedResponse(it)
             }
@@ -182,7 +182,7 @@ class FeedParser {
     }
 
     @Throws(FeedParsingError::class)
-    suspend fun parseFeedResponse(response: Response): Feed {
+    suspend fun parseFeedResponse(response: Response): JsonFeed {
         return response.body.use {
             // OkHttp string method handles BOM and Content-Type header in request
             parseFeedResponse(
@@ -199,7 +199,7 @@ class FeedParser {
     suspend fun parseFeedResponse(
         url: URL,
         responseBody: ResponseBody,
-    ): Feed {
+    ): JsonFeed {
         try {
             val feed = when (responseBody.contentType()?.subtype?.contains("json")) {
                 true -> jsonFeedParser.parseJson(responseBody)
@@ -218,7 +218,7 @@ class FeedParser {
     }
 
     @Throws(FeedParsingError::class)
-    internal suspend fun parseRssAtom(baseUrl: URL, responseBody: ResponseBody): Feed {
+    internal suspend fun parseRssAtom(baseUrl: URL, responseBody: ResponseBody): JsonFeed {
         try {
             responseBody.byteStream().use { bs ->
                 val feed = XmlReader(bs, true, responseBody.contentType()?.charset()?.name()).use {
@@ -274,7 +274,7 @@ suspend fun OkHttpClient.getResponse(url: URL, forceNetwork: Boolean = false): R
         }
         val credentials = Credentials.basic(decodedUser, decodedPass)
         newBuilder()
-            .authenticator { route, response ->
+            .authenticator { _, response ->
                 when {
                     response.request.header("Authorization") != null -> {
                         null

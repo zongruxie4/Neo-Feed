@@ -16,13 +16,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ua.itaysonlab.hfsdk.FeedCategory
 import ua.itaysonlab.hfsdk.FeedItem
-import ua.itaysonlab.hfsdk.FeedItemType
 import ua.itaysonlab.hfsdk.IFeedInterface
 import ua.itaysonlab.hfsdk.IFeedInterfaceCallback
-import ua.itaysonlab.hfsdk.content.StoryCardContent
-import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
-import java.util.Date
 
 class HFPluginService : Service(), CoroutineScope by MainScope() {
 
@@ -35,16 +30,16 @@ class HFPluginService : Service(), CoroutineScope by MainScope() {
             parameters: Bundle?
         ) {
             callback ?: return
-
             launch {
                 val list = mutableListOf<FeedItem>()
 
                 withContext(Dispatchers.IO) {
-                    val repository = FeedRepository(this@HFPluginService)
+                    /*val repository = FeedRepository(this@HFPluginService)
                     val feedList: List<Feed> = repository.getAllFeeds()
 
                     val feedParser = FeedArticleParser()
                     feedList.forEach { model ->
+
                         feedParser.getArticleList(model).forEach { article ->
                             list.add(
                                 FeedItem(
@@ -71,7 +66,8 @@ class HFPluginService : Service(), CoroutineScope by MainScope() {
                                 )
                             )
                         }
-                    }
+
+                    }*/
                 }
 
                 callback.onFeedReceive(list)

@@ -29,6 +29,7 @@ import java.net.URL
 class FeedRepository(context: Context) {
     private val scope = CoroutineScope(Dispatchers.IO) + CoroutineName("NeoFeedRepository")
     private val feedDao = NeoFeedDb.getInstance(context).feedDao()
+    private val feedArticleDao = NeoFeedDb.getInstance(context).feedArticleDao()
 
     fun saveFeed(feed: Feed) {
         scope.launch {
@@ -49,9 +50,8 @@ class FeedRepository(context: Context) {
     }
 
     fun getAllFeeds(): List<Feed> {
-        return feedDao.feedList()
+        return feedDao.loadFeeds()
     }
-
     fun deleteFeed(feed: Feed) {
         scope.launch {
             feedDao.delete(feed)

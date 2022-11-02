@@ -41,6 +41,12 @@ interface FeedDao {
     @Query("SELECT * FROM Feeds WHERE title = :title AND url = :url")
     suspend fun findFeed(title: String, url: URL): List<Feed>
 
-    @Query("SELECT * FROM feeds")
-    fun feedList(): List<Feed>
+    @Query("SELECT * FROM Feeds WHERE id IS :feedId")
+    suspend fun loadFeed(feedId: Long): Feed?
+
+    @Query("SELECT * FROM Feeds")
+    fun loadFeeds(): List<Feed>
+
+    @Query("SELECT * FROM Feeds WHERE tag IS :tag")
+    suspend fun loadFeeds(tag: String): List<Feed>
 }
