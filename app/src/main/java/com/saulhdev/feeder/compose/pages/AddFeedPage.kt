@@ -164,7 +164,7 @@ fun saveFeed(results: List<SearchResult>, repository: FeedRepository) {
                 url = sloppyLinkToStrictURL(result.url),
                 feedImage = sloppyLinkToStrictURL(result.url)
             )
-            repository.saveFeed(feed)
+            repository.insertFeed(feed)
         }
 
     }

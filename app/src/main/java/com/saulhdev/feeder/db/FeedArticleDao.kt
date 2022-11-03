@@ -30,9 +30,6 @@ interface FeedArticleDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertFeedArticle(item: FeedArticle): Long
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertFeedArticle(items: List<FeedArticle>): List<Long>
-
     @Update
     suspend fun updateFeedArticle(item: FeedArticle): Int
 
@@ -44,10 +41,17 @@ interface FeedArticleDao {
 
     @Query(
         """
-        DELETE FROM feedArticle WHERE id IN (:ids)
+        DELETE FROM FeedArticle WHERE id IN (:ids)
         """
     )
     suspend fun deleteFeedArticle(ids: List<Long>): Int
+
+    @Query(
+        """
+        DELETE FROM FeedArticle WHERE feedId = :feedId
+        """
+    )
+    suspend fun deleteFeedArticle(feedId: Long?): Int
 
     @Query("SELECT * FROM feedArticle WHERE guid IS :guid AND feedId IS :feedId")
     suspend fun loadArticle(guid: String, feedId: Long?): FeedArticle?

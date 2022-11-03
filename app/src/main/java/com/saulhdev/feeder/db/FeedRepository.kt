@@ -33,7 +33,7 @@ class FeedRepository(context: Context) {
     private val feedDao = NeoFeedDb.getInstance(context).feedDao()
     private val feedArticleDao = NeoFeedDb.getInstance(context).feedArticleDao()
 
-    fun saveFeed(feed: Feed) {
+    fun insertFeed(feed: Feed) {
         scope.launch {
             feedDao.insert(feed)
         }
@@ -67,6 +67,7 @@ class FeedRepository(context: Context) {
 
     fun deleteFeed(feed: Feed) {
         scope.launch {
+            feedArticleDao.deleteFeedArticle(feed.id)
             feedDao.delete(feed)
         }
     }
