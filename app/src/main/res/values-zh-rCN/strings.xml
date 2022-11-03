@@ -63,4 +63,5 @@
     <string name="title_feed_list">订阅列表</string>
     <string name="remove_title">确认操作</string>
     <string name="summary_feed_list">添加或移除 RSS 源</string>
+    <string name="theme_auto_system">自动（跟随系统）</string>
 </resources>
