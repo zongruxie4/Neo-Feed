@@ -16,8 +16,13 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ua.itaysonlab.hfsdk.FeedCategory
 import ua.itaysonlab.hfsdk.FeedItem
+import ua.itaysonlab.hfsdk.FeedItemType
 import ua.itaysonlab.hfsdk.IFeedInterface
 import ua.itaysonlab.hfsdk.IFeedInterfaceCallback
+import ua.itaysonlab.hfsdk.content.StoryCardContent
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
+import java.util.Date
 
 class HFPluginService : Service(), CoroutineScope by MainScope() {
 
@@ -33,33 +38,32 @@ class HFPluginService : Service(), CoroutineScope by MainScope() {
             launch {
                 val list = mutableListOf<FeedItem>()
 
+                //Load feed articles from database
                 withContext(Dispatchers.IO) {
-                    /*val repository = FeedRepository(this@HFPluginService)
+                    val repository = FeedRepository(this@HFPluginService)
                     val feedList: List<Feed> = repository.getAllFeeds()
 
-                    val feedParser = FeedArticleParser()
-                    feedList.forEach { model ->
-
-                        feedParser.getArticleList(model).forEach { article ->
+                    feedList.forEach { feed ->
+                        repository.getFeedArticles(feed).forEach { article ->
                             list.add(
                                 FeedItem(
-                                    "${model.title} [RSS]",
+                                    "${feed.title} [RSS]",
                                     FeedItemType.STORY_CARD,
                                     StoryCardContent(
-                                        title = article.title!!,
-                                        text = article.description!!,
-                                        background_url = article.image ?: "",
+                                        title = article.title,
+                                        text = article.description,
+                                        background_url = article.imageUrl ?: "",
                                         link = article.link ?: "",
                                         source = FeedCategory(
-                                            model.url.toString(),
-                                            model.title,
+                                            feed.url.toString(),
+                                            feed.title,
                                             Color.GREEN,
-                                            model.feedImage.toString()
+                                            feed.feedImage.toString()
                                         )
                                     ),
                                     Date.from(
                                         ZonedDateTime.parse(
-                                            article.date,
+                                            article.pubDate,
                                             DateTimeFormatter.ISO_ZONED_DATE_TIME
                                         ).toInstant()
                                     ).time
@@ -67,7 +71,7 @@ class HFPluginService : Service(), CoroutineScope by MainScope() {
                             )
                         }
 
-                    }*/
+                    }
                 }
 
                 callback.onFeedReceive(list)

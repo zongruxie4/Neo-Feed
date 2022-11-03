@@ -50,6 +50,11 @@ interface FeedArticleDao {
     suspend fun deleteFeedArticle(ids: List<Long>): Int
 
     @Query("SELECT * FROM feedArticle WHERE guid IS :guid AND feedId IS :feedId")
-    suspend fun loadFeedItem(guid: String, feedId: Long?): FeedArticle?
+    suspend fun loadArticle(guid: String, feedId: Long?): FeedArticle?
 
+    @Query("SELECT * FROM feedArticle WHERE guid IS :guid")
+    suspend fun findArticle(guid: String): FeedArticle?
+
+    @Query("SELECT * FROM feedArticle WHERE feedId IS :feedId")
+    suspend fun loadArticles(feedId: Long?): List<FeedArticle>
 }

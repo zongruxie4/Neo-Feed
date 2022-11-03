@@ -181,22 +181,6 @@ fun EditFeedView(
             Spacer(modifier = Modifier.width(8.dp))
             OutlinedButton(
                 onClick = {
-                    /*var feedList =
-                        prefs.feedList.onGetValue().map { SavedFeedModel(JSONObject(it)) }
-                    feedList.map {
-                        if (it.url == url.urlDecode()) {
-                            it.title = feedTitle
-                            it.url = feedUrl
-                        } else {
-                            feedList =
-                                feedList + SavedFeedModel(feedTitle, "", feedUrl)
-                        }
-                        prefs.feedList.onSetValue(feedList.map { feedItem ->
-                            feedItem.asJson().toString()
-                        }.toSet())
-
-
-                    }*/
                     repository.updateFeed(title, sloppyLinkToStrictURL(url))
                     navController.popBackStack()
                 }

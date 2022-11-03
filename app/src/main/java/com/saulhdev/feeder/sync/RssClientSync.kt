@@ -16,36 +16,43 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.saulhdev.feeder.utils
+package com.saulhdev.feeder.sync
 
+import android.content.Context
+import com.saulhdev.feeder.db.Converters
 import com.saulhdev.feeder.db.Feed
 import com.saulhdev.feeder.db.FeedArticle
+import com.saulhdev.feeder.db.FeedRepository
 import com.saulhdev.feeder.models.FeedParser
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class FeedArticleParser {
-    private val parser = FeedParser()
-
-    suspend fun getArticleList(feed: Feed): List<FeedArticle> {
+class RssClientSync(val context: Context) {
+    suspend fun getArticleList(feed: Feed) {
+        val parser = FeedParser()
+        val repository = FeedRepository(context)
         val articles = arrayListOf<FeedArticle>()
+        val converters = Converters()
+
         withContext(Dispatchers.IO) {
-            parser.parseFeedUrl(feed.url)?.items?.forEach {
-                /*articles.add(
+            parser.parseFeedUrl(feed.url)?.items?.filter {
+                converters.dateTimeFromString(it.date_published)!!.toInstant() > feed.lastSync
+            }?.forEach {
+                articles.add(
                     FeedArticle(
-                        id = it.id,
-                        guid = it.guid,
-                        title = it.title,
-                        description = it.summary,
-                        content_html = it.content_html,
-                        image = it.image,
+                        guid = it.id.toString(),
+                        title = it.title ?: "",
+                        description = it.summary ?: "",
+                        content_html = it.content_html ?: "",
+                        imageUrl = it.image,
                         link = it.url,
-                        date = it.date_published,
-                        categories = it.tags.orEmpty()
+                        feedId = feed.id,
+                        pubDate = it.date_published.toString(),
+                        categories = arrayListOf() //TODO it.tags,
                     )
-                )*/
+                )
             }
+            repository.updateOrInsertArticle(articles)
         }
-        return articles
     }
 }

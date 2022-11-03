@@ -24,6 +24,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
+import kotlinx.coroutines.withContext
+import org.threeten.bp.ZonedDateTime
 import java.net.URL
 
 class FeedRepository(context: Context) {
@@ -49,12 +51,50 @@ class FeedRepository(context: Context) {
         }
     }
 
+    fun updateFeed(feed: Feed) {
+        scope.launch {
+            val list: List<Feed> = feedDao.findFeed(feed.id)
+            if (list.isNotEmpty()) {
+                feed.lastSync = ZonedDateTime.now().toInstant()
+                feedDao.update(feed)
+            }
+        }
+    }
+
     fun getAllFeeds(): List<Feed> {
         return feedDao.loadFeeds()
     }
+
     fun deleteFeed(feed: Feed) {
         scope.launch {
             feedDao.delete(feed)
+        }
+    }
+
+    suspend fun getFeedArticles(feed: Feed): ArrayList<FeedArticle> = withContext(Dispatchers.IO) {
+        val list: ArrayList<FeedArticle> = arrayListOf()
+        list.addAll(feedArticleDao.loadArticles(feed.id))
+        list
+    }
+
+    fun updateOrInsertArticle(articles: List<FeedArticle>) {
+        scope.launch {
+            articles.forEach { article ->
+                val dbArticleDao: FeedArticle? = feedArticleDao.findArticle(article.guid)
+                if (dbArticleDao == null) {
+                    feedArticleDao.insertFeedArticle(article)
+                } else {
+                    dbArticleDao.title = article.title
+                    dbArticleDao.description = article.description
+                    dbArticleDao.content_html = article.content_html
+                    dbArticleDao.imageUrl = article.imageUrl
+                    dbArticleDao.link = article.link
+                    dbArticleDao.feedId = article.feedId
+                    dbArticleDao.pubDate = article.pubDate
+                    dbArticleDao.categories = article.categories
+                    feedArticleDao.updateFeedArticle(dbArticleDao)
+                }
+            }
         }
     }
 }

@@ -17,11 +17,13 @@ import com.google.android.libraries.gsa.d.a.OverlayController
 import com.saulhdev.feeder.MainActivity
 import com.saulhdev.feeder.NFApplication
 import com.saulhdev.feeder.R
+import com.saulhdev.feeder.db.FeedRepository
 import com.saulhdev.feeder.feed.FeedAdapter
 import com.saulhdev.feeder.launcherapi.LauncherAPI
 import com.saulhdev.feeder.launcherapi.OverlayThemeHolder
 import com.saulhdev.feeder.plugin.PluginConnector
 import com.saulhdev.feeder.preference.FeedPreferences
+import com.saulhdev.feeder.sync.RssClientSync
 import com.saulhdev.feeder.theme.Theming
 import com.saulhdev.feeder.utils.LinearLayoutManagerWrapper
 import com.saulhdev.feeder.utils.OverlayBridge
@@ -30,6 +32,11 @@ import com.saulhdev.feeder.utils.isDark
 import com.saulhdev.feeder.utils.setLightFlags
 import com.saulhdev.feeder.vkpopup.DialogActionsVcByPopup
 import com.saulhdev.feeder.vkpopup.PopupItem
+import kotlinx.coroutines.CoroutineName
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.plus
 import ua.itaysonlab.hfsdk.FeedItem
 
 class OverlayView(val context: Context) :
@@ -133,6 +140,10 @@ class OverlayView(val context: Context) :
                 "reload" -> {
                     refreshNotifications()
                 }
+
+                "loadArticles" -> {
+                    loadArticles()
+                }
             }
         }
     }
@@ -162,9 +173,22 @@ class OverlayView(val context: Context) :
         NFApplication.bridge.setCallback(this)
     }
 
+    private fun loadArticles() {
+        val repository = FeedRepository(context)
+        val articles = RssClientSync(context)
+        val scope = CoroutineScope(Dispatchers.IO) + CoroutineName("NeoFeedSync")
+        scope.launch {
+            val feeds = repository.getAllFeeds()
+            for (feed in feeds) {
+                articles.getArticleList(feed)
+                repository.updateFeed(feed)
+            }
+        }
+    }
+
     private fun refreshNotifications() {
         list.clear()
-
+        loadArticles()
         PluginConnector.getFeedAsItLoads(0, { feed ->
             list.addAll(feed)
         }) {

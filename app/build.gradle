@@ -125,22 +125,21 @@ dependencies {
     implementation 'io.github.fornewid:material-motion-compose-core:0.8.4'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
-    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation('com.squareup.retrofit2:retrofit:2.9.0') { exclude module: 'okhttp' }
     implementation 'com.squareup.retrofit2:converter-gson:2.6.4'
+    implementation "com.squareup.retrofit2:converter-moshi:2.9.0"
+    implementation 'com.squareup.okhttp3:okhttp:5.0.0-alpha.10'
     implementation 'com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.10'
-
-    // For feeder-sync
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.squareup.retrofit2:converter-moshi:2.9.0")
-    implementation("com.squareup.moshi:moshi:1.12.0")
-    implementation("com.squareup.moshi:moshi-kotlin:1.12.0")
-    implementation("com.squareup.moshi:moshi-adapters:1.12.0")
+    implementation "com.squareup.moshi:moshi:1.12.0"
+    implementation "com.squareup.moshi:moshi-kotlin:1.12.0"
+    implementation "com.squareup.moshi:moshi-adapters:1.12.0"
 
     implementation "com.jakewharton.threetenabp:threetenabp:1.2.4"
     implementation "org.jsoup:jsoup:1.14.2"
     implementation "org.ccil.cowan.tagsoup:tagsoup:1.2.1"
 
     implementation project(':homefeeder-sdk')
+
     // RSS
     implementation("com.rometools:rome:1.18.0") {
         exclude group: 'com.rometools', module: 'rome-utils'
