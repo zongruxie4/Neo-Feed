@@ -25,13 +25,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 import kotlinx.coroutines.withContext
+import org.threeten.bp.Instant
 import org.threeten.bp.ZonedDateTime
 import java.net.URL
 
 class FeedRepository(context: Context) {
     private val scope = CoroutineScope(Dispatchers.IO) + CoroutineName("NeoFeedRepository")
-    private val feedDao = NeoFeedDb.getInstance(context).feedDao()
-    private val feedArticleDao = NeoFeedDb.getInstance(context).feedArticleDao()
+
+    /* Feed */
+    val feedDao = NeoFeedDb.getInstance(context).feedDao()
 
     fun insertFeed(feed: Feed) {
         scope.launch {
@@ -72,30 +74,43 @@ class FeedRepository(context: Context) {
         }
     }
 
+    fun setCurrentlySyncingOn(feedId: Long, syncing: Boolean) {
+        scope.launch {
+            feedDao.setCurrentlySyncingOn(feedId, syncing)
+        }
+    }
+
+    fun setCurrentlySyncingOn(feedId: Long, syncing: Boolean, lastSync: Instant) {
+        scope.launch {
+            feedDao.setCurrentlySyncingOn(feedId, syncing, lastSync)
+        }
+    }
+
+
+    /* Articles */
+    private val feedArticleDao = NeoFeedDb.getInstance(context).feedArticleDao()
+
     suspend fun getFeedArticles(feed: Feed): ArrayList<FeedArticle> = withContext(Dispatchers.IO) {
         val list: ArrayList<FeedArticle> = arrayListOf()
         list.addAll(feedArticleDao.loadArticles(feed.id))
         list
     }
 
-    fun updateOrInsertArticle(articles: List<FeedArticle>) {
-        scope.launch {
-            articles.forEach { article ->
-                val dbArticleDao: FeedArticle? = feedArticleDao.findArticle(article.guid)
-                if (dbArticleDao == null) {
-                    feedArticleDao.insertFeedArticle(article)
-                } else {
-                    dbArticleDao.title = article.title
-                    dbArticleDao.description = article.description
-                    dbArticleDao.content_html = article.content_html
-                    dbArticleDao.imageUrl = article.imageUrl
-                    dbArticleDao.link = article.link
-                    dbArticleDao.feedId = article.feedId
-                    dbArticleDao.pubDate = article.pubDate
-                    dbArticleDao.categories = article.categories
-                    feedArticleDao.updateFeedArticle(dbArticleDao)
-                }
-            }
-        }
+    suspend fun deleteArticles(ids: List<Long>) {
+        feedArticleDao.deleteArticles(ids)
     }
+
+    suspend fun getArticleByGuid(guid: String, feedId: Long): FeedArticle? {
+        return feedArticleDao.loadArticle(guid = guid, feedId = feedId)
+    }
+
+    suspend fun updateOrInsertArticle(
+        itemsWithText: List<Pair<FeedArticle, String>>,
+        block: suspend (FeedArticle, String) -> Unit
+    ) {
+        feedArticleDao.insertOrUpdate(itemsWithText, block)
+    }
+
+    suspend fun getItemsToBeCleanedFromFeed(feedId: Long, keepCount: Int) =
+        feedArticleDao.getItemsToBeCleanedFromFeed(feedId = feedId, keepCount = keepCount)
 }

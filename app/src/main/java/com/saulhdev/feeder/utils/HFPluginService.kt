@@ -63,7 +63,7 @@ class HFPluginService : Service(), CoroutineScope by MainScope() {
                                     ),
                                     Date.from(
                                         ZonedDateTime.parse(
-                                            article.pubDate,
+                                            article.pubDate.toString(),
                                             DateTimeFormatter.ISO_ZONED_DATE_TIME
                                         ).toInstant()
                                     ).time

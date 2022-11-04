@@ -20,16 +20,14 @@ package com.saulhdev.feeder.utils
 
 import android.content.Context
 import com.saulhdev.feeder.R
-import com.squareup.moshi.FromJson
-import com.squareup.moshi.JsonAdapter
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.ToJson
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import org.threeten.bp.Instant
+import java.io.File
+import java.io.IOException
+import java.io.OutputStream
 import java.net.MalformedURLException
 import java.net.URL
 import java.net.URLDecoder
 import java.net.URLEncoder
+import java.util.zip.GZIPOutputStream
 
 fun getThemes(context: Context): Map<String, String> {
     return mapOf(
@@ -146,31 +144,9 @@ fun String.urlEncode(): String =
 fun String.urlDecode(): String =
     URLDecoder.decode(this, "UTF-8")
 
-fun getMoshi(): Moshi = Moshi.Builder()
-    .add(InstantAdapter())
-    .add(URLAdapter())
-    .addLast(KotlinJsonAdapterFactory())
-    .build()
+fun blobFile(itemId: Long, filesDir: File): File =
+    File(filesDir, "$itemId.txt.gz")
 
-class InstantAdapter {
-    @ToJson
-    fun toJSon(value: Instant): Long =
-        value.toEpochMilli()
-
-    @FromJson
-    fun fromJson(value: Long): Instant =
-        Instant.ofEpochMilli(value)
-}
-
-class URLAdapter {
-    @ToJson
-    fun toJSon(value: URL): String =
-        value.toString()
-
-    @FromJson
-    fun fromJson(value: String): URL =
-        URL(value)
-}
-
-inline fun <reified T> Moshi.adapter(): JsonAdapter<T> =
-    adapter(T::class.java)
+@Throws(IOException::class)
+fun blobOutputStream(itemId: Long, filesDir: File): OutputStream =
+    GZIPOutputStream(blobFile(itemId = itemId, filesDir = filesDir).outputStream())

@@ -24,6 +24,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
+import org.threeten.bp.Instant
 import java.net.URL
 
 @Dao
@@ -50,6 +51,30 @@ interface FeedDao {
     @Query("SELECT * FROM Feeds")
     fun loadFeeds(): List<Feed>
 
-    @Query("SELECT * FROM Feeds WHERE tag IS :tag")
-    suspend fun loadFeeds(tag: String): List<Feed>
+    @Query(
+        """
+       SELECT * FROM Feeds
+       WHERE id is :feedId
+       AND lastSync < :staleTime
+    """
+    )
+    suspend fun loadFeedIfStale(feedId: Long, staleTime: Long): Feed?
+
+    @Query(
+        """
+            UPDATE feeds
+            SET currentlySyncing = :syncing
+            WHERE id IS :feedId
+        """
+    )
+    suspend fun setCurrentlySyncingOn(feedId: Long, syncing: Boolean)
+
+    @Query(
+        """
+            UPDATE feeds
+            SET currentlySyncing = :syncing, lastSync = :lastSync
+            WHERE id IS :feedId
+        """
+    )
+    suspend fun setCurrentlySyncingOn(feedId: Long, syncing: Boolean, lastSync: Instant)
 }

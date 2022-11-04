@@ -18,11 +18,20 @@
 
 package com.saulhdev.feeder.db
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.ForeignKey.CASCADE
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import com.saulhdev.feeder.utils.relativeLinkIntoAbsolute
+import com.saulhdev.feeder.utils.sloppyLinkToStrictURL
+import com.saulhdev.feeder.views.HtmlToPlainTextConverter
+import com.saulhdev.jsonfeed.Item
+import com.saulhdev.jsonfeed.JsonFeed
+import org.threeten.bp.Instant
+import org.threeten.bp.ZoneOffset
+import org.threeten.bp.ZonedDateTime
 
 @Entity(
     tableName = "FeedArticle",
@@ -51,8 +60,60 @@ data class FeedArticle(
     var description: String = "",
     var content_html: String = "",
     var author: String? = "",
-    var pubDate: String = "",
+    var pubDate: ZonedDateTime? = null,
     var link: String? = "",
     var feedId: Long = 0,
-    var categories: ArrayList<String> = arrayListOf()
-)
+    @ColumnInfo(typeAffinity = ColumnInfo.INTEGER) var firstSyncedTime: Instant = Instant.EPOCH,
+    @ColumnInfo(typeAffinity = ColumnInfo.INTEGER) var primarySortTime: Instant = Instant.EPOCH,
+    var categories: ArrayList<String> = arrayListOf(),
+    var pinned: Boolean = false,
+    var bookmarked: Boolean = false,
+) {
+    fun updateFromParsedEntry(
+        entry: Item,
+        entryGuid: String,
+        feed: JsonFeed,
+    ) {
+        val converter = HtmlToPlainTextConverter()
+        // Be careful about nulls.
+        val text = entry.content_html ?: entry.content_text ?: ""
+        val summary: String = (
+                entry.summary ?: entry.content_text
+                ?: converter.convert(text)
+                ).take(200)
+
+        // Make double sure no base64 images are used as thumbnails
+        val safeImage = when {
+            entry.image?.startsWith("data") == true -> null
+            else -> entry.image
+        }
+
+        val absoluteImage = when {
+            feed.feed_url != null && safeImage != null -> {
+                relativeLinkIntoAbsolute(sloppyLinkToStrictURL(feed.feed_url.toString()), safeImage)
+            }
+
+            else -> safeImage
+        }
+
+        this.guid = entryGuid
+        entry.title?.let { this.plainTitle = it.take(200) }
+        this.title = this.plainTitle
+        this.plainSnippet = summary
+
+        this.imageUrl = absoluteImage
+        this.enclosureLink = entry.attachments?.firstOrNull()?.url
+        this.author = entry.author?.name ?: feed.author?.name
+        this.link = entry.url
+
+        this.pubDate =
+            try {
+                // Allow an actual pubdate to be updated
+                ZonedDateTime.parse(entry.date_published)
+            } catch (t: Throwable) {
+                // If a pubdate is missing, then don't update if one is already set
+                this.pubDate ?: ZonedDateTime.now(ZoneOffset.UTC)
+            }
+        primarySortTime = minOf(firstSyncedTime, pubDate?.toInstant() ?: firstSyncedTime)
+    }
+}

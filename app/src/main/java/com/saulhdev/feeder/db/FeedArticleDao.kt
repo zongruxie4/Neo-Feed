@@ -30,6 +30,9 @@ interface FeedArticleDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertFeedArticle(item: FeedArticle): Long
 
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertFeedArticle(items: List<FeedArticle>): List<Long>
+
     @Update
     suspend fun updateFeedArticle(item: FeedArticle): Int
 
@@ -38,6 +41,13 @@ interface FeedArticleDao {
 
     @Delete
     suspend fun deleteFeedArticle(item: FeedArticle): Int
+
+    @Query(
+        """
+        DELETE FROM FeedArticle WHERE id IN (:ids)
+        """
+    )
+    suspend fun deleteArticles(ids: List<Long>): Int
 
     @Query(
         """
@@ -61,4 +71,41 @@ interface FeedArticleDao {
 
     @Query("SELECT * FROM feedArticle WHERE feedId IS :feedId")
     suspend fun loadArticles(feedId: Long?): List<FeedArticle>
+
+    @Query(
+        """
+        SELECT id FROM FeedArticle
+        WHERE feedId IS :feedId AND pinned = 0 AND bookmarked = 0
+        ORDER BY primarySortTime DESC, pubDate DESC
+        LIMIT -1 OFFSET :keepCount
+        """
+    )
+    suspend fun getItemsToBeCleanedFromFeed(feedId: Long, keepCount: Int): List<Long>
+}
+
+suspend fun FeedArticleDao.insertOrUpdate(
+    itemsWithText: List<Pair<FeedArticle, String>>,
+    block: suspend (FeedArticle, String) -> Unit
+) {
+    val updatedItems = itemsWithText.filter { (item, _) ->
+        item.id > ID_UNSET
+    }
+    updateFeedArticle(updatedItems.map { (item, _) -> item })
+
+    val insertedItems = itemsWithText.filter { (item, _) ->
+        item.id <= ID_UNSET
+    }
+    val insertedIds = insertFeedArticle(insertedItems.map { (item, _) -> item })
+
+    updatedItems.forEach { (item, text) ->
+        block(item, text)
+    }
+
+    insertedIds.zip(insertedItems).forEach { (itemId, itemToText) ->
+        val (item, text) = itemToText
+
+        item.id = itemId
+
+        block(item, text)
+    }
 }

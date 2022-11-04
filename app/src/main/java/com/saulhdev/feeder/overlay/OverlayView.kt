@@ -23,7 +23,7 @@ import com.saulhdev.feeder.launcherapi.LauncherAPI
 import com.saulhdev.feeder.launcherapi.OverlayThemeHolder
 import com.saulhdev.feeder.plugin.PluginConnector
 import com.saulhdev.feeder.preference.FeedPreferences
-import com.saulhdev.feeder.sync.RssClientSync
+import com.saulhdev.feeder.sync.SyncRestClient
 import com.saulhdev.feeder.theme.Theming
 import com.saulhdev.feeder.utils.LinearLayoutManagerWrapper
 import com.saulhdev.feeder.utils.OverlayBridge
@@ -175,13 +175,12 @@ class OverlayView(val context: Context) :
 
     private fun loadArticles() {
         val repository = FeedRepository(context)
-        val articles = RssClientSync(context)
+        val articles = SyncRestClient(context)
         val scope = CoroutineScope(Dispatchers.IO) + CoroutineName("NeoFeedSync")
         scope.launch {
             val feeds = repository.getAllFeeds()
             for (feed in feeds) {
                 articles.getArticleList(feed)
-                repository.updateFeed(feed)
             }
         }
     }

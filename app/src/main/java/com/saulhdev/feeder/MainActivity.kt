@@ -24,10 +24,17 @@ import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.navigation.NavHostController
+import androidx.work.Constraints
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.saulhdev.feeder.compose.navigation.NavigationManager
 import com.saulhdev.feeder.preference.FeedPreferences
+import com.saulhdev.feeder.sync.FeedSyncer
 import com.saulhdev.feeder.theme.AppTheme
+import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceChangeListener {
     lateinit var prefs: FeedPreferences
@@ -56,6 +63,46 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             val list: ArrayList<String> = ArrayList()
             list.add(BuildConfig.APPLICATION_ID)
             prefs.enabledPlugins.onSetValue(list.toSet())
+        }
+
+        configurePerdiodicSync(prefs)
+    }
+
+    private fun configurePerdiodicSync(prefs: FeedPreferences) {
+        val workManager = WorkManager.getInstance(this)
+        val shouldSync = Integer.valueOf(prefs.syncFrequency.onGetValue()) != 0
+        val replace = true
+        if (shouldSync) {
+            val constraints = Constraints.Builder()
+
+            if (prefs.syncOnlyOnWifi.onGetValue()) {
+                constraints.setRequiredNetworkType(NetworkType.UNMETERED)
+            } else {
+                constraints.setRequiredNetworkType(NetworkType.CONNECTED)
+            }
+            val timeInterval = (Integer.valueOf(prefs.syncFrequency.onGetValue()) * 60).toLong()
+
+            val workRequestBuilder = PeriodicWorkRequestBuilder<FeedSyncer>(
+                timeInterval,
+                TimeUnit.MINUTES,
+            )
+
+            val syncWork = workRequestBuilder
+                .setConstraints(constraints.build())
+                .addTag("feeder")
+                .build()
+
+            workManager.enqueueUniquePeriodicWork(
+                "feeder_periodic_3",
+                when (replace) {
+                    true -> ExistingPeriodicWorkPolicy.REPLACE
+                    false -> ExistingPeriodicWorkPolicy.KEEP
+                },
+                syncWork
+            )
+
+        } else {
+            workManager.cancelUniqueWork("feeder_periodic_3")
         }
     }
 
