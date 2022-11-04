@@ -30,6 +30,8 @@
     <string name="pref_browser_theme">Open in Browser</string>
     <string name="pref_sync_wifi">Sync on Wifi Only</string>
     <string name="pref_sync_frequency">Sync Frequency</string>
+    <string name="syncing">Syncing</string>
+    <string name="sync_status">Sync status</string>
     <string name="pref_compact">Compact item layout</string>
     <string name="pref_card_bg">Card background</string>
     <string name="pref_bg_color">Overlay background</string>
