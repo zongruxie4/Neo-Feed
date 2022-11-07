@@ -38,7 +38,7 @@
     <string name="invalid_url">未通过验证的 URL</string>
     <string name="go_back">返回</string>
     <string name="remove_desc">要从订阅源移除 %s 吗\?</string>
-    <string name="theme_auto_launcher">自动（来自启动器）</string>
+    <string name="theme_auto_launcher">自动（跟随启动器）</string>
     <string name="theme_dark">黑暗</string>
     <string name="theme_light">明亮</string>
     <string name="transparency_high_transparency">25% 透明</string>
@@ -46,7 +46,7 @@
     <string name="transparency_low_transparency">75% 透明</string>
     <string name="transparency_non_transparent">无透明</string>
     <string name="transparency_transparent">完全透明</string>
-    <string name="background_theme_option">根据主题</string>
+    <string name="background_theme_option">跟随主题</string>
     <string name="background_white">白色</string>
     <string name="background_amoled">黑色</string>
     <string name="background_primary_color">启动器：第一颜色</string>
@@ -64,4 +64,6 @@
     <string name="remove_title">确认操作</string>
     <string name="summary_feed_list">添加或移除 RSS 源</string>
     <string name="theme_auto_system">自动（跟随系统）</string>
+    <string name="news_image_text">新闻故事图片</string>
+    <string name="debug_logcat_printing">输出基本日志</string>
 </resources>
