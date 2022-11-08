@@ -67,14 +67,6 @@ class FeedPreferences(val context: Context) {
         onChange = doNothing
     )
 
-    var feedList = StringSetPref(
-        key = "pref_feed_list",
-        titleId = R.string.title_feed_list,
-        summaryId = R.string.summary_feed_list,
-        defaultValue = setOf(),
-        onChange = restart
-    )
-
     var enabledPlugins = StringSetPref(
         key = "pref_enabled_plugins",
         titleId = R.string.title_plugin_list,
