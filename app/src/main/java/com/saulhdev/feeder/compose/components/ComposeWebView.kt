@@ -19,10 +19,7 @@
 package com.saulhdev.feeder.compose.components
 
 import android.app.Activity
-import android.graphics.Bitmap
 import android.net.Uri
-import android.util.Log
-import android.webkit.WebView
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.Column
@@ -54,22 +51,21 @@ import com.saulhdev.feeder.utils.urlDecode
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun ComposeWebView(pageUrl: String) {
-
-    val url by remember { mutableStateOf(pageUrl.urlDecode()) }
+fun ComposeWebView(
+    pageUrl: String
+) {
+    val url by remember { mutableStateOf(pageUrl) }
     val state = rememberWebViewState(url = url)
     val navigator = rememberWebViewNavigator()
 
     val loadingState = state.loadingState
     val title = remember { mutableStateOf("Neo Feed") }
     val subTitle = remember { mutableStateOf("Neo Feed") }
+
     val navController = rememberAnimatedNavController()
     val activity = (LocalContext.current as? Activity)
+
     BackHandler {
-        Log.d(
-            "ComposeWebView",
-            "BackHandler " + navController.currentBackStackEntry?.destination?.route
-        )
         if (navController.currentBackStackEntry?.destination?.route == null) {
             activity?.finish()
         } else {
@@ -108,16 +104,10 @@ fun ComposeWebView(pageUrl: String) {
                     subTitle.value = Uri.parse(currentUrl).host!!
                 }
             }
+
+
             val webClient = remember {
                 object : AccompanistWebViewClient() {
-                    override fun onPageStarted(
-                        view: WebView?,
-                        url: String?,
-                        favicon: Bitmap?
-                    ) {
-                        super.onPageStarted(view, url, favicon)
-                        Log.d("Accompanist WebView", "Page started loading for $url")
-                    }
                 }
             }
 
@@ -136,6 +126,7 @@ fun ComposeWebView(pageUrl: String) {
                 },
                 client = webClient
             )
+
         }
     }
 }
