@@ -33,7 +33,19 @@ object StoryCardBinder: FeedBinder {
             binding.storyDesc.text = Html.fromHtml(content.text, 0).toString()
         }
 
-        binding.storyPic.load(content.background_url)
+        if (
+            content.background_url.isEmpty() ||
+            content.background_url == "null" ||
+            content.background_url.contains(".rss")
+        ) {
+            binding.storyPic.visibility = View.GONE
+        } else {
+            binding.storyPic.visibility = View.VISIBLE
+            binding.storyPic.load(content.background_url) {
+                crossfade(true)
+                crossfade(500)
+            }
+        }
 
         binding.root.setOnClickListener {
             if (prefs.openInBrowser.onGetValue()) {
