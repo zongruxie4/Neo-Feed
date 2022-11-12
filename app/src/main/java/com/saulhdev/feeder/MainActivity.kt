@@ -41,13 +41,12 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     private val prefsToWatch = arrayOf(
         "pref_overlay_theme",
         "pref_overlay_transparency",
-        "pref_overlay_compact",
         "pref_overlay_system_colors",
         "pref_overlay_background",
         "pref_overlay_card_background"
     )
 
-    lateinit var navController: NavHostController
+    private lateinit var navController: NavHostController
 
     @OptIn(ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
