@@ -22,7 +22,7 @@
                 android:tint="@color/textColorPrimary"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                tools:src="@drawable/ic_settings_24" />
+                tools:src="@drawable/ic_settings_outline_28" />
 
             <TextView
                 android:id="@+id/not_app_name"

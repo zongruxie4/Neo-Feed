@@ -150,7 +150,7 @@ class OverlayView(val context: Context) :
 
     private fun createMenuList(): List<PopupItem> {
         return listOf(
-            PopupItem(R.drawable.ic_settings_24, R.string.title_settings, 0, "config"),
+            PopupItem(R.drawable.ic_settings_outline_28, R.string.title_settings, 0, "config"),
             PopupItem(R.drawable.ic_replay_24, R.string.action_reload, 0, "reload")
         )
     }
