@@ -125,7 +125,7 @@ class FeedPreferences(val context: Context) {
         titleId = R.string.pref_sync_frequency,
         defaultValue = "1",
         entries = getSyncFrecuency(context),
-        icon = R.drawable.ic_style,
+        icon = R.drawable.ic_clock,
         onChange = doNothing
     )
 
