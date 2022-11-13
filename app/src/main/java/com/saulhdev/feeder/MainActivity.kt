@@ -64,10 +64,10 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             prefs.enabledPlugins.onSetValue(list.toSet())
         }
 
-        configurePerdiodicSync(prefs)
+        configurePeriodicSync(prefs)
     }
 
-    private fun configurePerdiodicSync(prefs: FeedPreferences) {
+    private fun configurePeriodicSync(prefs: FeedPreferences) {
         val workManager = WorkManager.getInstance(this)
         val shouldSync = (prefs.syncFrequency.onGetValue().toDouble()) > 0
         val replace = true
