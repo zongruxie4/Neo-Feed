@@ -40,40 +40,13 @@ class FeedPreferences(val context: Context) {
 
     private var doNothing = {}
     private var recreate = { recreate() }
-    private var restart = { restart() }
 
     private val scope = CoroutineScope(Dispatchers.IO) + CoroutineName("NeoFeedRepository")
 
     private fun recreate() {
     }
 
-    private fun restart() {
-    }
-
-    /*PREFERENCES*/
-    var sources = StringPref(
-        key = "pref_sources",
-        titleId = R.string.title_sources,
-        summaryId = R.string.summary_sources,
-        icon = R.drawable.ic_services_outline_28,
-        route = "/${Routes.SOURCES}/",
-        onChange = doNothing
-    )
-    var about = StringPref(
-        key = "pref_about",
-        titleId = R.string.title_about,
-        icon = R.drawable.ic_info_outline_28,
-        route = "/${Routes.ABOUT}/",
-        onChange = doNothing
-    )
-
-    var enabledPlugins = StringSetPref(
-        key = "pref_enabled_plugins",
-        titleId = R.string.title_plugin_list,
-        defaultValue = setOf(),
-        onChange = doNothing
-    )
-
+    /*=== Appearance ===*/
     var overlayTheme = StringSelectionPref(
         key = "pref_overlay_theme",
         titleId = R.string.pref_ovr_theme,
@@ -119,6 +92,16 @@ class FeedPreferences(val context: Context) {
         onChange = recreate
     )
 
+    /*=== Sources ===*/
+    var sources = StringPref(
+        key = "pref_sources",
+        titleId = R.string.title_sources,
+        summaryId = R.string.summary_sources,
+        icon = R.drawable.ic_services_outline_28,
+        route = "/${Routes.SOURCES}/",
+        onChange = doNothing
+    )
+
     var openInBrowser = BooleanPref(
         key = "pref_open_browser",
         titleId = R.string.pref_browser_theme,
@@ -126,6 +109,8 @@ class FeedPreferences(val context: Context) {
         onChange = recreate
     )
 
+
+    /*=== Sync ===*/
     var syncOnlyOnWifi = BooleanPref(
         key = "pref_sync_only_wifi",
         titleId = R.string.pref_sync_wifi,
@@ -135,13 +120,28 @@ class FeedPreferences(val context: Context) {
             }
         }
     )
-
     var syncFrequency = StringSelectionPref(
         key = "pref_sync_frequency",
         titleId = R.string.pref_sync_frequency,
         defaultValue = "1",
         entries = getSyncFrecuency(context),
         icon = R.drawable.ic_style,
+        onChange = doNothing
+    )
+
+    /*=== Others ===*/
+    var enabledPlugins = StringSetPref(
+        key = "pref_enabled_plugins",
+        titleId = R.string.title_plugin_list,
+        defaultValue = setOf(),
+        onChange = doNothing
+    )
+
+    var about = StringPref(
+        key = "pref_about",
+        titleId = R.string.title_about,
+        icon = R.drawable.ic_info_outline_28,
+        route = "/${Routes.ABOUT}/",
         onChange = doNothing
     )
 

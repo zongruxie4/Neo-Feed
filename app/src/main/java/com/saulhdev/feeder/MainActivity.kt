@@ -69,7 +69,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
     private fun configurePerdiodicSync(prefs: FeedPreferences) {
         val workManager = WorkManager.getInstance(this)
-        val shouldSync = Integer.valueOf(prefs.syncFrequency.onGetValue()) != 0
+        val shouldSync = (prefs.syncFrequency.onGetValue().toDouble()) > 0
         val replace = true
         if (shouldSync) {
             val constraints = Constraints.Builder()
@@ -79,7 +79,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             } else {
                 constraints.setRequiredNetworkType(NetworkType.CONNECTED)
             }
-            val timeInterval = (Integer.valueOf(prefs.syncFrequency.onGetValue()) * 60).toLong()
+            val timeInterval = (prefs.syncFrequency.onGetValue().toDouble() * 60).toLong()
 
             val workRequestBuilder = PeriodicWorkRequestBuilder<FeedSyncer>(
                 timeInterval,

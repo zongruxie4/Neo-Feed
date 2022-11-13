@@ -40,6 +40,7 @@ fun getThemes(context: Context): Map<String, String> {
 
 fun getSyncFrecuency(context: Context): Map<String, String> {
     return mapOf(
+        "0.5" to context.resources.getString(R.string.sync_half_hour_minutes),
         "1" to context.resources.getString(R.string.sync_one_hour),
         "2" to context.resources.getString(R.string.sync_two_hours),
         "3" to context.resources.getString(R.string.sync_three_hours),

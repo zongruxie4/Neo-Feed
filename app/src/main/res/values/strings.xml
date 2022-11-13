@@ -64,6 +64,7 @@
     <string name="theme_auto_system">Automatically (from system)</string>
     <string name="theme_light">Light</string>
     <string name="theme_dark">Dark</string>
+    <string name="sync_half_hour_minutes">30 minutes</string>
     <string name="sync_one_hour">One Hour</string>
     <string name="sync_two_hours">Two Hours</string>
     <string name="sync_three_hours">Three Hours</string>
