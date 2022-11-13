@@ -153,14 +153,6 @@ class FeedPreferences(val context: Context) {
         onChange = doNothing
     )
 
-    var contentDebugging = BooleanPref(
-        key = "pref_content_debugging",
-        titleId = R.string.debug_content_printing,
-        defaultValue = false,
-        icon = R.drawable.ic_debug,
-        onChange = doNothing
-    )
-
     var developer1 = StringPref(
         key = "pref_developer",
         titleId = R.string.pref_tg_author,

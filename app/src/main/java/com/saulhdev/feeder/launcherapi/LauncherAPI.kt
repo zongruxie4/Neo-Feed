@@ -3,9 +3,6 @@ package com.saulhdev.feeder.launcherapi
 import android.graphics.Color
 import android.os.Bundle
 import androidx.annotation.ColorInt
-import com.saulhdev.feeder.preference.FeedPreferences
-import com.saulhdev.feeder.utils.dump
-import ua.itaysonlab.hfsdk.HFPluginApplication
 
 /**
  * A class which parses data from launcher's options [android.os.Bundle].
@@ -49,11 +46,6 @@ class LauncherAPI(bundle: Bundle = Bundle()) {
     var backgroundColorHintTertiary = Color.BLACK
 
     init {
-        val prefs = FeedPreferences(HFPluginApplication.instance)
-        if (prefs.contentDebugging.onGetValue()) {
-            bundle.dump(LOG_TAG)
-        }
-
         darkTheme = bundle.getBoolean(DARK_THEME_KEY, true)
         backgroundColorHint = bundle.getInt(BG_HINT_KEY, Color.BLACK)
         backgroundColorHintSecondary = bundle.getInt(BG_SECONDARY_HINT_KEY, Color.BLACK)
