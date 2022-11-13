@@ -28,10 +28,6 @@ import com.saulhdev.feeder.utils.getItemsPerFeed
 import com.saulhdev.feeder.utils.getSyncFrequency
 import com.saulhdev.feeder.utils.getThemes
 import com.saulhdev.feeder.utils.getTransparencyOptions
-import kotlinx.coroutines.CoroutineName
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.plus
 import kotlin.reflect.KProperty
 
 class FeedPreferences(val context: Context) {
@@ -40,8 +36,6 @@ class FeedPreferences(val context: Context) {
 
     private var doNothing = {}
     private var recreate = { recreate() }
-
-    private val scope = CoroutineScope(Dispatchers.IO) + CoroutineName("NeoFeedRepository")
 
     private fun recreate() {
     }
@@ -108,7 +102,6 @@ class FeedPreferences(val context: Context) {
         defaultValue = false,
         onChange = recreate
     )
-
 
     /*=== Sync ===*/
     var syncOnlyOnWifi = BooleanPref(
