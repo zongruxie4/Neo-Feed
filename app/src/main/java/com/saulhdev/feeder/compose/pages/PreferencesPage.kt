@@ -19,6 +19,8 @@
 package com.saulhdev.feeder.compose.pages
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
@@ -54,12 +56,14 @@ fun PreferencesPage() {
 
         val debugPrefs = listOf(
             prefs.about,
+            Spacer(modifier = Modifier.height(8.dp))
         )
         val sourcePrefs = listOf(
             prefs.sources,
             prefs.openInBrowser,
             prefs.syncOnlyOnWifi,
-            prefs.syncFrequency
+            prefs.syncFrequency,
+            prefs.itemsPerFeed
         )
         val openDialog = remember { mutableStateOf(false) }
         var dialogPref by remember { mutableStateOf<Any?>(null) }

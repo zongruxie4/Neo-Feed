@@ -24,13 +24,13 @@ import androidx.annotation.StringRes
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.compose.navigation.Routes
 import com.saulhdev.feeder.utils.getBackgroundOptions
-import com.saulhdev.feeder.utils.getSyncFrecuency
+import com.saulhdev.feeder.utils.getItemsPerFeed
+import com.saulhdev.feeder.utils.getSyncFrequency
 import com.saulhdev.feeder.utils.getThemes
 import com.saulhdev.feeder.utils.getTransparencyOptions
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 import kotlin.reflect.KProperty
 
@@ -114,18 +114,23 @@ class FeedPreferences(val context: Context) {
     var syncOnlyOnWifi = BooleanPref(
         key = "pref_sync_only_wifi",
         titleId = R.string.pref_sync_wifi,
-        defaultValue = true,
-        onChange = {
-            scope.launch {
-            }
-        }
+        defaultValue = true
     )
     var syncFrequency = StringSelectionPref(
         key = "pref_sync_frequency",
         titleId = R.string.pref_sync_frequency,
         defaultValue = "1",
-        entries = getSyncFrecuency(context),
+        entries = getSyncFrequency(context),
         icon = R.drawable.ic_clock,
+        onChange = doNothing
+    )
+
+    var itemsPerFeed = StringSelectionPref(
+        key = "pref_items_per_feed",
+        titleId = R.string.pref_items_per_feed,
+        defaultValue = "25",
+        entries = getItemsPerFeed(),
+        icon = R.drawable.ic_article,
         onChange = doNothing
     )
 

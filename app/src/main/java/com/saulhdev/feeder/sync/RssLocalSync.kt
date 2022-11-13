@@ -9,6 +9,7 @@ import com.saulhdev.feeder.db.FeedRepository
 import com.saulhdev.feeder.db.ID_UNSET
 import com.saulhdev.feeder.models.FeedParser
 import com.saulhdev.feeder.models.getResponse
+import com.saulhdev.feeder.preference.FeedPreferences
 import com.saulhdev.feeder.utils.blobFile
 import com.saulhdev.feeder.utils.blobOutputStream
 import com.saulhdev.feeder.utils.sloppyLinkToStrictURLNoThrows
@@ -41,15 +42,16 @@ suspend fun syncFeeds(
     feedId: Long = ID_UNSET,
     feedTag: String = "",
     forceNetwork: Boolean = false,
-    minFeedAgeMinutes: Int = 15
+    minFeedAgeMinutes: Int = 5
 ): Boolean {
+    val prefs = FeedPreferences(context)
     return syncMutex.withLock {
         withContext(singleThreadedSync) {
             syncFeeds(
                 context = context,
                 feedId = feedId,
                 feedTag = feedTag,
-                maxFeedItemCount = 100,
+                maxFeedItemCount = prefs.itemsPerFeed.onGetValue().toInt(),
                 forceNetwork = forceNetwork,
                 minFeedAgeMinutes = minFeedAgeMinutes
             )
@@ -61,7 +63,7 @@ internal suspend fun syncFeeds(
     context: Context,
     feedId: Long = ID_UNSET,
     feedTag: String = "",
-    maxFeedItemCount: Int = 200,
+    maxFeedItemCount: Int = 50,
     forceNetwork: Boolean = false,
     minFeedAgeMinutes: Int = 5
 ): Boolean {

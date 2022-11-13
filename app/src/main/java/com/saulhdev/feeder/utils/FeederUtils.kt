@@ -38,13 +38,23 @@ fun getThemes(context: Context): Map<String, String> {
     )
 }
 
-fun getSyncFrecuency(context: Context): Map<String, String> {
+fun getSyncFrequency(context: Context): Map<String, String> {
     return mapOf(
         "0.5" to context.resources.getString(R.string.sync_half_hour_minutes),
         "1" to context.resources.getString(R.string.sync_one_hour),
         "2" to context.resources.getString(R.string.sync_two_hours),
         "3" to context.resources.getString(R.string.sync_three_hours),
         "6" to context.resources.getString(R.string.sync_six_hours)
+    )
+}
+
+fun getItemsPerFeed(): Map<String, String> {
+    return mapOf(
+        "25" to "25",
+        "50" to "50",
+        "100" to "100",
+        "200" to "200",
+        "500" to "500"
     )
 }
 
