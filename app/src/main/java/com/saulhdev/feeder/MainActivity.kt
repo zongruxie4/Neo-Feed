@@ -48,6 +48,8 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
     private lateinit var navController: NavHostController
 
+    private var sRestart = false
+
     @OptIn(ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,6 +67,18 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         }
 
         configurePeriodicSync(prefs)
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+
+        restartIfPending()
+    }
+
+    private fun restartIfPending() {
+        if (sRestart) {
+            NFApplication.instance.restart(false)
+        }
     }
 
     private fun configurePeriodicSync(prefs: FeedPreferences) {

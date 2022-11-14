@@ -22,11 +22,14 @@ import android.content.Context
 import com.saulhdev.feeder.db.Feed
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.kodein.di.DI
+import org.kodein.di.android.closestDI
 
 class SyncRestClient(val context: Context) {
+    val di: DI by closestDI(context)
     suspend fun getArticleList(feed: Feed) {
         withContext(Dispatchers.IO) {
-            requestFeedSync(context, feed.id)
+            requestFeedSync(di, feed.id)
         }
     }
 }

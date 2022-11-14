@@ -21,6 +21,7 @@ package com.saulhdev.feeder.preference
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.annotation.StringRes
+import com.saulhdev.feeder.NFApplication
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.compose.navigation.Routes
 import com.saulhdev.feeder.utils.getBackgroundOptions
@@ -35,9 +36,13 @@ class FeedPreferences(val context: Context) {
         context.getSharedPreferences("com.saulhdev.neofeed.prefs", Context.MODE_PRIVATE)
 
     private var doNothing = {}
-    private var recreate = { recreate() }
 
-    private fun recreate() {
+    private var recreate = {
+        NFApplication.instance.restart(true)
+    }
+
+    private var restart = {
+        NFApplication.instance.restart(false)
     }
 
     /*=== Appearance ===*/
@@ -56,7 +61,7 @@ class FeedPreferences(val context: Context) {
         defaultValue = "non_transparent",
         entries = getTransparencyOptions(context),
         icon = R.drawable.ic_circle, //TODO: Change icon
-        onChange = recreate
+        onChange = doNothing
     )
 
     var systemColors = BooleanPref(
@@ -100,7 +105,7 @@ class FeedPreferences(val context: Context) {
         key = "pref_open_browser",
         titleId = R.string.pref_browser_theme,
         defaultValue = false,
-        onChange = recreate
+        onChange = doNothing
     )
 
     var offlineReader = BooleanPref(

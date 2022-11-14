@@ -141,8 +141,8 @@ class OverlayView(val context: Context) :
                     refreshNotifications()
                 }
 
-                "loadArticles" -> {
-                    loadArticles()
+                "restart" -> {
+                    NFApplication.instance.restart(false)
                 }
             }
         }

@@ -20,6 +20,8 @@ import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.db.ID_UNSET
+import org.kodein.di.DI
+import org.kodein.di.instance
 import java.util.concurrent.TimeUnit
 
 class FeedSyncer(val context: Context, workerParams: WorkerParameters) :
@@ -111,7 +113,7 @@ fun createForegroundInfo(
 }
 
 fun requestFeedSync(
-    context: Context,
+    di: DI,
     feedId: Long = ID_UNSET,
     feedTag: String = "",
     forceNetwork: Boolean = false,
@@ -128,7 +130,7 @@ fun requestFeedSync(
     )
 
     workRequest.setInputData(data)
-    val workManager = WorkManager.getInstance(context)
+    val workManager by di.instance<WorkManager>()
     workManager.enqueueUniqueWork(
         "feeder_sync_onetime",
         ExistingWorkPolicy.KEEP,
