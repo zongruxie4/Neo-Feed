@@ -19,15 +19,13 @@
 package com.saulhdev.feeder.utils
 
 import android.content.Context
+import android.text.BidiFormatter
 import com.saulhdev.feeder.R
-import java.io.File
-import java.io.IOException
-import java.io.OutputStream
 import java.net.MalformedURLException
 import java.net.URL
 import java.net.URLDecoder
 import java.net.URLEncoder
-import java.util.zip.GZIPOutputStream
+import java.util.Locale
 
 fun getThemes(context: Context): Map<String, String> {
     return mapOf(
@@ -155,9 +153,8 @@ fun String.urlEncode(): String =
 fun String.urlDecode(): String =
     URLDecoder.decode(this, "UTF-8")
 
-fun blobFile(itemId: Long, filesDir: File): File =
-    File(filesDir, "$itemId.txt.gz")
+fun Context.unicodeWrap(text: String): String =
+    BidiFormatter.getInstance(getLocale()).unicodeWrap(text)
 
-@Throws(IOException::class)
-fun blobOutputStream(itemId: Long, filesDir: File): OutputStream =
-    GZIPOutputStream(blobFile(itemId = itemId, filesDir = filesDir).outputStream())
+fun Context.getLocale(): Locale =
+    resources.configuration.locales[0]

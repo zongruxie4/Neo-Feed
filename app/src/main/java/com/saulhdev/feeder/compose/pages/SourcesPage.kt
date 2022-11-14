@@ -130,7 +130,7 @@ fun SourcesPage() {
                             navController.navigate(
                                 "/edit_feed/${item.title.urlEncode()}/${
                                     item.url.toString().urlEncode()
-                                }/"
+                                }/${item.fullTextByDefault}/"
                             )
                         },
                         onRemoveAction = {

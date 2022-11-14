@@ -24,6 +24,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface FeedArticleDao {
@@ -67,7 +68,10 @@ interface FeedArticleDao {
     suspend fun loadArticle(guid: String, feedId: Long?): FeedArticle?
 
     @Query("SELECT * FROM feedArticle WHERE guid IS :guid")
-    suspend fun findArticle(guid: String): FeedArticle?
+    suspend fun loadArticleByGuid(guid: String): FeedArticle?
+
+    @Query("SELECT * FROM feedArticle WHERE id IS :id")
+    fun loadArticleById(id: Long): Flow<FeedArticle?>
 
     @Query("SELECT * FROM feedArticle WHERE feedId IS :feedId")
     suspend fun loadArticles(feedId: Long?): List<FeedArticle>
@@ -81,6 +85,16 @@ interface FeedArticleDao {
         """
     )
     suspend fun getItemsToBeCleanedFromFeed(feedId: Long, keepCount: Int): List<Long>
+
+    @Query(
+        """
+            SELECT fi.id, fi.link
+            FROM feedArticle fi
+            JOIN feeds f ON fi.feedId = f.id
+            WHERE f.fulltextByDefault = 1
+        """
+    )
+    fun getFeedsItemsWithDefaultFullTextParse(): Flow<List<FeedItemIdWithLink>>
 }
 
 suspend fun FeedArticleDao.insertOrUpdate(

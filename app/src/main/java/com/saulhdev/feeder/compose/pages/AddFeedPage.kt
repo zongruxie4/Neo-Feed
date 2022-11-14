@@ -146,7 +146,7 @@ fun AddFeedPage() {
                 currentlySearching = currentlySearching,
                 onClick = {
                     saveFeed(results, repository)
-                    navController.navigate("/edit_feed/${it.title.urlEncode()}/${it.url.urlEncode()}/")
+                    navController.navigate("/edit_feed/${it.title.urlEncode()}/${it.url.urlEncode()}/false/")
                 }
             )
         }

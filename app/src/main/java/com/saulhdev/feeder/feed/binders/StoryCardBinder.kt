@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
 import ua.itaysonlab.hfsdk.FeedItem
 import ua.itaysonlab.hfsdk.content.StoryCardContent
 
-object StoryCardBinder: FeedBinder {
+object StoryCardBinder : FeedBinder {
     override fun bind(theme: SparseIntArray?, item: FeedItem, view: View) {
         val content = item.content as StoryCardContent
         val binding = FeedCardStoryLargeBinding.bind(view)
@@ -52,13 +52,23 @@ object StoryCardBinder: FeedBinder {
                 view.context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(content.link)))
             } else {
                 val scope = CoroutineScope(Dispatchers.Main)
+
                 scope.launch {
-                    view.context.startActivity(
-                        ComposeActivity.createIntent(
-                            view.context,
-                            "web_view/${content.link.urlEncode()}/"
+                    if (prefs.offlineReader.onGetValue()) {
+                        view.context.startActivity(
+                            ComposeActivity.createIntent(
+                                view.context,
+                                "article_page/${item.id}/"
+                            )
                         )
-                    )
+                    } else {
+                        view.context.startActivity(
+                            ComposeActivity.createIntent(
+                                view.context,
+                                "web_view/${content.link.urlEncode()}/"
+                            )
+                        )
+                    }
                 }
             }
         }

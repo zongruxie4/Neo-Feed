@@ -42,6 +42,7 @@ class Feed(
     var feedImage: URL = sloppyLinkToStrictURL(""),
     @ColumnInfo(typeAffinity = ColumnInfo.INTEGER) var lastSync: Instant = Instant.EPOCH,
     var alternateId: Boolean = false,
+    var fullTextByDefault: Boolean = false,
     var tag: String = "",
     var currentlySyncing: Boolean = false
 )

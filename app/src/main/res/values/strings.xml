@@ -28,6 +28,7 @@
     <string name="pref_transparency">Overlay background transparency</string>
     <string name="pref_ovr_theme">Overlay theme</string>
     <string name="pref_browser_theme">Open in Browser</string>
+    <string name="pref_offline_reader">Offline reader</string>
     <string name="pref_sync_wifi">Sync on Wifi Only</string>
     <string name="pref_sync_frequency">Sync Frequency</string>
     <string name="pref_items_per_feed">Max items per feed</string>
@@ -89,4 +90,10 @@
     <string name="about_developer" translatable="false">Saul Henriquez</string>
     <string name="about_developer2" translatable="false">Antonios Hazim</string>
     <string name="title_plugin_list">Plugin List</string>
+    <string name="touch_to_play_video">Touch to play video</string>
+    <string name="fetch_full_articles_by_default">Fetch full articles by default</string>
+    <string name="article_not_found">Local article not found</string>
+    <string name="on_date" translatable="false">%1$s</string>
+    <string name="by_author_on_date">%1$s, %2$s</string>
+
 </resources>

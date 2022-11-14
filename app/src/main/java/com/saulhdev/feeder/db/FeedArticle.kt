@@ -32,6 +32,8 @@ import com.saulhdev.jsonfeed.JsonFeed
 import org.threeten.bp.Instant
 import org.threeten.bp.ZoneOffset
 import org.threeten.bp.ZonedDateTime
+import java.net.URI
+import java.net.URL
 
 @Entity(
     tableName = "FeedArticle",
@@ -116,4 +118,41 @@ data class FeedArticle(
             }
         primarySortTime = minOf(firstSyncedTime, pubDate?.toInstant() ?: firstSyncedTime)
     }
+
+    val pubDateString: String?
+        get() = pubDate?.toString()
+
+    val enclosureFilename: String?
+        get() {
+            enclosureLink?.let { enclosureLink ->
+                var fname: String? = null
+                try {
+                    fname = URI(enclosureLink).path.split("/").last()
+                } catch (_: Exception) {
+                }
+                return if (fname.isNullOrEmpty()) {
+                    null
+                } else {
+                    fname
+                }
+            }
+            return null
+        }
+
+    val domain: String?
+        get() {
+            val l: String? = enclosureLink ?: link
+            if (l != null) {
+                try {
+                    return URL(l).host.replace("www.", "")
+                } catch (_: Throwable) {
+                }
+            }
+            return null
+        }
+}
+
+interface FeedItemForFetching {
+    val id: Long
+    val link: String?
 }

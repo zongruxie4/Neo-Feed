@@ -23,6 +23,8 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 
 const val ID_UNSET: Long = 0
 
@@ -31,7 +33,7 @@ const val ID_UNSET: Long = 0
         Feed::class,
         FeedArticle::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
@@ -51,7 +53,21 @@ abstract class NeoFeedDb : RoomDatabase() {
 
         private fun buildDatabase(context: Context): NeoFeedDb {
             return Room.databaseBuilder(context, NeoFeedDb::class.java, "NeoFeed")
+                .addMigrations(*allMigrations)
                 .build()
         }
+    }
+}
+
+val allMigrations = arrayOf(MIGRATION_1_2)
+
+@Suppress("ClassName")
+object MIGRATION_1_2 : Migration(1, 2) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+        database.execSQL(
+            """
+            ALTER TABLE Feeds ADD COLUMN fullTextByDefault INTEGER NOT NULL DEFAULT 0
+            """.trimIndent()
+        )
     }
 }

@@ -63,7 +63,8 @@ fun PreferencesPage() {
             prefs.openInBrowser,
             prefs.syncOnlyOnWifi,
             prefs.syncFrequency,
-            prefs.itemsPerFeed
+            prefs.itemsPerFeed,
+            prefs.offlineReader
         )
         val openDialog = remember { mutableStateOf(false) }
         var dialogPref by remember { mutableStateOf<Any?>(null) }
@@ -96,6 +97,7 @@ fun PreferencesPage() {
                     prefs = debugPrefs,
                     onPrefDialog = onPrefDialog
                 )
+                Spacer(modifier = Modifier.height(8.dp))
             }
         }
 

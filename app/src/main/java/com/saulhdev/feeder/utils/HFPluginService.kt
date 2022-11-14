@@ -47,6 +47,7 @@ class HFPluginService : Service(), CoroutineScope by MainScope() {
                         repository.getFeedArticles(feed).forEach { article ->
                             list.add(
                                 FeedItem(
+                                    id = article.id,
                                     "${feed.title} [RSS]",
                                     FeedItemType.STORY_CARD,
                                     StoryCardContent(

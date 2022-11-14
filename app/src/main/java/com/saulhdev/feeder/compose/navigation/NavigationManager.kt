@@ -78,6 +78,7 @@ object Routes {
     const val ADD_FEED = "add_feed"
     const val EDIT_FEED = "edit_feed"
     const val WEB_VIEW = "web_view"
+    const val ARTICLE_VIEW = "article_page"
     const val LICENSE = "license"
     const val CHANGELOG = "changelog"
 }

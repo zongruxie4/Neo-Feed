@@ -9,6 +9,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.navigation.NavHostController
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.saulhdev.feeder.compose.components.webViewerGraph
+import com.saulhdev.feeder.compose.pages.articleGraph
 import soup.compose.material.motion.materialSharedAxisX
 
 @OptIn(ExperimentalAnimationApi::class)
@@ -30,6 +31,7 @@ fun NavigationManager2(navController: NavHostController) {
         ) {
             preferenceGraph(route = "/", { }) { subRoute ->
                 webViewerGraph(route = subRoute(Routes.WEB_VIEW))
+                articleGraph(route = subRoute(Routes.ARTICLE_VIEW))
             }
         }
     }

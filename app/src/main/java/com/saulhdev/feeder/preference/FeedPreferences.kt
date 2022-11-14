@@ -103,6 +103,14 @@ class FeedPreferences(val context: Context) {
         onChange = recreate
     )
 
+    var offlineReader = BooleanPref(
+        key = "pref_offline_reader",
+        titleId = R.string.pref_offline_reader,
+        icon = R.drawable.ic_wallpaper,
+        defaultValue = false,
+        onChange = doNothing
+    )
+
     /*=== Sync ===*/
     var syncOnlyOnWifi = BooleanPref(
         key = "pref_sync_only_wifi",

@@ -22,6 +22,7 @@ import android.content.Context
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 import kotlinx.coroutines.withContext
@@ -41,13 +42,13 @@ class FeedRepository(context: Context) {
         }
     }
 
-    fun updateFeed(title: String, url: URL) {
+    fun updateFeed(title: String, url: URL, fullTextByDefault: Boolean) {
         scope.launch {
-            val list: List<Feed> = feedDao.findFeed(title, url)
-            if (list.isEmpty()) {
-                val feed = list.first()
+            val feed = feedDao.getFeedByURL(url)
+            if (feed != null) {
                 feed.title = title
                 feed.url = url
+                feed.fullTextByDefault = fullTextByDefault
                 feedDao.update(feed)
             }
         }
@@ -65,6 +66,10 @@ class FeedRepository(context: Context) {
 
     fun getAllFeeds(): List<Feed> {
         return feedDao.loadFeeds()
+    }
+
+    fun getFeedById(id: Long): Flow<Feed> {
+        return feedDao.getFeedById(id)
     }
 
     fun deleteFeed(feed: Feed) {
@@ -104,6 +109,10 @@ class FeedRepository(context: Context) {
         return feedArticleDao.loadArticle(guid = guid, feedId = feedId)
     }
 
+    fun getArticleById(feedId: Long): Flow<FeedArticle?> {
+        return feedArticleDao.loadArticleById(id = feedId)
+    }
+
     suspend fun updateOrInsertArticle(
         itemsWithText: List<Pair<FeedArticle, String>>,
         block: suspend (FeedArticle, String) -> Unit
@@ -113,4 +122,7 @@ class FeedRepository(context: Context) {
 
     suspend fun getItemsToBeCleanedFromFeed(feedId: Long, keepCount: Int) =
         feedArticleDao.getItemsToBeCleanedFromFeed(feedId = feedId, keepCount = keepCount)
+
+    fun getFeedsItemsWithDefaultFullTextParse(): Flow<List<FeedItemIdWithLink>> =
+        feedArticleDao.getFeedsItemsWithDefaultFullTextParse()
 }

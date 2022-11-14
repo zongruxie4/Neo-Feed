@@ -18,6 +18,7 @@
 
 package com.saulhdev.feeder.compose.pages
 
+import android.util.Log
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -37,6 +38,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -58,6 +60,7 @@ import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import com.google.accompanist.navigation.animation.composable
 import com.saulhdev.feeder.R
+import com.saulhdev.feeder.compose.components.ComposeSwitchView
 import com.saulhdev.feeder.compose.components.ViewWithActionBar
 import com.saulhdev.feeder.compose.navigation.LocalNavController
 import com.saulhdev.feeder.compose.navigation.preferenceGraph
@@ -69,7 +72,8 @@ import com.saulhdev.feeder.utils.urlDecode
 @Composable
 fun EditFeedPage(
     feedTitle: String,
-    feedUrl: String
+    feedUrl: String,
+    feedFullTextByDefault: Boolean = false
 ) {
     val title = stringResource(id = R.string.edit_rss)
     ViewWithActionBar(
@@ -83,9 +87,11 @@ fun EditFeedPage(
             ),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Log.d("EditFeedPage", "feedTitle: $feedFullTextByDefault")
             EditFeedView(
                 title = feedTitle.urlDecode(),
                 url = feedUrl.urlDecode(),
+                feedFullTextByDefault = feedFullTextByDefault
             )
         }
     }
@@ -95,13 +101,19 @@ fun EditFeedPage(
 @Composable
 fun EditFeedView(
     title: String,
-    url: String
+    url: String,
+    feedFullTextByDefault: Boolean = false
 ) {
     val (focusTitle, focusTag) = createRefs()
     val focusManager = LocalFocusManager.current
     var feedTitle by rememberSaveable { mutableStateOf(title) }
     var feedUrl by rememberSaveable { mutableStateOf(url) }
     val repository = FeedRepository(LocalContext.current)
+    val (fullTextByDefault, enableFullText) = remember(feedFullTextByDefault) {
+        mutableStateOf(
+            feedFullTextByDefault
+        )
+    }
 
     Column {
         OutlinedTextField(
@@ -162,6 +174,15 @@ fun EditFeedView(
                     focusManager.clearFocus()
                 }
         )
+        Spacer(modifier = Modifier.height(16.dp))
+
+        ComposeSwitchView(
+            title = stringResource(id = R.string.fetch_full_articles_by_default),
+            isChecked = fullTextByDefault,
+            onCheckedChange = {
+                enableFullText(it)
+            }
+        )
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -181,7 +202,8 @@ fun EditFeedView(
             Spacer(modifier = Modifier.width(8.dp))
             OutlinedButton(
                 onClick = {
-                    repository.updateFeed(title, sloppyLinkToStrictURL(url))
+                    Log.d("EditFeedView", "feedTitle: $fullTextByDefault")
+                    repository.updateFeed(title, sloppyLinkToStrictURL(url), fullTextByDefault)
                     navController.popBackStack()
                 }
             ) {
@@ -203,18 +225,21 @@ fun EditFeedPagePreview() {
 fun NavGraphBuilder.editFeedGraph(route: String) {
     preferenceGraph(route, { }) { subRoute ->
         composable(
-            route = subRoute("{feedTitle}/{feedUrl}"),
+            route = subRoute("{feedTitle}/{feedUrl}/{fullTextByDefault}"),
             arguments = listOf(
                 navArgument("feedTitle") { type = NavType.StringType },
-                navArgument("feedUrl") { type = NavType.StringType }
+                navArgument("feedUrl") { type = NavType.StringType },
+                navArgument("fullTextByDefault") { defaultValue = false }
             )
         ) { backStackEntry ->
             val args = backStackEntry.arguments!!
             val feedUrl = args.getString("feedUrl")!!
             val feedTitle = args.getString("feedTitle")!!
+            val feedFullTextByDefault = args.getBoolean("fullTextByDefault")
             EditFeedPage(
                 feedTitle = feedTitle,
-                feedUrl = feedUrl
+                feedUrl = feedUrl,
+                feedFullTextByDefault = feedFullTextByDefault
             )
         }
     }

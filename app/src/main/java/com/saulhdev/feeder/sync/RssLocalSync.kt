@@ -9,6 +9,7 @@ import com.saulhdev.feeder.db.FeedRepository
 import com.saulhdev.feeder.db.ID_UNSET
 import com.saulhdev.feeder.models.FeedParser
 import com.saulhdev.feeder.models.getResponse
+import com.saulhdev.feeder.models.scheduleFullTextParse
 import com.saulhdev.feeder.preference.FeedPreferences
 import com.saulhdev.feeder.utils.blobFile
 import com.saulhdev.feeder.utils.blobOutputStream
@@ -25,6 +26,8 @@ import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Response
+import org.kodein.di.DI
+import org.kodein.di.android.closestDI
 import org.threeten.bp.Instant
 import org.threeten.bp.temporal.ChronoUnit
 import java.io.File
@@ -45,9 +48,11 @@ suspend fun syncFeeds(
     minFeedAgeMinutes: Int = 5
 ): Boolean {
     val prefs = FeedPreferences(context)
+    val di: DI by closestDI(context)
     return syncMutex.withLock {
         withContext(singleThreadedSync) {
             syncFeeds(
+                di,
                 context = context,
                 feedId = feedId,
                 feedTag = feedTag,
@@ -60,6 +65,7 @@ suspend fun syncFeeds(
 }
 
 internal suspend fun syncFeeds(
+    di: DI,
     context: Context,
     feedId: Long = ID_UNSET,
     feedTag: String = "",
@@ -70,6 +76,7 @@ internal suspend fun syncFeeds(
     var result = false
     val repository = FeedRepository(context)
     val downloadTime = Instant.now()
+    var needFullTextSync = false
     val time = measureTimeMillis {
         try {
             supervisorScope {
@@ -87,8 +94,8 @@ internal suspend fun syncFeeds(
 
                 val feedsToFetch =
                     feedsToSync(repository.feedDao, feedId, feedTag, staleTime = staleTime)
-                Log.d(TAG, "Iniciando sincronizacion " + feedsToFetch.size)
                 val jobs = feedsToFetch.map {
+                    needFullTextSync = needFullTextSync || it.fullTextByDefault
                     launch(coroutineContext) {
                         try {
                             repository.setCurrentlySyncingOn(
@@ -119,6 +126,10 @@ internal suspend fun syncFeeds(
             }
         } catch (e: Throwable) {
             Log.e(TAG, "Outer error", e)
+        } finally {
+            if (needFullTextSync) {
+                scheduleFullTextParse(di = di)
+            }
         }
     }
     Log.d(TAG, "Completed in $time ms")

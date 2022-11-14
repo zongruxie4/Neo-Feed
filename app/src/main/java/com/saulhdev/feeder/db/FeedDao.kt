@@ -24,6 +24,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
+import kotlinx.coroutines.flow.Flow
 import org.threeten.bp.Instant
 import java.net.URL
 
@@ -44,6 +45,12 @@ interface FeedDao {
 
     @Query("SELECT * FROM Feeds WHERE id = :id")
     suspend fun findFeed(id: Long): List<Feed>
+
+    @Query("SELECT * FROM Feeds WHERE url = :url")
+    suspend fun getFeedByURL(url: URL): Feed?
+
+    @Query("SELECT * FROM Feeds WHERE id = :id")
+    fun getFeedById(id: Long): Flow<Feed>
 
     @Query("SELECT * FROM Feeds WHERE id IS :feedId")
     suspend fun loadFeed(feedId: Long): Feed?
