@@ -52,7 +52,7 @@
                     android:id="@+id/nas_icon"
                     android:layout_width="72dp"
                     android:layout_height="72dp"
-                    android:src="@drawable/ic_notifications_24" />
+                    android:src="@drawable/ic_notification" />
 
                 <TextView
                     android:id="@+id/nas_title"

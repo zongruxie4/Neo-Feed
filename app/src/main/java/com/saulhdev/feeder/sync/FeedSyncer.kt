@@ -95,7 +95,7 @@ fun createForegroundInfo(
             .setContentTitle(syncingText)
             .setTicker(syncingText)
             .setGroup(syncNotificationGroup)
-            //.setSmallIcon(R.drawable.ic_stat_sync)
+            .setSmallIcon(R.drawable.ic_notification)
             .setOngoing(true)
             .build()
 
