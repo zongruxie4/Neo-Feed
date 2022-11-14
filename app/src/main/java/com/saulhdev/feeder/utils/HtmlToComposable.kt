@@ -633,8 +633,8 @@ private fun TextComposer.appendTextChildren(
                                                 val imageWidth = maxImageWidth()
                                                 AsyncImage(
                                                     model = ImageRequest.Builder(LocalContext.current)
-                                                        .placeholder(R.drawable.youtube_icon)
-                                                        .error(R.drawable.youtube_icon)
+                                                        .placeholder(R.drawable.ic_youtube)
+                                                        .error(R.drawable.ic_youtube)
                                                         .scale(Scale.FIT)
                                                         .size(imageWidth)
                                                         .precision(Precision.INEXACT)
