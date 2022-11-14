@@ -107,7 +107,7 @@ class FeedPreferences(val context: Context) {
         key = "pref_offline_reader",
         titleId = R.string.pref_offline_reader,
         icon = R.drawable.ic_wallpaper,
-        defaultValue = false,
+        defaultValue = true,
         onChange = doNothing
     )
 
