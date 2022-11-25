@@ -50,7 +50,7 @@
     <string name="pref_syscolors">Usar los colores del walpaper del sistema</string>
     <string name="theme_auto_launcher">Automaticamente (desde el Launcher)</string>
     <string name="theme_auto_system">Automaticamente (desde el Sistema)</string>
-    <string name="pref_transparency">Transparencia de fondo superpuesta</string>
+    <string name="pref_transparency">Opacidad</string>
     <string name="pref_ovr_theme">tema de superposición</string>
     <string name="pref_bg_color">Fondo superpuesto</string>
     <string name="pref_card_bg">Fondo de la tarjeta</string>

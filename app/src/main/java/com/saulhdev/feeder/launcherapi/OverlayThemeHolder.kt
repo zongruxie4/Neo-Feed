@@ -41,11 +41,6 @@ class OverlayThemeHolder(private val context: Context, private val overlay: Over
     var overlayBgPref = prefs.overlayBackground.onGetValue()
 
     /**
-     * Overlay transparency
-     */
-    var transparencyBgPref = prefs.overlayTransparency.onGetValue()
-
-    /**
      * If we should apply light statusbar/navbar
      */
     var shouldUseSN = false
@@ -79,24 +74,6 @@ class OverlayThemeHolder(private val context: Context, private val overlay: Over
         "launcher_secondary" -> if (prefs.systemColors.onGetValue()) secondaryWallColor() else overlay.apiInstance.backgroundColorHintSecondary
         "launcher_tertiary" -> if (prefs.systemColors.onGetValue()) tertiaryWallColor() else overlay.apiInstance.backgroundColorHintTertiary
         else -> Color.BLACK
-    }
-
-    /**
-     * If [transparencyBgPref] is fully transparent
-     */
-    val isTransparentBg get() = transparencyBgPref == "transparent"
-
-    /**
-     * Parses scroll alpha to match theme
-     */
-    fun getScrollAlpha(alpha: Float): Float {
-        return if (transparencyBgPref == "half" && alpha > 0.5f) {
-            0.5f
-        } else if (transparencyBgPref == "less_half" && alpha > 0.25f) {
-            0.25f
-        } else if (transparencyBgPref == "more_half" && alpha > 0.75f) {
-            0.75f
-        } else alpha
     }
 
     /**

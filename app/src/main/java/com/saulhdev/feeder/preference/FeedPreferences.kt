@@ -28,7 +28,7 @@ import com.saulhdev.feeder.utils.getBackgroundOptions
 import com.saulhdev.feeder.utils.getItemsPerFeed
 import com.saulhdev.feeder.utils.getSyncFrequency
 import com.saulhdev.feeder.utils.getThemes
-import com.saulhdev.feeder.utils.getTransparencyOptions
+import kotlin.math.roundToInt
 import kotlin.reflect.KProperty
 
 class FeedPreferences(val context: Context) {
@@ -55,12 +55,14 @@ class FeedPreferences(val context: Context) {
         onChange = recreate
     )
 
-    var overlayTransparency = StringSelectionPref(
-        key = "pref_overlay_transparency",
+    var overlayTransparency = FloatPref(
+        key = "pref_overlay_opacity",
         titleId = R.string.pref_transparency,
-        defaultValue = "non_transparent",
-        entries = getTransparencyOptions(context),
-        icon = R.drawable.ic_circle, //TODO: Change icon
+        defaultValue = 1f,
+        maxValue = 1f,
+        minValue = 0f,
+        steps = 100,
+        specialOutputs = { "${(it * 100).roundToInt()}%" },
         onChange = doNothing
     )
 
@@ -260,6 +262,24 @@ class FeedPreferences(val context: Context) {
         override fun onGetValue(): String = sharedPrefs.getString(getKey(), defaultValue)!!
         override fun onSetValue(value: String) {
             edit { putString(getKey(), value) }
+        }
+    }
+
+    open inner class FloatPref(
+        key: String,
+        @StringRes titleId: Int,
+        @StringRes summaryId: Int = -1,
+        defaultValue: Float = 0f,
+        val minValue: Float,
+        val maxValue: Float,
+        val steps: Int,
+        val specialOutputs: ((Float) -> String) = Float::toString,
+        onChange: () -> Unit = doNothing
+    ) : PrefDelegate<Float>(key, titleId, summaryId, defaultValue, onChange) {
+        override fun onGetValue(): Float = sharedPrefs.getFloat(getKey(), defaultValue)
+
+        override fun onSetValue(value: Float) {
+            edit { putFloat(getKey(), value) }
         }
     }
 

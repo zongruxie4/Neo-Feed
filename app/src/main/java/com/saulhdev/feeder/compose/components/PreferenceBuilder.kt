@@ -26,10 +26,16 @@ val PreferenceBuilder =
         when (pref) {
             is FeedPreferences.BooleanPref ->
                 SwitchPreference(pref = pref, index = index, groupSize = size)
+
             is FeedPreferences.StringSetPref ->
                 StringSetPreference(pref = pref, index = index, groupSize = size)
+
             is FeedPreferences.StringPref ->
                 ActionPreference(pref = pref, index = index, groupSize = size)
+
+            is FeedPreferences.FloatPref ->
+                SeekBarPreference(pref = pref, index = index, groupSize = size)
+
             is FeedPreferences.StringSelectionPref ->
                 StringSelectionPreference(
                     pref = pref,

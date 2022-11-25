@@ -204,11 +204,7 @@ class OverlayView(val context: Context) :
 
     override fun onScroll(f: Float) {
         super.onScroll(f)
-        if (themeHolder.isTransparentBg) return
-
-        val float = if (f > 1) 1f else f
-
-        if (f > 0.7f) {
+        if (prefs.overlayTransparency.onGetValue() > 0.7f) {
             if (themeHolder.shouldUseSN && !themeHolder.isSNApplied) {
                 themeHolder.isSNApplied = true
                 window.decorView.setLightFlags()
@@ -222,7 +218,7 @@ class OverlayView(val context: Context) :
 
         val bgColor = themeHolder.currentTheme.get(Theming.Colors.OVERLAY_BG.ordinal)
         val color =
-            (themeHolder.getScrollAlpha(float) * 255.0f).toInt() shl 24 or (bgColor and 0x00ffffff)
+            (prefs.overlayTransparency.onGetValue() * 255.0f).toInt() shl 24 or (bgColor and 0x00ffffff)
         getWindow().setBackgroundDrawable(ColorDrawable(color))
     }
 
@@ -236,8 +232,8 @@ class OverlayView(val context: Context) :
         updateTheme(value)
     }
 
-    override fun applyNewTransparency(value: String) {
-        themeHolder.transparencyBgPref = value
+    override fun applyNewTransparency(value: Float) {
+        themeHolder.prefs.overlayTransparency.onSetValue(value)
     }
 
     override fun applyNewCardBg(value: String) {

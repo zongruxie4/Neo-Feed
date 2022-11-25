@@ -23,7 +23,7 @@ class OverlayBridge {
         fun applyNewOverlayBg(value: String)
         fun applyCompactCard(value: Boolean)
         fun applySysColors(value: Boolean)
-        fun applyNewTransparency(value: String)
+        fun applyNewTransparency(value: Float)
         fun onClientMessage(action: String)
     }
 }

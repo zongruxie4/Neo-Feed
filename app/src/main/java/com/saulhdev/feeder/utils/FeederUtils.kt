@@ -56,16 +56,6 @@ fun getItemsPerFeed(): Map<String, String> {
     )
 }
 
-fun getTransparencyOptions(context: Context): Map<String, String> {
-    return mapOf(
-        "non_transparent" to context.resources.getString(R.string.transparency_non_transparent),
-        "more_half" to context.resources.getString(R.string.transparency_low_transparency),
-        "half" to context.resources.getString(R.string.transparency_mid_transparency),
-        "less_half" to context.resources.getString(R.string.transparency_high_transparency),
-        "transparent" to context.resources.getString(R.string.transparency_transparent)
-    )
-}
-
 fun getBackgroundOptions(context: Context): Map<String, String> {
     return mapOf(
         "theme" to context.resources.getString(R.string.background_theme_option),
