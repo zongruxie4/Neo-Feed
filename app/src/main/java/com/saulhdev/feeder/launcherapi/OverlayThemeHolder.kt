@@ -64,11 +64,8 @@ class OverlayThemeHolder(private val context: Context, private val overlay: Over
      * Parses [cardBgPref] into color integer
      */
     private val cardBackground: Int get() = when (cardBgPref) {
-        "white" -> ContextCompat.getColor(context, R.color.card_bg)
+        "light" -> ContextCompat.getColor(context, R.color.card_bg)
         "dark" -> ContextCompat.getColor(context, R.color.card_bg_dark)
-        "launcher_primary" -> if (prefs.systemColors.onGetValue()) primaryWallColor() else overlay.apiInstance.backgroundColorHint
-        "launcher_secondary" -> if (prefs.systemColors.onGetValue()) secondaryWallColor() else overlay.apiInstance.backgroundColorHintSecondary
-        "launcher_tertiary" -> if (prefs.systemColors.onGetValue()) tertiaryWallColor() else overlay.apiInstance.backgroundColorHintTertiary
         else -> Color.BLACK
     }
 

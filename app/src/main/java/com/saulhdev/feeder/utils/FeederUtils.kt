@@ -69,12 +69,9 @@ fun getTransparencyOptions(context: Context): Map<String, String> {
 fun getBackgroundOptions(context: Context): Map<String, String> {
     return mapOf(
         "theme" to context.resources.getString(R.string.background_theme_option),
-        "white" to context.resources.getString(R.string.background_white),
+        "light" to context.resources.getString(R.string.theme_light),
         "dark" to context.resources.getString(R.string.theme_dark),
-        "amoled" to context.resources.getString(R.string.background_amoled),
-        "launcher_primary" to context.resources.getString(R.string.background_primary_color),
-        "launcher_secondary" to context.resources.getString(R.string.background_secondary_color),
-        "launcher_tertiary" to context.resources.getString(R.string.background_tertiary_color)
+        "amoled" to context.resources.getString(R.string.background_amoled)
     )
 }
 
