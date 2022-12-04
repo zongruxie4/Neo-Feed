@@ -2,6 +2,7 @@ package com.saulhdev.feeder.overlay
 
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.res.ColorStateList
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -41,9 +42,11 @@ import ua.itaysonlab.hfsdk.FeedItem
 
 class OverlayView(val context: Context) :
     OverlayController(context, R.style.AppTheme, R.style.WindowTheme),
-    OverlayBridge.OverlayBridgeCallback {
+    OverlayBridge.OverlayBridgeCallback, SharedPreferences.OnSharedPreferenceChangeListener {
     var apiInstance = LauncherAPI()
     private lateinit var themeHolder: OverlayThemeHolder
+    var sharedPrefs: SharedPreferences =
+        context.getSharedPreferences("com.saulhdev.neofeed.prefs", Context.MODE_PRIVATE)
 
     private lateinit var rootView: View
     private lateinit var adapter: FeedAdapter
@@ -151,7 +154,8 @@ class OverlayView(val context: Context) :
     private fun createMenuList(): List<PopupItem> {
         return listOf(
             PopupItem(R.drawable.ic_settings_outline_28, R.string.title_settings, 0, "config"),
-            PopupItem(R.drawable.ic_replay_24, R.string.action_reload, 0, "reload")
+            PopupItem(R.drawable.ic_replay_24, R.string.action_reload, 0, "reload"),
+            PopupItem(R.drawable.ic_restart, R.string.action_restart, 1, "restart")
         )
     }
 
@@ -171,6 +175,7 @@ class OverlayView(val context: Context) :
         initHeader()
         refreshNotifications()
         NFApplication.bridge.setCallback(this)
+        sharedPrefs.registerOnSharedPreferenceChangeListener(this)
     }
 
     private fun loadArticles() {
@@ -200,6 +205,7 @@ class OverlayView(val context: Context) :
     override fun onDestroy() {
         super.onDestroy()
         NFApplication.bridge.setCallback(null)
+        sharedPrefs.unregisterOnSharedPreferenceChangeListener(this)
     }
 
     override fun onScroll(f: Float) {
@@ -256,5 +262,11 @@ class OverlayView(val context: Context) :
     override fun applySysColors(value: Boolean) {
         themeHolder.systemColors = value
         updateTheme()
+    }
+
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
+        if (key == "pref_overlay_card_background") {
+
+        }
     }
 }
