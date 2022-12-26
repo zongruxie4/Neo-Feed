@@ -10,6 +10,17 @@
 
 [![Neo Applications Banner](neo_banner.png)](https://github.com/NeoApplications)
 
+## *Installation & Download*
+
+Our builds are available on:
+
+[<img width="200" src="badge_github.png" alt="Izzy"/>]https://github.com/NeoApplications/Neo-Feed/releases)
+.
+
+[<img width="200" src="badge_izzy.png" alt="Izzy"/>](https://apt.izzysoft.de/fdroid/repo?fingerprint=3BF0D6ABFEAE2F401707B6D966BE743BF0EEE49C2561B9BA39073711F628937A)**
+
+- **Telegram**: [Neo Applications channel](https://t.me/neo_applications).
+
 ## Supported launchers
 
 - Neo Launcher
