@@ -5,7 +5,7 @@
     <string name="allow_notify_to_settings">打开设置</string>
     <string name="date_ago_now">刚刚</string>
     <string name="about_open_source">开源库</string>
-    <string name="pref_tg">电报频道</string>
+    <string name="pref_tg">Telegram 频道</string>
     <string name="pref_git">源代码</string>
     <string name="pref_cat_overlay">外观</string>
     <string name="pref_cat_debug">Debug</string>
@@ -27,7 +27,7 @@
     <string name="pref_transparency">背景透明度</string>
     <string name="pref_compact">紧凑布局</string>
     <string name="overlay_no_permission_snackbar">请检查您是否已经允许应用使用“通知使用权 “并重试。</string>
-    <string name="pref_syscolors_disabled">需求 Android 8.1 版本及以上</string>
+    <string name="pref_syscolors_disabled">需要 Android 8.1 版本及以上</string>
     <string name="action_reload">重载</string>
     <string name="pm_empty">无已安装的源</string>
     <string name="add_rss">添加新的 RSS 订阅</string>
@@ -44,7 +44,7 @@
     <string name="transparency_high_transparency">25% 透明</string>
     <string name="transparency_mid_transparency">50% 透明</string>
     <string name="transparency_low_transparency">75% 透明</string>
-    <string name="transparency_non_transparent">无透明</string>
+    <string name="transparency_non_transparent">不透明</string>
     <string name="transparency_transparent">完全透明</string>
     <string name="background_theme_option">跟随主题</string>
     <string name="background_white">白色</string>
@@ -65,5 +65,5 @@
     <string name="summary_feed_list">添加或移除 RSS 源</string>
     <string name="theme_auto_system">自动（跟随系统）</string>
     <string name="news_image_text">新闻故事图片</string>
-    <string name="debug_logcat_printing">输出基本日志</string>
+    <string name="debug_logcat_printing">输出详细日志</string>
 </resources>
