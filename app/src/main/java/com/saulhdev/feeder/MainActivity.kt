@@ -23,6 +23,7 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.navigation.NavHostController
 import androidx.work.Constraints
 import androidx.work.ExistingPeriodicWorkPolicy
@@ -53,13 +54,19 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     @OptIn(ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        prefs = FeedPreferences(this)
         setContent {
-            AppTheme {
+            AppTheme(
+                darkTheme = when (prefs.overlayTheme.onGetValue()) {
+                    "auto_system" -> isSystemInDarkTheme()
+                    "dark" -> true
+                    else -> false
+                }
+            ) {
                 navController = rememberAnimatedNavController()
                 NavigationManager(navController = navController)
             }
         }
-        prefs = FeedPreferences(this)
         if (prefs.enabledPlugins.onGetValue().isEmpty()) {
             val list: ArrayList<String> = ArrayList()
             list.add(BuildConfig.APPLICATION_ID)
@@ -71,7 +78,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
     override fun onRestart() {
         super.onRestart()
-
         restartIfPending()
     }
 

@@ -65,7 +65,6 @@ import java.io.InputStream
 
 @Composable
 fun AboutPage() {
-
     val title = stringResource(id = R.string.title_about)
     ViewWithActionBar(
         title = title,
@@ -85,7 +84,6 @@ fun AboutPage() {
             ),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
@@ -95,6 +93,7 @@ fun AboutPage() {
                         .padding(8.dp)
                         .clip(RoundedCornerShape(2f))
                 ) {
+
                     ResourcesCompat.getDrawable(
                         LocalContext.current.resources,
                         R.mipmap.ic_launcher,
@@ -117,11 +116,12 @@ fun AboutPage() {
                         )
                     }
                 }
+
                 Text(
                     text = stringResource(id = R.string.app_name),
                     fontWeight = FontWeight.Normal,
                     fontSize = 24.sp,
-                    color = MaterialTheme.colorScheme.primary
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
 
                 Text(
@@ -129,15 +129,16 @@ fun AboutPage() {
                             + BuildConfig.VERSION_NAME + " ( Build " + BuildConfig.VERSION_CODE + " )",
                     fontWeight = FontWeight.Normal,
                     fontSize = 13.sp,
-                    color = MaterialTheme.colorScheme.onPrimary
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Text(
                     text = stringResource(id = R.string.app_id) + ": " + BuildConfig.APPLICATION_ID,
                     fontWeight = FontWeight.Normal,
                     fontSize = 13.sp,
-                    color = MaterialTheme.colorScheme.onPrimary
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
+
             Spacer(modifier = Modifier.height(16.dp))
 
             LazyColumn(

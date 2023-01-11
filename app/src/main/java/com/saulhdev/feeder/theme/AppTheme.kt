@@ -18,6 +18,7 @@
 
 package com.saulhdev.feeder.theme
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 
 import androidx.compose.material3.lightColorScheme
@@ -25,16 +26,23 @@ import androidx.compose.runtime.Composable
 
 @Composable
 fun AppTheme(
+    darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
     MaterialTheme(
-        colorScheme = LightColors,
+        colorScheme = when {
+            darkTheme -> DarkColors
+            else -> LightColors
+        },
+        shapes = shapes,
         content = content
     )
 }
 
 private val LightColors = lightColorScheme(
     background = LightBackground,
+    secondary = LightSecondary,
+    onSecondary = LightOnSecondary,
     onBackground = LightOnBackground,
     surface = LightSurface,
     onSurface = LightOnSurface,
@@ -43,4 +51,18 @@ private val LightColors = lightColorScheme(
     surfaceVariant = LightSurfaceVariant,
     onSurfaceVariant = LightOnSurfaceVariant,
     outline = LightOutline
+)
+
+private val DarkColors = lightColorScheme(
+    background = DarkBackground,
+    secondary = DarkSecondary,
+    onSecondary = DarkOnSecondary,
+    onBackground = DarkOnBackground,
+    surface = DarkSurface,
+    onSurface = DarkOnSurface,
+    primary = DarkPrimary,
+    onPrimary = DarkOnPrimary,
+    surfaceVariant = DarkSurfaceVariant,
+    onSurfaceVariant = DarkOnSurfaceVariant,
+    outline = DarkOutline
 )
