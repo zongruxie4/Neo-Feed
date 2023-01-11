@@ -25,23 +25,33 @@ import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.core.net.toUri
 import androidx.navigation.NavHostController
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.saulhdev.feeder.compose.navigation.NavigationManager2
+import com.saulhdev.feeder.preference.FeedPreferences
 import com.saulhdev.feeder.theme.AppTheme
 
 class ComposeActivity : AppCompatActivity() {
+    lateinit var prefs: FeedPreferences
     lateinit var navController: NavHostController
 
     @OptIn(ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        prefs = FeedPreferences(this)
         if (supportActionBar != null) {
             supportActionBar?.hide()
         }
         setContent {
-            AppTheme {
+            AppTheme(
+                darkTheme = when (prefs.overlayTheme.onGetValue()) {
+                    "auto_system" -> isSystemInDarkTheme()
+                    "dark" -> true
+                    else -> false
+                }
+            ) {
                 navController = rememberAnimatedNavController()
                 NavigationManager2(navController = navController)
             }
