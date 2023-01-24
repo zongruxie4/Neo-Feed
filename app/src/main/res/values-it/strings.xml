@@ -10,7 +10,7 @@
     <string name="title_sources">Fonti dei dati</string>
     <string name="date_ago_now">ora</string>
     <string name="date_at">alle</string>
-    <string name="pref_transparency">Sovrapponi trasparenza sfondo</string>
+    <string name="pref_transparency">Sovrapponi opacità sfondo</string>
     <string name="pref_ovr_theme">Sovrapposizione tema</string>
     <string name="pref_compact">Disposizione compatta oggetto</string>
     <string name="date_at_1am">\@string/date_at</string>
@@ -69,4 +69,20 @@
     <string name="about_licenses">Licenza</string>
     <string name="about_changelog">Registro delle modifiche</string>
     <string name="about_open_source">Librerie con codice aperto</string>
+    <string name="sync_status">Stato sincronizzazione</string>
+    <string name="syncing">Sincronizzazione</string>
+    <string name="pref_sync_wifi">Sincronizza solo su Wi-Fi</string>
+    <string name="pref_offline_reader">Lettore offline</string>
+    <string name="pref_sync_frequency">Frequenza sincronizzazione</string>
+    <string name="pref_items_per_feed">Numero massimo di articoli per feed</string>
+    <string name="action_restart">Riavvia app</string>
+    <string name="sync_half_hour_minutes">30 minuti</string>
+    <string name="sync_one_hour">Un\'ora</string>
+    <string name="sync_two_hours">Due ore</string>
+    <string name="sync_three_hours">Tre ore</string>
+    <string name="sync_six_hours">Sei ore</string>
+    <string name="touch_to_play_video">Tocca per riprodurre il video</string>
+    <string name="fetch_full_articles_by_default">Recupera articoli completi per impostazione predefinita</string>
+    <string name="article_not_found">Articolo locale non trovato</string>
+    <string name="by_author_on_date">%1$s, %2$s</string>
 </resources>
