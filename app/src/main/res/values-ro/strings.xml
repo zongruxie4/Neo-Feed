@@ -66,4 +66,19 @@
     <string name="title_plugin_list">Lista plugin-urilor</string>
     <string name="transparency_high_transparency">25% transparent</string>
     <string name="transparency_mid_transparency">50% transparent</string>
+    <string name="sync_three_hours">Trei ore</string>
+    <string name="sync_six_hours">Șase ore</string>
+    <string name="touch_to_play_video">Atinge pentru a reda videoclipul</string>
+    <string name="fetch_full_articles_by_default">Preluare articole complete în mod implicit</string>
+    <string name="article_not_found">Articolul local nu a fost găsit</string>
+    <string name="pref_offline_reader">Cititor offline</string>
+    <string name="sync_status">Starea sincronizării</string>
+    <string name="action_restart">Repornire aplicație</string>
+    <string name="sync_one_hour">O oră</string>
+    <string name="sync_half_hour_minutes">30 de minute</string>
+    <string name="pref_sync_wifi">Sincronizare numai prin Wi-Fi</string>
+    <string name="pref_items_per_feed">Maximum de articole per flux</string>
+    <string name="pref_sync_frequency">Frecvența de sincronizare</string>
+    <string name="syncing">Sincronizare</string>
+    <string name="sync_two_hours">Două ore</string>
 </resources>
