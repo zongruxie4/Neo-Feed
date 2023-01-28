@@ -55,8 +55,11 @@ interface FeedDao {
     @Query("SELECT * FROM Feeds WHERE id IS :feedId")
     suspend fun loadFeed(feedId: Long): Feed?
 
-    @Query("SELECT * FROM Feeds")
+    @Query("SELECT * FROM Feeds WHERE isEnabled IS 1")
     fun loadFeeds(): List<Feed>
+
+    @Query("SELECT * FROM Feeds")
+    fun getAllFeeds(): Flow<List<Feed>>
 
     @Query(
         """
@@ -75,6 +78,15 @@ interface FeedDao {
         """
     )
     suspend fun setCurrentlySyncingOn(feedId: Long, syncing: Boolean)
+
+    @Query(
+        """
+            UPDATE feeds
+            SET isEnabled = :isEnabled
+            WHERE id IS :feedId
+        """
+    )
+    suspend fun setIsEnabled(feedId: Long, isEnabled: Boolean)
 
     @Query(
         """
