@@ -86,7 +86,7 @@ fun ComposeSwitchView(
             ) {
                 Text(
                     text = title,
-                    color = MaterialTheme.colorScheme.onPrimary,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.titleMedium,
                     fontSize = 16.sp
                 )
