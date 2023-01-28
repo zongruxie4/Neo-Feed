@@ -18,6 +18,7 @@
 
 package com.saulhdev.feeder.compose.components
 
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -28,68 +29,86 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.saulhdev.feeder.db.Feed
 
 @Composable
 fun FeedItem(
-    feedTitle: String = "",
-    feedURL: String = "",
-    description: String = "",
-    onClickAction: () -> Unit = {},
-    onRemoveAction: () -> Unit = {}
+    modifier: Modifier = Modifier,
+    repository: Feed,
+    onClickAction: (Feed) -> Unit = {},
+    onRemoveAction: (Feed) -> Unit = {}
 ) {
-    Card(
-        modifier = Modifier
-            .clickable { onClickAction() }
-            .fillMaxWidth()
-            .padding(8.dp)
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-            verticalArrangement = Arrangement.spacedBy(4.dp),
-        ) {
-            Row(modifier = Modifier.fillMaxWidth()) {
-                Column(
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Text(text = feedTitle, style = MaterialTheme.typography.titleSmall)
-                    Text(text = feedURL, style = MaterialTheme.typography.bodyMedium)
-                }
-
-                Spacer(modifier = Modifier.padding(horizontal = 8.dp))
-
-                IconButton(
-                    modifier = Modifier.size(36.dp),
-                    onClick = { onRemoveAction() }
-                ) {
-                    Icon(imageVector = Icons.Filled.Close, contentDescription = "Close")
-                }
-            }
-            Spacer(modifier = Modifier.padding(vertical = 4.dp))
-            Text(
-                text = description,
-                style = MaterialTheme.typography.bodyMedium
-            )
-        }
+    val (isEnabled, enable) = remember(repository.isEnabled) {
+        mutableStateOf(repository.isEnabled)
     }
-}
-
-@Preview
-@Composable
-fun FeedItemPreview() {
-    FeedItem(
-        feedTitle = "Feed Title",
-        feedURL = "https://www.feedurl.com",
-        description = "Feed Description"
+    val backgroundColor by animateColorAsState(
+        targetValue = if (isEnabled) MaterialTheme.colorScheme.surfaceColorAtElevation(32.dp)
+        else MaterialTheme.colorScheme.background
     )
+    Surface(
+        modifier = modifier
+            .clickable { onClickAction(repository) }
+            .fillMaxWidth()
+            .padding(8.dp),
+        color = backgroundColor,
+        shape = MaterialTheme.shapes.large
+    ) {
+        Row(
+            modifier = Modifier.padding(
+                horizontal = 8.dp,
+                vertical = 8.dp
+            ),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(
+                modifier = modifier.fillMaxWidth(0.9f),
+                horizontalAlignment = Alignment.Start,
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Row(modifier = Modifier.fillMaxWidth()) {
+                    Column(
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text(text = repository.title, style = MaterialTheme.typography.titleSmall)
+                        Text(
+                            text = repository.url.toString(),
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.padding(vertical = 4.dp))
+                Text(
+                    text = repository.description,
+                    style = MaterialTheme.typography.bodyMedium,
+                    overflow = TextOverflow.Ellipsis,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 1
+                )
+            }
+            IconButton(
+                modifier = Modifier.size(36.dp),
+                onClick = { onRemoveAction(repository) }
+            ) {
+                Icon(imageVector = Icons.Filled.Close, contentDescription = "Close")
+            }
+
+
+        }
+
+    }
 }
