@@ -29,7 +29,7 @@
     <string name="pref_tg_author">Entwickler</string>
     <string name="pref_cat_debug">Debuggen</string>
     <string name="news_image_text">Nachrichtenbild</string>
-    <string name="pref_transparency">Hintergrundtransparenz überlagern</string>
+    <string name="pref_transparency">Deckkraft des Overlay-Hintergrunds</string>
     <string name="pref_compact">Kompaktes Artikel-Layout</string>
     <string name="theme_auto_system">Automatisch (vom System)</string>
     <string name="theme_light">Hell</string>
@@ -67,6 +67,22 @@
     <string name="add_rss">Neue RSS hinzufügen</string>
     <string name="title">Titel</string>
     <string name="description">Beschreibung</string>
-    <string name="debug_logcat_printing">Umfangreicher Logcat-Druck</string>
+    <string name="debug_logcat_printing">Ausführliche Logcat-Ausgabe</string>
     <string name="debug_content_printing">Inhalt der Benachrichtigung protokollieren</string>
+    <string name="touch_to_play_video">Berühren, um Video abzuspielen</string>
+    <string name="fetch_full_articles_by_default">Standardmäßig vollständige Artikel abrufen</string>
+    <string name="article_not_found">Lokaler Artikel nicht gefunden</string>
+    <string name="by_author_on_date">%1$s, %2$s</string>
+    <string name="pref_sync_wifi">Synchronisierung nur bei WLAN-Verbindungen</string>
+    <string name="pref_sync_frequency">Häufigkeit der Synchronisierung</string>
+    <string name="pref_items_per_feed">Maximale Anzahl der Beiträge im Feed</string>
+    <string name="syncing">synchronisierend</string>
+    <string name="sync_status">Synchronisationsstatus</string>
+    <string name="pref_offline_reader">Lokaler Reader</string>
+    <string name="action_restart">App neustarten</string>
+    <string name="sync_half_hour_minutes">halbe Stunde</string>
+    <string name="sync_one_hour">eine Stunde</string>
+    <string name="sync_two_hours">zwei Stunden</string>
+    <string name="sync_three_hours">drei Stunden</string>
+    <string name="sync_six_hours">sechs Stunden</string>
 </resources>
