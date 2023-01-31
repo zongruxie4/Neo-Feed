@@ -39,7 +39,7 @@
     <string name="today">aujourd’hui</string>
     <string name="tomorrow">demain</string>
     <string name="pref_git">Code source</string>
-    <string name="pref_transparency">Transparence de l’arrière-plan de la superposition</string>
+    <string name="pref_transparency">Opacité de l\'arrière-plan de la superposition</string>
     <string name="add_input_hint">URL</string>
     <string name="remove_action_yes">Oui</string>
     <string name="background_white">Blanc</string>
@@ -69,4 +69,19 @@
     <string name="edit_rss">Modifier l\'élément du flux</string>
     <string name="add_feed_search_hint">URL du flux</string>
     <string name="invalid_url">Pas une URL valide</string>
+    <string name="pref_items_per_feed">Nombre maximum de messages dans le flux</string>
+    <string name="pref_offline_reader">Lecteur hors-ligne</string>
+    <string name="pref_sync_wifi">Synchronisation sur Wifi uniquement</string>
+    <string name="pref_sync_frequency">Fréquence de synchronisation</string>
+    <string name="syncing">En train de synchroniser</string>
+    <string name="sync_status">État de la synchronisation</string>
+    <string name="action_restart">Redémarrer l\'application</string>
+    <string name="sync_half_hour_minutes">30 minutes</string>
+    <string name="sync_one_hour">Une heure</string>
+    <string name="sync_two_hours">Deux heures</string>
+    <string name="sync_three_hours">Trois heures</string>
+    <string name="sync_six_hours">Six heures</string>
+    <string name="touch_to_play_video">Appuyez pour lire la vidéo</string>
+    <string name="fetch_full_articles_by_default">Récupérer les articles complets par défaut</string>
+    <string name="article_not_found">Article local non trouvé</string>
 </resources>
