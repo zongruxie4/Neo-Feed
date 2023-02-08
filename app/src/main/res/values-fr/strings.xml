@@ -69,7 +69,7 @@
     <string name="edit_rss">Modifier l\'élément du flux</string>
     <string name="add_feed_search_hint">URL du flux</string>
     <string name="invalid_url">Pas une URL valide</string>
-    <string name="pref_items_per_feed">Nombre maximum de messages dans le flux</string>
+    <string name="pref_items_per_feed">Nombre maximal d\'éléments par flux</string>
     <string name="pref_offline_reader">Lecteur hors-ligne</string>
     <string name="pref_sync_wifi">Synchronisation sur Wifi uniquement</string>
     <string name="pref_sync_frequency">Fréquence de synchronisation</string>
@@ -84,4 +84,5 @@
     <string name="touch_to_play_video">Appuyez pour lire la vidéo</string>
     <string name="fetch_full_articles_by_default">Récupérer les articles complets par défaut</string>
     <string name="article_not_found">Article local non trouvé</string>
+    <string name="by_author_on_date">%1$s, %2$s</string>
 </resources>
