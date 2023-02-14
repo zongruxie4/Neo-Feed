@@ -16,7 +16,7 @@
     <string name="pref_git">Codul sursă</string>
     <string name="pref_cat_overlay">Aspect</string>
     <string name="pref_cat_debug">Depanare</string>
-    <string name="pref_transparency">Suprapunerea transparenței fundalului</string>
+    <string name="pref_transparency">Opacitatea fundalului de suprapunere</string>
     <string name="pref_ovr_theme">Temă</string>
     <string name="pref_browser_theme">Deschidere în browser</string>
     <string name="pref_compact">Aspect compact</string>
@@ -81,4 +81,5 @@
     <string name="pref_sync_frequency">Frecvența de sincronizare</string>
     <string name="syncing">Sincronizare</string>
     <string name="sync_two_hours">Două ore</string>
+    <string name="by_author_on_date">%1$s, %2$s</string>
 </resources>
