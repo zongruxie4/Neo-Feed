@@ -7,7 +7,7 @@ apply plugin: 'kotlin-parcelize'
 android {
     def name = "1.4.5"
     def code = 44
-
+    compileSdkVersion = 33
     defaultConfig {
         applicationId "com.saulhdev.neofeed"
         minSdkVersion 24
@@ -81,8 +81,8 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    implementation 'androidx.appcompat:appcompat:1.6.0'
-    implementation 'androidx.appcompat:appcompat-resources:1.6.0'
+    implementation 'androidx.appcompat:appcompat:1.5.1'
+    implementation 'androidx.appcompat:appcompat-resources:1.5.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.core:core-ktx:1.9.0'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
@@ -94,28 +94,28 @@ dependencies {
     implementation "androidx.work:work-runtime-ktx:2.7.1"
 
     //Compose
-    implementation 'androidx.compose.ui:ui:1.3.3'
-    implementation 'androidx.compose.ui:ui-tooling:1.33'
-    implementation 'androidx.compose.ui:ui-tooling-preview:1.3.3'
-    implementation 'androidx.compose.animation:animation:1.3.3'
-    implementation 'androidx.compose.material3:material3:1.1.0-alpha05'
+    implementation 'androidx.compose.ui:ui:1.3.1'
+    implementation 'androidx.compose.ui:ui-tooling:1.3.1'
+    implementation 'androidx.compose.ui:ui-tooling-preview:1.3.1'
+    implementation 'androidx.compose.animation:animation:1.3.1'
+    implementation 'androidx.compose.material3:material3:1.1.0-alpha02'
     implementation 'androidx.compose.material:material:1.3.1'
     implementation 'androidx.navigation:navigation-compose:2.6.0-alpha04'
 
     //Room
-    implementation 'androidx.room:room-ktx:2.5.0'
-    implementation 'androidx.room:room-paging:2.5.0'
-    kapt 'androidx.room:room-compiler:2.5.0'
+    implementation 'androidx.room:room-ktx:2.4.3'
+    implementation 'androidx.room:room-paging:2.4.3'
+    kapt 'androidx.room:room-compiler:2.4.3'
 
     //DataStore
     implementation 'androidx.datastore:datastore-preferences:1.0.0'
 
     //Material
-    implementation 'com.google.android.material:material:1.9.0-alpha01'
-    implementation 'com.google.android.material:compose-theme-adapter-3:1.1.1'
+    implementation 'com.google.android.material:material:1.8.0-alpha02'
+    implementation 'com.google.android.material:compose-theme-adapter-3:1.1.0'
 
     //Accompanist
-    implementation("com.google.accompanist:accompanist-navigation-animation:0.28.0")
+    implementation("com.google.accompanist:accompanist-navigation-animation:0.27.1")
     implementation "com.google.accompanist:accompanist-webview:0.26.3-beta"
 
     implementation 'io.coil-kt:coil:2.2.2'
@@ -136,6 +136,8 @@ dependencies {
     implementation "com.jakewharton.threetenabp:threetenabp:1.2.4"
     implementation "org.jsoup:jsoup:1.14.2"
     implementation "org.ccil.cowan.tagsoup:tagsoup:1.2.1"
+
+    implementation "androidx.multidex:multidex:2.0.1"
 
     implementation project(':homefeeder-sdk')
 

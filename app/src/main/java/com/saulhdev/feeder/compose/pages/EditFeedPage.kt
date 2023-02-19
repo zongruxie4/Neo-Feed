@@ -18,7 +18,6 @@
 
 package com.saulhdev.feeder.compose.pages
 
-import android.util.Log
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -36,11 +35,8 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -53,7 +49,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
@@ -66,16 +61,21 @@ import com.saulhdev.feeder.compose.navigation.LocalNavController
 import com.saulhdev.feeder.compose.navigation.preferenceGraph
 import com.saulhdev.feeder.compose.util.interceptKey
 import com.saulhdev.feeder.db.FeedRepository
+import com.saulhdev.feeder.models.EditFeedViewState
 import com.saulhdev.feeder.utils.sloppyLinkToStrictURL
-import com.saulhdev.feeder.utils.urlDecode
+import com.saulhdev.feeder.viewmodel.DIAwareViewModel
+import com.saulhdev.feeder.viewmodel.EditFeedViewModel
 
 @Composable
 fun EditFeedPage(
-    feedTitle: String,
-    feedUrl: String,
-    feedFullTextByDefault: Boolean = false
+    editFeedViewModel: EditFeedViewModel,
+    feedId: Long = -1
 ) {
     val title = stringResource(id = R.string.edit_rss)
+    editFeedViewModel.setFeedId(feedId)
+    val viewState by editFeedViewModel.viewState.collectAsState()
+
+
     ViewWithActionBar(
         title = title,
         showBackButton = true,
@@ -87,11 +87,12 @@ fun EditFeedPage(
             ),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Log.d("EditFeedPage", "feedTitle: $feedFullTextByDefault")
             EditFeedView(
-                title = feedTitle.urlDecode(),
-                url = feedUrl.urlDecode(),
-                feedFullTextByDefault = feedFullTextByDefault
+                viewState = viewState,
+                feedTitle = editFeedViewModel::setTitle,
+                feedUrl = editFeedViewModel::setUrl,
+                feedFullTextByDefault = editFeedViewModel::setFullTextByDefault,
+                feedIsEnabled = editFeedViewModel::setIsEnabled
             )
         }
     }
@@ -100,25 +101,32 @@ fun EditFeedPage(
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun EditFeedView(
-    title: String,
-    url: String,
-    feedFullTextByDefault: Boolean = false
+    viewState: EditFeedViewState,
+    feedTitle: (String) -> Unit,
+    feedUrl: (String) -> Unit,
+    feedFullTextByDefault: (Boolean) -> Unit,
+    feedIsEnabled: (Boolean) -> Unit
 ) {
     val (focusTitle, focusTag) = createRefs()
     val focusManager = LocalFocusManager.current
-    var feedTitle by rememberSaveable { mutableStateOf(title) }
-    var feedUrl by rememberSaveable { mutableStateOf(url) }
     val repository = FeedRepository(LocalContext.current)
-    val (fullTextByDefault, enableFullText) = remember(feedFullTextByDefault) {
+    //var feedTitle by rememberSaveable { mutableStateOf(title) }
+    //var feedUrl by rememberSaveable { mutableStateOf(url) }
+    /*val (fullTextByDefault, enableFullText) = remember(feedFullTextByDefault) {
         mutableStateOf(
             feedFullTextByDefault
         )
-    }
+    }*/
+    /*val (isEnabled, itemIsEnabled) = remember(feedIsEnabled) {
+        mutableStateOf(
+            feedIsEnabled
+        )
+    }*/
 
     Column {
         OutlinedTextField(
-            value = feedUrl,
-            onValueChange = { feedUrl = it },
+            value = viewState.url,
+            onValueChange = feedUrl,
             label = {
                 Text(stringResource(id = R.string.add_input_hint))
             },
@@ -146,8 +154,8 @@ fun EditFeedView(
         )
         Spacer(modifier = Modifier.height(16.dp))
         OutlinedTextField(
-            value = feedTitle,
-            onValueChange = { feedTitle = it },
+            value = viewState.title,
+            onValueChange = feedTitle,
             label = {
                 Text(stringResource(id = R.string.title))
             },
@@ -178,12 +186,16 @@ fun EditFeedView(
 
         ComposeSwitchView(
             title = stringResource(id = R.string.fetch_full_articles_by_default),
-            isChecked = fullTextByDefault,
-            onCheckedChange = {
-                enableFullText(it)
-            }
+            isChecked = viewState.fullTextByDefault,
+            onCheckedChange = feedFullTextByDefault
         )
+        Spacer(modifier = Modifier.height(16.dp))
+        ComposeSwitchView(
+            title = stringResource(id = R.string.source_enabled),
+            isChecked = viewState.isEnabled,
+            onCheckedChange = feedIsEnabled
 
+        )
         Spacer(modifier = Modifier.height(16.dp))
 
         Row(
@@ -202,8 +214,12 @@ fun EditFeedView(
             Spacer(modifier = Modifier.width(8.dp))
             OutlinedButton(
                 onClick = {
-                    Log.d("EditFeedView", "feedTitle: $fullTextByDefault")
-                    repository.updateFeed(title, sloppyLinkToStrictURL(url), fullTextByDefault)
+                    repository.updateFeed(
+                        viewState.title,
+                        sloppyLinkToStrictURL(viewState.url),
+                        viewState.fullTextByDefault,
+                        viewState.isEnabled
+                    )
                     navController.popBackStack()
                 }
             ) {
@@ -215,31 +231,20 @@ fun EditFeedView(
     }
 }
 
-@Preview
-@Composable
-fun EditFeedPagePreview() {
-    EditFeedPage("Android Police", "https://www.androidpolice.com/feed/")
-}
-
 @OptIn(ExperimentalAnimationApi::class)
 fun NavGraphBuilder.editFeedGraph(route: String) {
     preferenceGraph(route, { }) { subRoute ->
         composable(
-            route = subRoute("{feedTitle}/{feedUrl}/{fullTextByDefault}"),
+            route = subRoute("{feedId}"),
             arguments = listOf(
-                navArgument("feedTitle") { type = NavType.StringType },
-                navArgument("feedUrl") { type = NavType.StringType },
-                navArgument("fullTextByDefault") { defaultValue = false }
+                navArgument("feedId") { type = NavType.LongType }
             )
         ) { backStackEntry ->
             val args = backStackEntry.arguments!!
-            val feedUrl = args.getString("feedUrl")!!
-            val feedTitle = args.getString("feedTitle")!!
-            val feedFullTextByDefault = args.getBoolean("fullTextByDefault")
+            val feedId = args.getLong("feedId")
             EditFeedPage(
-                feedTitle = feedTitle,
-                feedUrl = feedUrl,
-                feedFullTextByDefault = feedFullTextByDefault
+                editFeedViewModel = backStackEntry.DIAwareViewModel(),
+                feedId = feedId
             )
         }
     }

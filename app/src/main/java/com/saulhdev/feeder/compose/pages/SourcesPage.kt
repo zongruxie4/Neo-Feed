@@ -42,8 +42,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -64,15 +65,10 @@ import com.saulhdev.feeder.compose.navigation.LocalNavController
 import com.saulhdev.feeder.compose.navigation.Routes
 import com.saulhdev.feeder.db.Feed
 import com.saulhdev.feeder.db.FeedRepository
-import com.saulhdev.feeder.utils.urlEncode
-import kotlinx.coroutines.CoroutineName
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.plus
+import com.saulhdev.feeder.viewmodel.SourcesViewModel
 
 @Composable
-fun SourcesPage() {
+fun SourcesPage(viewModel: SourcesViewModel) {
     val title = stringResource(id = R.string.title_sources)
     val context = LocalContext.current
     val navController = LocalNavController.current
@@ -107,30 +103,18 @@ fun SourcesPage() {
                 )
         ) {
             val showDialog = remember { mutableStateOf(false) }
-            val list: List<Feed> = listOf()
-            val feedList = remember { mutableStateOf(list) }
+            val list: State<List<Feed>> = viewModel.feedSources.collectAsState()
             val removeItem: MutableState<Feed?> =
-                remember { mutableStateOf(feedList.value.firstOrNull()) }
-            val scope = CoroutineScope(Dispatchers.IO) + CoroutineName("NeoFeedRepository")
-            LaunchedEffect(Unit) {
-                scope.launch {
-                    feedList.value = repository.getAllFeeds()
-                }
-            }
-
+                remember { mutableStateOf(list.value.firstOrNull()) }
             Spacer(modifier = Modifier.height(8.dp))
 
             LazyColumn {
-                items(feedList.value) { item ->
+                items(list.value) { item ->
                     FeedItem(
-                        feedTitle = item.title,
-                        feedURL = item.url.toString(),
-                        description = item.description,
+                        repository = item,
                         onClickAction = {
                             navController.navigate(
-                                "/edit_feed/${item.title.urlEncode()}/${
-                                    item.url.toString().urlEncode()
-                                }/${item.fullTextByDefault}/"
+                                "/edit_feed/${item.id}/"
                             )
                         },
                         onRemoveAction = {
@@ -206,8 +190,7 @@ fun SourcesPage() {
                                             TextButton(
                                                 shape = RoundedCornerShape(16.dp),
                                                 onClick = {
-                                                    feedList.value =
-                                                        feedList.value - removeItem.value!!
+                                                    //list.value = list.value - removeItem.value!!
                                                     repository.deleteFeed(removeItem.value!!)
                                                     showDialog.value = false
                                                 },

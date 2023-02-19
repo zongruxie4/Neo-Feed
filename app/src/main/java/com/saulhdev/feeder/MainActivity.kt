@@ -21,7 +21,7 @@ package com.saulhdev.feeder
 import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.activity.compose.setContent
-import androidx.appcompat.app.AppCompatActivity
+import androidx.activity.viewModels
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.navigation.NavHostController
@@ -32,12 +32,16 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.saulhdev.feeder.compose.navigation.NavigationManager
+import com.saulhdev.feeder.compose.withDI
 import com.saulhdev.feeder.preference.FeedPreferences
 import com.saulhdev.feeder.sync.FeedSyncer
 import com.saulhdev.feeder.theme.AppTheme
+import com.saulhdev.feeder.viewmodel.DIAwareComponentActivity
+import com.saulhdev.feeder.viewmodel.SourcesViewModel
 import java.util.concurrent.TimeUnit
 
-class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceChangeListener {
+class MainActivity : DIAwareComponentActivity(),
+    SharedPreferences.OnSharedPreferenceChangeListener {
     lateinit var prefs: FeedPreferences
     private val prefsToWatch = arrayOf(
         "pref_overlay_theme",
@@ -50,9 +54,16 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     private lateinit var navController: NavHostController
 
     private var sRestart = false
+    val db
+        get() = (application as NFApplication).db
+
+    val reposViewModel: SourcesViewModel by viewModels() {
+        SourcesViewModel.Factory(db.feedDao())
+    }
 
     @OptIn(ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
+        NFApplication.mainActivity = this
         super.onCreate(savedInstanceState)
         prefs = FeedPreferences(this)
         setContent {
@@ -63,8 +74,10 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                     else -> false
                 }
             ) {
-                navController = rememberAnimatedNavController()
-                NavigationManager(navController = navController)
+                withDI {
+                    navController = rememberAnimatedNavController()
+                    NavigationManager(navController = navController)
+                }
             }
         }
         if (prefs.enabledPlugins.onGetValue().isEmpty()) {

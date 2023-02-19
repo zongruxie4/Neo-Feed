@@ -42,13 +42,14 @@ class FeedRepository(context: Context) {
         }
     }
 
-    fun updateFeed(title: String, url: URL, fullTextByDefault: Boolean) {
+    fun updateFeed(title: String, url: URL, fullTextByDefault: Boolean, isEnabled: Boolean) {
         scope.launch {
             val feed = feedDao.getFeedByURL(url)
             if (feed != null) {
                 feed.title = title
                 feed.url = url
                 feed.fullTextByDefault = fullTextByDefault
+                feed.isEnabled = isEnabled
                 feedDao.update(feed)
             }
         }

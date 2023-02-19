@@ -44,5 +44,6 @@ class Feed(
     var alternateId: Boolean = false,
     var fullTextByDefault: Boolean = false,
     var tag: String = "",
-    var currentlySyncing: Boolean = false
+    var currentlySyncing: Boolean = false,
+    var isEnabled: Boolean = true,
 )

@@ -3,6 +3,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-parcelize'
 
 android {
+    compileSdkVersion = 33
     defaultConfig {
         minSdkVersion 21
         targetSdkVersion 33
