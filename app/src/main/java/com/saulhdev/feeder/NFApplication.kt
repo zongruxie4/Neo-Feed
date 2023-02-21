@@ -1,6 +1,7 @@
 package com.saulhdev.feeder
 
 import android.app.Activity
+import android.app.Application
 import android.os.Bundle
 import androidx.multidex.MultiDexApplication
 import androidx.work.WorkManager
@@ -14,9 +15,12 @@ import com.saulhdev.feeder.plugin.PluginFetcher
 import com.saulhdev.feeder.utils.ApplicationCoroutineScope
 import com.saulhdev.feeder.utils.OverlayBridge
 import com.saulhdev.feeder.utils.Utilities
+import com.saulhdev.feeder.viewmodel.EditFeedViewModel
+import com.saulhdev.feeder.viewmodel.MainActivityViewModel
+import com.saulhdev.feeder.viewmodel.bindWithActivityViewModelScope
+import com.saulhdev.feeder.viewmodel.bindWithComposableViewModelScope
 import org.kodein.di.DI
 import org.kodein.di.DIAware
-import org.kodein.di.android.x.androidXModule
 import org.kodein.di.bind
 import org.kodein.di.instance
 import org.kodein.di.singleton
@@ -30,17 +34,19 @@ class NFApplication : MultiDexApplication(), DIAware {
 
     override val di by DI.lazy {
 
-        import(androidXModule(this@NFApplication))
+        bind<Application>() with singleton { this@NFApplication }
         bind<NeoFeedDb>() with singleton { NeoFeedDb.getInstance(this@NFApplication) }
         bind<WorkManager>() with singleton { WorkManager.getInstance(this@NFApplication) }
         bind<FeedDao>() with singleton { instance<NeoFeedDb>().feedDao() }
         bind<FeedArticleDao>() with singleton { instance<NeoFeedDb>().feedArticleDao() }
 
+        bind<ApplicationCoroutineScope>() with instance(applicationCoroutineScope)
         bind<Repository>() with singleton { Repository(di) }
         bind<FeedStore>() with singleton { FeedStore(di) }
-        bind<ApplicationCoroutineScope>() with instance(applicationCoroutineScope)
 
-        //bindWithComposableViewModelScope<EditFeedViewModel>()
+
+        bindWithActivityViewModelScope<MainActivityViewModel>()
+        bindWithComposableViewModelScope<EditFeedViewModel>()
     }
 
     override fun onCreate() {

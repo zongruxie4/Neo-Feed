@@ -12,10 +12,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,27 +41,44 @@ fun ComposeSwitchView(
     isChecked: Boolean = false,
     isEnabled: Boolean = true,
     showDivider: Boolean = false,
-    applyPaddings: Boolean = true,
+    applyPaddings: Boolean = false,
     horizontalPadding: Dp = 16.dp,
     verticalPadding: Dp = 16.dp,
-    verticalAlignment: Alignment.Vertical = Alignment.CenterVertically
+    index: Int = -1,
+    groupSize: Int = -1,
 ) {
     val (checked, check) = remember { mutableStateOf(isChecked) }
-    Column {
+    val rank = (index + 1f) / groupSize
+    val base = index.toFloat() / groupSize
+    Column(
+        modifier = Modifier
+            .height(64.dp)
+            .fillMaxWidth()
+            .clip(
+                RoundedCornerShape(
+                    topStart = if (base == 0f) 16.dp else 6.dp,
+                    topEnd = if (base == 0f) 16.dp else 6.dp,
+                    bottomStart = if (rank == 1f) 16.dp else 6.dp,
+                    bottomEnd = if (rank == 1f) 16.dp else 6.dp
+                )
+            )
+            .background(MaterialTheme.colorScheme.surfaceColorAtElevation((rank * 24).dp))
+            .clickable(enabled = isEnabled) {
+                check(!checked)
+                onCheckedChange(!checked)
+            }
+    ) {
         if (showDivider) {
             Divider(modifier = Modifier.padding(horizontal = 16.dp))
         }
         Row(
             modifier = modifier
                 .fillMaxWidth()
-                .clickable(enabled = isEnabled) {
-                    check(!checked)
-                    onCheckedChange(!checked)
-                }
+                .padding(horizontal = 12.dp, vertical = 16.dp)
                 .addIf(applyPaddings) {
                     padding(horizontal = horizontalPadding, vertical = verticalPadding)
                 },
-            verticalAlignment = verticalAlignment,
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             if (iconId != 0) {
 

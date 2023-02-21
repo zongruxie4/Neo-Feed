@@ -73,7 +73,8 @@ fun BasePreference(
             .heightIn(min = 64.dp)
             .addIf(onClick != null) {
                 clickable(enabled = isEnabled, onClick = onClick!!)
-            }, verticalArrangement = Arrangement.Center
+            },
+        verticalArrangement = Arrangement.Center
     ) {
         Row(
             modifier = modifier

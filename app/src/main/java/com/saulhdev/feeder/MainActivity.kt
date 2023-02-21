@@ -32,12 +32,12 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.saulhdev.feeder.compose.navigation.NavigationManager
-import com.saulhdev.feeder.compose.withDI
 import com.saulhdev.feeder.preference.FeedPreferences
 import com.saulhdev.feeder.sync.FeedSyncer
 import com.saulhdev.feeder.theme.AppTheme
 import com.saulhdev.feeder.viewmodel.DIAwareComponentActivity
 import com.saulhdev.feeder.viewmodel.SourcesViewModel
+import org.kodein.di.compose.withDI
 import java.util.concurrent.TimeUnit
 
 class MainActivity : DIAwareComponentActivity(),

@@ -75,7 +75,6 @@ fun EditFeedPage(
     editFeedViewModel.setFeedId(feedId)
     val viewState by editFeedViewModel.viewState.collectAsState()
 
-
     ViewWithActionBar(
         title = title,
         showBackButton = true,
@@ -110,18 +109,6 @@ fun EditFeedView(
     val (focusTitle, focusTag) = createRefs()
     val focusManager = LocalFocusManager.current
     val repository = FeedRepository(LocalContext.current)
-    //var feedTitle by rememberSaveable { mutableStateOf(title) }
-    //var feedUrl by rememberSaveable { mutableStateOf(url) }
-    /*val (fullTextByDefault, enableFullText) = remember(feedFullTextByDefault) {
-        mutableStateOf(
-            feedFullTextByDefault
-        )
-    }*/
-    /*val (isEnabled, itemIsEnabled) = remember(feedIsEnabled) {
-        mutableStateOf(
-            feedIsEnabled
-        )
-    }*/
 
     Column {
         OutlinedTextField(
@@ -187,14 +174,17 @@ fun EditFeedView(
         ComposeSwitchView(
             title = stringResource(id = R.string.fetch_full_articles_by_default),
             isChecked = viewState.fullTextByDefault,
-            onCheckedChange = feedFullTextByDefault
+            onCheckedChange = feedFullTextByDefault,
+            index = 0,
+            groupSize = 2
         )
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(4.dp))
         ComposeSwitchView(
             title = stringResource(id = R.string.source_enabled),
             isChecked = viewState.isEnabled,
-            onCheckedChange = feedIsEnabled
-
+            onCheckedChange = feedIsEnabled,
+            index = 1,
+            groupSize = 2
         )
         Spacer(modifier = Modifier.height(16.dp))
 

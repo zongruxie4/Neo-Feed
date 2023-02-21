@@ -232,7 +232,7 @@ internal suspend fun feedsToSync(
     staleTime: Long = -1L
 ): List<Feed> {
     return when {
-        /*feedId > 0 -> {
+        feedId > 0 -> {
             val feed = if (staleTime > 0) feedDao.loadFeedIfStale(
                 feedId,
                 staleTime = staleTime
@@ -243,7 +243,7 @@ internal suspend fun feedsToSync(
                 emptyList()
             }
         }
-        tag.isNotEmpty() -> if (staleTime > 0) feedDao.loadFeedsIfStale(
+        /*tag.isNotEmpty() -> if (staleTime > 0) feedDao.loadFeedsIfStale(
             tag = tag,
             staleTime = staleTime
         ) else feedDao.loadFeeds(tag)

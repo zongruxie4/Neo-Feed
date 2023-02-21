@@ -19,6 +19,7 @@
 package com.saulhdev.feeder.db
 
 import android.content.Context
+import android.util.Log
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -45,6 +46,7 @@ class FeedRepository(context: Context) {
     fun updateFeed(title: String, url: URL, fullTextByDefault: Boolean, isEnabled: Boolean) {
         scope.launch {
             val feed = feedDao.getFeedByURL(url)
+            Log.d("FeedRepository", "updateFeed: ${feed?.url}")
             if (feed != null) {
                 feed.title = title
                 feed.url = url
