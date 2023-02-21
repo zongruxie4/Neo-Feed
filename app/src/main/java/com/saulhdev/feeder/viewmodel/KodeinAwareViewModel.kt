@@ -2,8 +2,6 @@ package com.saulhdev.feeder.viewmodel
 
 import android.os.Bundle
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.ProvidableCompositionLocal
-import androidx.compose.runtime.compositionLocalOf
 import androidx.lifecycle.AbstractSavedStateViewModelFactory
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.SavedStateHandle
@@ -15,6 +13,7 @@ import androidx.savedstate.SavedStateRegistryOwner
 import org.kodein.di.DI
 import org.kodein.di.DIAware
 import org.kodein.di.bind
+import org.kodein.di.compose.LocalDI
 import org.kodein.di.direct
 import org.kodein.di.factory
 import org.kodein.di.instance
@@ -67,8 +66,8 @@ inline fun <reified T : DIAwareViewModel> DI.Builder.bindWithComposableViewModel
 
 class DIAwareSavedStateViewModelFactory(
     override val di: DI,
-    val owner: SavedStateRegistryOwner,
-    val defaultArgs: Bundle? = null
+    private val owner: SavedStateRegistryOwner,
+    private val defaultArgs: Bundle? = null
 ) : AbstractSavedStateViewModelFactory(owner, defaultArgs), DIAware {
     override fun <T : ViewModel> create(
         key: String,
@@ -117,22 +116,4 @@ inline fun <reified T : DIAwareViewModel> NavBackStackEntry.DIAwareViewModel(
         factory = factory
     )
 }
-
-/**
- * DI container holder that can be shared and accessed across the Composable tree
- *
- * Note that the current container can be different depending on the Composable node
- * see [CompositionLocalProvider] / [withDI] / [subDI]
- *
- * @throws [IllegalStateException] if no DI container is attached to the Composable tree
- */
-val LocalDI: ProvidableCompositionLocal<DI> = compositionLocalOf { error("Missing DI container!") }
-
-/**
- * Composable helper function to access the current DI container from the Composable tree (if there is one!)
- *
- * @throws [IllegalStateException] if no DI container is attached to the Composable tree
- */
-@Composable
-fun localDI(): DI = LocalDI.current
 

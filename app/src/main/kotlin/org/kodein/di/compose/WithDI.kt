@@ -1,8 +1,7 @@
-package com.saulhdev.feeder.compose
+package org.kodein.di.compose
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import com.saulhdev.feeder.viewmodel.LocalDI
 import org.kodein.di.DI
 
 /**
