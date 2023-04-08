@@ -55,8 +55,7 @@ fun PreferencesPage() {
         )
 
         val debugPrefs = listOf(
-            prefs.about,
-            Spacer(modifier = Modifier.height(8.dp))
+            prefs.about
         )
         val sourcePrefs = listOf(
             prefs.sources,
