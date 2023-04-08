@@ -98,4 +98,8 @@
     <string name="by_author_on_date">%1$s, %2$s</string>
 
     <string name="source_enabled">Is Enabled</string>
+    <string name="sources_import_opml">Import feeds from OPML</string>
+    <string name="sources_export_opml">Export feeds to OPML</string>
+    <string name="failed_to_import_OPML">"Failed to import OPML"</string>
+    <string name="failed_to_export_OPML">"Failed to export OPML"</string>
 </resources>

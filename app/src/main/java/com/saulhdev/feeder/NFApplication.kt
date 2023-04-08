@@ -2,7 +2,9 @@ package com.saulhdev.feeder
 
 import android.app.Activity
 import android.app.Application
+import android.content.ContentResolver
 import android.os.Bundle
+import android.widget.Toast
 import androidx.multidex.MultiDexApplication
 import androidx.work.WorkManager
 import com.jakewharton.threetenabp.AndroidThreeTen
@@ -14,11 +16,14 @@ import com.saulhdev.feeder.models.Repository
 import com.saulhdev.feeder.plugin.PluginFetcher
 import com.saulhdev.feeder.utils.ApplicationCoroutineScope
 import com.saulhdev.feeder.utils.OverlayBridge
+import com.saulhdev.feeder.utils.ToastMaker
 import com.saulhdev.feeder.utils.Utilities
 import com.saulhdev.feeder.viewmodel.EditFeedViewModel
 import com.saulhdev.feeder.viewmodel.MainActivityViewModel
 import com.saulhdev.feeder.viewmodel.bindWithActivityViewModelScope
 import com.saulhdev.feeder.viewmodel.bindWithComposableViewModelScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.kodein.di.DI
 import org.kodein.di.DIAware
 import org.kodein.di.bind
@@ -44,6 +49,18 @@ class NFApplication : MultiDexApplication(), DIAware {
         bind<Repository>() with singleton { Repository(di) }
         bind<FeedStore>() with singleton { FeedStore(di) }
 
+        bind<ContentResolver>() with singleton { contentResolver }
+        bind<ToastMaker>() with singleton {
+            object : ToastMaker {
+                override suspend fun makeToast(text: String) = withContext(Dispatchers.Main) {
+                    Toast.makeText(this@NFApplication, text, Toast.LENGTH_SHORT).show()
+                }
+
+                override suspend fun makeToast(resId: Int) {
+                    Toast.makeText(this@NFApplication, resId, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
 
         bindWithActivityViewModelScope<MainActivityViewModel>()
         bindWithComposableViewModelScope<EditFeedViewModel>()

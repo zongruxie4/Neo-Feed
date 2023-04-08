@@ -18,6 +18,10 @@
 
 package com.saulhdev.feeder.compose.pages
 
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -35,7 +39,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.outlined.CloudDownload
+import androidx.compose.material.icons.outlined.CloudUpload
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -60,22 +67,54 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.compose.components.FeedItem
+import com.saulhdev.feeder.compose.components.OverflowMenu
 import com.saulhdev.feeder.compose.components.ViewWithActionBar
 import com.saulhdev.feeder.compose.navigation.LocalNavController
 import com.saulhdev.feeder.compose.navigation.Routes
 import com.saulhdev.feeder.db.Feed
 import com.saulhdev.feeder.db.FeedRepository
+import com.saulhdev.feeder.models.exportOpml
+import com.saulhdev.feeder.models.importOpml
+import com.saulhdev.feeder.utils.ApplicationCoroutineScope
 import com.saulhdev.feeder.viewmodel.SourcesViewModel
+import kotlinx.coroutines.launch
+import org.kodein.di.compose.LocalDI
+import org.kodein.di.instance
+import java.time.LocalDateTime
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun SourcesPage(viewModel: SourcesViewModel) {
-    val title = stringResource(id = R.string.title_sources)
     val context = LocalContext.current
     val navController = LocalNavController.current
     val repository = FeedRepository(context)
+    val localTime = LocalDateTime.now().toString().replace(":", "_").substring(0, 19)
+
+    val di = LocalDI.current
+    val opmlExporter = rememberLauncherForActivityResult(
+        ActivityResultContracts.CreateDocument("application/xml")
+    ) { uri ->
+        if (uri != null) {
+            val applicationCoroutineScope: ApplicationCoroutineScope by di.instance()
+            applicationCoroutineScope.launch {
+                exportOpml(di, uri)
+            }
+        }
+    }
+
+    val opmlImporter = rememberLauncherForActivityResult(
+        ActivityResultContracts.OpenDocument()
+    ) { uri ->
+        if (uri != null) {
+            val applicationCoroutineScope: ApplicationCoroutineScope by di.instance()
+            applicationCoroutineScope.launch {
+                importOpml(di, uri)
+            }
+        }
+    }
 
     ViewWithActionBar(
-        title = title,
+        title = stringResource(id = R.string.title_sources),
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
@@ -91,6 +130,36 @@ fun SourcesPage(viewModel: SourcesViewModel) {
                 )
             }
 
+        },
+        actions = {
+            OverflowMenu {
+                DropdownMenuItem(
+                    leadingIcon = {
+                        Icon(
+                            Icons.Outlined.CloudDownload,
+                            contentDescription = null,
+                        )
+                    },
+                    onClick = {
+                        hideMenu()
+                        opmlImporter.launch(arrayOf("text/plain", "text/xml", "text/opml", "*/*"))
+                    },
+                    text = { Text(text = stringResource(id = R.string.sources_import_opml)) }
+                )
+                DropdownMenuItem(
+                    leadingIcon = {
+                        Icon(
+                            Icons.Outlined.CloudUpload,
+                            contentDescription = null,
+                        )
+                    },
+                    onClick = {
+                        hideMenu()
+                        opmlExporter.launch("NF-${localTime}.opml")
+                    },
+                    text = { Text(text = stringResource(id = R.string.sources_export_opml)) }
+                )
+            }
         }
     ) { paddingValues ->
         Column(
@@ -190,7 +259,6 @@ fun SourcesPage(viewModel: SourcesViewModel) {
                                             TextButton(
                                                 shape = RoundedCornerShape(16.dp),
                                                 onClick = {
-                                                    //list.value = list.value - removeItem.value!!
                                                     repository.deleteFeed(removeItem.value!!)
                                                     showDialog.value = false
                                                 },

@@ -40,9 +40,6 @@ interface FeedDao {
     @Delete
     suspend fun delete(feed: Feed): Int
 
-    @Query("SELECT * FROM Feeds WHERE title = :title AND url = :url")
-    suspend fun findFeed(title: String, url: URL): List<Feed>
-
     @Query("SELECT * FROM Feeds WHERE id = :id")
     suspend fun findFeed(id: Long): List<Feed>
 
@@ -60,6 +57,12 @@ interface FeedDao {
 
     @Query("SELECT * FROM Feeds")
     fun getAllFeeds(): Flow<List<Feed>>
+
+    @Query("SELECT DISTINCT tag FROM Feeds ORDER BY tag COLLATE NOCASE")
+    suspend fun loadTags(): List<String>
+
+    @Query("SELECT * FROM feeds WHERE tag IS :tag")
+    suspend fun loadFeeds(tag: String): List<Feed>
 
     @Query(
         """
