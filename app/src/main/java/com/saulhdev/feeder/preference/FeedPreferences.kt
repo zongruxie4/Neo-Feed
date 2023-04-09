@@ -21,6 +21,19 @@ package com.saulhdev.feeder.preference
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.annotation.StringRes
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.AccessTime
+import androidx.compose.material.icons.outlined.Adb
+import androidx.compose.material.icons.outlined.Brightness4
+import androidx.compose.material.icons.outlined.ContactEmergency
+import androidx.compose.material.icons.outlined.Dashboard
+import androidx.compose.material.icons.outlined.Feed
+import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.Opacity
+import androidx.compose.material.icons.outlined.OpenInBrowser
+import androidx.compose.material.icons.outlined.Style
+import androidx.compose.material.icons.outlined.Wallpaper
+import androidx.compose.material.icons.outlined.Wifi
 import com.saulhdev.feeder.NFApplication
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.compose.navigation.Routes
@@ -51,13 +64,14 @@ class FeedPreferences(val context: Context) {
         titleId = R.string.pref_ovr_theme,
         defaultValue = "auto_launcher",
         entries = getThemes(context),
-        icon = R.drawable.ic_style,
+        icon = Icons.Outlined.Style,
         onChange = recreate
     )
 
     var overlayTransparency = FloatPref(
         key = "pref_overlay_opacity",
         titleId = R.string.pref_transparency,
+        icon = Icons.Outlined.Brightness4,
         defaultValue = 1f,
         maxValue = 1f,
         minValue = 0f,
@@ -70,7 +84,7 @@ class FeedPreferences(val context: Context) {
         key = "pref_overlay_system_colors",
         titleId = R.string.pref_syscolors,
         summaryId = R.string.pref_syscolors_desc,
-        icon = R.drawable.ic_wallpaper,
+        icon = Icons.Outlined.Wallpaper,
         defaultValue = false,
         onChange = recreate
     )
@@ -80,7 +94,7 @@ class FeedPreferences(val context: Context) {
         titleId = R.string.pref_bg_color,
         defaultValue = "theme",
         entries = getBackgroundOptions(context),
-        icon = R.drawable.ic_circle, //TODO: Change icon
+        icon = Icons.Outlined.ContactEmergency,
         onChange = recreate
     )
 
@@ -89,7 +103,7 @@ class FeedPreferences(val context: Context) {
         titleId = R.string.pref_card_bg,
         defaultValue = "theme",
         entries = getBackgroundOptions(context),
-        icon = R.drawable.ic_card,
+        icon = Icons.Outlined.Opacity,
         onChange = recreate
     )
 
@@ -98,7 +112,7 @@ class FeedPreferences(val context: Context) {
         key = "pref_sources",
         titleId = R.string.title_sources,
         summaryId = R.string.summary_sources,
-        icon = R.drawable.ic_services_outline_28,
+        icon = Icons.Outlined.Dashboard,
         route = "/${Routes.SOURCES}/",
         onChange = doNothing
     )
@@ -106,6 +120,7 @@ class FeedPreferences(val context: Context) {
     var openInBrowser = BooleanPref(
         key = "pref_open_browser",
         titleId = R.string.pref_browser_theme,
+        icon = Icons.Outlined.OpenInBrowser,
         defaultValue = false,
         onChange = doNothing
     )
@@ -113,7 +128,7 @@ class FeedPreferences(val context: Context) {
     var offlineReader = BooleanPref(
         key = "pref_offline_reader",
         titleId = R.string.pref_offline_reader,
-        icon = R.drawable.ic_wallpaper,
+        icon = Icons.Outlined.Wallpaper,
         defaultValue = true,
         onChange = doNothing
     )
@@ -122,6 +137,7 @@ class FeedPreferences(val context: Context) {
     var syncOnlyOnWifi = BooleanPref(
         key = "pref_sync_only_wifi",
         titleId = R.string.pref_sync_wifi,
+        icon = Icons.Outlined.Wifi,
         defaultValue = true
     )
     var syncFrequency = StringSelectionPref(
@@ -129,7 +145,7 @@ class FeedPreferences(val context: Context) {
         titleId = R.string.pref_sync_frequency,
         defaultValue = "1",
         entries = getSyncFrequency(context),
-        icon = R.drawable.ic_clock,
+        icon = Icons.Outlined.AccessTime,
         onChange = doNothing
     )
 
@@ -138,7 +154,7 @@ class FeedPreferences(val context: Context) {
         titleId = R.string.pref_items_per_feed,
         defaultValue = "25",
         entries = getItemsPerFeed(),
-        icon = R.drawable.ic_article,
+        icon = Icons.Outlined.Feed,
         onChange = doNothing
     )
 
@@ -153,7 +169,7 @@ class FeedPreferences(val context: Context) {
     var about = StringPref(
         key = "pref_about",
         titleId = R.string.title_about,
-        icon = R.drawable.ic_info_outline_28,
+        icon = Icons.Outlined.Info,
         route = "/${Routes.ABOUT}/",
         onChange = doNothing
     )
@@ -162,7 +178,7 @@ class FeedPreferences(val context: Context) {
         key = "pref_debugging",
         titleId = R.string.debug_logcat_printing,
         defaultValue = false,
-        icon = R.drawable.ic_debug,
+        icon = Icons.Outlined.Adb,
         onChange = doNothing
     )
 
@@ -270,6 +286,7 @@ class FeedPreferences(val context: Context) {
         @StringRes titleId: Int,
         @StringRes summaryId: Int = -1,
         defaultValue: Float = 0f,
+        val icon: Any? = null,
         val minValue: Float,
         val maxValue: Float,
         val steps: Int,

@@ -21,7 +21,7 @@ package com.saulhdev.feeder.db
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
-import androidx.room.ForeignKey.CASCADE
+import androidx.room.ForeignKey.Companion.CASCADE
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.saulhdev.feeder.utils.relativeLinkIntoAbsolute

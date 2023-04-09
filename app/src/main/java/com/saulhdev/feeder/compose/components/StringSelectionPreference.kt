@@ -8,6 +8,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -55,6 +56,14 @@ fun StringSelectionPreference(
                         .clip(CircleShape)
                         .size(36.dp)
                         .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.12F))
+                )
+            }
+            if (pref.icon is ImageVector) {
+                Image(
+                    imageVector = pref.icon,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(30.dp)
                 )
             }
         },

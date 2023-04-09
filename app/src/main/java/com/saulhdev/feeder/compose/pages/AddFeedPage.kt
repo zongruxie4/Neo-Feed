@@ -248,10 +248,11 @@ fun SearchFeedUI(
                 focusManager.clearFocus()
             },
         singleLine = true,
-        colors = TextFieldDefaults.outlinedTextFieldColors(
-            unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12F),
-            textColor = MaterialTheme.colorScheme.onSurface
+        colors = TextFieldDefaults.colors(
+            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+            unfocusedIndicatorColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12F),
         ),
+
         isError = isNotValidUrl,
         keyboardOptions = KeyboardOptions.Default.copy(
             capitalization = KeyboardCapitalization.None,

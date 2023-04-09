@@ -1,20 +1,17 @@
 package com.saulhdev.feeder.compose.components
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.requiredHeight
-import androidx.compose.foundation.layout.requiredWidth
-import androidx.compose.foundation.layout.widthIn
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Slider
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import com.saulhdev.feeder.preference.FeedPreferences
 
@@ -36,15 +33,25 @@ fun SeekBarPreference(
         index = index,
         groupSize = groupSize,
         isEnabled = isEnabled,
+        startWidget = {
+            if (pref.icon is ImageVector) {
+                Image(
+                    imageVector = pref.icon,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(30.dp)
+                )
+            }
+        },
         bottomWidget = {
             Row {
-                Text(
+                /*Text(
                     text = pref.specialOutputs(currentValue),
                     textAlign = TextAlign.Center,
                     color = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.widthIn(min = 52.dp)
                 )
-                Spacer(modifier = Modifier.requiredWidth(8.dp))
+                Spacer(modifier = Modifier.requiredWidth(8.dp))*/
                 Slider(
                     modifier = Modifier
                         .requiredHeight(24.dp)

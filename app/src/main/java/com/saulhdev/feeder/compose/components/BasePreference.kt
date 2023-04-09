@@ -84,7 +84,7 @@ fun BasePreference(
         ) {
             startWidget?.let {
                 startWidget()
-                Spacer(modifier = Modifier.requiredWidth(8.dp))
+                Spacer(modifier = Modifier.requiredWidth(16.dp))
             }
             Column(
                 modifier = Modifier
