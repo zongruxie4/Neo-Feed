@@ -6,7 +6,7 @@
     <string name="date_ago_now">刚刚</string>
     <string name="about_open_source">开源库</string>
     <string name="pref_tg">电报频道</string>
-    <string name="pref_git">源代码</string>
+    <string name="about_source_code">源代码</string>
     <string name="pref_cat_overlay">外观</string>
     <string name="pref_cat_debug">Debug</string>
     <string name="title_sources">信息源</string>

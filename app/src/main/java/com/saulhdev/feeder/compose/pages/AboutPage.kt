@@ -27,18 +27,22 @@ import android.view.ViewGroup
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.requiredSize
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -55,14 +59,18 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.net.toUri
+import coil.annotation.ExperimentalCoilApi
 import com.saulhdev.feeder.BuildConfig
 import com.saulhdev.feeder.R
+import com.saulhdev.feeder.compose.components.ContributorRow
+import com.saulhdev.feeder.compose.components.ItemLink
 import com.saulhdev.feeder.compose.components.PreferenceGroup
 import com.saulhdev.feeder.compose.components.ViewWithActionBar
 import com.saulhdev.feeder.preference.FeedPreferences
 import com.saulhdev.feeder.utils.urlDecode
 import java.io.InputStream
 
+@OptIn(ExperimentalCoilApi::class)
 @Composable
 fun AboutPage() {
     val title = stringResource(id = R.string.title_about)
@@ -70,19 +78,17 @@ fun AboutPage() {
         title = title,
     ) { paddingValues ->
         val prefs = FeedPreferences(LocalContext.current)
-        val aboutInfo = listOf(
-            prefs.developer1,
-            prefs.developer2,
-            prefs.telegramChannel,
-            prefs.sourceCode
-        )
 
         Column(
-            modifier = Modifier.padding(
-                top = paddingValues.calculateTopPadding(),
-                bottom = paddingValues.calculateBottomPadding(), start = 8.dp, end = 8.dp
-            ),
-            horizontalAlignment = Alignment.CenterHorizontally
+            modifier = Modifier
+                .padding(
+                    top = paddingValues.calculateTopPadding(),
+                    bottom = paddingValues.calculateBottomPadding(), start = 8.dp, end = 8.dp
+                )
+                .verticalScroll(rememberScrollState())
+                .background(MaterialTheme.colorScheme.background),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -120,7 +126,7 @@ fun AboutPage() {
                 Text(
                     text = stringResource(id = R.string.app_name),
                     fontWeight = FontWeight.Normal,
-                    fontSize = 24.sp,
+                    fontSize = 30.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
 
@@ -139,29 +145,90 @@ fun AboutPage() {
                 )
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-            LazyColumn(
+            Row(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
             ) {
-                item {
-                    PreferenceGroup(
-                        stringResource(id = R.string.pref_cat_contact),
-                        prefs = aboutInfo
-                    )
-
-                    PreferenceGroup(
-                        heading = stringResource(id = R.string.about_licenses),
-                        prefs = listOf(prefs.aboutLicense, prefs.aboutChangelog)
+                links.map { link ->
+                    ItemLink(
+                        iconResId = link.iconResId,
+                        label = stringResource(id = link.labelResId),
+                        modifier = Modifier.weight(1f),
+                        url = link.url
                     )
                 }
             }
+
+            PreferenceGroup(heading = stringResource(id = R.string.about_team)) {
+                val size = contributors.size
+                contributors.forEachIndexed { i, it ->
+                    ContributorRow(
+                        nameId = it.name,
+                        roleId = it.descriptionRes,
+                        photoUrl = it.photoUrl,
+                        url = it.webpage,
+                        index = i,
+                        groupSize = size
+                    )
+                    if (i + 1 < size) Spacer(modifier = Modifier.height(2.dp))
+                }
+            }
+
+            PreferenceGroup(
+                heading = stringResource(id = R.string.about_licenses),
+                prefs = listOf(prefs.aboutLicense, prefs.aboutChangelog)
+            )
         }
     }
 }
+
+
+private data class Link(
+    @DrawableRes val iconResId: Int,
+    @StringRes val labelResId: Int,
+    val url: String
+)
+
+private data class TeamMember(
+    @StringRes val name: Int,
+    @StringRes val descriptionRes: Int,
+    val photoUrl: String,
+    val webpage: String
+)
+
+private val links = listOf(
+    Link(
+        iconResId = R.drawable.ic_github,
+        labelResId = R.string.about_source_code,
+        url = "https://github.com/NeoApplications/Neo-Launcher"
+    ),
+    Link(
+        iconResId = R.drawable.ic_channel,
+        labelResId = R.string.about_channel,
+        url = "https://t.me/neo_applications"
+    ),
+    Link(
+        iconResId = R.drawable.ic_community,
+        labelResId = R.string.about_community,
+        url = "https://t.me/neo_launcher"
+    )
+)
+
+private val contributors = listOf(
+    TeamMember(
+        name = R.string.about_developer,
+        descriptionRes = R.string.author_role,
+        photoUrl = "https://avatars.githubusercontent.com/u/6044050",
+        webpage = "https://github.com/saulhdev"
+    ),
+    TeamMember(
+        name = R.string.about_developer2,
+        descriptionRes = R.string.author_role,
+        photoUrl = "https://avatars.githubusercontent.com/u/40302595",
+        webpage = "https://github.com/machiav3lli"
+    )
+)
 
 @Composable
 fun LicenseScreen() {

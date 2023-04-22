@@ -11,8 +11,8 @@
     <string name="yesterday">вчера</string>
     <string name="pref_cat_contact">Контакты</string>
     <string name="pref_tg">Официальный канал в Telegram</string>
-    <string name="pref_tg_author">Разработчик</string>
-    <string name="pref_git">Исходный код</string>
+    <string name="author_role">Разработчик</string>
+    <string name="about_source_code">Исходный код</string>
     <string name="pref_cat_overlay">Внешний вид</string>
     <string name="pref_transparency">Прозрачность фона</string>
     <string name="pref_ovr_theme">Тема</string>

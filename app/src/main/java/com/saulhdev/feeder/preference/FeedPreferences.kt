@@ -182,42 +182,6 @@ class FeedPreferences(val context: Context) {
         onChange = doNothing
     )
 
-    var developer1 = StringPref(
-        key = "pref_developer",
-        titleId = R.string.pref_tg_author,
-        summaryId = R.string.about_developer,
-        icon = "https://avatars.githubusercontent.com/u/6044050",
-        url = "https://github.com/saulhdev",
-        onChange = doNothing
-    )
-
-    var developer2 = StringPref(
-        key = "pref_developer",
-        titleId = R.string.pref_tg_author,
-        summaryId = R.string.about_developer2,
-        icon = "https://avatars.githubusercontent.com/u/40302595",
-        url = "https://github.com/machiav3lli",
-        onChange = doNothing
-    )
-
-    var telegramChannel = StringPref(
-        key = "pref_channel",
-        titleId = R.string.pref_tg,
-        summaryId = R.string.telegram_channel,
-        icon = R.drawable.ic_telegram,
-        url = "https://t.me/neo_launcher",
-        onChange = doNothing
-    )
-
-    var sourceCode = StringPref(
-        key = "pref_source_code",
-        titleId = R.string.pref_git,
-        summaryId = R.string.source_code_url,
-        icon = R.drawable.ic_code,
-        url = context.getString(R.string.source_code_url),
-        onChange = doNothing
-    )
-
     var aboutLicense = StringPref(
         key = "pref_license",
         titleId = R.string.about_licenses,

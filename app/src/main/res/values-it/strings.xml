@@ -24,10 +24,10 @@
     <string name="title_feed_list">Elenco feed</string>
     <string name="today">oggi</string>
     <string name="pref_cat_overlay">Aspetto</string>
-    <string name="pref_tg_author">Sviluppatore</string>
+    <string name="author_role">Sviluppatore</string>
     <string name="summary_feed_list">Aggiungi o rimuovi fonti RSS</string>
     <string name="tomorrow">domani</string>
-    <string name="pref_git">Codice sorgente</string>
+    <string name="about_source_code">Codice sorgente</string>
     <string name="pref_cat_debug">Debug</string>
     <string name="pref_cat_contact">Contatti</string>
     <string name="overlay_reload">Clicca qui per ricaricare</string>

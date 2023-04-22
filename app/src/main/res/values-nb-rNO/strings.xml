@@ -45,8 +45,8 @@
     <string name="pref_cat_contact">Kontakter</string>
     <string name="pref_syscolors_disabled">Krever Android 8.1+</string>
     <string name="pref_tg">Telegram-kanal</string>
-    <string name="pref_tg_author">Utvikler</string>
-    <string name="pref_git">Kildekode</string>
+    <string name="author_role">Utvikler</string>
+    <string name="about_source_code">Kildekode</string>
     <string name="remove_title">Bekreft</string>
     <string name="pm_desc">HomeFeeder bruker dem for å vise data</string>
     <string name="news_image_text">nyhetssaksbilde</string>
