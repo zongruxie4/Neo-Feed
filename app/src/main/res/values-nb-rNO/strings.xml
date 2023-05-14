@@ -57,7 +57,7 @@
     <string name="background_theme_option">Draktbasert</string>
     <string name="transparency_transparent">Gjennomsiktig</string>
     <string name="about_open_source">Frie biblioteker</string>
-    <string name="about_changelog">Endingslogg</string>
+    <string name="about_changelog">Endringslogg</string>
     <string name="about_licenses">Fri lisens</string>
     <string name="pref_browser_theme">Åpne i nettleser</string>
     <string name="failed_to_parse">Kunne ikke tolke %1$s</string>

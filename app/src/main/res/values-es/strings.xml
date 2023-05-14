@@ -67,4 +67,20 @@
     <string name="about_changelog">Lista de Cambios</string>
     <string name="about_open_source">Librerias Open Source</string>
     <string name="pref_browser_theme">Abrir en el navegador</string>
+    <string name="sync_six_hours">Seis horas</string>
+    <string name="pref_sync_wifi">Sincronización sólo con Wifi</string>
+    <string name="pref_sync_frequency">Frecuencia de la sincronización</string>
+    <string name="pref_offline_reader">Lector sin conexión</string>
+    <string name="action_restart">Reiniciar la aplicación</string>
+    <string name="sync_half_hour_minutes">30 minutos</string>
+    <string name="sync_two_hours">Dos horas</string>
+    <string name="pref_items_per_feed">Elementos máximos por feed</string>
+    <string name="syncing">Sincronizando</string>
+    <string name="sync_one_hour">Una hora</string>
+    <string name="sync_status">Estado de la sincronización</string>
+    <string name="sync_three_hours">Tres horas</string>
+    <string name="by_author_on_date">%1$s, %2$s</string>
+    <string name="touch_to_play_video">Toca para reproducir el vídeo</string>
+    <string name="fetch_full_articles_by_default">Obtener artículos completos de forma predeterminada</string>
+    <string name="article_not_found">Artículo local no encontrado</string>
 </resources>

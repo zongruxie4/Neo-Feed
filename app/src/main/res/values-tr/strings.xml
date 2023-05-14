@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="title_settings">Ayarlar</string>
+    <string name="title_about">Hakkında</string>
+    <string name="title_sources">Veri kaynakları</string>
+    <string name="summary_sources">Kaynak ekle veya kaldır</string>
+    <string name="date_ago_now">şimdi</string>
+    <string name="today">bugün</string>
+    <string name="tomorrow">yarın</string>
+    <string name="yesterday">dün</string>
+    <string name="pref_cat_contact">Kişiler</string>
+    <string name="about_licenses">Lisans</string>
+    <string name="about_changelog">Değişim günlüğü</string>
+    <string name="about_open_source">Açık Kaynak Kütüphaneleri</string>
+    <string name="pref_tg">Telegram kanalı</string>
+    <string name="pref_git">Kaynak kodu</string>
+    <string name="pref_cat_overlay">Görünüm</string>
+    <string name="pref_browser_theme">Tarayıcıda aç</string>
+    <string name="pref_compact">Sıkışık öğe düzeni</string>
+    <string name="pref_cat_debug">Hata ayıklama</string>
+</resources>
