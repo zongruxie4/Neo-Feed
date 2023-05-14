@@ -378,7 +378,7 @@ private fun TextComposer.appendTextChildren(
                     }
 
                     "font" -> {
-                        val fontFamily: FontFamily? = element.attr("face")?.asFontFamily()
+                        val fontFamily: FontFamily? = element.attr("face").asFontFamily()
                         withStyle(SpanStyle(fontFamily = fontFamily)) {
                             appendTextChildren(
                                 element.childNodes(),
@@ -596,9 +596,9 @@ private fun TextComposer.appendTextChildren(
 
                             element.children()
                                 .filter { it.tagName() == "thead" || it.tagName() == "tbody" || it.tagName() == "tfoot" }
-                                .flatMap {
-                                    it.children()
-                                        .filter { it.tagName() == "tr" }
+                                .flatMap { child ->
+                                    child.children()
+                                        .filter { child.tagName() == "tr" }
                                 }
                                 .forEach { row ->
                                     appendTextChildren(
