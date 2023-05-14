@@ -13,7 +13,7 @@
     <string name="about_changelog">Değişim günlüğü</string>
     <string name="about_open_source">Açık Kaynak Kütüphaneleri</string>
     <string name="pref_tg">Telegram kanalı</string>
-    <string name="pref_git">Kaynak kodu</string>
+    <string name="about_source_code">Kaynak kodu</string>
     <string name="pref_cat_overlay">Görünüm</string>
     <string name="pref_browser_theme">Tarayıcıda aç</string>
     <string name="pref_compact">Sıkışık öğe düzeni</string>

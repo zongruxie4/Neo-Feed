@@ -13,7 +13,7 @@
     <string name="about_changelog">Jurnalul modificărilor</string>
     <string name="about_open_source">Biblioteci cu sursă deschisă</string>
     <string name="pref_tg">Canalul Telegram</string>
-    <string name="pref_git">Codul sursă</string>
+    <string name="about_source_code">Codul sursă</string>
     <string name="pref_cat_overlay">Aspect</string>
     <string name="pref_cat_debug">Depanare</string>
     <string name="pref_transparency">Opacitatea fundalului de suprapunere</string>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="pref_cat_contact">Mga Kontak</string>
-    <string name="pref_git">Source code</string>
+    <string name="about_source_code">Source code</string>
     <string name="pref_browser_theme">Buksan sa Browser</string>
     <string name="today">ngayong araw</string>
     <string name="title_about">Tungkol</string>

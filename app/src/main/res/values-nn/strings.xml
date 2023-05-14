@@ -14,7 +14,7 @@
     <string name="about_licenses">Løyve</string>
     <string name="about_changelog">Brigdelogg</string>
     <string name="pref_tg">Telegram-sambandsline</string>
-    <string name="pref_git">Kjeldekoden</string>
+    <string name="about_source_code">Kjeldekoden</string>
     <string name="pref_cat_debug">Lysking</string>
     <string name="pref_transparency">Overlagbakgrunnens gjennomsynlegheit</string>
     <string name="pref_browser_theme">Opne i nettlesar</string>
