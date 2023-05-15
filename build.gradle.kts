@@ -1,19 +1,21 @@
-plugins {
-    id("com.android.application").version("8.0.1") apply false
-    id("com.android.library").version("8.0.1") apply false
-    id("org.jetbrains.kotlin.android").version("1.8.21") apply false
-    kotlin("plugin.parcelize").version("1.8.21") apply false
-    kotlin("plugin.serialization").version("1.8.21") apply false
-    kotlin("kapt").version("1.8.21") apply false
-    id("com.google.devtools.ksp").version("1.8.20-1.0.11") apply false
-}
-
 buildscript {
+    repositories {
+        mavenCentral()
+        google()
+    }
     dependencies {
         classpath("com.android.tools.build:gradle:8.0.1")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.21")
     }
 }
 
+allprojects {
+    repositories {
+        mavenCentral()
+        google()
+        maven(url = "https://jitpack.io")
+    }
+}
 
 tasks.register("clean", Delete::class.java) {
     delete(rootProject.buildDir)

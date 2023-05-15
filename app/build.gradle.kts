@@ -4,12 +4,12 @@ val vComposeCompiler = "1.4.7"
 val vKotlin = "1.8.21"
 
 plugins {
-    id("com.android.application").version("8.0.1")
-    kotlin("android").version("1.8.21")
-    kotlin("plugin.parcelize").version("1.8.21")
-    kotlin("plugin.serialization").version("1.8.21")
-    kotlin("kapt").version("1.8.21")
-    id("com.google.devtools.ksp").version("1.8.20-1.0.11")
+    id("com.android.application")
+    kotlin("android")
+    kotlin("kapt")
+    kotlin("plugin.parcelize")
+    kotlin("plugin.serialization") version ("1.8.21")
+    id("com.google.devtools.ksp") version ("1.8.21-1.0.11")
 }
 
 allprojects {
@@ -103,6 +103,7 @@ android {
         compose = true
         dataBinding = true
         viewBinding = true
+        buildConfig = true
     }
 
     composeOptions {
@@ -121,12 +122,12 @@ android {
 }
 
 dependencies {
-    implementation("com.google.devtools.ksp:symbol-processing-api:1.8.20-1.0.11")
+    implementation("com.google.devtools.ksp:symbol-processing-api:1.8.21-1.0.11")
     implementation(kotlin("stdlib", vKotlin))
 
     //Core
     implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("androidx.core:core-ktx:1.10.1")
+    implementation("androidx.core:core-ktx:1.11.0-alpha04")
     implementation("androidx.datastore:datastore-preferences:1.0.0")
     implementation("androidx.multidex:multidex:2.0.1")
     implementation("androidx.navigation:navigation-compose:2.5.3")
@@ -163,10 +164,10 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-moshi:2.9.0")
     implementation("io.coil-kt:coil:2.3.0")
     implementation("io.coil-kt:coil-compose:2.3.0")
-    implementation("io.github.fornewid:material-motion-compose-core:0.9.0")
+    implementation("io.github.fornewid:material-motion-compose-core:0.11.1")
     implementation("net.dankito.readability4j:readability4j:1.0.5")
     implementation("org.ccil.cowan.tagsoup:tagsoup:1.2.1")
-    implementation("org.jsoup:jsoup:1.14.2")
+    implementation("org.jsoup:jsoup:1.16.1")
     implementation("org.kodein.di:kodein-di-framework-android-x:7.6.0")
 
     implementation("com.google.android.material:material:1.9.0")
