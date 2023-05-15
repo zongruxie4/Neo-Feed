@@ -5,8 +5,8 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-class CardAction (
+class CardAction(
     val title: String,
     val type: ActionType,
     val meta: Bundle
-): Parcelable
+) : Parcelable

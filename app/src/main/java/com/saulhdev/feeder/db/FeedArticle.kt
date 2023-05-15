@@ -50,6 +50,7 @@ import java.net.URL
         )
     ]
 )
+
 data class FeedArticle(
     @PrimaryKey(autoGenerate = true)
     var id: Long = ID_UNSET,

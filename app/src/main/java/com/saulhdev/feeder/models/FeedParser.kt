@@ -187,7 +187,7 @@ class FeedParser {
             // OkHttp string method handles BOM and Content-Type header in request
             parseFeedResponse(
                 response.request.url.toUrl(),
-                it,
+                it!!,
             )
         }
     }
@@ -313,7 +313,7 @@ suspend fun OkHttpClient.getResponse(url: URL, forceNetwork: Boolean = false): R
 suspend fun OkHttpClient.curl(url: URL): String? {
     var result: String? = null
     curlAndOnResponse(url) {
-        result = it.body.string()
+        result = it.body?.string()
     }
     return result
 }

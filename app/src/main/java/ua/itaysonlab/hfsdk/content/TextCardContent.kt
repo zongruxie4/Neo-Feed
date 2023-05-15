@@ -8,9 +8,9 @@ import ua.itaysonlab.hfsdk.actions.CardAction
  */
 
 @Parcelize
-data class TextCardContent (
+data class TextCardContent(
     val title: String,
     val subtitle: String? = null,
     val text: String,
     val actions: List<CardAction>? = null
-): BaseContent()
+) : BaseContent()

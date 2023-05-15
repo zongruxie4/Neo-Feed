@@ -2,7 +2,7 @@ package ua.itaysonlab.hfsdk
 
 import android.app.Application
 
-open class HFPluginApplication: Application() {
+open class HFPluginApplication : Application() {
     companion object {
         lateinit var instance: HFPluginApplication
     }

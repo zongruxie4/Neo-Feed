@@ -162,7 +162,7 @@ private suspend fun syncFeed(
                     Log.d(TAG, "Fetching correct ${feedSql.title}")
                     feedParser.parseFeedResponse(
                         url = response.request.url.toUrl(),
-                        responseBody = responseBody
+                        responseBody = responseBody!!
                     )
                 }
             }

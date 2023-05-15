@@ -1,5 +1,0 @@
-include ':app'
-include ':jsonfeed-parser'
-
-include ':homefeeder-sdk'
-project(':homefeeder-sdk').projectDir = new File(rootDir, 'homefeeder-sdk')

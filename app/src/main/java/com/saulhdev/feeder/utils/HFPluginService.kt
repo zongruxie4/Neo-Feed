@@ -26,7 +26,7 @@ import java.util.Date
 
 class HFPluginService : Service(), CoroutineScope by MainScope() {
 
-    private val mBinder = object : IFeedInterface.Stub() {
+    private val mBinder = IFeedInterface.Stub() {
         @RequiresApi(Build.VERSION_CODES.O)
         override fun getFeed(
             callback: IFeedInterfaceCallback?,
