@@ -71,7 +71,6 @@ import com.saulhdev.feeder.db.Feed
 import com.saulhdev.feeder.db.FeedRepository
 import com.saulhdev.feeder.utils.sloppyLinkToStrictURL
 import com.saulhdev.feeder.utils.sloppyLinkToStrictURLNoThrows
-import com.saulhdev.feeder.utils.urlEncode
 import com.saulhdev.feeder.viewmodel.SearchFeedViewModel
 import com.saulhdev.feeder.viewmodel.SearchResult
 import kotlinx.coroutines.flow.onCompletion
@@ -146,7 +145,10 @@ fun AddFeedPage() {
                 currentlySearching = currentlySearching,
                 onClick = {
                     saveFeed(results, repository)
-                    navController.navigate("/edit_feed/${it.title.urlEncode()}/${it.url.urlEncode()}/false/")
+                    val feedId = repository.getFeedByURL(sloppyLinkToStrictURL(it.url))?.id ?: -1
+                    if (feedId.toInt() != -1) {
+                        navController.navigate("/feed/$feedId")
+                    }
                 }
             )
         }

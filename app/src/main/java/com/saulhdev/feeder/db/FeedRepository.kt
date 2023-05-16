@@ -75,6 +75,15 @@ class FeedRepository(context: Context) {
         return feedDao.getFeedById(id)
     }
 
+    fun getFeedByURL(url: URL): Feed? {
+        var feed: Feed? = null
+        scope.launch {
+            feed = feedDao.getFeedByURL(url)
+        }
+
+        return feed
+    }
+
     fun deleteFeed(feed: Feed) {
         scope.launch {
             feedArticleDao.deleteFeedArticle(feed.id)
