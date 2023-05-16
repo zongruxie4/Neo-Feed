@@ -146,6 +146,7 @@ dependencies {
     //Room
     implementation("androidx.room:room-runtime:$vRoom")
     implementation("androidx.room:room-ktx:$vRoom")
+    kapt("androidx.room:room-compiler:$vRoom")
 
     //Accompanist
     implementation("com.google.accompanist:accompanist-navigation-animation:0.30.1")
