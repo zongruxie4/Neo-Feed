@@ -149,8 +149,8 @@ dependencies {
     kapt("androidx.room:room-compiler:$vRoom")
 
     //Accompanist
-    implementation("com.google.accompanist:accompanist-navigation-animation:0.30.1")
-    implementation("com.google.accompanist:accompanist-webview:0.26.3-beta")
+    implementation("com.google.accompanist:accompanist-navigation-animation:0.31.2-alpha")
+    implementation("com.google.accompanist:accompanist-webview:0.31.2-alpha")
 
     //Libs
     implementation("com.jakewharton.threetenabp:threetenabp:1.3.1")
@@ -166,7 +166,6 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-moshi:2.9.0")
     implementation("io.coil-kt:coil:2.3.0")
     implementation("io.coil-kt:coil-compose:2.3.0")
-    implementation("io.github.fornewid:material-motion-compose-core:0.11.1")
     implementation("net.dankito.readability4j:readability4j:1.0.5")
     implementation("org.ccil.cowan.tagsoup:tagsoup:1.2.1")
     implementation("org.jsoup:jsoup:1.16.1")
