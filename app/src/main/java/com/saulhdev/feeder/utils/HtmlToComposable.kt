@@ -535,7 +535,7 @@ private fun TextComposer.appendTextChildren(
 
                     "ul" -> {
                         element.children()
-                            .filter { it.tagName() == "li" }
+                            .filter { e -> e.tagName() == "li" }
                             .forEach { listItem ->
                                 withParagraph {
                                     // no break space
@@ -553,7 +553,7 @@ private fun TextComposer.appendTextChildren(
 
                     "ol" -> {
                         element.children()
-                            .filter { it.tagName() == "li" }
+                            .filter { e -> e.tagName() == "li" }
                             .forEachIndexed { i, listItem ->
                                 withParagraph {
                                     // no break space
@@ -581,7 +581,7 @@ private fun TextComposer.appendTextChildren(
                             followed optionally by a tfoot element
                              */
                             element.children()
-                                .filter { it.tagName() == "caption" }
+                                .filter { e -> e.tagName() == "caption" }
                                 .forEach {
                                     appendTextChildren(
                                         it.childNodes(),
@@ -595,10 +595,10 @@ private fun TextComposer.appendTextChildren(
                                 }
 
                             element.children()
-                                .filter { it.tagName() == "thead" || it.tagName() == "tbody" || it.tagName() == "tfoot" }
+                                .filter { e -> e.tagName() == "thead" || e.tagName() == "tbody" || e.tagName() == "tfoot" }
                                 .flatMap { child ->
                                     child.children()
-                                        .filter { child.tagName() == "tr" }
+                                        .filter { _ -> child.tagName() == "tr" }
                                 }
                                 .forEach { row ->
                                     appendTextChildren(

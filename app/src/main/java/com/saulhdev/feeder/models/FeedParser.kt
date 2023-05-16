@@ -100,9 +100,11 @@ class FeedParser {
         val doc = Jsoup.parse(html.byteInputStream(), "UTF-8", "")
 
         val feeds = doc.getElementsByAttributeValue("rel", "alternate")
-            .filter { it.hasAttr("href") && it.hasAttr("type") }
-            .filter {
-                val t = it.attr("type").lowercase(Locale.getDefault())
+            .filter { element ->
+                element.hasAttr("href") && element.hasAttr("type")
+            }
+            .filter { element ->
+                val t = element.attr("type").lowercase(Locale.getDefault())
                 when {
                     t.contains("application/atom") -> true
                     t.contains("application/rss") -> true
@@ -111,8 +113,8 @@ class FeedParser {
                     else -> false
                 }
             }
-            .filter {
-                val l = it.attr("href").lowercase(Locale.getDefault())
+            .filter { element ->
+                val l = element.attr("href").lowercase(Locale.getDefault())
                 try {
                     if (baseUrl != null) {
                         relativeLinkIntoAbsoluteOrThrow(base = baseUrl, link = l)
