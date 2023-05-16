@@ -19,12 +19,13 @@
 package com.saulhdev.feeder.compose.navigation
 
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.staticCompositionLocalOf
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.google.accompanist.navigation.animation.AnimatedNavHost
@@ -36,7 +37,6 @@ import com.saulhdev.feeder.compose.pages.LicenseScreen
 import com.saulhdev.feeder.compose.pages.PreferencesPage
 import com.saulhdev.feeder.compose.pages.SourcesPage
 import com.saulhdev.feeder.compose.pages.editFeedGraph
-import soup.compose.material.motion.materialSharedAxisX
 
 val LocalNavController = staticCompositionLocalOf<NavController> {
     error("CompositionLocal LocalNavController not present")
@@ -45,19 +45,16 @@ val LocalNavController = staticCompositionLocalOf<NavController> {
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun NavigationManager(navController: NavHostController) {
-    val isRtl = LocalLayoutDirection.current == LayoutDirection.Rtl
-    val motionSpec = materialSharedAxisX()
-    val density = LocalDensity.current
     CompositionLocalProvider(
         LocalNavController provides navController
     ) {
         AnimatedNavHost(
             navController = navController,
             startDestination = "/",
-            enterTransition = { motionSpec.enter.transition(!isRtl, density) },
-            exitTransition = { motionSpec.exit.transition(!isRtl, density) },
-            popEnterTransition = { motionSpec.enter.transition(isRtl, density) },
-            popExitTransition = { motionSpec.exit.transition(isRtl, density) },
+            enterTransition = { fadeIn()  + slideInHorizontally { it -> it } },
+            exitTransition = { fadeOut() + slideOutHorizontally { it -> -it/2 } },
+            popEnterTransition = { fadeIn()  + slideInHorizontally { it -> -it } },
+            popExitTransition = { fadeOut()  + slideOutHorizontally { it -> it/2 } },
         ) {
             preferenceGraph(route = "/", { PreferencesPage() }) { subRoute ->
                 preferenceGraph(route = subRoute(Routes.SETTINGS), { PreferencesPage() })
