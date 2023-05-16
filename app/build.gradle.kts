@@ -29,7 +29,7 @@ android {
 
     defaultConfig {
         applicationId = "com.saulhdev.neofeed"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 33
         versionCode = code
         versionName = name
