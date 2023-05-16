@@ -149,8 +149,8 @@ dependencies {
     kapt("androidx.room:room-compiler:$vRoom")
 
     //Accompanist
-    implementation("com.google.accompanist:accompanist-navigation-animation:0.30.1")
-    implementation("com.google.accompanist:accompanist-webview:0.26.3-beta")
+    implementation("com.google.accompanist:accompanist-navigation-animation:0.31.2-alpha")
+    implementation("com.google.accompanist:accompanist-webview:0.31.2-alpha")
 
     //Libs
     implementation("com.jakewharton.threetenabp:threetenabp:1.3.1")
