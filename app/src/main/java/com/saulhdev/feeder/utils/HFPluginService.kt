@@ -3,10 +3,8 @@ package com.saulhdev.feeder.utils
 import android.app.Service
 import android.content.Intent
 import android.graphics.Color
-import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
-import androidx.annotation.RequiresApi
 import com.saulhdev.feeder.db.Feed
 import com.saulhdev.feeder.db.FeedRepository
 import kotlinx.coroutines.CoroutineScope
@@ -27,7 +25,6 @@ import java.util.Date
 class HFPluginService : Service(), CoroutineScope by MainScope() {
 
     private val mBinder: IBinder = object : IFeedInterface.Stub() {
-        @RequiresApi(Build.VERSION_CODES.O)
         override fun getFeed(
             callback: IFeedInterfaceCallback?,
             page: Int,

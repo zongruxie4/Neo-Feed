@@ -25,21 +25,17 @@ fun View.setLightFlags() {
     var flags = systemUiVisibility
     flags = flags or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
     systemUiVisibility = flags
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        flags = flags or View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
-        systemUiVisibility = flags
-    }
+    flags = flags or View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
+    systemUiVisibility = flags
 }
 
 fun View.clearLightFlags() {
     var flags = systemUiVisibility
     flags = flags xor View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
     systemUiVisibility = flags
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        flags = systemUiVisibility
-        flags = flags xor View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
-        systemUiVisibility = flags
-    }
+    flags = systemUiVisibility
+    flags = flags xor View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
+    systemUiVisibility = flags
 }
 
 @ColorInt

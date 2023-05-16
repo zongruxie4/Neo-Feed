@@ -18,10 +18,8 @@
 
 package com.saulhdev.feeder.compose.pages
 
-import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -82,7 +80,6 @@ import org.kodein.di.compose.LocalDI
 import org.kodein.di.instance
 import java.time.LocalDateTime
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun SourcesPage(viewModel: SourcesViewModel) {
     val context = LocalContext.current

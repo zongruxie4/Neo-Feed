@@ -1,13 +1,11 @@
 package com.saulhdev.feeder.sync
 
-import android.annotation.TargetApi
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.content.pm.ServiceInfo
 import android.os.Build
 import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.work.CoroutineWorker
@@ -66,8 +64,6 @@ private const val syncNotificationId = 42623
 private const val syncChannelId = "feederSyncNotifications"
 private const val syncNotificationGroup = "com.saulhdev.neofeed.SYNC"
 
-@TargetApi(Build.VERSION_CODES.O)
-@RequiresApi(Build.VERSION_CODES.O)
 private fun createNotificationChannel(
     context: Context,
     notificationManager: NotificationManagerCompat
@@ -86,9 +82,7 @@ fun createForegroundInfo(
     context: Context,
     notificationManager: NotificationManagerCompat
 ): ForegroundInfo {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        createNotificationChannel(context, notificationManager)
-    }
+    createNotificationChannel(context, notificationManager)
 
     val syncingText = context.getString(R.string.syncing)
 
