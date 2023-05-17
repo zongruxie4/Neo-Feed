@@ -74,7 +74,7 @@ class NFApplication : MultiDexApplication(), DIAware {
         db = NeoFeedDb.getInstance(applicationContext)
     }
 
-    fun restart(recreate: Boolean = true) {
+    fun restart(recreate: Boolean = false) {
         if (recreate) {
             activityHandler.finishAll(recreate)
         } else {
