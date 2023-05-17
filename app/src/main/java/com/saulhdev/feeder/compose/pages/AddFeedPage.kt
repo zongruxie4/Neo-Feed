@@ -144,11 +144,8 @@ fun AddFeedPage() {
                 errors = if (currentlySearching) StableHolder(emptyList()) else StableHolder(errors),
                 currentlySearching = currentlySearching,
                 onClick = {
-                    saveFeed(results, repository)
-                    val feedId = repository.getFeedByURL(sloppyLinkToStrictURL(it.url))?.id ?: -1
-                    if (feedId.toInt() != -1) {
-                        navController.navigate("/feed/$feedId")
-                    }
+                    //saveFeed(results, repository)
+                    //TODO: enable click event when the rss is added
                 }
             )
         }
@@ -168,7 +165,6 @@ fun saveFeed(results: List<SearchResult>, repository: FeedRepository) {
             )
             repository.insertFeed(feed)
         }
-
     }
 }
 
@@ -216,7 +212,7 @@ fun AddFeedView(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun SearchFeedUI(
     feedUrl: String,
