@@ -100,6 +100,7 @@ class OverlayView(val context: Context) :
 
     private fun initRecyclerView() {
         rootView.findViewById<SwipeRefreshLayout>(R.id.swipe_to_refresh).setOnRefreshListener {
+            rootView.findViewById<RecyclerView>(R.id.recycler).recycledViewPool.clear()
             refreshNotifications()
         }
 
@@ -265,8 +266,5 @@ class OverlayView(val context: Context) :
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
-        if (key == "pref_overlay_card_background") {
-
-        }
     }
 }
