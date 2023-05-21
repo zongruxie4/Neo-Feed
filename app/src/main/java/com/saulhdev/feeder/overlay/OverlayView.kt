@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.libraries.gsa.d.a.OverlayController
+import com.google.android.material.button.MaterialButton
 import com.saulhdev.feeder.MainActivity
 import com.saulhdev.feeder.NFApplication
 import com.saulhdev.feeder.R
@@ -99,15 +100,40 @@ class OverlayView(val context: Context) :
     }
 
     private fun initRecyclerView() {
+        val recyclerView = rootView.findViewById<RecyclerView>(R.id.recycler)
+        val buttonReturnToTop = rootView.findViewById<MaterialButton>(R.id.button_return_to_top).apply {
+            visibility = View.GONE
+        }
+
         rootView.findViewById<SwipeRefreshLayout>(R.id.swipe_to_refresh).setOnRefreshListener {
             refreshNotifications()
         }
 
         adapter = FeedAdapter()
-        rootView.findViewById<RecyclerView>(R.id.recycler).apply {
+        recyclerView.apply {
             layoutManager = LinearLayoutManagerWrapper(context, LinearLayoutManager.VERTICAL, false)
             adapter = this@OverlayView.adapter
         }
+
+        recyclerView.addOnScrollListener(object: RecyclerView.OnScrollListener(){
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                if ((recyclerView.layoutManager as LinearLayoutManager)
+                        .findFirstCompletelyVisibleItemPosition() == 0) {
+                    buttonReturnToTop.visibility = View.GONE
+                }
+                else if ((recyclerView.layoutManager as LinearLayoutManager)
+                        .findFirstCompletelyVisibleItemPosition() > 5) {
+                    buttonReturnToTop.visibility = View.GONE
+                }
+            }
+        })
+
+        rootView.findViewById<MaterialButton>(R.id.button_return_to_top).setOnClickListener {
+            recyclerView.smoothScrollToPosition(0)
+            buttonReturnToTop.visibility = View.GONE
+        }
+
     }
 
     private fun initHeader() {
