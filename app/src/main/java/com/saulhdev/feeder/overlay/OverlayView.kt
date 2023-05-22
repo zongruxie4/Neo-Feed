@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.libraries.gsa.d.a.OverlayController
-import com.google.android.material.button.MaterialButton
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.saulhdev.feeder.MainActivity
 import com.saulhdev.feeder.NFApplication
 import com.saulhdev.feeder.R
@@ -101,7 +101,7 @@ class OverlayView(val context: Context) :
 
     private fun initRecyclerView() {
         val recyclerView = rootView.findViewById<RecyclerView>(R.id.recycler)
-        val buttonReturnToTop = rootView.findViewById<MaterialButton>(R.id.button_return_to_top).apply {
+        val buttonReturnToTop = rootView.findViewById<FloatingActionButton>(R.id.button_return_to_top).apply {
             visibility = View.GONE
         }
 
@@ -119,19 +119,18 @@ class OverlayView(val context: Context) :
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 if ((recyclerView.layoutManager as LinearLayoutManager)
-                        .findFirstCompletelyVisibleItemPosition() == 0) {
+                        .findFirstCompletelyVisibleItemPosition() < 5) {
                     buttonReturnToTop.visibility = View.GONE
-                }
-                else if ((recyclerView.layoutManager as LinearLayoutManager)
-                        .findFirstCompletelyVisibleItemPosition() > 5) {
-                    buttonReturnToTop.visibility = View.GONE
+                }else if ((recyclerView.layoutManager as LinearLayoutManager)
+                        .findFirstCompletelyVisibleItemPosition() > 5){
+                    buttonReturnToTop.visibility = View.VISIBLE
                 }
             }
         })
 
-        rootView.findViewById<MaterialButton>(R.id.button_return_to_top).setOnClickListener {
-            recyclerView.smoothScrollToPosition(0)
+        buttonReturnToTop.setOnClickListener {
             buttonReturnToTop.visibility = View.GONE
+            recyclerView.smoothScrollToPosition(0)
         }
 
     }
