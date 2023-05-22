@@ -218,7 +218,10 @@ class OverlayView(val context: Context) :
 
     private fun refreshNotifications() {
         list.clear()
+        rootView.findViewById<RecyclerView>(R.id.recycler).recycledViewPool.clear()
+        adapter.notifyDataSetChanged()
         loadArticles()
+
         PluginConnector.getFeedAsItLoads(0, { feed ->
             list.addAll(feed)
         }) {
