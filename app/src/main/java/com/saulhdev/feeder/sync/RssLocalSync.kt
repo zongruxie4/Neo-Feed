@@ -247,11 +247,11 @@ internal suspend fun feedsToSync(
             tag = tag,
             staleTime = staleTime
         ) else feedDao.loadFeeds(tag)
-        else -> if (staleTime > 0) feedDao.loadFeedsIfStale(staleTime) else feedDao.loadFeeds()*/
+        else -> if (staleTime > 0) feedDao.loadFeedsIfStale(staleTime) else feedDao.loadFeeds()
 
         feedId > 0 -> {
             feedDao.loadFeed(feedId)?.let { listOf(it) } ?: emptyList()
-        }
+        }*/
 
         else -> feedDao.loadFeeds()
     }
