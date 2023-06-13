@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.libraries.gsa.d.a.OverlayController
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.saulhdev.feeder.MainActivity
 import com.saulhdev.feeder.NFApplication
 import com.saulhdev.feeder.R
@@ -99,16 +100,40 @@ class OverlayView(val context: Context) :
     }
 
     private fun initRecyclerView() {
+        val recyclerView = rootView.findViewById<RecyclerView>(R.id.recycler)
+        val buttonReturnToTop = rootView.findViewById<FloatingActionButton>(R.id.button_return_to_top).apply {
+            visibility = View.GONE
+        }
+
         rootView.findViewById<SwipeRefreshLayout>(R.id.swipe_to_refresh).setOnRefreshListener {
             rootView.findViewById<RecyclerView>(R.id.recycler).recycledViewPool.clear()
             refreshNotifications()
         }
 
         adapter = FeedAdapter()
-        rootView.findViewById<RecyclerView>(R.id.recycler).apply {
+        recyclerView.apply {
             layoutManager = LinearLayoutManagerWrapper(context, LinearLayoutManager.VERTICAL, false)
             adapter = this@OverlayView.adapter
         }
+
+        recyclerView.addOnScrollListener(object: RecyclerView.OnScrollListener(){
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                if ((recyclerView.layoutManager as LinearLayoutManager)
+                        .findFirstCompletelyVisibleItemPosition() < 5) {
+                    buttonReturnToTop.visibility = View.GONE
+                }else if ((recyclerView.layoutManager as LinearLayoutManager)
+                        .findFirstCompletelyVisibleItemPosition() > 5){
+                    buttonReturnToTop.visibility = View.VISIBLE
+                }
+            }
+        })
+
+        buttonReturnToTop.setOnClickListener {
+            buttonReturnToTop.visibility = View.GONE
+            recyclerView.smoothScrollToPosition(0)
+        }
+
     }
 
     private fun initHeader() {
@@ -193,7 +218,10 @@ class OverlayView(val context: Context) :
 
     private fun refreshNotifications() {
         list.clear()
+        rootView.findViewById<RecyclerView>(R.id.recycler).recycledViewPool.clear()
+        adapter.notifyDataSetChanged()
         loadArticles()
+
         PluginConnector.getFeedAsItLoads(0, { feed ->
             list.addAll(feed)
         }) {

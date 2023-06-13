@@ -2,6 +2,7 @@
 <resources>
     <color name="globalAccent">#4285f4</color>
     <color name="colorAccent">#FF00668B</color>
+    <color name="backToTop">#D1087AA4</color>
 
     <color name="overlayBg">#A0FFFFFF</color>
     <color name="bg">#ffffff</color>

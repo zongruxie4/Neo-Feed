@@ -24,6 +24,7 @@
     <string name="about_developer2" translatable="false">Antonios Hazim</string>
     <string name="author_role">Developer</string>
     <string name="about_licenses">License</string>
+    <string name="back_to_top">Back to Top</string>
     <string name="about_changelog">Changelog</string>
     <string name="about_open_source">Open Source Libraries</string>
     <string name="pref_tg">Telegram channel</string>
