@@ -3,7 +3,6 @@ package com.saulhdev.feeder.compose.pages
 import android.app.Activity
 import android.net.Uri
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -30,9 +29,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.google.accompanist.navigation.animation.composable
-import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.saulhdev.feeder.ComposeActivity
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.compose.components.ViewWithActionBar
@@ -52,7 +51,6 @@ import org.threeten.bp.format.DateTimeFormatter
 import org.threeten.bp.format.FormatStyle
 import java.util.Locale
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun ArticleScreen(articleId: Long) {
     val context = LocalContext.current
@@ -67,7 +65,7 @@ fun ArticleScreen(articleId: Long) {
     val subTitle = remember { mutableStateOf("Neo Feed") }
     val feedTitle = remember { mutableStateOf("Neo Feed") }
 
-    val navController = rememberAnimatedNavController()
+    val navController = rememberNavController()
     val activity = (LocalContext.current as? Activity)
     BackHandler {
         if (navController.currentBackStackEntry?.destination?.route == null) {
@@ -210,7 +208,6 @@ fun NotFoundView() {
     }
 }
 
-@OptIn(ExperimentalAnimationApi::class)
 fun NavGraphBuilder.articleGraph(route: String) {
     preferenceGraph(route, { }) { subRoute ->
         composable(

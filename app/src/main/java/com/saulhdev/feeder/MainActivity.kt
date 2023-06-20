@@ -22,15 +22,14 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import androidx.work.Constraints
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
-import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.saulhdev.feeder.compose.navigation.NavigationManager
 import com.saulhdev.feeder.preference.FeedPreferences
 import com.saulhdev.feeder.sync.FeedSyncer
@@ -61,7 +60,6 @@ class MainActivity : DIAwareComponentActivity(),
         SourcesViewModel.Factory(db.feedDao())
     }
 
-    @OptIn(ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         NFApplication.mainActivity = this
         super.onCreate(savedInstanceState)
@@ -75,7 +73,7 @@ class MainActivity : DIAwareComponentActivity(),
                 }
             ) {
                 withDI {
-                    navController = rememberAnimatedNavController()
+                    navController = rememberNavController()
                     NavigationManager(navController = navController)
                 }
             }

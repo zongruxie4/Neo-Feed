@@ -18,7 +18,6 @@
 
 package com.saulhdev.feeder.compose.navigation
 
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
@@ -28,7 +27,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
-import com.google.accompanist.navigation.animation.AnimatedNavHost
+import androidx.navigation.compose.NavHost
 import com.saulhdev.feeder.NFApplication
 import com.saulhdev.feeder.compose.pages.AboutPage
 import com.saulhdev.feeder.compose.pages.AddFeedPage
@@ -42,19 +41,18 @@ val LocalNavController = staticCompositionLocalOf<NavController> {
     error("CompositionLocal LocalNavController not present")
 }
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun NavigationManager(navController: NavHostController) {
     CompositionLocalProvider(
         LocalNavController provides navController
     ) {
-        AnimatedNavHost(
+        NavHost(
             navController = navController,
             startDestination = "/",
-            enterTransition = { fadeIn()  + slideInHorizontally { it -> it } },
-            exitTransition = { fadeOut() + slideOutHorizontally { it -> -it/2 } },
-            popEnterTransition = { fadeIn()  + slideInHorizontally { it -> -it } },
-            popExitTransition = { fadeOut()  + slideOutHorizontally { it -> it/2 } },
+            enterTransition = { fadeIn() + slideInHorizontally { it } },
+            exitTransition = { fadeOut() + slideOutHorizontally { -it / 2 } },
+            popEnterTransition = { fadeIn() + slideInHorizontally { -it } },
+            popExitTransition = { fadeOut() + slideOutHorizontally { it / 2 } },
         ) {
             preferenceGraph(route = "/", { PreferencesPage() }) { subRoute ->
                 preferenceGraph(route = subRoute(Routes.SETTINGS), { PreferencesPage() })

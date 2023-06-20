@@ -21,7 +21,6 @@ package com.saulhdev.feeder.compose.components
 import android.app.Activity
 import android.net.Uri
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -38,9 +37,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.google.accompanist.navigation.animation.composable
-import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.web.AccompanistWebViewClient
 import com.google.accompanist.web.LoadingState
 import com.google.accompanist.web.WebView
@@ -49,7 +48,6 @@ import com.google.accompanist.web.rememberWebViewState
 import com.saulhdev.feeder.compose.navigation.preferenceGraph
 import com.saulhdev.feeder.utils.urlDecode
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun ComposeWebView(
     pageUrl: String
@@ -62,7 +60,7 @@ fun ComposeWebView(
     val title = remember { mutableStateOf("Neo Feed") }
     val subTitle = remember { mutableStateOf("Neo Feed") }
 
-    val navController = rememberAnimatedNavController()
+    val navController = rememberNavController()
     val activity = (LocalContext.current as? Activity)
 
     BackHandler {
@@ -131,7 +129,6 @@ fun ComposeWebView(
     }
 }
 
-@OptIn(ExperimentalAnimationApi::class)
 fun NavGraphBuilder.webViewerGraph(route: String) {
     preferenceGraph(route, { }) { subRoute ->
         composable(
