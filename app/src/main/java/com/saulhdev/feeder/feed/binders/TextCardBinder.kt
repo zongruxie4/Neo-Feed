@@ -1,6 +1,5 @@
 package com.saulhdev.feeder.feed.binders
 
-import android.util.SparseIntArray
 import android.view.View
 import com.saulhdev.feeder.NFApplication
 import com.saulhdev.feeder.databinding.NotificationGenericContentBinding
@@ -8,8 +7,8 @@ import com.saulhdev.feeder.utils.RelativeTimeHelper
 import ua.itaysonlab.hfsdk.FeedItem
 import ua.itaysonlab.hfsdk.content.TextCardContent
 
-object TextCardBinder: FeedBinder {
-    override fun bind(theme: SparseIntArray?, item: FeedItem, view: View) {
+object TextCardBinder : FeedBinder {
+    override fun bind(item: FeedItem, view: View) {
         val content = item.content as TextCardContent
         val binding = NotificationGenericContentBinding.bind(view)
 

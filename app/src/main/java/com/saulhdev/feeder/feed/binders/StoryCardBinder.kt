@@ -3,7 +3,6 @@ package com.saulhdev.feeder.feed.binders
 import android.content.Intent
 import android.net.Uri
 import android.text.Html
-import android.util.SparseIntArray
 import android.view.View
 import coil.load
 import com.saulhdev.feeder.ComposeActivity
@@ -18,7 +17,7 @@ import ua.itaysonlab.hfsdk.FeedItem
 import ua.itaysonlab.hfsdk.content.StoryCardContent
 
 object StoryCardBinder : FeedBinder {
-    override fun bind(theme: SparseIntArray?, item: FeedItem, view: View) {
+    override fun bind(item: FeedItem, view: View) {
         val content = item.content as StoryCardContent
         val binding = FeedCardStoryLargeBinding.bind(view)
         val prefs = FeedPreferences(view.context)

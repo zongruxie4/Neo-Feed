@@ -82,7 +82,7 @@ class OverlayView(val context: Context) :
     private fun updateTheme(force: String? = null) {
         setTheme(force)
         updateStubUi()
-        adapter.setTheme(themeHolder.currentTheme)
+        adapter.setTheme()
     }
 
     private fun updateStubUi() {
