@@ -1,10 +1,12 @@
 val vRoom = "2.5.1"
 val vCompose = "1.5.0-beta02"
+val vCoil = "2.4.0"
 val vAccompanist = "0.31.3-beta"
 val vComposeCompiler = "1.4.7"
 val vKotlin = "1.8.21"
 val vMaterial = "1.5.0-beta02"
-val vMaterial3 = "1.1.0"
+val vMaterial3 = "1.2.0-alpha02"
+val vRome = "2.1.0"
 
 plugins {
     id("com.android.application")
@@ -128,7 +130,7 @@ android {
 dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
 
-    implementation("com.google.devtools.ksp:symbol-processing-api:1.8.21-1.0.11")
+    implementation("com.google.devtools.ksp:symbol-processing-api:$vKotlin-1.0.11")
     implementation(kotlin("stdlib", vKotlin))
 
     //Core
@@ -136,17 +138,18 @@ dependencies {
     implementation("androidx.core:core-ktx:1.11.0-beta02")
     implementation("androidx.datastore:datastore-preferences:1.0.0")
     implementation("androidx.multidex:multidex:2.0.1")
-    implementation("androidx.navigation:navigation-compose:2.6.0")
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
     implementation("androidx.work:work-runtime-ktx:2.8.1")
+    implementation("com.google.android.material:material:1.9.0")
 
     //Compose
-    implementation("androidx.compose.material:material:$vMaterial")
     implementation("androidx.compose.material:material-icons-extended:$vMaterial")
     implementation("androidx.compose.material3:material3:$vMaterial3")
     implementation("androidx.compose.ui:ui:$vCompose")
     implementation("androidx.compose.ui:ui-tooling:$vCompose")
     implementation("androidx.compose.ui:ui-tooling-preview:$vCompose")
+    implementation("androidx.navigation:navigation-compose:2.7.0-beta01")
+    implementation("com.google.accompanist:accompanist-webview:$vAccompanist")
 
     //Room
     implementation("androidx.room:room-runtime:$vRoom")
@@ -154,29 +157,25 @@ dependencies {
     implementation("androidx.room:room-paging:$vRoom")
     kapt("androidx.room:room-compiler:$vRoom")
 
-    //Accompanist
-    implementation("com.google.accompanist:accompanist-navigation-animation:$vAccompanist")
-    implementation("com.google.accompanist:accompanist-webview:$vAccompanist")
-
-    //Libs
-    implementation("com.jakewharton.threetenabp:threetenabp:1.4.6")
-    implementation("com.rometools:rome:2.1.0") { exclude(module = "rome-utils") }
-    implementation("com.rometools:rome-modules:2.1.0")
+    //Squareup
     implementation("com.squareup.moshi:moshi:1.15.0")
     implementation("com.squareup.moshi:moshi-kotlin:1.15.0")
     implementation("com.squareup.okhttp3:okhttp:5.0.0-alpha.9")
     implementation("com.squareup.retrofit2:retrofit:2.9.0") { exclude(module = "okhttp") }
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-    implementation("io.coil-kt:coil:2.4.0")
-    implementation("io.coil-kt:coil-compose:2.4.0")
+
+    //Coil
+    implementation("io.coil-kt:coil:$vCoil")
+    implementation("io.coil-kt:coil-compose:$vCoil")
+
+    //Libs
+    implementation("com.jakewharton.threetenabp:threetenabp:1.4.6")
+    implementation("com.rometools:rome:$vRome") { exclude(module = "rome-utils") }
+    implementation("com.rometools:rome-modules:$vRome")
     implementation("net.dankito.readability4j:readability4j:1.0.8")
     implementation("org.ccil.cowan.tagsoup:tagsoup:1.2.1")
     implementation("org.jsoup:jsoup:1.16.1")
     implementation("org.kodein.di:kodein-di-framework-android-x:7.20.1")
     implementation("com.github.kenglxn.qrgen:android:2.6.0")
-
-    implementation("com.google.android.material:material:1.9.0")
-    implementation("com.google.android.material:compose-theme-adapter-3:1.1.1")
-
     implementation("org.slf4j:slf4j-android:1.7.36")
 }
