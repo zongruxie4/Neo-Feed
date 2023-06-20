@@ -19,17 +19,15 @@
 package com.saulhdev.feeder.compose.components
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -64,28 +62,24 @@ fun SwitchPreference(
                             }).build()
                     ),
                     contentDescription = null,
-                    modifier = Modifier
-                        .clip(CircleShape)
-                        .size(36.dp)
-                        .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.12F))
+                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface),
+                    modifier = Modifier.size(36.dp)
                 )
             }
             if (pref.icon is Int) {
                 Image(
                     painter = painterResource(id = pref.icon),
                     contentDescription = null,
-                    modifier = Modifier
-                        .clip(CircleShape)
-                        .size(36.dp)
-                        .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.12F))
+                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface),
+                    modifier = Modifier.size(36.dp)
                 )
             }
             if (pref.icon is ImageVector) {
                 Image(
                     imageVector = pref.icon,
                     contentDescription = null,
-                    modifier = Modifier
-                        .size(30.dp)
+                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface),
+                    modifier = Modifier.size(30.dp)
                 )
             }
         },
