@@ -23,23 +23,25 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.saulhdev.feeder.R
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ViewWithActionBar(
     title: String,
@@ -79,8 +81,8 @@ fun ViewWithActionBar(
                     }
 
                 },
-                navigationIcon = if (showBackButton) {
-                    {
+                navigationIcon = {
+                    if (showBackButton) {
                         val backDispatcher =
                             LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
                         IconButton(
@@ -95,10 +97,11 @@ fun ViewWithActionBar(
                             )
                         }
                     }
-                } else null,
+                },
                 actions = actions,
-                backgroundColor = MaterialTheme.colorScheme.background,
-                elevation = 0.dp
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.background,
+                ),
             )
         },
         bottomBar = bottomBar,
