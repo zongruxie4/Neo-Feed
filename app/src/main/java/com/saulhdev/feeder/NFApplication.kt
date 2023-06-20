@@ -7,6 +7,8 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.multidex.MultiDexApplication
 import androidx.work.WorkManager
+import com.google.android.material.color.DynamicColors
+import com.google.android.material.color.DynamicColorsOptions
 import com.jakewharton.threetenabp.AndroidThreeTen
 import com.saulhdev.feeder.db.FeedArticleDao
 import com.saulhdev.feeder.db.FeedDao
@@ -69,6 +71,13 @@ class NFApplication : MultiDexApplication(), DIAware {
     override fun onCreate() {
         super.onCreate()
         AndroidThreeTen.init(this)
+
+        DynamicColors.applyToActivitiesIfAvailable(
+            this,
+            DynamicColorsOptions.Builder()
+                .setPrecondition { _, _ -> DynamicColors.isDynamicColorAvailable() }
+                .build()
+        )
         instance = this
         PluginFetcher.init(instance)
         db = NeoFeedDb.getInstance(applicationContext)
