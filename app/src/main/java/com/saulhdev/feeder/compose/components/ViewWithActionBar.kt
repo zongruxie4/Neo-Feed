@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -35,9 +36,13 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.saulhdev.feeder.R
 
@@ -108,4 +113,26 @@ fun ViewWithActionBar(
         floatingActionButton = floatingActionButton,
         content = content
     )
+}
+
+@Composable
+fun RoundButton(
+    modifier: Modifier = Modifier,
+    size: Dp = 24.dp,
+    icon: ImageVector,
+    tint: Color = MaterialTheme.colorScheme.onBackground,
+    description: String = "",
+    onClick: () -> Unit,
+) {
+    IconButton(
+        modifier = modifier,
+        onClick = onClick
+    ) {
+        Icon(
+            modifier = Modifier.size(size),
+            imageVector = icon,
+            tint = tint,
+            contentDescription = description
+        )
+    }
 }

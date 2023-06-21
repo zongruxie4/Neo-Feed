@@ -1,6 +1,7 @@
 package com.saulhdev.feeder.compose.pages
 
 import android.app.Activity
+import android.content.Intent
 import android.net.Uri
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
@@ -27,6 +28,7 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.net.toUri
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
@@ -34,8 +36,12 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.saulhdev.feeder.ComposeActivity
 import com.saulhdev.feeder.R
+import com.saulhdev.feeder.compose.components.RoundButton
 import com.saulhdev.feeder.compose.components.ViewWithActionBar
 import com.saulhdev.feeder.compose.components.WithBidiDeterminedLayoutDirection
+import com.saulhdev.feeder.compose.icon.Phosphor
+import com.saulhdev.feeder.compose.icon.phosphor.ArrowSquareOut
+import com.saulhdev.feeder.compose.icon.phosphor.ShareNetwork
 import com.saulhdev.feeder.compose.navigation.preferenceGraph
 import com.saulhdev.feeder.db.FeedRepository
 import com.saulhdev.feeder.theme.LinkTextStyle
@@ -44,6 +50,7 @@ import com.saulhdev.feeder.utils.blobFullFile
 import com.saulhdev.feeder.utils.blobFullInputStream
 import com.saulhdev.feeder.utils.blobInputStream
 import com.saulhdev.feeder.utils.htmlFormattedText
+import com.saulhdev.feeder.utils.shareIntent
 import com.saulhdev.feeder.utils.unicodeWrap
 import com.saulhdev.feeder.utils.urlEncode
 import org.threeten.bp.ZonedDateTime
@@ -109,8 +116,24 @@ fun ArticleScreen(articleId: Long) {
         titleSize = 16.sp,
         subTitle = subTitle.value,
         showBackButton = true,
+        actions = {
+            RoundButton(
+                icon = Phosphor.ArrowSquareOut,
+                description = stringResource(id = R.string.pref_browser_theme),
+            ) {
+                context.startActivity(
+                    Intent(Intent.ACTION_VIEW, currentUrl.toUri())
+                )
+            }
+            RoundButton(
+                icon = Phosphor.ShareNetwork,
+                description = stringResource(id = R.string.share),
+            ) {
+                context.shareIntent(currentUrl, title.value)
+            }
+        }
 
-        ) { paddingValues ->
+    ) { paddingValues ->
         SelectionContainer {
             LazyColumn(
                 modifier = Modifier
