@@ -5,9 +5,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
+import com.saulhdev.feeder.R
 
 @Composable
 fun LinkTextStyle(): TextStyle =
@@ -69,3 +71,7 @@ fun BlockQuoteStyle(): SpanStyle =
             fontWeight = FontWeight.Light
         )
     )
+
+val kingthingsPrintingkit = FontFamily(
+    Font(R.font.kingthings_printingkit)
+)
