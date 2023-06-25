@@ -20,8 +20,8 @@ package com.saulhdev.feeder.compose.components
 
 import android.content.Intent
 import android.net.Uri
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.size
+import androidx.annotation.StringRes
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -93,5 +93,33 @@ fun ActionPreference(
                 pref.onClick?.invoke()
             }
         }
+    )
+}
+
+@Composable
+fun PagePreference(
+    modifier: Modifier = Modifier,
+    @StringRes titleId: Int,
+    icon: ImageVector,
+    index: Int = 1,
+    groupSize: Int = 1,
+    isEnabled: Boolean = true,
+    route: String,
+) {
+    val navController = LocalNavController.current
+    BasePreference(
+        modifier = modifier,
+        titleId = titleId,
+        startWidget = {
+            Icon(
+                imageVector = icon,
+                contentDescription = stringResource(id = titleId),
+                tint = MaterialTheme.colorScheme.onSurface,
+            )
+        },
+        index = index,
+        groupSize = groupSize,
+        isEnabled = isEnabled,
+        onClick = { navController.navigate(route) }
     )
 }
