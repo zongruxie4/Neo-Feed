@@ -47,7 +47,7 @@ fun ComposeSwitchView(
     index: Int = -1,
     groupSize: Int = -1,
 ) {
-    val (checked, check) = remember { mutableStateOf(isChecked) }
+    val (checked, check) = remember(isChecked) { mutableStateOf(isChecked) }
     val rank = (index + 1f) / groupSize
     val base = index.toFloat() / groupSize
     Column(
