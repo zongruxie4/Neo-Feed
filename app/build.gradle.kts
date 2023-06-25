@@ -143,7 +143,6 @@ dependencies {
     implementation("com.google.android.material:material:1.9.0")
 
     //Compose
-    implementation("androidx.compose.material:material-icons-extended:$vMaterial")
     implementation("androidx.compose.material3:material3:$vMaterial3")
     implementation("androidx.compose.ui:ui:$vCompose")
     implementation("androidx.compose.ui:ui-tooling:$vCompose")
