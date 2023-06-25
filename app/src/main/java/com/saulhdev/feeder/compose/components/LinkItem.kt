@@ -17,8 +17,6 @@
  */
 package com.saulhdev.feeder.compose.components
 
-import android.content.Intent
-import android.net.Uri
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.Icon
@@ -29,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
+import com.saulhdev.feeder.utils.launchView
 
 @Composable
 fun LinkItem(
@@ -63,11 +62,7 @@ fun LinkItem(
             )
         },
         onClick = {
-            val webpage = Uri.parse(url)
-            val intent = Intent(Intent.ACTION_VIEW, webpage)
-            if (intent.resolveActivity(context.packageManager) != null) {  // TODO FIX launching
-                context.startActivity(intent)
-            }
+            context.launchView(url)
         }
     )
 }

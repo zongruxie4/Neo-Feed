@@ -19,7 +19,6 @@
 package com.saulhdev.feeder.compose.pages
 
 import android.content.ActivityNotFoundException
-import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.util.Base64
@@ -56,9 +55,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
-import androidx.core.net.toUri
 import coil.annotation.ExperimentalCoilApi
 import com.saulhdev.feeder.BuildConfig
 import com.saulhdev.feeder.R
@@ -76,6 +73,7 @@ import com.saulhdev.feeder.compose.navigation.PageItem
 import com.saulhdev.feeder.compose.util.blockBorder
 import com.saulhdev.feeder.preference.FeedPreferences
 import com.saulhdev.feeder.theme.kingthingsPrintingkit
+import com.saulhdev.feeder.utils.launchView
 import com.saulhdev.feeder.utils.urlDecode
 import java.io.InputStream
 
@@ -317,9 +315,8 @@ fun PreferencesWebView(url: String) {
                         if (url.contains("file://")) {
                             view.loadUrl(url)
                         } else {
-                            val intent = Intent(Intent.ACTION_VIEW, url.urlDecode().toUri())
                             try {
-                                ContextCompat.startActivity(context, intent, null)
+                                context.launchView(url)
                             } catch (e: ActivityNotFoundException) {
                                 view.loadUrl(url)
                             }

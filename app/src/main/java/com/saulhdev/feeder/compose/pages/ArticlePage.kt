@@ -1,7 +1,6 @@
 package com.saulhdev.feeder.compose.pages
 
 import android.app.Activity
-import android.content.Intent
 import android.net.Uri
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
@@ -28,7 +27,6 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.net.toUri
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
@@ -50,6 +48,7 @@ import com.saulhdev.feeder.utils.blobFullFile
 import com.saulhdev.feeder.utils.blobFullInputStream
 import com.saulhdev.feeder.utils.blobInputStream
 import com.saulhdev.feeder.utils.htmlFormattedText
+import com.saulhdev.feeder.utils.launchView
 import com.saulhdev.feeder.utils.shareIntent
 import com.saulhdev.feeder.utils.unicodeWrap
 import com.saulhdev.feeder.utils.urlEncode
@@ -121,9 +120,7 @@ fun ArticleScreen(articleId: Long) {
                 icon = Phosphor.ArrowSquareOut,
                 description = stringResource(id = R.string.pref_browser_theme),
             ) {
-                context.startActivity(
-                    Intent(Intent.ACTION_VIEW, currentUrl.toUri())
-                )
+                context.launchView(currentUrl)
             }
             RoundButton(
                 icon = Phosphor.ShareNetwork,

@@ -17,8 +17,6 @@
  */
 package com.saulhdev.feeder.compose.components
 
-import android.content.Intent
-import android.net.Uri
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.size
@@ -32,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
+import com.saulhdev.feeder.utils.launchView
 
 @ExperimentalCoilApi
 @Composable
@@ -47,13 +46,7 @@ fun ContributorRow(
 
     BasePreference(
         titleId = nameId,
-        onClick = {
-            val webpage = Uri.parse(url)
-            val intent = Intent(Intent.ACTION_VIEW, webpage)
-            if (intent.resolveActivity(context.packageManager) != null) {
-                context.startActivity(intent)
-            }
-        },
+        onClick = { context.launchView(url) },
         summaryId = roleId,
         index = index,
         groupSize = groupSize,

@@ -18,8 +18,6 @@
 
 package com.saulhdev.feeder.compose.components
 
-import android.content.Intent
-import android.net.Uri
 import androidx.annotation.StringRes
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -30,6 +28,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.saulhdev.feeder.compose.navigation.LocalNavController
 import com.saulhdev.feeder.preference.FeedPreferences
+import com.saulhdev.feeder.utils.launchView
 
 @Composable
 fun ActionPreference(
@@ -59,8 +58,7 @@ fun ActionPreference(
             if (pref.route != "") {
                 navController.navigate(pref.route)
             } else if (pref.url != "") {
-                val webpage = Uri.parse(pref.url)
-                context.startActivity(Intent(Intent.ACTION_VIEW, webpage))
+                context.launchView(pref.url)
             } else {
                 pref.onClick?.invoke()
             }

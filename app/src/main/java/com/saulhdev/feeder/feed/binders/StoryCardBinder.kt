@@ -1,7 +1,5 @@
 package com.saulhdev.feeder.feed.binders
 
-import android.content.Intent
-import android.net.Uri
 import android.text.Html
 import android.view.View
 import coil.load
@@ -9,6 +7,7 @@ import com.saulhdev.feeder.ComposeActivity
 import com.saulhdev.feeder.databinding.FeedCardStoryLargeBinding
 import com.saulhdev.feeder.preference.FeedPreferences
 import com.saulhdev.feeder.utils.RelativeTimeHelper
+import com.saulhdev.feeder.utils.launchView
 import com.saulhdev.feeder.utils.urlEncode
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -48,7 +47,7 @@ object StoryCardBinder : FeedBinder {
 
         binding.root.setOnClickListener {
             if (prefs.openInBrowser.onGetValue()) {
-                view.context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(content.link)))
+                view.context.launchView(content.link)
             } else {
                 val scope = CoroutineScope(Dispatchers.Main)
 
