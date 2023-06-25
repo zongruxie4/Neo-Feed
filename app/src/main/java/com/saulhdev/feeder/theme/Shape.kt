@@ -29,3 +29,10 @@ val shapes: Shapes = Shapes(
     large = RoundedCornerShape(18.dp),
     extraLarge = RoundedCornerShape(24.dp)
 )
+
+fun GroupItemShape(index: Int, lastIndex: Int) = RoundedCornerShape(
+    topStart = if (index == 0) 24.dp else 8.dp,
+    topEnd = if (index == 0) 24.dp else 8.dp,
+    bottomStart = if (index == lastIndex) 24.dp else 8.dp,
+    bottomEnd = if (index == lastIndex) 24.dp else 8.dp
+)
