@@ -208,7 +208,7 @@ class FeedPreferences(val context: Context) {
         onChange: () -> Unit = doNothing,
         val route: String = "",
         val url: String = "",
-        val icon: Any? = null
+        val icon: ImageVector,
     ) : PrefDelegate<String>(key, titleId, summaryId, defaultValue, onChange) {
         override fun onGetValue(): String = sharedPrefs.getString(key, defaultValue)!!
 
@@ -238,7 +238,7 @@ class FeedPreferences(val context: Context) {
         @StringRes summaryId: Int = -1,
         defaultValue: String = "",
         val entries: Map<String, String>,
-        val icon: Any? = null,
+        val icon: ImageVector,
         onChange: () -> Unit = doNothing
     ) : PrefDelegate<String>(key, titleId, summaryId, defaultValue, onChange) {
         override fun onGetValue(): String = sharedPrefs.getString(getKey(), defaultValue)!!
@@ -252,7 +252,7 @@ class FeedPreferences(val context: Context) {
         @StringRes titleId: Int,
         @StringRes summaryId: Int = -1,
         defaultValue: Float = 0f,
-        val icon: Any? = null,
+        val icon: ImageVector,
         val minValue: Float,
         val maxValue: Float,
         val steps: Int,
@@ -271,7 +271,7 @@ class FeedPreferences(val context: Context) {
         @StringRes titleId: Int,
         @StringRes summaryId: Int = -1,
         defaultValue: Boolean = false,
-        val icon: Any? = null,
+        val icon: ImageVector,
         onChange: () -> Unit = doNothing
     ) : PrefDelegate<Boolean>(key, titleId, summaryId, defaultValue, onChange) {
         override fun onGetValue(): Boolean = sharedPrefs.getBoolean(getKey(), defaultValue)

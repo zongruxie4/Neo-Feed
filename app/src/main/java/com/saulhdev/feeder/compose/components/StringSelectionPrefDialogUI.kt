@@ -30,6 +30,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
@@ -45,9 +46,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.saulhdev.feeder.preference.FeedPreferences
 import kotlinx.coroutines.launch
 
@@ -75,7 +74,7 @@ fun StringSelectionPrefDialogUI(
             Text(text = stringResource(pref.titleId), style = MaterialTheme.typography.titleLarge)
             LazyColumn(
                 modifier = Modifier
-                    .padding(top = 16.dp, bottom = 8.dp)
+                    .padding(vertical = 8.dp)
                     .weight(1f, false)
             ) {
                 items(items = entryPairs) {
