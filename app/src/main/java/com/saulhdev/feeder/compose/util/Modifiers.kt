@@ -1,9 +1,14 @@
 package com.saulhdev.feeder.compose.util
 
+import androidx.compose.foundation.border
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.SemanticsPropertyReceiver
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.unit.dp
 
 inline fun Modifier.addIf(
     condition: Boolean,
@@ -39,3 +44,13 @@ fun Modifier.safeSemantics(
             // Bug in framework? This can be null in any case
         }
     }
+
+fun Modifier.blockBorder() = composed {
+    this
+        .clip(MaterialTheme.shapes.extraLarge)
+        .border(
+            2.dp,
+            MaterialTheme.colorScheme.outlineVariant,
+            MaterialTheme.shapes.extraLarge,
+        )
+}
