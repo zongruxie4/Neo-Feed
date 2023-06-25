@@ -27,22 +27,23 @@ import android.view.ViewGroup
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.requiredSize
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -50,11 +51,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
@@ -63,10 +63,19 @@ import coil.annotation.ExperimentalCoilApi
 import com.saulhdev.feeder.BuildConfig
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.compose.components.ContributorRow
-import com.saulhdev.feeder.compose.components.ItemLink
-import com.saulhdev.feeder.compose.components.PreferenceGroup
+import com.saulhdev.feeder.compose.components.LinkItem
+import com.saulhdev.feeder.compose.components.PagePreference
+import com.saulhdev.feeder.compose.components.PreferenceGroupHeading
 import com.saulhdev.feeder.compose.components.ViewWithActionBar
+import com.saulhdev.feeder.compose.icon.Phosphor
+import com.saulhdev.feeder.compose.icon.phosphor.BracketsSquare
+import com.saulhdev.feeder.compose.icon.phosphor.GithubLogo
+import com.saulhdev.feeder.compose.icon.phosphor.Megaphone
+import com.saulhdev.feeder.compose.icon.phosphor.TelegramLogo
+import com.saulhdev.feeder.compose.navigation.PageItem
+import com.saulhdev.feeder.compose.util.blockBorder
 import com.saulhdev.feeder.preference.FeedPreferences
+import com.saulhdev.feeder.theme.kingthingsPrintingkit
 import com.saulhdev.feeder.utils.urlDecode
 import java.io.InputStream
 
@@ -78,114 +87,122 @@ fun AboutPage() {
         title = title,
     ) { paddingValues ->
         val prefs = FeedPreferences(LocalContext.current)
-
-        Column(
+        LazyColumn(
             modifier = Modifier
-                .padding(
-                    top = paddingValues.calculateTopPadding(),
-                    bottom = paddingValues.calculateBottomPadding(), start = 8.dp, end = 8.dp
-                )
-                .verticalScroll(rememberScrollState())
-                .background(MaterialTheme.colorScheme.background),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+                .fillMaxSize()
+                .padding(paddingValues)
+                .blockBorder(),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+            contentPadding = PaddingValues(8.dp),
         ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
-            ) {
-                Row(
+            item {
+                Column(
                     modifier = Modifier
-                        .padding(8.dp)
-                        .clip(RoundedCornerShape(2f))
+                        .fillMaxWidth()
+                        .padding(4.dp)
+                        .background(
+                            MaterialTheme.colorScheme.surface,
+                            MaterialTheme.shapes.extraLarge
+                        )
+                        .padding(12.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
+                    ListItem(
+                        modifier = Modifier.fillMaxWidth(),
+                        leadingContent = {
+                            ResourcesCompat.getDrawable(
+                                LocalContext.current.resources,
+                                R.mipmap.ic_launcher,
+                                LocalContext.current.theme
+                            )?.let { drawable ->
+                                val bitmap = Bitmap.createBitmap(
+                                    drawable.intrinsicWidth,
+                                    drawable.intrinsicHeight,
+                                    Bitmap.Config.ARGB_8888
+                                )
+                                val canvas = Canvas(bitmap)
+                                drawable.setBounds(0, 0, canvas.width, canvas.height)
+                                drawable.draw(canvas)
+                                Image(
+                                    bitmap = bitmap.asImageBitmap(),
+                                    contentDescription = null,
+                                    modifier = Modifier
+                                        .requiredSize(84.dp)
+                                        .clip(MaterialTheme.shapes.large)
+                                )
+                            }
+                        },
+                        headlineContent = {
+                            Text(
+                                text = stringResource(id = R.string.app_name),
+                                style = MaterialTheme.typography.headlineMedium,
+                                color = MaterialTheme.colorScheme.primary,
+                                fontFamily = kingthingsPrintingkit,
+                            )
+                        },
+                        supportingContent = {
+                            Column {
+                                Text(
+                                    text = stringResource(id = R.string.app_version) + ": "
+                                            + BuildConfig.VERSION_NAME + " ( Build " + BuildConfig.VERSION_CODE + " )",
+                                    style = MaterialTheme.typography.titleSmall,
+                                    color = MaterialTheme.colorScheme.onPrimary
+                                )
+                                Text(
+                                    text = BuildConfig.APPLICATION_ID,
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = MaterialTheme.colorScheme.onPrimary
+                                )
+                            }
+                        }
+                    )
 
-                    ResourcesCompat.getDrawable(
-                        LocalContext.current.resources,
-                        R.mipmap.ic_launcher,
-                        LocalContext.current.theme
-                    )?.let { drawable ->
-                        val bitmap = Bitmap.createBitmap(
-                            drawable.intrinsicWidth,
-                            drawable.intrinsicHeight,
-                            Bitmap.Config.ARGB_8888
-                        )
-                        val canvas = Canvas(bitmap)
-                        drawable.setBounds(0, 0, canvas.width, canvas.height)
-                        drawable.draw(canvas)
-                        Image(
-                            bitmap = bitmap.asImageBitmap(),
-                            contentDescription = stringResource(id = R.string.app_name),
-                            modifier = Modifier
-                                .requiredSize(84.dp)
-                                .padding(top = 16.dp)
-                        )
+                    LazyRow(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        items(links) { link ->
+                            LinkItem(
+                                icon = link.icon,
+                                label = stringResource(id = link.labelResId),
+                                url = link.url,
+                            )
+                        }
                     }
                 }
-
-                Text(
-                    text = stringResource(id = R.string.app_name),
-                    fontWeight = FontWeight.Normal,
-                    fontSize = 30.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-
-                Text(
-                    text = stringResource(id = R.string.app_version) + ": "
-                            + BuildConfig.VERSION_NAME + " ( Build " + BuildConfig.VERSION_CODE + " )",
-                    fontWeight = FontWeight.Normal,
-                    fontSize = 13.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                Text(
-                    text = stringResource(id = R.string.app_id) + ": " + BuildConfig.APPLICATION_ID,
-                    fontWeight = FontWeight.Normal,
-                    fontSize = 13.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+            }
+            item {
+                PreferenceGroupHeading(stringResource(id = R.string.about_team))
+            }
+            itemsIndexed(contributors) { i, it ->
+                ContributorRow(
+                    nameId = it.name,
+                    roleId = it.descriptionRes,
+                    photoUrl = it.photoUrl,
+                    url = it.webpage,
+                    index = i,
+                    groupSize = contributors.size
                 )
             }
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-            ) {
-                links.map { link ->
-                    ItemLink(
-                        iconResId = link.iconResId,
-                        label = stringResource(id = link.labelResId),
-                        modifier = Modifier.weight(1f),
-                        url = link.url
-                    )
-                }
+            item {
+                PreferenceGroupHeading(stringResource(id = R.string.about_build_information))
             }
-
-            PreferenceGroup(heading = stringResource(id = R.string.about_team)) {
-                val size = contributors.size
-                contributors.forEachIndexed { i, it ->
-                    ContributorRow(
-                        nameId = it.name,
-                        roleId = it.descriptionRes,
-                        photoUrl = it.photoUrl,
-                        url = it.webpage,
-                        index = i,
-                        groupSize = size
-                    )
-                    if (i + 1 < size) Spacer(modifier = Modifier.height(2.dp))
-                }
+            itemsIndexed(listOf(PageItem.AboutLicense, PageItem.AboutChangelog)) { i, it ->
+                PagePreference(
+                    titleId = it.titleId,
+                    icon = it.icon,
+                    route = it.route,
+                    index = i,
+                    groupSize = 2
+                )
             }
-
-            PreferenceGroup(
-                heading = stringResource(id = R.string.about_licenses),
-                prefs = listOf(prefs.aboutLicense, prefs.aboutChangelog)
-            )
         }
     }
 }
 
 
 private data class Link(
-    @DrawableRes val iconResId: Int,
+    val icon: ImageVector,
     @StringRes val labelResId: Int,
     val url: String
 )
@@ -199,19 +216,24 @@ private data class TeamMember(
 
 private val links = listOf(
     Link(
-        iconResId = R.drawable.ic_github,
+        icon = Phosphor.GithubLogo,
         labelResId = R.string.about_source_code,
-        url = "https://github.com/NeoApplications/Neo-Launcher"
+        url = "https://github.com/NeoApplications/Neo-Feed"
     ),
     Link(
-        iconResId = R.drawable.ic_channel,
+        icon = Phosphor.Megaphone,
         labelResId = R.string.about_channel,
         url = "https://t.me/neo_applications"
     ),
     Link(
-        iconResId = R.drawable.ic_community,
-        labelResId = R.string.about_community,
+        icon = Phosphor.TelegramLogo,
+        labelResId = R.string.about_community_telegram,
         url = "https://t.me/neo_launcher"
+    ),
+    Link(
+        icon = Phosphor.BracketsSquare,
+        labelResId = R.string.about_community_matrix,
+        url = "https://matrix.to/#/#neo-launcher:matrix.org"
     )
 )
 

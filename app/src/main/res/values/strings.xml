@@ -20,8 +20,11 @@
     <string name="about_team">Team Members</string>
     <string name="about_channel">Channel</string>
     <string name="about_community">Community</string>
+    <string name="about_community_telegram">Community on Telegram</string>
+    <string name="about_community_matrix">Community on Matrix</string>
     <string name="about_developer" translatable="false">Saul Henriquez</string>
     <string name="about_developer2" translatable="false">Antonios Hazim</string>
+    <string name="about_build_information">Build info</string>
     <string name="author_role">Developer</string>
     <string name="about_licenses">License</string>
     <string name="back_to_top">Back to Top</string>
