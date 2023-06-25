@@ -177,7 +177,7 @@ fun SourcesPage(viewModel: SourcesViewModel) {
             LazyColumn {
                 items(list.value) { item ->
                     FeedItem(
-                        repository = item,
+                        feed = item,
                         onClickAction = {
                             navController.navigate(
                                 "/edit_feed/${item.id}/"

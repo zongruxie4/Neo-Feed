@@ -19,113 +19,81 @@
 package com.saulhdev.feeder.compose.components
 
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.saulhdev.feeder.R
 import com.saulhdev.feeder.db.Feed
 
 @Composable
 fun FeedItem(
     modifier: Modifier = Modifier,
-    repository: Feed,
+    feed: Feed,
     onClickAction: (Feed) -> Unit = {},
     onRemoveAction: (Feed) -> Unit = {}
 ) {
-    val (isEnabled, enable) = remember(repository.isEnabled) {
-        mutableStateOf(repository.isEnabled)
+    val (isEnabled, enable) = remember(feed.isEnabled) {
+        mutableStateOf(feed.isEnabled)
     }
     val backgroundColor by animateColorAsState(
         targetValue = if (isEnabled) MaterialTheme.colorScheme.surfaceColorAtElevation(32.dp)
         else MaterialTheme.colorScheme.background
     )
-    Surface(
+
+    ListItem(
         modifier = modifier
             .fillMaxWidth()
-            .padding(8.dp)
-            .clip(
-                RoundedCornerShape(
-                    topStart = 16.dp,
-                    topEnd = 16.dp,
-                    bottomStart = 16.dp,
-                    bottomEnd = 16.dp
-                )
-            )
-            .background(backgroundColor)
-            .clickable { onClickAction(repository) },
-        color = backgroundColor,
-        border = BorderStroke(
-            width = 1.dp,
-            color = MaterialTheme.colorScheme.outline
+            .clip(MaterialTheme.shapes.large)
+            .clickable(enabled = isEnabled, onClick = { onClickAction(feed) }),
+        colors = ListItemDefaults.colors(
+            containerColor = backgroundColor,
         ),
-        shape = MaterialTheme.shapes.medium
-    ) {
-        Row(
-            modifier = Modifier.padding(
-                horizontal = 8.dp,
-                vertical = 8.dp
-            ),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column(
-                modifier = modifier.fillMaxWidth(0.9f),
-                horizontalAlignment = Alignment.Start,
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                Row(modifier = Modifier.fillMaxWidth()) {
-                    Column(
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        Text(text = repository.title, style = MaterialTheme.typography.titleSmall)
-                        Text(
-                            text = repository.url.toString(),
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                    }
-                }
-                Spacer(modifier = Modifier.padding(vertical = 4.dp))
+        overlineContent = {
+            Text(
+                text = feed.url.toString(),
+            )
+        },
+        headlineContent = {
+            Text(text = feed.title)
+        },
+        supportingContent = feed.description.takeIf { it.isNotEmpty() }?.let {
+            {
                 Text(
-                    text = repository.description,
-                    style = MaterialTheme.typography.bodyMedium,
+                    text = it,
                     overflow = TextOverflow.Ellipsis,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    maxLines = 1
+                    maxLines = 2
                 )
             }
+        },
+        trailingContent = {
             IconButton(
                 modifier = Modifier.size(36.dp),
-                onClick = { onRemoveAction(repository) }
+                onClick = { onRemoveAction(feed) }
             ) {
-                Icon(imageVector = Icons.Filled.Close, contentDescription = "Close")
+                Icon(
+                    imageVector = Icons.Filled.Close,
+                    contentDescription = stringResource(id = R.string.delete_feed),
+                )
             }
-
-
         }
-
-    }
+    )
 }
