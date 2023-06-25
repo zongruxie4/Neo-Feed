@@ -1,11 +1,11 @@
-val vRoom = "2.5.1"
+val vRoom = "2.5.2"
 val vCompose = "1.5.0-beta02"
 val vCoil = "2.4.0"
-val vAccompanist = "0.31.3-beta"
+val vAccompanist = "0.31.4-beta"
 val vComposeCompiler = "1.4.7"
 val vKotlin = "1.8.21"
 val vMaterial = "1.5.0-beta02"
-val vMaterial3 = "1.2.0-alpha02"
+val vMaterial3 = "1.2.0-alpha03"
 val vRome = "2.1.0"
 
 plugins {
