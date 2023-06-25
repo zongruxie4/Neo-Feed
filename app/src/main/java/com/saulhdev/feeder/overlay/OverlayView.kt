@@ -101,9 +101,10 @@ class OverlayView(val context: Context) :
 
     private fun initRecyclerView() {
         val recyclerView = rootView.findViewById<RecyclerView>(R.id.recycler)
-        val buttonReturnToTop = rootView.findViewById<FloatingActionButton>(R.id.button_return_to_top).apply {
-            visibility = View.GONE
-        }
+        val buttonReturnToTop =
+            rootView.findViewById<FloatingActionButton>(R.id.button_return_to_top).apply {
+                visibility = View.GONE
+            }
 
         rootView.findViewById<SwipeRefreshLayout>(R.id.swipe_to_refresh).setOnRefreshListener {
             rootView.findViewById<RecyclerView>(R.id.recycler).recycledViewPool.clear()
@@ -116,14 +117,16 @@ class OverlayView(val context: Context) :
             adapter = this@OverlayView.adapter
         }
 
-        recyclerView.addOnScrollListener(object: RecyclerView.OnScrollListener(){
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 if ((recyclerView.layoutManager as LinearLayoutManager)
-                        .findFirstCompletelyVisibleItemPosition() < 5) {
+                        .findFirstCompletelyVisibleItemPosition() < 5
+                ) {
                     buttonReturnToTop.visibility = View.GONE
-                }else if ((recyclerView.layoutManager as LinearLayoutManager)
-                        .findFirstCompletelyVisibleItemPosition() > 5){
+                } else if ((recyclerView.layoutManager as LinearLayoutManager)
+                        .findFirstCompletelyVisibleItemPosition() > 5
+                ) {
                     buttonReturnToTop.visibility = View.VISIBLE
                 }
             }
@@ -283,7 +286,7 @@ class OverlayView(val context: Context) :
 
     override fun applyCompactCard(value: Boolean) {
         adapter = FeedAdapter()
-        adapter.setTheme(themeHolder.currentTheme)
+        adapter.setTheme()
         rootView.findViewById<RecyclerView>(R.id.recycler).adapter = adapter
         refreshNotifications()
     }

@@ -27,6 +27,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberAsyncImagePainter
@@ -64,10 +65,10 @@ fun ContributorRow(
                             crossfade(true)
                         }).build()
                 ),
-                contentDescription = null,
+                contentDescription = stringResource(id = nameId),
                 modifier = Modifier
                     .clip(CircleShape)
-                    .size(32.dp)
+                    .size(24.dp),
             )
         }
     )

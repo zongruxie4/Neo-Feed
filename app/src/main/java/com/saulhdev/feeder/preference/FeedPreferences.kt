@@ -184,20 +184,6 @@ class FeedPreferences(val context: Context) {
         onChange = doNothing
     )
 
-    var aboutLicense = StringPref(
-        key = "pref_license",
-        titleId = R.string.about_licenses,
-        icon = R.drawable.ic_copyright,
-        route = Routes.LICENSE,
-    )
-
-    var aboutChangelog = StringPref(
-        key = "pref_changelog",
-        titleId = R.string.about_changelog,
-        icon = R.drawable.ic_list,
-        route = Routes.CHANGELOG,
-    )
-
     /*HELPER CLASSES FOR PREFERENCES*/
     inner class StringPref(
         key: String,

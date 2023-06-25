@@ -76,8 +76,7 @@ fun ComposeWebView(
         titleSize = 16.sp,
         subTitle = subTitle.value,
         showBackButton = true,
-
-        ) { paddingValues ->
+    ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
