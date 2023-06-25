@@ -36,8 +36,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.outlined.CloudDownload
-import androidx.compose.material.icons.outlined.CloudUpload
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FloatingActionButton
@@ -67,6 +65,9 @@ import com.saulhdev.feeder.R
 import com.saulhdev.feeder.compose.components.FeedItem
 import com.saulhdev.feeder.compose.components.OverflowMenu
 import com.saulhdev.feeder.compose.components.ViewWithActionBar
+import com.saulhdev.feeder.compose.icon.Phosphor
+import com.saulhdev.feeder.compose.icon.phosphor.CloudArrowDown
+import com.saulhdev.feeder.compose.icon.phosphor.CloudArrowUp
 import com.saulhdev.feeder.compose.navigation.LocalNavController
 import com.saulhdev.feeder.compose.navigation.Routes
 import com.saulhdev.feeder.db.Feed
@@ -133,7 +134,7 @@ fun SourcesPage(viewModel: SourcesViewModel) {
                 DropdownMenuItem(
                     leadingIcon = {
                         Icon(
-                            Icons.Outlined.CloudDownload,
+                            Phosphor.CloudArrowDown,
                             contentDescription = null,
                         )
                     },
@@ -146,7 +147,7 @@ fun SourcesPage(viewModel: SourcesViewModel) {
                 DropdownMenuItem(
                     leadingIcon = {
                         Icon(
-                            Icons.Outlined.CloudUpload,
+                            Phosphor.CloudArrowUp,
                             contentDescription = null,
                         )
                     },
