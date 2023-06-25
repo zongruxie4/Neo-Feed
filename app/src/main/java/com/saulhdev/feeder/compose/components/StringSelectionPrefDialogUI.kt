@@ -121,26 +121,23 @@ fun SingleSelectionListItem(
     isEnabled: Boolean = true,
     onClick: () -> Unit = {}
 ) {
-    Row(
+    ListItem(
         modifier = modifier
             .fillMaxWidth()
             .clickable(onClick = onClick, enabled = isEnabled),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        RadioButton(
-            selected = isSelected,
-            enabled = isEnabled,
-            onClick = onClick,
-            modifier = Modifier.padding(start = 8.dp, end = 8.dp),
-            colors = RadioButtonDefaults.colors(
-                selectedColor = MaterialTheme.colorScheme.primary,
-                unselectedColor = MaterialTheme.colorScheme.onSurface
+        leadingContent = {
+            RadioButton(
+                selected = isSelected,
+                enabled = isEnabled,
+                onClick = onClick,
+                colors = RadioButtonDefaults.colors(
+                    selectedColor = MaterialTheme.colorScheme.primary,
+                    unselectedColor = MaterialTheme.colorScheme.onSurface
+                )
             )
-        )
-        Text(
-            text = text,
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Bold
-        )
-    }
+        },
+        headlineContent = {
+            Text(text = text)
+        }
+    )
 }
