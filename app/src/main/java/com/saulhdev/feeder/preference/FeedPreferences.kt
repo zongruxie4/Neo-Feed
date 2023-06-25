@@ -21,21 +21,23 @@ package com.saulhdev.feeder.preference
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.annotation.StringRes
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.AccessTime
-import androidx.compose.material.icons.outlined.Adb
-import androidx.compose.material.icons.outlined.Brightness4
-import androidx.compose.material.icons.outlined.ContactEmergency
-import androidx.compose.material.icons.outlined.Dashboard
-import androidx.compose.material.icons.outlined.Feed
-import androidx.compose.material.icons.outlined.Info
-import androidx.compose.material.icons.outlined.Opacity
-import androidx.compose.material.icons.outlined.OpenInBrowser
-import androidx.compose.material.icons.outlined.Style
-import androidx.compose.material.icons.outlined.Wallpaper
-import androidx.compose.material.icons.outlined.Wifi
+import androidx.compose.ui.graphics.vector.ImageVector
 import com.saulhdev.feeder.NFApplication
 import com.saulhdev.feeder.R
+import com.saulhdev.feeder.compose.icon.Phosphor
+import com.saulhdev.feeder.compose.icon.phosphor.BookBookmark
+import com.saulhdev.feeder.compose.icon.phosphor.Browser
+import com.saulhdev.feeder.compose.icon.phosphor.Bug
+import com.saulhdev.feeder.compose.icon.phosphor.Clock
+import com.saulhdev.feeder.compose.icon.phosphor.EyedropperSample
+import com.saulhdev.feeder.compose.icon.phosphor.Graph
+import com.saulhdev.feeder.compose.icon.phosphor.Hash
+import com.saulhdev.feeder.compose.icon.phosphor.Info
+import com.saulhdev.feeder.compose.icon.phosphor.PaintRoller
+import com.saulhdev.feeder.compose.icon.phosphor.SelectionBackground
+import com.saulhdev.feeder.compose.icon.phosphor.SubtractSquare
+import com.saulhdev.feeder.compose.icon.phosphor.Swatches
+import com.saulhdev.feeder.compose.icon.phosphor.WifiHigh
 import com.saulhdev.feeder.compose.navigation.Routes
 import com.saulhdev.feeder.utils.getBackgroundOptions
 import com.saulhdev.feeder.utils.getItemsPerFeed
@@ -64,14 +66,14 @@ class FeedPreferences(val context: Context) {
         titleId = R.string.pref_ovr_theme,
         defaultValue = "auto_launcher",
         entries = getThemes(context),
-        icon = Icons.Outlined.Style,
+        icon = Phosphor.PaintRoller,
         onChange = recreate
     )
 
     var overlayTransparency = FloatPref(
         key = "pref_overlay_opacity",
         titleId = R.string.pref_transparency,
-        icon = Icons.Outlined.Brightness4,
+        icon = Phosphor.SubtractSquare,
         defaultValue = 1f,
         maxValue = 1f,
         minValue = 0f,
@@ -84,7 +86,7 @@ class FeedPreferences(val context: Context) {
         key = "pref_overlay_system_colors",
         titleId = R.string.pref_syscolors,
         summaryId = R.string.pref_syscolors_desc,
-        icon = Icons.Outlined.Wallpaper,
+        icon = Phosphor.EyedropperSample,
         defaultValue = false,
         onChange = recreate
     )
@@ -94,7 +96,7 @@ class FeedPreferences(val context: Context) {
         titleId = R.string.pref_bg_color,
         defaultValue = "theme",
         entries = getBackgroundOptions(context),
-        icon = Icons.Outlined.ContactEmergency,
+        icon = Phosphor.Swatches,
         onChange = recreate
     )
 
@@ -103,7 +105,7 @@ class FeedPreferences(val context: Context) {
         titleId = R.string.pref_card_bg,
         defaultValue = "theme",
         entries = getBackgroundOptions(context),
-        icon = Icons.Outlined.Opacity,
+        icon = Phosphor.SelectionBackground,
         onChange = recreate
     )
 
@@ -112,7 +114,7 @@ class FeedPreferences(val context: Context) {
         key = "pref_sources",
         titleId = R.string.title_sources,
         summaryId = R.string.summary_sources,
-        icon = Icons.Outlined.Dashboard,
+        icon = Phosphor.Graph,
         route = "/${Routes.SOURCES}/",
         onChange = doNothing
     )
@@ -120,7 +122,7 @@ class FeedPreferences(val context: Context) {
     var openInBrowser = BooleanPref(
         key = "pref_open_browser",
         titleId = R.string.pref_browser_theme,
-        icon = Icons.Outlined.OpenInBrowser,
+        icon = Phosphor.Browser,
         defaultValue = false,
         onChange = doNothing
     )
@@ -128,7 +130,7 @@ class FeedPreferences(val context: Context) {
     var offlineReader = BooleanPref(
         key = "pref_offline_reader",
         titleId = R.string.pref_offline_reader,
-        icon = Icons.Outlined.Wallpaper,
+        icon = Phosphor.BookBookmark,
         defaultValue = true,
         onChange = doNothing
     )
@@ -137,7 +139,7 @@ class FeedPreferences(val context: Context) {
     var syncOnlyOnWifi = BooleanPref(
         key = "pref_sync_only_wifi",
         titleId = R.string.pref_sync_wifi,
-        icon = Icons.Outlined.Wifi,
+        icon = Phosphor.WifiHigh,
         defaultValue = true
     )
     var syncFrequency = StringSelectionPref(
@@ -145,7 +147,7 @@ class FeedPreferences(val context: Context) {
         titleId = R.string.pref_sync_frequency,
         defaultValue = "1",
         entries = getSyncFrequency(context),
-        icon = Icons.Outlined.AccessTime,
+        icon = Phosphor.Clock,
         onChange = doNothing
     )
 
@@ -154,7 +156,7 @@ class FeedPreferences(val context: Context) {
         titleId = R.string.pref_items_per_feed,
         defaultValue = "25",
         entries = getItemsPerFeed(),
-        icon = Icons.Outlined.Feed,
+        icon = Phosphor.Hash,
         onChange = doNothing
     )
 
@@ -169,7 +171,7 @@ class FeedPreferences(val context: Context) {
     var about = StringPref(
         key = "pref_about",
         titleId = R.string.title_about,
-        icon = Icons.Outlined.Info,
+        icon = Phosphor.Info,
         route = "/${Routes.ABOUT}/",
         onChange = doNothing
     )
@@ -178,7 +180,7 @@ class FeedPreferences(val context: Context) {
         key = "pref_debugging",
         titleId = R.string.debug_logcat_printing,
         defaultValue = false,
-        icon = Icons.Outlined.Adb,
+        icon = Phosphor.Bug,
         onChange = doNothing
     )
 
