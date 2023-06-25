@@ -62,7 +62,7 @@ fun FeedItem(
         modifier = modifier
             .fillMaxWidth()
             .clip(MaterialTheme.shapes.large)
-            .clickable(enabled = isEnabled, onClick = { onClickAction(feed) }),
+            .clickable(enabled = true, onClick = { onClickAction(feed) }),
         colors = ListItemDefaults.colors(
             containerColor = backgroundColor,
         ),
