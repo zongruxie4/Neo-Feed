@@ -28,7 +28,7 @@
     </style>
 
     <style name="AppTheme" parent="HFBaseTheme">
-        <item name="android:statusBarColor">?backgroundColor</item>
+        <item name="android:statusBarColor">?colorSurface</item>
         <item name="android:windowLightStatusBar">@bool/isLight</item>
         <item name="android:navigationBarColor">@android:color/black</item>
     </style>
