@@ -146,7 +146,7 @@ class MainActivity : DIAwareComponentActivity(),
         prefs.sharedPrefs.unregisterOnSharedPreferenceChangeListener(this)
     }
 
-    override fun onSharedPreferenceChanged(prefs: SharedPreferences, key: String) {
+    override fun onSharedPreferenceChanged(prefs: SharedPreferences?, key: String?) {
         if (prefsToWatch.contains(key)) {
             recreate()
         }
