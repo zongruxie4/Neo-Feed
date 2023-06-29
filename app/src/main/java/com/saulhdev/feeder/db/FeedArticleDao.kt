@@ -71,6 +71,9 @@ interface FeedArticleDao {
     suspend fun loadArticleByGuid(guid: String): FeedArticle?
 
     @Query("SELECT * FROM feedArticle WHERE id IS :id")
+    suspend fun getArticleById(id: Long): FeedArticle?
+
+    @Query("SELECT * FROM feedArticle WHERE id IS :id")
     fun loadArticleById(id: Long): Flow<FeedArticle?>
 
     @Query("SELECT * FROM feedArticle WHERE feedId IS :feedId")

@@ -132,6 +132,13 @@ class FeedRepository(context: Context) {
         feedArticleDao.insertOrUpdate(itemsWithText, block)
     }
 
+    suspend fun bookmarkArticle(
+        articleId: Long,
+        bookmark: Boolean,
+    ) = feedArticleDao.getArticleById(articleId)?.let {
+        feedArticleDao.updateFeedArticle(it.copy(bookmarked = bookmark))
+    }
+
     suspend fun getItemsToBeCleanedFromFeed(feedId: Long, keepCount: Int) =
         feedArticleDao.getItemsToBeCleanedFromFeed(feedId = feedId, keepCount = keepCount)
 

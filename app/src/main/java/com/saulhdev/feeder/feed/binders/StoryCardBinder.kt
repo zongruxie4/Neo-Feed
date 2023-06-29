@@ -3,8 +3,11 @@ package com.saulhdev.feeder.feed.binders
 import android.text.Html
 import android.view.View
 import coil.load
+import com.google.android.material.button.MaterialButton
 import com.saulhdev.feeder.ComposeActivity
+import com.saulhdev.feeder.R
 import com.saulhdev.feeder.databinding.FeedCardStoryLargeBinding
+import com.saulhdev.feeder.db.FeedRepository
 import com.saulhdev.feeder.preference.FeedPreferences
 import com.saulhdev.feeder.utils.RelativeTimeHelper
 import com.saulhdev.feeder.utils.launchView
@@ -17,9 +20,12 @@ import ua.itaysonlab.hfsdk.content.StoryCardContent
 
 object StoryCardBinder : FeedBinder {
     override fun bind(item: FeedItem, view: View) {
+        val context = view.context
         val content = item.content as StoryCardContent
         val binding = FeedCardStoryLargeBinding.bind(view)
-        val prefs = FeedPreferences(view.context)
+        val prefs = FeedPreferences(context)
+        val repository = FeedRepository(context)
+        var bookmarked = item.bookmarked
         binding.storyTitle.text = content.title
         binding.storySource.text = content.source.title
         binding.storyDate.text =
@@ -42,6 +48,15 @@ object StoryCardBinder : FeedBinder {
             binding.storyPic.load(content.background_url) {
                 crossfade(true)
                 crossfade(500)
+            }
+        }
+
+        binding.saveButton.updateBookmark(bookmarked)
+        binding.saveButton.setOnClickListener {
+            CoroutineScope(Dispatchers.Main).launch {
+                repository.bookmarkArticle(item.id, !bookmarked)
+                binding.saveButton.updateBookmark(!bookmarked)
+                bookmarked = !bookmarked
             }
         }
 
@@ -70,5 +85,15 @@ object StoryCardBinder : FeedBinder {
                 }
             }
         }
+    }
+
+    private fun MaterialButton.updateBookmark(bookmarked: Boolean) = if (bookmarked) {
+        text = context.getString(R.string.bookmark_remove)
+        setIconResource(R.drawable.ic_trash_simple)
+        setBackgroundColor(context.getColor(com.google.android.material.R.color.m3_sys_color_secondary_fixed))
+    } else {
+        text = context.getString(R.string.bookmark)
+        setIconResource(R.drawable.ic_archive_tray)
+        setBackgroundColor(context.getColor(com.google.android.material.R.color.m3_sys_color_dynamic_primary_fixed))
     }
 }
