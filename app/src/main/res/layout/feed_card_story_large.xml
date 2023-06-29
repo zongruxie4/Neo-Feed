@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
-    app:cardBackgroundColor="@color/cardBg"
+    app:cardBackgroundColor="?colorSurfaceContainer"
     app:cardCornerRadius="16dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -16,12 +16,12 @@
             android:id="@+id/story_pic"
             android:layout_width="match_parent"
             android:layout_height="240dp"
+            android:contentDescription="@string/news_image_text"
             android:scaleType="centerCrop"
-            app:shapeAppearanceOverlay="@style/roundedCorner"
-            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            android:contentDescription="@string/news_image_text"
+            app:layout_constraintTop_toTopOf="parent"
+            app:shapeAppearanceOverlay="@style/roundedCorner"
             tools:src="@tools:sample/backgrounds/scenic" />
 
         <LinearLayout
@@ -31,29 +31,29 @@
             android:layout_gravity="bottom"
             android:orientation="vertical"
             android:paddingStart="12dp"
+            android:paddingTop="8dp"
             android:paddingEnd="12dp"
             android:paddingBottom="12dp"
-            android:paddingTop="8dp"
             app:layout_constraintTop_toBottomOf="@+id/story_pic">
 
             <TextView
                 android:id="@+id/story_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="?android:textColorPrimary"
-                android:textSize="23sp"
-                android:textStyle="bold"
                 android:maxLines="5"
+                android:textAppearance="?textAppearanceHeadlineSmall"
+                android:textColor="?colorOnSurface"
                 tools:text="Story Title" />
 
             <TextView
-                android:ellipsize="end"
-                android:layout_marginTop="8dp"
                 android:id="@+id/story_desc"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="12sp"
+                android:layout_marginTop="8dp"
+                android:ellipsize="end"
                 android:maxLines="5"
+                android:textAppearance="?textAppearanceBodySmall"
+                android:textColor="?colorOnSurface"
                 tools:text="Story Text" />
 
             <androidx.appcompat.widget.LinearLayoutCompat
@@ -66,18 +66,18 @@
                     android:id="@+id/story_source"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:textColor="?android:textColorSecondary"
                     android:layout_weight="1"
-                    android:textSize="13sp"
+                    android:textAppearance="?textAppearanceBodySmall"
+                    android:textColor="?colorOnSurfaceVariant"
                     tools:text="Story Source" />
 
                 <TextView
                     android:id="@+id/story_date"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="0.5"
-                    android:textColor="?android:textColorSecondary"
-                    android:textSize="13sp"
+                    android:textAlignment="textEnd"
+                    android:textAppearance="?textAppearanceBodySmall"
+                    android:textColor="?colorOnSurfaceVariant"
                     tools:text="Story Date" />
 
             </androidx.appcompat.widget.LinearLayoutCompat>
