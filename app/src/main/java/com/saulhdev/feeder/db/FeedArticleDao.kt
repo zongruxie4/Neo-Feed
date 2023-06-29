@@ -94,7 +94,7 @@ interface FeedArticleDao {
             SELECT fi.id, fi.link
             FROM feedArticle fi
             JOIN feeds f ON fi.feedId = f.id
-            WHERE f.fulltextByDefault = 1
+            WHERE f.fulltextByDefault = 1 OR fi.bookmarked = 1
         """
     )
     fun getFeedsItemsWithDefaultFullTextParse(): Flow<List<FeedItemIdWithLink>>
