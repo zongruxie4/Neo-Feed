@@ -192,7 +192,7 @@ fun ArticleScreen(articleId: Long) {
                                 inputStream = it,
                                 baseUrl = article?.link ?: "",
                                 imagePlaceholder = R.drawable.placeholder_image_article_day,
-                                onLinkClick = { }
+                                onLinkClick = context::launchView
                             )
                         }
                     } else {
@@ -207,7 +207,7 @@ fun ArticleScreen(articleId: Long) {
                                 inputStream = it,
                                 baseUrl = article?.link ?: "",
                                 imagePlaceholder = R.drawable.placeholder_image_article_day,
-                                onLinkClick = { }
+                                onLinkClick = context::launchView
                             )
                         }
                     } else {
