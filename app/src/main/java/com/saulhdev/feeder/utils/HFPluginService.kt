@@ -45,9 +45,9 @@ class HFPluginService : Service(), CoroutineScope by MainScope() {
                             list.add(
                                 FeedItem(
                                     id = article.id,
-                                    "${feed.title} [RSS]",
-                                    FeedItemType.STORY_CARD,
-                                    StoryCardContent(
+                                    title = "${feed.title} [RSS]",
+                                    type = FeedItemType.STORY_CARD,
+                                    content = StoryCardContent(
                                         title = article.title,
                                         text = article.description,
                                         background_url = article.imageUrl ?: "",
@@ -59,7 +59,8 @@ class HFPluginService : Service(), CoroutineScope by MainScope() {
                                             feed.feedImage.toString()
                                         )
                                     ),
-                                    Date.from(
+                                    bookmarked = article.bookmarked,
+                                    time = Date.from(
                                         ZonedDateTime.parse(
                                             article.pubDate.toString(),
                                             DateTimeFormatter.ISO_ZONED_DATE_TIME

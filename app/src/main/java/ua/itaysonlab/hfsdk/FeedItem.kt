@@ -10,6 +10,7 @@ data class FeedItem(
     val title: String,
     val type: FeedItemType,
     val content: BaseContent,
+    val bookmarked: Boolean,
     val time: Long
 ) : Parcelable {
     override fun describeContents(): Int {
