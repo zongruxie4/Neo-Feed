@@ -1,9 +1,9 @@
 val vRoom = "2.5.2"
-val vCompose = "1.5.0-beta02"
+val vCompose = "1.5.0-beta03"
 val vCoil = "2.4.0"
 val vAccompanist = "0.31.4-beta"
-val vComposeCompiler = "1.4.7"
-val vKotlin = "1.8.21"
+val vComposeCompiler = "1.4.8"
+val vKotlin = "1.8.22"
 val vMaterial = "1.5.0-beta02"
 val vMaterial3 = "1.2.0-alpha03"
 val vRome = "2.1.0"
@@ -13,8 +13,8 @@ plugins {
     kotlin("android")
     kotlin("kapt")
     kotlin("plugin.parcelize")
-    kotlin("plugin.serialization") version ("1.8.21")
-    id("com.google.devtools.ksp") version ("1.8.21-1.0.11")
+    kotlin("plugin.serialization") version ("1.8.22")
+    id("com.google.devtools.ksp") version ("1.8.22-1.0.11")
 }
 
 allprojects {
@@ -147,7 +147,7 @@ dependencies {
     implementation("androidx.compose.ui:ui:$vCompose")
     implementation("androidx.compose.ui:ui-tooling:$vCompose")
     implementation("androidx.compose.ui:ui-tooling-preview:$vCompose")
-    implementation("androidx.navigation:navigation-compose:2.7.0-beta01")
+    implementation("androidx.navigation:navigation-compose:2.7.0-beta02")
     implementation("com.google.accompanist:accompanist-webview:$vAccompanist")
 
     //Room
@@ -174,7 +174,7 @@ dependencies {
     implementation("net.dankito.readability4j:readability4j:1.0.8")
     implementation("org.ccil.cowan.tagsoup:tagsoup:1.2.1")
     implementation("org.jsoup:jsoup:1.16.1")
-    implementation("org.kodein.di:kodein-di-framework-android-x:7.20.1")
+    implementation("org.kodein.di:kodein-di-framework-android-x:7.20.2")
     implementation("com.github.kenglxn.qrgen:android:2.6.0")
     implementation("org.slf4j:slf4j-android:1.7.36")
 }
