@@ -39,9 +39,6 @@ class ComposeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         prefs = FeedPreferences(this)
-        if (supportActionBar != null) {
-            supportActionBar?.hide()
-        }
         setContent {
             AppTheme(
                 darkTheme = when (prefs.overlayTheme.onGetValue()) {
