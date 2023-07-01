@@ -26,6 +26,7 @@ import com.saulhdev.feeder.NFApplication
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.compose.icon.Phosphor
 import com.saulhdev.feeder.compose.icon.phosphor.BookBookmark
+import com.saulhdev.feeder.compose.icon.phosphor.Bookmarks
 import com.saulhdev.feeder.compose.icon.phosphor.Browser
 import com.saulhdev.feeder.compose.icon.phosphor.Bug
 import com.saulhdev.feeder.compose.icon.phosphor.Clock
@@ -116,6 +117,15 @@ class FeedPreferences(val context: Context) {
         summaryId = R.string.summary_sources,
         icon = Phosphor.Graph,
         route = "/${Routes.SOURCES}/",
+        onChange = doNothing
+    )
+
+    var bookmarks = StringPref(
+        key = "pref_bookmarks",
+        titleId = R.string.title_bookmarks,
+        summaryId = R.string.summary_bookmarks,
+        icon = Phosphor.Bookmarks,
+        route = "/${Routes.BOOKMARKS}/",
         onChange = doNothing
     )
 

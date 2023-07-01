@@ -59,6 +59,7 @@ fun PreferencesPage() {
         )
         val sourcePrefs = listOf(
             prefs.sources,
+            prefs.bookmarks,
             prefs.openInBrowser,
             prefs.syncOnlyOnWifi,
             prefs.syncFrequency,

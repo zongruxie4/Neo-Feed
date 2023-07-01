@@ -31,6 +31,7 @@ import androidx.navigation.compose.NavHost
 import com.saulhdev.feeder.NFApplication
 import com.saulhdev.feeder.compose.pages.AboutPage
 import com.saulhdev.feeder.compose.pages.AddFeedPage
+import com.saulhdev.feeder.compose.pages.BookmarksPage
 import com.saulhdev.feeder.compose.pages.ChangelogScreen
 import com.saulhdev.feeder.compose.pages.LicenseScreen
 import com.saulhdev.feeder.compose.pages.PreferencesPage
@@ -60,6 +61,7 @@ fun NavigationManager(navController: NavHostController) {
                     val viewModel = NFApplication.mainActivity?.reposViewModel!!
                     SourcesPage(viewModel)
                 })
+                preferenceGraph(route = subRoute(Routes.BOOKMARKS), { BookmarksPage() })
                 preferenceGraph(route = subRoute(Routes.ABOUT), { AboutPage() })
                 preferenceGraph(route = Routes.LICENSE, { LicenseScreen() })
                 preferenceGraph(route = Routes.CHANGELOG, { ChangelogScreen() })
@@ -73,6 +75,7 @@ fun NavigationManager(navController: NavHostController) {
 object Routes {
     const val SETTINGS = "settings"
     const val SOURCES = "sources"
+    const val BOOKMARKS = "bookmarks"
     const val ABOUT = "about"
     const val ADD_FEED = "add_feed"
     const val EDIT_FEED = "edit_feed"

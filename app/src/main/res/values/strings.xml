@@ -113,4 +113,6 @@
     <string name="delete_feed">Delete feed</string>
     <string name="bookmark">Bookmark</string>
     <string name="bookmark_remove">Remove bookmark</string>
+    <string name="title_bookmarks">Bookmarks</string>
+    <string name="summary_bookmarks">See your bookmarked articles</string>
 </resources>
