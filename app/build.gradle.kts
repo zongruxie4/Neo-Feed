@@ -164,7 +164,7 @@ dependencies {
     implementation("androidx.room:room-runtime:$vRoom")
     implementation("androidx.room:room-ktx:$vRoom")
     implementation("androidx.room:room-paging:$vRoom")
-    ksp("androidx.room:room-compiler:$vRoom")
+    kapt("androidx.room:room-compiler:$vRoom")
 
     //Squareup
     implementation("com.squareup.moshi:moshi:1.15.0")

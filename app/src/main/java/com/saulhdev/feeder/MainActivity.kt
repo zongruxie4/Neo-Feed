@@ -37,6 +37,9 @@ import com.saulhdev.feeder.theme.AppTheme
 import com.saulhdev.feeder.viewmodel.DIAwareComponentActivity
 import com.saulhdev.feeder.viewmodel.SourcesViewModel
 import org.kodein.di.compose.withDI
+import org.koin.android.ext.koin.androidContext
+import org.koin.android.ext.koin.androidLogger
+import org.koin.core.context.startKoin
 import java.util.concurrent.TimeUnit
 
 class MainActivity : DIAwareComponentActivity(),
@@ -63,6 +66,13 @@ class MainActivity : DIAwareComponentActivity(),
     override fun onCreate(savedInstanceState: Bundle?) {
         NFApplication.mainActivity = this
         super.onCreate(savedInstanceState)
+        startKoin {
+            androidLogger()
+            androidContext(this@MainActivity)
+            //modules(listOf(appModule))
+        }
+
+
         prefs = FeedPreferences(this)
         setContent {
             AppTheme(
