@@ -1,6 +1,7 @@
 val vRoom = "2.5.2"
 val vCompose = "1.5.0-beta03"
 val vCoil = "2.4.0"
+val vKoin = "3.4.2"
 val vAccompanist = "0.31.4-beta"
 val vComposeCompiler = "1.4.8"
 val vKotlin = "1.8.22"
@@ -26,8 +27,8 @@ allprojects {
 }
 
 android {
-    val name = "1.6.0"
-    val code = 52
+    val name = "1.6.1"
+    val code = 51
 
     namespace = "com.saulhdev.feeder"
     compileSdk = 34
@@ -166,6 +167,10 @@ dependencies {
     //Coil
     implementation("io.coil-kt:coil:$vCoil")
     implementation("io.coil-kt:coil-compose:$vCoil")
+
+    //Koin
+    implementation("io.insert-koin:koin-android:$vKoin")
+    ksp("io.insert-koin:koin-ksp-compiler:$vKoin")
 
     //Libs
     implementation("com.jakewharton.threetenabp:threetenabp:1.4.6")
