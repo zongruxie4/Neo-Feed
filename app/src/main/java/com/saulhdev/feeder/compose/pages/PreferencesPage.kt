@@ -19,7 +19,9 @@
 package com.saulhdev.feeder.compose.pages
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -34,9 +36,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.compose.components.BaseDialog
+import com.saulhdev.feeder.compose.components.CardButton
 import com.saulhdev.feeder.compose.components.PreferenceGroup
 import com.saulhdev.feeder.compose.components.StringSelectionPrefDialogUI
 import com.saulhdev.feeder.compose.components.ViewWithActionBar
+import com.saulhdev.feeder.compose.navigation.LocalNavController
 import com.saulhdev.feeder.preference.FeedPreferences
 
 @Composable
@@ -46,26 +50,30 @@ fun PreferencesPage() {
         title = title,
     ) { paddingValues ->
         val prefs = FeedPreferences(LocalContext.current)
-        val themePrefs = listOf(
-            prefs.overlayTheme,
-            prefs.overlayTransparency,
-            prefs.systemColors,
-            prefs.overlayBackground,
-            prefs.cardBackground
-        )
+        val navController = LocalNavController.current
 
-        val debugPrefs = listOf(
-            prefs.about
-        )
-        val sourcePrefs = listOf(
+        val actions = listOf(
             prefs.sources,
             prefs.bookmarks,
-            prefs.openInBrowser,
-            prefs.syncOnlyOnWifi,
-            prefs.syncFrequency,
-            prefs.itemsPerFeed,
-            prefs.offlineReader
         )
+        val servicePrefs = listOf(
+            prefs.itemsPerFeed,
+            prefs.syncFrequency,
+            prefs.syncOnlyOnWifi,
+            prefs.openInBrowser,
+            prefs.offlineReader,
+        )
+        val themePrefs = listOf(
+            prefs.overlayTheme,
+            prefs.systemColors,
+            prefs.cardBackground,
+            prefs.overlayBackground,
+            prefs.overlayTransparency,
+        )
+        val debugPrefs = listOf(
+            prefs.about,
+        )
+
         val openDialog = remember { mutableStateOf(false) }
         var dialogPref by remember { mutableStateOf<Any?>(null) }
         val onPrefDialog = { pref: Any ->
@@ -82,18 +90,37 @@ fun PreferencesPage() {
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             item {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    actions.forEach { item ->
+                        CardButton(
+                            modifier = Modifier.weight(1f),
+                            icon = item.icon,
+                            description = stringResource(id = item.titleId),
+                            onClick = { navController.navigate(item.route) },
+                        )
+                    }
+                }
+            }
+            item {
                 PreferenceGroup(
-                    stringResource(id = R.string.title_sources),
-                    prefs = sourcePrefs,
+                    stringResource(id = R.string.title_service),
+                    prefs = servicePrefs,
                     onPrefDialog = onPrefDialog
                 )
+            }
+            item {
                 PreferenceGroup(
                     stringResource(id = R.string.pref_cat_overlay),
                     prefs = themePrefs,
                     onPrefDialog = onPrefDialog
                 )
+            }
+            item {
                 PreferenceGroup(
-                    stringResource(id = R.string.pref_cat_debug),
+                    stringResource(id = R.string.title_other),
                     prefs = debugPrefs,
                     onPrefDialog = onPrefDialog
                 )

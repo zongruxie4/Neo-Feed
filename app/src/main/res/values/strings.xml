@@ -115,4 +115,6 @@
     <string name="bookmark_remove">Remove bookmark</string>
     <string name="title_bookmarks">Bookmarks</string>
     <string name="summary_bookmarks">See your bookmarked articles</string>
+    <string name="title_service">Service</string>
+    <string name="title_other">Other</string>
 </resources>
