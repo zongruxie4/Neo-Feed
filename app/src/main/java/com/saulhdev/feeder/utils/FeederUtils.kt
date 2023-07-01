@@ -29,7 +29,6 @@ import java.util.Locale
 
 fun getThemes(context: Context): Map<String, String> {
     return mapOf(
-        "auto_launcher" to context.resources.getString(R.string.theme_auto_launcher),
         "auto_system" to context.resources.getString(R.string.theme_auto_system),
         "light" to context.resources.getString(R.string.theme_light),
         "dark" to context.resources.getString(R.string.theme_dark)

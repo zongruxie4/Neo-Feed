@@ -58,14 +58,6 @@ class OverlayView(val context: Context) :
     private fun setTheme(force: String?) {
         themeHolder.setTheme(
             when (force ?: prefs.overlayTheme.onGetValue()) {
-                "auto_launcher" -> {
-                    if (apiInstance.darkTheme) {
-                        Theming.defaultDarkThemeColors
-                    } else {
-                        Theming.defaultLightThemeColors
-                    }
-                }
-
                 "auto_system" -> Theming.getThemeBySystem(context)
                 "dark" -> Theming.defaultDarkThemeColors
                 else -> Theming.defaultLightThemeColors
