@@ -30,7 +30,6 @@ import com.saulhdev.feeder.compose.icon.phosphor.Bookmarks
 import com.saulhdev.feeder.compose.icon.phosphor.Browser
 import com.saulhdev.feeder.compose.icon.phosphor.Bug
 import com.saulhdev.feeder.compose.icon.phosphor.Clock
-import com.saulhdev.feeder.compose.icon.phosphor.EyedropperSample
 import com.saulhdev.feeder.compose.icon.phosphor.Graph
 import com.saulhdev.feeder.compose.icon.phosphor.Hash
 import com.saulhdev.feeder.compose.icon.phosphor.Info
@@ -81,15 +80,6 @@ class FeedPreferences(val context: Context) {
         steps = 100,
         specialOutputs = { "${(it * 100).roundToInt()}%" },
         onChange = doNothing
-    )
-
-    var systemColors = BooleanPref(
-        key = "pref_overlay_system_colors",
-        titleId = R.string.pref_syscolors,
-        summaryId = R.string.pref_syscolors_desc,
-        icon = Phosphor.EyedropperSample,
-        defaultValue = false,
-        onChange = recreate
     )
 
     var overlayBackground = StringSelectionPref(
