@@ -24,6 +24,7 @@ import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 import kotlinx.coroutines.withContext
@@ -117,6 +118,10 @@ class FeedRepository(context: Context) {
         feedArticleDao.deleteArticles(ids)
     }
 
+    suspend fun deleteArticle(id: Long) {
+        feedArticleDao.deleteFeedArticle(id)
+    }
+
     suspend fun getArticleByGuid(guid: String, feedId: Long): FeedArticle? {
         return feedArticleDao.loadArticle(guid = guid, feedId = feedId)
     }
@@ -136,7 +141,14 @@ class FeedRepository(context: Context) {
         articleId: Long,
         bookmark: Boolean,
     ) = feedArticleDao.getArticleById(articleId)?.let {
-        feedArticleDao.updateFeedArticle(it.copy(bookmarked = bookmark))
+        feedArticleDao.updateFeedArticle(it.copy(bookmarked = bookmark, pinned = bookmark))
+    }
+
+    suspend fun unpinArticle(
+        articleId: Long,
+        pin: Boolean = false,
+    ) = feedArticleDao.getArticleById(articleId)?.let {
+        feedArticleDao.updateFeedArticle(it.copy(pinned = pin))
     }
 
     suspend fun getItemsToBeCleanedFromFeed(feedId: Long, keepCount: Int) =
@@ -144,4 +156,11 @@ class FeedRepository(context: Context) {
 
     fun getFeedsItemsWithDefaultFullTextParse(): Flow<List<FeedItemIdWithLink>> =
         feedArticleDao.getFeedsItemsWithDefaultFullTextParse()
+
+    fun getBookmarkedArticlesMap(): Flow<Map<FeedArticle, Feed>> =
+        feedArticleDao.allBookmarked.mapLatest {
+            it.associateWith { fa ->
+                feedDao.findFeed(fa.feedId).first()
+            }
+        }
 }
