@@ -189,6 +189,7 @@ fun SourcesPage(viewModel: SourcesViewModel) {
                             removeItem.value = item
                         }
                     )
+                    Spacer(modifier = Modifier.height(2.dp))
                     if (showDialog.value) {
                         Dialog(
                             onDismissRequest = { showDialog.value = false },
