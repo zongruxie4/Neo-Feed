@@ -98,6 +98,16 @@ interface FeedArticleDao {
         """
     )
     fun getFeedsItemsWithDefaultFullTextParse(): Flow<List<FeedItemIdWithLink>>
+
+    @get:Query(
+        """
+            SELECT *
+            FROM feedArticle fi
+            WHERE fi.bookmarked = 1
+            ORDER BY pinned DESC, pubDate DESC
+        """
+    )
+    val allBookmarked: Flow<List<FeedArticle>>
 }
 
 suspend fun FeedArticleDao.insertOrUpdate(
