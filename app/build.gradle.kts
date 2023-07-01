@@ -41,6 +41,15 @@ android {
         versionName = name
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                ksp {
+                    arg("room.schemaLocation", "$projectDir/schemas")
+                    arg("room.incremental", "true")
+                }
+            }
+        }
     }
 
     applicationVariants.all { variant ->
@@ -155,7 +164,7 @@ dependencies {
     implementation("androidx.room:room-runtime:$vRoom")
     implementation("androidx.room:room-ktx:$vRoom")
     implementation("androidx.room:room-paging:$vRoom")
-    kapt("androidx.room:room-compiler:$vRoom")
+    ksp("androidx.room:room-compiler:$vRoom")
 
     //Squareup
     implementation("com.squareup.moshi:moshi:1.15.0")
@@ -170,7 +179,7 @@ dependencies {
 
     //Koin
     implementation("io.insert-koin:koin-android:$vKoin")
-    ksp("io.insert-koin:koin-ksp-compiler:$vKoin")
+    ksp("io.insert-koin:koin-ksp-compiler:1.2.2")
 
     //Libs
     implementation("com.jakewharton.threetenabp:threetenabp:1.4.6")
