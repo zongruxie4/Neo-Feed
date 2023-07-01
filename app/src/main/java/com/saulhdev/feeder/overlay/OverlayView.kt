@@ -74,7 +74,7 @@ class OverlayView(val context: Context) :
     private fun updateTheme(force: String? = null) {
         setTheme(force)
         updateStubUi()
-        adapter.setTheme()
+        adapter.setTheme(themeHolder.currentTheme)
     }
 
     private fun updateStubUi() {
@@ -96,6 +96,11 @@ class OverlayView(val context: Context) :
         val buttonReturnToTop =
             rootView.findViewById<FloatingActionButton>(R.id.button_return_to_top).apply {
                 visibility = View.GONE
+                setOnClickListener {
+                    visibility = View.GONE
+                    recyclerView.smoothScrollToPosition(0)
+
+                }
             }
 
         rootView.findViewById<SwipeRefreshLayout>(R.id.swipe_to_refresh).setOnRefreshListener {
@@ -123,12 +128,6 @@ class OverlayView(val context: Context) :
                 }
             }
         })
-
-        buttonReturnToTop.setOnClickListener {
-            buttonReturnToTop.visibility = View.GONE
-            recyclerView.smoothScrollToPosition(0)
-        }
-
     }
 
     private fun initHeader() {
@@ -278,7 +277,7 @@ class OverlayView(val context: Context) :
 
     override fun applyCompactCard(value: Boolean) {
         adapter = FeedAdapter()
-        adapter.setTheme()
+        adapter.setTheme(themeHolder.currentTheme)
         rootView.findViewById<RecyclerView>(R.id.recycler).adapter = adapter
         refreshNotifications()
     }

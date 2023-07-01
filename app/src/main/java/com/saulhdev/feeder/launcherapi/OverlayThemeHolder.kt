@@ -1,8 +1,6 @@
 package com.saulhdev.feeder.launcherapi
 
 import android.content.Context
-import android.graphics.Color
-import android.util.Log
 import android.util.SparseIntArray
 import androidx.core.content.ContextCompat
 import com.saulhdev.feeder.R
@@ -52,11 +50,10 @@ class OverlayThemeHolder(private val context: Context, private val overlay: Over
      * Parses [cardBgPref] into color integer
      */
     private val cardBackground: Int get() = when (cardBgPref) {
-        "light" -> ContextCompat.getColor(context, R.color.card_bg)
+        "theme" -> currentTheme.get(Theming.Colors.CARD_BG.ordinal)
         "dark" -> ContextCompat.getColor(context, R.color.card_bg_dark)
-        else -> Color.BLACK
+        else -> ContextCompat.getColor(context, R.color.card_bg)
     }
-
 
     /**
      * Replaces the color mapping ([currentTheme]) with config-specified values
@@ -72,7 +69,5 @@ class OverlayThemeHolder(private val context: Context, private val overlay: Over
         if (cardBgPref != "theme") {
             currentTheme.put(Theming.Colors.CARD_BG.ordinal, cardBackground)
         }
-
-        Log.d("OTH", currentTheme.toString())
     }
 }

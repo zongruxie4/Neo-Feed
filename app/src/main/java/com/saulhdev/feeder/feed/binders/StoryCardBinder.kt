@@ -1,6 +1,7 @@
 package com.saulhdev.feeder.feed.binders
 
 import android.text.Html
+import android.util.SparseIntArray
 import android.view.View
 import coil.load
 import com.google.android.material.button.MaterialButton
@@ -9,7 +10,9 @@ import com.saulhdev.feeder.R
 import com.saulhdev.feeder.databinding.FeedCardStoryLargeBinding
 import com.saulhdev.feeder.db.FeedRepository
 import com.saulhdev.feeder.preference.FeedPreferences
+import com.saulhdev.feeder.theme.Theming
 import com.saulhdev.feeder.utils.RelativeTimeHelper
+import com.saulhdev.feeder.utils.isDark
 import com.saulhdev.feeder.utils.launchView
 import com.saulhdev.feeder.utils.urlEncode
 import kotlinx.coroutines.CoroutineScope
@@ -19,7 +22,7 @@ import ua.itaysonlab.hfsdk.FeedItem
 import ua.itaysonlab.hfsdk.content.StoryCardContent
 
 object StoryCardBinder : FeedBinder {
-    override fun bind(item: FeedItem, view: View) {
+    override fun bind(theme: SparseIntArray?, item: FeedItem, view: View) {
         val context = view.context
         val content = item.content as StoryCardContent
         val binding = FeedCardStoryLargeBinding.bind(view)
@@ -32,9 +35,9 @@ object StoryCardBinder : FeedBinder {
             RelativeTimeHelper.getDateFormattedRelative(view.context, (item.time / 1000) - 1000)
 
         if (content.text.isEmpty()) {
-            binding.storyDesc.visibility = View.GONE
+            binding.storySummary.visibility = View.GONE
         } else {
-            binding.storyDesc.text = Html.fromHtml(content.text, 0).toString()
+            binding.storySummary.text = Html.fromHtml(content.text, 0).toString()
         }
 
         if (
@@ -85,6 +88,16 @@ object StoryCardBinder : FeedBinder {
                 }
             }
         }
+
+        theme ?: return
+        binding.cardStory.setBackgroundColor(theme.get(Theming.Colors.CARD_BG.ordinal))
+        val themeCard = if (theme.get(Theming.Colors.CARD_BG.ordinal)
+                .isDark()
+        ) Theming.defaultDarkThemeColors else Theming.defaultLightThemeColors
+        binding.storyTitle.setTextColor(themeCard.get(Theming.Colors.TEXT_COLOR_PRIMARY.ordinal))
+        binding.storySource.setTextColor(themeCard.get(Theming.Colors.TEXT_COLOR_SECONDARY.ordinal))
+        binding.storyDate.setTextColor(themeCard.get(Theming.Colors.TEXT_COLOR_SECONDARY.ordinal))
+        binding.storySummary.setTextColor(themeCard.get(Theming.Colors.TEXT_COLOR_SECONDARY.ordinal))
     }
 
     private fun MaterialButton.updateBookmark(bookmarked: Boolean) = if (bookmarked) {

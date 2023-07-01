@@ -1,5 +1,6 @@
 package com.saulhdev.feeder.feed.binders
 
+import android.util.SparseIntArray
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,8 +10,8 @@ import ua.itaysonlab.hfsdk.FeedItem
 import ua.itaysonlab.hfsdk.content.TextCardContent
 
 object TextCardWithActionsBinder : FeedBinder {
-    override fun bind(item: FeedItem, view: View) {
-        TextCardBinder.bind(item, view)
+    override fun bind(theme: SparseIntArray?, item: FeedItem, view: View) {
+        TextCardBinder.bind(theme, item, view)
         val valley = view.findViewById<ViewGroup>(R.id.button_valley_2)
         valley.removeAllViews()
         (item.content as TextCardContent).actions?.forEach {

@@ -59,8 +59,7 @@ fun getBackgroundOptions(context: Context): Map<String, String> {
     return mapOf(
         "theme" to context.resources.getString(R.string.background_theme_option),
         "light" to context.resources.getString(R.string.theme_light),
-        "dark" to context.resources.getString(R.string.theme_dark),
-        "amoled" to context.resources.getString(R.string.background_amoled)
+        "dark" to context.resources.getString(R.string.theme_dark)
     )
 }
 

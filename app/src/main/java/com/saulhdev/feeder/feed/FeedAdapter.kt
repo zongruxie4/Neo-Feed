@@ -1,5 +1,6 @@
 package com.saulhdev.feeder.feed
 
+import android.util.SparseIntArray
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,13 +15,15 @@ import ua.itaysonlab.hfsdk.FeedItemType
 class FeedAdapter : RecyclerView.Adapter<FeedAdapter.FeedViewHolder>() {
     private var list = listOf<FeedItem>()
     private lateinit var layoutInflater: LayoutInflater
+    private var theme: SparseIntArray? = null
 
     fun replace(new: List<FeedItem>) {
         list = new
         notifyDataSetChanged()
     }
 
-    fun setTheme() {
+    fun setTheme(theme: SparseIntArray) {
+        this.theme = theme
         notifyDataSetChanged()
     }
 
@@ -47,9 +50,14 @@ class FeedAdapter : RecyclerView.Adapter<FeedAdapter.FeedViewHolder>() {
     override fun onBindViewHolder(holder: FeedViewHolder, position: Int) {
         val item = list[position]
         when (FeedItemType.values()[holder.type]) {
-            FeedItemType.TEXT_CARD -> TextCardBinder.bind(item, holder.itemView)
-            FeedItemType.TEXT_CARD_ACTIONS -> TextCardWithActionsBinder.bind(item, holder.itemView)
-            FeedItemType.STORY_CARD -> StoryCardBinder.bind(item, holder.itemView)
+            FeedItemType.TEXT_CARD -> TextCardBinder.bind(theme, item, holder.itemView)
+            FeedItemType.TEXT_CARD_ACTIONS -> TextCardWithActionsBinder.bind(
+                theme,
+                item,
+                holder.itemView
+            )
+
+            FeedItemType.STORY_CARD -> StoryCardBinder.bind(theme, item, holder.itemView)
         }
     }
 
