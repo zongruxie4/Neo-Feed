@@ -73,7 +73,6 @@ import com.saulhdev.feeder.compose.icon.phosphor.Megaphone
 import com.saulhdev.feeder.compose.icon.phosphor.TelegramLogo
 import com.saulhdev.feeder.compose.navigation.PageItem
 import com.saulhdev.feeder.compose.util.blockBorder
-import com.saulhdev.feeder.preference.FeedPreferences
 import com.saulhdev.feeder.theme.kingthingsPrintingkit
 import com.saulhdev.feeder.utils.launchView
 import com.saulhdev.feeder.utils.urlDecode
@@ -86,7 +85,6 @@ fun AboutPage() {
     ViewWithActionBar(
         title = title,
     ) { paddingValues ->
-        val prefs = FeedPreferences(LocalContext.current)
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
