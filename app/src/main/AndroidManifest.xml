@@ -49,10 +49,7 @@
 
         <activity
             android:name=".ComposeActivity"
-            android:exported="true"
-            android:theme="@style/ComposeAppTheme">
-
-        </activity>
+            android:exported="true" />
 
         <service
             android:name=".overlay.DrawerOverlayService"
