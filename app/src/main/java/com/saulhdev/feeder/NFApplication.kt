@@ -87,7 +87,7 @@ class NFApplication : MultiDexApplication(), DIAware {
         if (recreate) {
             activityHandler.finishAll(recreate)
         } else {
-            Utilities.getInstance().restartFeed(this)
+            Utilities().restartFeed(this)
         }
     }
 

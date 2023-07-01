@@ -39,17 +39,6 @@ class Utilities {
         // Kill the application
         exitProcess(0)
     }
-
-    companion object {
-        private lateinit var instance: Utilities
-        fun getInstance(): Utilities {
-            if (instance == null) {
-                instance = Utilities()
-            }
-            return instance
-
-        }
-    }
 }
 
 fun Context.shareIntent(url: String, title: String) {
