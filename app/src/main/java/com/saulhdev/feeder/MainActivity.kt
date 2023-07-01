@@ -40,6 +40,7 @@ import org.kodein.di.compose.withDI
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
+import org.koin.core.context.stopKoin
 import java.util.concurrent.TimeUnit
 
 class MainActivity : DIAwareComponentActivity(),
@@ -100,6 +101,11 @@ class MainActivity : DIAwareComponentActivity(),
     override fun onRestart() {
         super.onRestart()
         restartIfPending()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        stopKoin()
     }
 
     private fun restartIfPending() {
