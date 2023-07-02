@@ -162,7 +162,7 @@ private suspend fun syncFeed(
                     Log.d(TAG, "Fetching correct ${feedSql.title}")
                     feedParser.parseFeedResponse(
                         url = response.request.url.toUrl(),
-                        responseBody = responseBody!!
+                        responseBody = responseBody
                     )
                 }
             }
@@ -198,7 +198,7 @@ private suspend fun syncFeed(
             }
         }
     }
-    feedSql.title = feed.title ?: feedSql.title
+    feedSql.title = feedSql.title
 
     feedSql.feedImage = feed.icon?.let { sloppyLinkToStrictURLNoThrows(it) }
         ?: feedSql.feedImage
