@@ -28,7 +28,7 @@ allprojects {
 
 android {
     val name = "1.6.1"
-    val code = 51
+    val code = 53
 
     namespace = "com.saulhdev.feeder"
     compileSdk = 34
