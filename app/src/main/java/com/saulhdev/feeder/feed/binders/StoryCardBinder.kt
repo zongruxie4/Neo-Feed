@@ -1,5 +1,6 @@
 package com.saulhdev.feeder.feed.binders
 
+import android.os.Build
 import android.text.Html
 import android.util.SparseIntArray
 import android.view.View
@@ -103,10 +104,18 @@ object StoryCardBinder : FeedBinder {
     private fun MaterialButton.updateBookmark(bookmarked: Boolean) = if (bookmarked) {
         text = context.getString(R.string.bookmark_remove)
         setIconResource(R.drawable.ic_trash_simple)
-        setBackgroundColor(context.getColor(com.google.android.material.R.color.m3_sys_color_secondary_fixed))
+        if (Build.VERSION.SDK_INT > 30) {
+            setBackgroundColor(context.getColor(com.google.android.material.R.color.m3_sys_color_secondary_fixed))
+        } else {
+            setBackgroundColor(context.getColor(R.color.colorSecondary))
+        }
     } else {
         text = context.getString(R.string.bookmark)
         setIconResource(R.drawable.ic_archive_tray)
-        setBackgroundColor(context.getColor(com.google.android.material.R.color.m3_sys_color_dynamic_primary_fixed))
+        if (Build.VERSION.SDK_INT > 30) {
+            setBackgroundColor(context.getColor(com.google.android.material.R.color.m3_sys_color_dynamic_primary_fixed))
+        } else {
+            setBackgroundColor(context.getColor(R.color.textColorPrimary))
+        }
     }
 }
