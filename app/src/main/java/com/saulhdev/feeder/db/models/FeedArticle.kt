@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.saulhdev.feeder.db
+package com.saulhdev.feeder.db.models
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
@@ -24,6 +24,7 @@ import androidx.room.ForeignKey
 import androidx.room.ForeignKey.Companion.CASCADE
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import com.saulhdev.feeder.db.ID_UNSET
 import com.saulhdev.feeder.utils.relativeLinkIntoAbsolute
 import com.saulhdev.feeder.utils.sloppyLinkToStrictURL
 import com.saulhdev.feeder.views.HtmlToPlainTextConverter
