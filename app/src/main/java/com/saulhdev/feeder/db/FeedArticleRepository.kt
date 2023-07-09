@@ -20,6 +20,10 @@ package com.saulhdev.feeder.db
 
 import android.content.Context
 import android.util.Log
+import com.saulhdev.feeder.db.dao.insertOrUpdate
+import com.saulhdev.feeder.db.models.Feed
+import com.saulhdev.feeder.db.models.FeedArticle
+import com.saulhdev.feeder.db.models.FeedItemIdWithLink
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -32,54 +36,56 @@ import org.threeten.bp.Instant
 import org.threeten.bp.ZonedDateTime
 import java.net.URL
 
-class FeedRepository(context: Context) {
-    private val scope = CoroutineScope(Dispatchers.IO) + CoroutineName("NeoFeedRepository")
+class FeedArticleRepository(context: Context) {
+    private val scope = CoroutineScope(Dispatchers.IO) + CoroutineName("FeedArticleRepository")
 
     /* Feed */
-    val feedDao = NeoFeedDb.getInstance(context).feedDao()
+    val articleDao = NeoFeedDb.getInstance(context).feedDao()
 
     fun insertFeed(feed: Feed) {
         scope.launch {
-            feedDao.insert(feed)
+            articleDao.insert(feed)
         }
     }
 
     fun updateFeed(title: String, url: URL, fullTextByDefault: Boolean, isEnabled: Boolean) {
         scope.launch {
-            val feed = feedDao.getFeedByURL(url)
+            val feed = articleDao.getFeedByURL(url)
             Log.d("FeedRepository", "updateFeed: ${feed?.url}")
             if (feed != null) {
                 feed.title = title
                 feed.url = url
                 feed.fullTextByDefault = fullTextByDefault
                 feed.isEnabled = isEnabled
-                feedDao.update(feed)
+                articleDao.update(feed)
             }
         }
     }
 
     fun updateFeed(feed: Feed) {
         scope.launch {
-            val list: List<Feed> = feedDao.findFeed(feed.id)
+            val list: List<Feed> = articleDao.findFeed(feed.id)
             if (list.isNotEmpty()) {
                 feed.lastSync = ZonedDateTime.now().toInstant()
-                feedDao.update(feed)
+                articleDao.update(feed)
             }
         }
     }
 
+    suspend fun getFeed(feedId: Long): Feed? = articleDao.loadFeed(feedId)
+
     fun getAllFeeds(): List<Feed> {
-        return feedDao.loadFeeds()
+        return articleDao.loadFeeds()
     }
 
     fun getFeedById(id: Long): Flow<Feed> {
-        return feedDao.getFeedById(id)
+        return articleDao.getFeedById(id)
     }
 
     fun getFeedByURL(url: URL): Feed? {
         var feed: Feed? = null
         scope.launch {
-            feed = feedDao.getFeedByURL(url)
+            feed = articleDao.getFeedByURL(url)
         }
 
         return feed
@@ -88,19 +94,19 @@ class FeedRepository(context: Context) {
     fun deleteFeed(feed: Feed) {
         scope.launch {
             feedArticleDao.deleteFeedArticle(feed.id)
-            feedDao.delete(feed)
+            articleDao.delete(feed)
         }
     }
 
     fun setCurrentlySyncingOn(feedId: Long, syncing: Boolean) {
         scope.launch {
-            feedDao.setCurrentlySyncingOn(feedId, syncing)
+            articleDao.setCurrentlySyncingOn(feedId, syncing)
         }
     }
 
     fun setCurrentlySyncingOn(feedId: Long, syncing: Boolean, lastSync: Instant) {
         scope.launch {
-            feedDao.setCurrentlySyncingOn(feedId, syncing, lastSync)
+            articleDao.setCurrentlySyncingOn(feedId, syncing, lastSync)
         }
     }
 
@@ -160,7 +166,7 @@ class FeedRepository(context: Context) {
     fun getBookmarkedArticlesMap(): Flow<Map<FeedArticle, Feed>> =
         feedArticleDao.allBookmarked.mapLatest {
             it.associateWith { fa ->
-                feedDao.findFeed(fa.feedId).first()
+                articleDao.findFeed(fa.feedId).first()
             }
         }
 }
