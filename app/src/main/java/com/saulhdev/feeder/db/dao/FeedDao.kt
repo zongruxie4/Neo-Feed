@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.saulhdev.feeder.db
+package com.saulhdev.feeder.db.dao
 
 import androidx.room.Dao
 import androidx.room.Delete
@@ -24,6 +24,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
+import com.saulhdev.feeder.db.models.Feed
 import kotlinx.coroutines.flow.Flow
 import org.threeten.bp.Instant
 import java.net.URL
