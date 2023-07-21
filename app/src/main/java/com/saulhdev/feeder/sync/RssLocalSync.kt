@@ -2,11 +2,11 @@ package com.saulhdev.feeder.sync
 
 import android.content.Context
 import android.util.Log
-import com.saulhdev.feeder.db.Feed
-import com.saulhdev.feeder.db.FeedArticle
-import com.saulhdev.feeder.db.FeedDao
-import com.saulhdev.feeder.db.FeedRepository
+import com.saulhdev.feeder.db.ArticleRepository
 import com.saulhdev.feeder.db.ID_UNSET
+import com.saulhdev.feeder.db.SourceRepository
+import com.saulhdev.feeder.db.models.Feed
+import com.saulhdev.feeder.db.models.FeedArticle
 import com.saulhdev.feeder.models.FeedParser
 import com.saulhdev.feeder.models.getResponse
 import com.saulhdev.feeder.models.scheduleFullTextParse
@@ -74,7 +74,7 @@ internal suspend fun syncFeeds(
     minFeedAgeMinutes: Int = 5
 ): Boolean {
     var result = false
-    val repository = FeedRepository(context)
+    val repository = ArticleRepository(context)
     val downloadTime = Instant.now()
     var needFullTextSync = false
     val time = measureTimeMillis {
@@ -92,8 +92,12 @@ internal suspend fun syncFeeds(
                         Log.e(TAG, "Error during sync", throwable)
                     }
 
-                val feedsToFetch =
-                    feedsToSync(repository.feedDao, feedId, feedTag, staleTime = staleTime)
+                val feedsToFetch = feedsToSync(
+                    repository = SourceRepository(context),
+                    feedId = feedId,
+                    tag = feedTag,
+                    staleTime = staleTime
+                )
                 val jobs = feedsToFetch.map {
                     needFullTextSync = needFullTextSync || it.fullTextByDefault
                     launch(coroutineContext) {
@@ -137,7 +141,7 @@ internal suspend fun syncFeeds(
 }
 
 private suspend fun syncFeed(
-    repository: FeedRepository,
+    repository: ArticleRepository,
     feedSql: Feed,
     filesDir: File,
     maxFeedItemCount: Int,
@@ -226,17 +230,18 @@ private suspend fun syncFeed(
 class ResponseFailure(message: String?) : Exception(message)
 
 internal suspend fun feedsToSync(
-    feedDao: FeedDao,
+    repository: SourceRepository,
     feedId: Long,
     tag: String,
     staleTime: Long = -1L
 ): List<Feed> {
+
     return when {
         feedId > 0 -> {
-            val feed = if (staleTime > 0) feedDao.loadFeedIfStale(
-                feedId,
+            val feed = if (staleTime > 0) repository.loadFeedIfStale(
+                feedId = feedId,
                 staleTime = staleTime
-            ) else feedDao.loadFeed(feedId)
+            ) else repository.loadFeed(feedId)
             if (feed != null) {
                 listOf(feed)
             } else {
@@ -253,6 +258,6 @@ internal suspend fun feedsToSync(
             feedDao.loadFeed(feedId)?.let { listOf(it) } ?: emptyList()
         }*/
 
-        else -> feedDao.loadFeeds()
+        else -> repository.loadFeeds()
     }
 }

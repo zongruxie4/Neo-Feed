@@ -37,14 +37,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.saulhdev.feeder.R
-import com.saulhdev.feeder.db.Feed
-import com.saulhdev.feeder.db.FeedArticle
+import com.saulhdev.feeder.db.models.Feed
+import com.saulhdev.feeder.db.models.FeedArticle
 
 @Composable
 fun BookmarkItem(
@@ -54,13 +53,13 @@ fun BookmarkItem(
     onClickAction: (FeedArticle) -> Unit = {},
     onRemoveAction: (FeedArticle) -> Unit = {},
 ) {
-    val context = LocalContext.current
     val isPinned by remember(article.pinned) {
         mutableStateOf(article.pinned)
     }
     val backgroundColor by animateColorAsState(
         targetValue = if (isPinned) MaterialTheme.colorScheme.surfaceContainerHighest
-        else MaterialTheme.colorScheme.surfaceContainer
+        else MaterialTheme.colorScheme.surfaceContainer,
+        label = ""
     )
 
     ListItem(

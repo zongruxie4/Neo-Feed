@@ -5,8 +5,8 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.os.IBinder
-import com.saulhdev.feeder.db.Feed
-import com.saulhdev.feeder.db.FeedRepository
+import com.saulhdev.feeder.db.ArticleRepository
+import com.saulhdev.feeder.db.models.Feed
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
@@ -37,7 +37,7 @@ class HFPluginService : Service(), CoroutineScope by MainScope() {
 
                 //Load feed articles from database
                 withContext(Dispatchers.IO) {
-                    val repository = FeedRepository(this@HFPluginService)
+                    val repository = ArticleRepository(this@HFPluginService)
                     val feedList: List<Feed> = repository.getAllFeeds()
 
                     feedList.forEach { feed ->
@@ -78,7 +78,7 @@ class HFPluginService : Service(), CoroutineScope by MainScope() {
         }
 
         override fun getCategories(callback: IFeedInterfaceCallback) {
-            val repository = FeedRepository(this@HFPluginService)
+            val repository = ArticleRepository(this@HFPluginService)
             val feedList: List<Feed> = repository.getAllFeeds()
 
             callback.onCategoriesReceive(feedList.map {

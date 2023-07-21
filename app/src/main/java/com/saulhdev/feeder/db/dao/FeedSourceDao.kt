@@ -30,7 +30,7 @@ import org.threeten.bp.Instant
 import java.net.URL
 
 @Dao
-interface FeedDao {
+interface FeedSourceDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(feed: Feed): Long
@@ -41,17 +41,17 @@ interface FeedDao {
     @Delete
     suspend fun delete(feed: Feed): Int
 
-    @Query("SELECT * FROM Feeds WHERE id = :id")
-    suspend fun findFeed(id: Long): List<Feed>
-
     @Query("SELECT * FROM Feeds WHERE url = :url")
     suspend fun getFeedByURL(url: URL): Feed?
 
     @Query("SELECT * FROM Feeds WHERE id = :id")
     fun getFeedById(id: Long): Flow<Feed>
 
-    @Query("SELECT * FROM Feeds WHERE id IS :feedId")
-    suspend fun loadFeed(feedId: Long): Feed?
+    @Query("SELECT * FROM Feeds WHERE id = :id")
+    suspend fun loadFeedById(id: Long): Feed
+
+    @Query("SELECT * FROM Feeds WHERE id = :id")
+    suspend fun findFeedById(id: Long): List<Feed>
 
     @Query("SELECT * FROM Feeds WHERE isEnabled IS 1")
     fun loadFeeds(): List<Feed>

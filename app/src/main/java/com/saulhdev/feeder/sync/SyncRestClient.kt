@@ -19,7 +19,7 @@
 package com.saulhdev.feeder.sync
 
 import android.content.Context
-import com.saulhdev.feeder.db.Feed
+import com.saulhdev.feeder.db.models.Feed
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.kodein.di.DI

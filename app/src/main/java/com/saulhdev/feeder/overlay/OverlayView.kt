@@ -19,7 +19,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.saulhdev.feeder.MainActivity
 import com.saulhdev.feeder.NFApplication
 import com.saulhdev.feeder.R
-import com.saulhdev.feeder.db.FeedRepository
+import com.saulhdev.feeder.db.ArticleRepository
 import com.saulhdev.feeder.feed.FeedAdapter
 import com.saulhdev.feeder.launcherapi.LauncherAPI
 import com.saulhdev.feeder.launcherapi.OverlayThemeHolder
@@ -44,9 +44,9 @@ import ua.itaysonlab.hfsdk.FeedItem
 class OverlayView(val context: Context) :
     OverlayController(context, R.style.AppTheme, R.style.WindowTheme),
     OverlayBridge.OverlayBridgeCallback, SharedPreferences.OnSharedPreferenceChangeListener {
-    var apiInstance = LauncherAPI()
+    private var apiInstance = LauncherAPI()
     private lateinit var themeHolder: OverlayThemeHolder
-    var sharedPrefs: SharedPreferences =
+    private var sharedPrefs: SharedPreferences =
         context.getSharedPreferences("com.saulhdev.neofeed.prefs", Context.MODE_PRIVATE)
 
     private lateinit var rootView: View
@@ -199,7 +199,7 @@ class OverlayView(val context: Context) :
     }
 
     private fun loadArticles() {
-        val repository = FeedRepository(context)
+        val repository = ArticleRepository(context)
         val articles = SyncRestClient(context)
         val scope = CoroutineScope(Dispatchers.IO) + CoroutineName("NeoFeedSync")
         scope.launch {

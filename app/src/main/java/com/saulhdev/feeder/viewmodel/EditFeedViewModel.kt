@@ -1,9 +1,27 @@
+/*
+ * This file is part of Neo Feed
+ * Copyright (c) 2022   Saul Henriquez <henriquez.saul@gmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package com.saulhdev.feeder.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.saulhdev.feeder.db.ArticleRepository
 import com.saulhdev.feeder.models.EditFeedViewState
-import com.saulhdev.feeder.models.Repository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -11,12 +29,16 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.kodein.di.DI
-import org.kodein.di.instance
+import org.koin.java.KoinJavaComponent.inject
 
 class EditFeedViewModel(di: DI, private val state: SavedStateHandle) : DIAwareViewModel(di) {
-    private val repository: Repository by instance()
+    private val repository: ArticleRepository by inject(ArticleRepository::class.java)
 
-    private val _feedId: MutableStateFlow<Long> = MutableStateFlow(
+    private val _viewState = MutableStateFlow(EditFeedViewState())
+    val viewState: StateFlow<EditFeedViewState>
+        get() = _viewState.asStateFlow()
+
+    private var _feedId: MutableStateFlow<Long> = MutableStateFlow(
         state["feedId"] ?: -1
     )
 
@@ -61,15 +83,10 @@ class EditFeedViewModel(di: DI, private val state: SavedStateHandle) : DIAwareVi
         _isEnabled.update { value }
     }
 
-    private val _viewState = MutableStateFlow(EditFeedViewState())
-    val viewState: StateFlow<EditFeedViewState>
-        get() = _viewState.asStateFlow()
-
     init {
         viewModelScope.launch {
-            // Set initial state in case state is empty
-            val feed = repository.getFeed(_feedId.value)
-                ?: throw IllegalArgumentException("No feed with id $_feedId!")
+            val feed = repository.getFeed(_feedId.value).firstOrNull()
+                ?: throw IllegalArgumentException("No feed with id ${_feedId.value}!")
 
             if (!state.contains("feedUrl")) {
                 setUrl(feed.url.toString())

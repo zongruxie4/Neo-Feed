@@ -40,7 +40,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.saulhdev.feeder.R
-import com.saulhdev.feeder.db.Feed
+import com.saulhdev.feeder.db.models.Feed
 
 @Composable
 fun FeedItem(
@@ -54,7 +54,7 @@ fun FeedItem(
     }
     val backgroundColor by animateColorAsState(
         targetValue = if (isEnabled) MaterialTheme.colorScheme.primaryContainer
-        else MaterialTheme.colorScheme.surfaceContainer
+        else MaterialTheme.colorScheme.surfaceContainer, label = ""
     )
 
     ListItem(

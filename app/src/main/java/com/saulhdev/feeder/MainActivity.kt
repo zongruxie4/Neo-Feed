@@ -21,7 +21,6 @@ package com.saulhdev.feeder
 import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
@@ -35,12 +34,7 @@ import com.saulhdev.feeder.preference.FeedPreferences
 import com.saulhdev.feeder.sync.FeedSyncer
 import com.saulhdev.feeder.theme.AppTheme
 import com.saulhdev.feeder.viewmodel.DIAwareComponentActivity
-import com.saulhdev.feeder.viewmodel.SourcesViewModel
 import org.kodein.di.compose.withDI
-import org.koin.android.ext.koin.androidContext
-import org.koin.android.ext.koin.androidLogger
-import org.koin.core.context.startKoin
-import org.koin.core.context.stopKoin
 import java.util.concurrent.TimeUnit
 
 class MainActivity : DIAwareComponentActivity(),
@@ -60,19 +54,9 @@ class MainActivity : DIAwareComponentActivity(),
     val db
         get() = (application as NFApplication).db
 
-    val reposViewModel: SourcesViewModel by viewModels() {
-        SourcesViewModel.Factory(db.feedDao())
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         NFApplication.mainActivity = this
         super.onCreate(savedInstanceState)
-        startKoin {
-            androidLogger()
-            androidContext(this@MainActivity)
-            //modules(listOf(appModule))
-        }
-
 
         prefs = FeedPreferences(this)
         setContent {
@@ -101,11 +85,6 @@ class MainActivity : DIAwareComponentActivity(),
     override fun onRestart() {
         super.onRestart()
         restartIfPending()
-    }
-
-    override fun onStop() {
-        super.onStop()
-        stopKoin()
     }
 
     private fun restartIfPending() {

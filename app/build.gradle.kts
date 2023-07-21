@@ -179,6 +179,10 @@ dependencies {
 
     //Koin
     implementation("io.insert-koin:koin-android:$vKoin")
+    implementation("io.insert-koin:koin-android-compat:$vKoin")
+    implementation("io.insert-koin:koin-androidx-workmanager:$vKoin")
+    implementation("io.insert-koin:koin-androidx-navigation:$vKoin")
+    implementation("io.insert-koin:koin-androidx-compose:$vKoin")
     ksp("io.insert-koin:koin-ksp-compiler:1.2.2")
 
     //Libs

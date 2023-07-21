@@ -6,8 +6,8 @@ import androidx.work.CoroutineWorker
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
-import com.saulhdev.feeder.db.FeedItemForFetching
-import com.saulhdev.feeder.db.FeedRepository
+import com.saulhdev.feeder.db.ArticleRepository
+import com.saulhdev.feeder.db.models.FeedItemForFetching
 import com.saulhdev.feeder.utils.blobFullFile
 import com.saulhdev.feeder.utils.blobFullOutputStream
 import kotlinx.coroutines.Dispatchers
@@ -37,7 +37,7 @@ class FullTextWorker(
 ) : CoroutineWorker(context, workerParams) {
 
     private val okHttpClient: OkHttpClient = OkHttpClient.Builder().build()
-    private val repository = FeedRepository(context)
+    private val repository = ArticleRepository(context)
 
     override suspend fun doWork(): Result {
         Log.i("FeederFullText", "Parsing full texts for articles if missing")

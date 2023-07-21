@@ -58,12 +58,11 @@ import com.saulhdev.feeder.compose.components.ViewWithActionBar
 import com.saulhdev.feeder.compose.navigation.LocalNavController
 import com.saulhdev.feeder.compose.navigation.preferenceGraph
 import com.saulhdev.feeder.compose.util.interceptKey
-import com.saulhdev.feeder.db.FeedRepository
+import com.saulhdev.feeder.db.ArticleRepository
 import com.saulhdev.feeder.models.EditFeedViewState
 import com.saulhdev.feeder.utils.sloppyLinkToStrictURL
 import com.saulhdev.feeder.viewmodel.DIAwareViewModel
 import com.saulhdev.feeder.viewmodel.EditFeedViewModel
-
 @Composable
 fun EditFeedPage(
     editFeedViewModel: EditFeedViewModel,
@@ -106,7 +105,7 @@ fun EditFeedView(
 ) {
     val (focusTitle, focusTag) = createRefs()
     val focusManager = LocalFocusManager.current
-    val repository = FeedRepository(LocalContext.current)
+    val repository = ArticleRepository(LocalContext.current)
 
     Column {
         OutlinedTextField(

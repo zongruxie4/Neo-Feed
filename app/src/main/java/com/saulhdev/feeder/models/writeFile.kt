@@ -1,7 +1,7 @@
 package com.saulhdev.feeder.models
 
 import android.util.Log
-import com.saulhdev.feeder.db.Feed
+import com.saulhdev.feeder.db.models.Feed
 import java.io.IOException
 import java.io.OutputStream
 

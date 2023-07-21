@@ -27,6 +27,7 @@ import com.saulhdev.feeder.db.models.FeedItemIdWithLink
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.launch
@@ -36,11 +37,9 @@ import org.threeten.bp.Instant
 import org.threeten.bp.ZonedDateTime
 import java.net.URL
 
-class FeedArticleRepository(context: Context) {
+class ArticleRepository(context: Context) {
     private val scope = CoroutineScope(Dispatchers.IO) + CoroutineName("FeedArticleRepository")
-
-    /* Feed */
-    val articleDao = NeoFeedDb.getInstance(context).feedDao()
+    private val articleDao = NeoFeedDb.getInstance(context).feedSourceDao()
 
     fun insertFeed(feed: Feed) {
         scope.launch {
@@ -64,7 +63,7 @@ class FeedArticleRepository(context: Context) {
 
     fun updateFeed(feed: Feed) {
         scope.launch {
-            val list: List<Feed> = articleDao.findFeed(feed.id)
+            val list: List<Feed> = articleDao.findFeedById(feed.id)
             if (list.isNotEmpty()) {
                 feed.lastSync = ZonedDateTime.now().toInstant()
                 articleDao.update(feed)
@@ -72,7 +71,7 @@ class FeedArticleRepository(context: Context) {
         }
     }
 
-    suspend fun getFeed(feedId: Long): Feed? = articleDao.loadFeed(feedId)
+    suspend fun getFeed(feedId: Long): List<Feed> = articleDao.findFeedById(feedId)
 
     fun getAllFeeds(): List<Feed> {
         return articleDao.loadFeeds()
@@ -80,22 +79,6 @@ class FeedArticleRepository(context: Context) {
 
     fun getFeedById(id: Long): Flow<Feed> {
         return articleDao.getFeedById(id)
-    }
-
-    fun getFeedByURL(url: URL): Feed? {
-        var feed: Feed? = null
-        scope.launch {
-            feed = articleDao.getFeedByURL(url)
-        }
-
-        return feed
-    }
-
-    fun deleteFeed(feed: Feed) {
-        scope.launch {
-            feedArticleDao.deleteFeedArticle(feed.id)
-            articleDao.delete(feed)
-        }
     }
 
     fun setCurrentlySyncingOn(feedId: Long, syncing: Boolean) {
@@ -122,10 +105,6 @@ class FeedArticleRepository(context: Context) {
 
     suspend fun deleteArticles(ids: List<Long>) {
         feedArticleDao.deleteArticles(ids)
-    }
-
-    suspend fun deleteArticle(id: Long) {
-        feedArticleDao.deleteFeedArticle(id)
     }
 
     suspend fun getArticleByGuid(guid: String, feedId: Long): FeedArticle? {
@@ -163,10 +142,11 @@ class FeedArticleRepository(context: Context) {
     fun getFeedsItemsWithDefaultFullTextParse(): Flow<List<FeedItemIdWithLink>> =
         feedArticleDao.getFeedsItemsWithDefaultFullTextParse()
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     fun getBookmarkedArticlesMap(): Flow<Map<FeedArticle, Feed>> =
         feedArticleDao.allBookmarked.mapLatest {
             it.associateWith { fa ->
-                articleDao.findFeed(fa.feedId).first()
+                articleDao.findFeedById(fa.feedId).first()
             }
         }
 }

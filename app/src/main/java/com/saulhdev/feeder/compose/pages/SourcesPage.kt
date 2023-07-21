@@ -70,22 +70,22 @@ import com.saulhdev.feeder.compose.icon.phosphor.CloudArrowDown
 import com.saulhdev.feeder.compose.icon.phosphor.CloudArrowUp
 import com.saulhdev.feeder.compose.navigation.LocalNavController
 import com.saulhdev.feeder.compose.navigation.Routes
-import com.saulhdev.feeder.db.Feed
-import com.saulhdev.feeder.db.FeedRepository
+import com.saulhdev.feeder.db.SourceRepository
+import com.saulhdev.feeder.db.models.Feed
 import com.saulhdev.feeder.models.exportOpml
 import com.saulhdev.feeder.models.importOpml
 import com.saulhdev.feeder.utils.ApplicationCoroutineScope
-import com.saulhdev.feeder.viewmodel.SourcesViewModel
 import kotlinx.coroutines.launch
 import org.kodein.di.compose.LocalDI
 import org.kodein.di.instance
 import java.time.LocalDateTime
 
 @Composable
-fun SourcesPage(viewModel: SourcesViewModel) {
+fun SourcesPage() {
     val context = LocalContext.current
+
     val navController = LocalNavController.current
-    val repository = FeedRepository(context)
+    val repository = SourceRepository(context)
     val localTime = LocalDateTime.now().toString().replace(":", "_").substring(0, 19)
 
     val di = LocalDI.current
@@ -170,7 +170,8 @@ fun SourcesPage(viewModel: SourcesViewModel) {
                 )
         ) {
             val showDialog = remember { mutableStateOf(false) }
-            val list: State<List<Feed>> = viewModel.feedSources.collectAsState()
+            val list: State<List<Feed>> =
+                repository.getAllFeeds().collectAsState(initial = listOf())
             val removeItem: MutableState<Feed?> =
                 remember { mutableStateOf(list.value.firstOrNull()) }
             Spacer(modifier = Modifier.height(8.dp))

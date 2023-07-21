@@ -1,6 +1,6 @@
 package com.saulhdev.feeder.models
 
-import com.saulhdev.feeder.db.Feed
+import com.saulhdev.feeder.db.models.Feed
 import com.saulhdev.feeder.utils.sloppyLinkToStrictURL
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

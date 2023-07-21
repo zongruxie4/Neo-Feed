@@ -25,6 +25,10 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
+import com.saulhdev.feeder.db.dao.FeedArticleDao
+import com.saulhdev.feeder.db.dao.FeedSourceDao
+import com.saulhdev.feeder.db.models.Feed
+import com.saulhdev.feeder.db.models.FeedArticle
 
 const val ID_UNSET: Long = 0
 
@@ -38,7 +42,7 @@ const val ID_UNSET: Long = 0
 )
 @TypeConverters(Converters::class)
 abstract class NeoFeedDb : RoomDatabase() {
-    abstract fun feedDao(): FeedDao
+    abstract fun feedSourceDao(): FeedSourceDao
     abstract fun feedArticleDao(): FeedArticleDao
 
     companion object {

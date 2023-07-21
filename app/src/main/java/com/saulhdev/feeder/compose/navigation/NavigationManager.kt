@@ -28,7 +28,6 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import com.saulhdev.feeder.NFApplication
 import com.saulhdev.feeder.compose.pages.AboutPage
 import com.saulhdev.feeder.compose.pages.AddFeedPage
 import com.saulhdev.feeder.compose.pages.BookmarksPage
@@ -57,10 +56,7 @@ fun NavigationManager(navController: NavHostController) {
         ) {
             preferenceGraph(route = "/", { PreferencesPage() }) { subRoute ->
                 preferenceGraph(route = subRoute(Routes.SETTINGS), { PreferencesPage() })
-                preferenceGraph(route = subRoute(Routes.SOURCES), {
-                    val viewModel = NFApplication.mainActivity?.reposViewModel!!
-                    SourcesPage(viewModel)
-                })
+                preferenceGraph(route = subRoute(Routes.SOURCES), { SourcesPage() })
                 preferenceGraph(route = subRoute(Routes.BOOKMARKS), { BookmarksPage() })
                 preferenceGraph(route = subRoute(Routes.ABOUT), { AboutPage() })
                 preferenceGraph(route = Routes.LICENSE, { LicenseScreen() })

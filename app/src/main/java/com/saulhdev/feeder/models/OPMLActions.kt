@@ -4,8 +4,8 @@ import android.content.ContentResolver
 import android.net.Uri
 import android.util.Log
 import com.saulhdev.feeder.R
-import com.saulhdev.feeder.db.FeedDao
 import com.saulhdev.feeder.db.NeoFeedDb
+import com.saulhdev.feeder.db.SourceRepository
 import com.saulhdev.feeder.sync.requestFeedSync
 import com.saulhdev.feeder.utils.ToastMaker
 import kotlinx.coroutines.Dispatchers
@@ -13,6 +13,7 @@ import kotlinx.coroutines.withContext
 import org.kodein.di.DI
 import org.kodein.di.direct
 import org.kodein.di.instance
+import org.koin.java.KoinJavaComponent.inject
 import kotlin.system.measureTimeMillis
 
 /**
@@ -22,13 +23,13 @@ suspend fun exportOpml(di: DI, uri: Uri) = withContext(Dispatchers.IO) {
     try {
         val time = measureTimeMillis {
             val contentResolver: ContentResolver by di.instance()
-            val feedDao: FeedDao by di.instance()
+            val sourceRepository: SourceRepository by inject(SourceRepository::class.java)
             contentResolver.openOutputStream(uri)?.let {
                 writeOutputStream(
                     it,
-                    feedDao.loadTags()
+                    sourceRepository.loadTags()
                 ) { tag ->
-                    feedDao.loadFeeds(tag = tag)
+                    sourceRepository.loadFeeds(tag = tag)
                 }
             }
         }

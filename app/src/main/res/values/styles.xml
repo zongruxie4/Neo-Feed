@@ -6,6 +6,8 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="alertDialogTheme">@style/AlertDialogTheme</item>
+        <!--Status bar theme -->
+        <item name="android:windowLightStatusBar">@bool/isLight</item>
     </style>
 
     <style name="roundedCorner" parent="">

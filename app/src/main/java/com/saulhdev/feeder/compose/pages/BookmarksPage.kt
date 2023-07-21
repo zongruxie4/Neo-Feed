@@ -32,7 +32,7 @@ import com.saulhdev.feeder.ComposeActivity
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.compose.components.BookmarkItem
 import com.saulhdev.feeder.compose.components.ViewWithActionBar
-import com.saulhdev.feeder.db.FeedRepository
+import com.saulhdev.feeder.db.ArticleRepository
 import com.saulhdev.feeder.preference.FeedPreferences
 import com.saulhdev.feeder.utils.launchView
 import com.saulhdev.feeder.utils.urlEncode
@@ -43,7 +43,7 @@ fun BookmarksPage() {
     val context = LocalContext.current
     val prefs = FeedPreferences(context)
     val scope = rememberCoroutineScope()
-    val repository = FeedRepository(context)
+    val repository = ArticleRepository(context)
     val bookmarked = repository.getBookmarkedArticlesMap().collectAsState(initial = emptyMap())
 
     ViewWithActionBar(

@@ -41,7 +41,7 @@ import com.saulhdev.feeder.compose.icon.Phosphor
 import com.saulhdev.feeder.compose.icon.phosphor.ArrowSquareOut
 import com.saulhdev.feeder.compose.icon.phosphor.ShareNetwork
 import com.saulhdev.feeder.compose.navigation.preferenceGraph
-import com.saulhdev.feeder.db.FeedRepository
+import com.saulhdev.feeder.db.ArticleRepository
 import com.saulhdev.feeder.theme.LinkTextStyle
 import com.saulhdev.feeder.utils.blobFile
 import com.saulhdev.feeder.utils.blobFullFile
@@ -60,7 +60,7 @@ import java.util.Locale
 @Composable
 fun ArticleScreen(articleId: Long) {
     val context = LocalContext.current
-    val repository = FeedRepository(context)
+    val repository = ArticleRepository(context)
     val article by repository.getArticleById(articleId).collectAsState(initial = null)
     val feed by repository.getFeedById(article?.feedId ?: 0).collectAsState(initial = null)
 

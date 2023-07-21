@@ -9,7 +9,7 @@ import com.google.android.material.button.MaterialButton
 import com.saulhdev.feeder.ComposeActivity
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.databinding.FeedCardStoryLargeBinding
-import com.saulhdev.feeder.db.FeedRepository
+import com.saulhdev.feeder.db.ArticleRepository
 import com.saulhdev.feeder.preference.FeedPreferences
 import com.saulhdev.feeder.theme.Theming
 import com.saulhdev.feeder.utils.RelativeTimeHelper
@@ -28,7 +28,7 @@ object StoryCardBinder : FeedBinder {
         val content = item.content as StoryCardContent
         val binding = FeedCardStoryLargeBinding.bind(view)
         val prefs = FeedPreferences(context)
-        val repository = FeedRepository(context)
+        val repository = ArticleRepository(context)
         var bookmarked = item.bookmarked
         binding.storyTitle.text = content.title
         binding.storySource.text = content.source.title

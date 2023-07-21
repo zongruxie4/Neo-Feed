@@ -67,8 +67,8 @@ import com.saulhdev.feeder.compose.navigation.LocalNavController
 import com.saulhdev.feeder.compose.util.StableHolder
 import com.saulhdev.feeder.compose.util.interceptKey
 import com.saulhdev.feeder.compose.util.safeSemantics
-import com.saulhdev.feeder.db.Feed
-import com.saulhdev.feeder.db.FeedRepository
+import com.saulhdev.feeder.db.ArticleRepository
+import com.saulhdev.feeder.db.models.Feed
 import com.saulhdev.feeder.utils.sloppyLinkToStrictURL
 import com.saulhdev.feeder.utils.sloppyLinkToStrictURLNoThrows
 import com.saulhdev.feeder.viewmodel.SearchFeedViewModel
@@ -88,7 +88,7 @@ fun AddFeedPage() {
         mutableStateOf(listOf<SearchResult>())
     }
 
-    val repository = FeedRepository(LocalContext.current)
+    val repository = ArticleRepository(LocalContext.current)
 
     BackHandler {
         saveFeed(results, repository)
@@ -152,7 +152,7 @@ fun AddFeedPage() {
     }
 }
 
-fun saveFeed(results: List<SearchResult>, repository: FeedRepository) {
+fun saveFeed(results: List<SearchResult>, repository: ArticleRepository) {
     results.forEach { result ->
         if (result.isError) {
             return@forEach
