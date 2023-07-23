@@ -40,8 +40,8 @@ object PluginFetcher {
             Pair(it.serviceInfo.packageName, it.serviceInfo.metaData)
         }
 
-        val prefs = FeedPreferences(NFApplication.instance)
-        if (prefs.debugging.onGetValue()) {
+        val prefs = FeedPreferences.getInstance(NFApplication.instance)
+        if (prefs.debugging.getValue()) {
             Log.d("PluginFetcher", "Packages that has service: $hasService")
         }
 

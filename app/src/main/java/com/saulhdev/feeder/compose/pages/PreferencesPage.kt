@@ -42,6 +42,7 @@ import com.saulhdev.feeder.compose.components.StringSelectionPrefDialogUI
 import com.saulhdev.feeder.compose.components.ViewWithActionBar
 import com.saulhdev.feeder.compose.navigation.LocalNavController
 import com.saulhdev.feeder.preference.FeedPreferences
+import com.saulhdev.feeder.preference.StringSelectionPref
 
 @Composable
 fun PreferencesPage() {
@@ -49,7 +50,7 @@ fun PreferencesPage() {
     ViewWithActionBar(
         title = title,
     ) { paddingValues ->
-        val prefs = FeedPreferences(LocalContext.current)
+        val prefs = FeedPreferences.getInstance(LocalContext.current)
         val navController = LocalNavController.current
 
         val actions = listOf(
@@ -66,7 +67,6 @@ fun PreferencesPage() {
         val themePrefs = listOf(
             prefs.overlayTheme,
             prefs.cardBackground,
-            prefs.overlayBackground,
             prefs.overlayTransparency,
         )
         val debugPrefs = listOf(
@@ -130,8 +130,8 @@ fun PreferencesPage() {
         if (openDialog.value) {
             BaseDialog(openDialogCustom = openDialog) {
                 when (dialogPref) {
-                    is FeedPreferences.StringSelectionPref -> StringSelectionPrefDialogUI(
-                        pref = dialogPref as FeedPreferences.StringSelectionPref,
+                    is StringSelectionPref -> StringSelectionPrefDialogUI(
+                        pref = dialogPref as StringSelectionPref,
                         openDialogCustom = openDialog
                     )
                 }

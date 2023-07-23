@@ -47,15 +47,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.saulhdev.feeder.preference.FeedPreferences
+import com.saulhdev.feeder.preference.StringSelectionPref
 import kotlinx.coroutines.launch
 
 @Composable
 fun StringSelectionPrefDialogUI(
-    pref: FeedPreferences.StringSelectionPref,
+    pref: StringSelectionPref,
     openDialogCustom: MutableState<Boolean>
 ) {
-    var selected by remember { mutableStateOf(pref.onGetValue()) }
+    var selected by remember { mutableStateOf(pref.getValue()) }
     val entryPairs = pref.entries.toList()
 
     val scope = rememberCoroutineScope()
@@ -104,7 +104,7 @@ fun StringSelectionPrefDialogUI(
                     onClick = {
                         scope.launch {
                             openDialogCustom.value = false
-                            pref.onSetValue(selected)
+                            pref.setValue(selected)
                         }
                     }
                 )

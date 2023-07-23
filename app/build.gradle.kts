@@ -146,11 +146,16 @@ dependencies {
     //Core
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("androidx.core:core-ktx:1.11.0-beta02")
-    implementation("androidx.datastore:datastore-preferences:1.0.0")
     implementation("androidx.multidex:multidex:2.0.1")
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
     implementation("androidx.work:work-runtime-ktx:2.8.1")
     implementation("com.google.android.material:material:1.9.0")
+
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.1")
+    implementation("androidx.lifecycle:lifecycle-extensions:2.2.0")
+    implementation("androidx.lifecycle:lifecycle-common-java8:2.6.1")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1")
 
     //Compose
     implementation("androidx.compose.material3:material3:$vMaterial3")
@@ -169,7 +174,7 @@ dependencies {
     //Squareup
     implementation("com.squareup.moshi:moshi:1.15.0")
     implementation("com.squareup.moshi:moshi-kotlin:1.15.0")
-    implementation("com.squareup.okhttp3:okhttp:5.0.0-alpha.9")
+    implementation("com.squareup.okhttp3:okhttp:5.0.0-alpha.11")
     implementation("com.squareup.retrofit2:retrofit:2.9.0") { exclude(module = "okhttp") }
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
 

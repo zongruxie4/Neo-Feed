@@ -5,12 +5,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import com.saulhdev.feeder.preference.FeedPreferences
+import com.saulhdev.feeder.preference.StringSelectionPref
 
 @Composable
 fun StringSelectionPreference(
     modifier: Modifier = Modifier,
-    pref: FeedPreferences.StringSelectionPref,
+    pref: StringSelectionPref,
     index: Int = 1,
     groupSize: Int = 1,
     isEnabled: Boolean = true,
@@ -20,7 +20,7 @@ fun StringSelectionPreference(
         modifier = modifier,
         titleId = pref.titleId,
         summaryId = pref.summaryId,
-        summary = pref.entries[pref.onGetValue()],
+        summary = pref.entries[pref.getValue()],
         index = index,
         groupSize = groupSize,
         startWidget = {

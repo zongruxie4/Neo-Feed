@@ -28,7 +28,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.saulhdev.feeder.ComposeActivity
+import com.saulhdev.feeder.MainActivity
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.compose.components.BookmarkItem
 import com.saulhdev.feeder.compose.components.ViewWithActionBar
@@ -41,7 +41,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun BookmarksPage() {
     val context = LocalContext.current
-    val prefs = FeedPreferences(context)
+    val prefs = FeedPreferences.getInstance(context)
     val scope = rememberCoroutineScope()
     val repository = ArticleRepository(context)
     val bookmarked = repository.getBookmarkedArticlesMap().collectAsState(initial = emptyMap())
@@ -63,20 +63,20 @@ fun BookmarksPage() {
                     article = item.key,
                     feed = item.value,
                     onClickAction = { article ->
-                        if (prefs.openInBrowser.onGetValue()) {
+                        if (prefs.openInBrowser.getValue()) {
                             context.launchView(article.link ?: "")
                         } else {
                             scope.launch {
-                                if (prefs.offlineReader.onGetValue()) {
+                                if (prefs.offlineReader.getValue()) {
                                     context.startActivity(
-                                        ComposeActivity.createIntent(
+                                        MainActivity.createIntent(
                                             context,
                                             "article_page/${article.id}/"
                                         )
                                     )
                                 } else {
                                     context.startActivity(
-                                        ComposeActivity.createIntent(
+                                        MainActivity.createIntent(
                                             context,
                                             "web_view/${article.link?.urlEncode()}/"
                                         )

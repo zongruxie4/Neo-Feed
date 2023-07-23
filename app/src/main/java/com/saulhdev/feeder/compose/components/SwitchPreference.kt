@@ -28,18 +28,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.saulhdev.feeder.preference.FeedPreferences
+import com.saulhdev.feeder.preference.BooleanPref
 
 @Composable
 fun SwitchPreference(
     modifier: Modifier = Modifier,
-    pref: FeedPreferences.BooleanPref,
+    pref: BooleanPref,
     index: Int = 1,
     groupSize: Int = 1,
     isEnabled: Boolean = true,
     onCheckedChange: ((Boolean) -> Unit) = {},
 ) {
-    val (checked, check) = remember(pref) { mutableStateOf(pref.onGetValue()) }
+    val (checked, check) = remember(pref) { mutableStateOf(pref.getValue()) }
     BasePreference(
         modifier = modifier,
         titleId = pref.titleId,
@@ -56,7 +56,7 @@ fun SwitchPreference(
         isEnabled = isEnabled,
         onClick = {
             onCheckedChange(!checked)
-            pref.onSetValue(!checked)
+            pref.setValue(!checked)
             check(!checked)
         },
         endWidget = {
@@ -66,7 +66,7 @@ fun SwitchPreference(
                 checked = checked,
                 onCheckedChange = {
                     onCheckedChange(it)
-                    pref.onSetValue(it)
+                    pref.setValue(it)
                     check(it)
                 },
                 enabled = isEnabled,

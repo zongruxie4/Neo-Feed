@@ -47,7 +47,7 @@ suspend fun syncFeeds(
     forceNetwork: Boolean = false,
     minFeedAgeMinutes: Int = 5
 ): Boolean {
-    val prefs = FeedPreferences(context)
+    val prefs = FeedPreferences.getInstance(context)
     val di: DI by closestDI(context)
     return syncMutex.withLock {
         withContext(singleThreadedSync) {
@@ -56,7 +56,7 @@ suspend fun syncFeeds(
                 context = context,
                 feedId = feedId,
                 feedTag = feedTag,
-                maxFeedItemCount = prefs.itemsPerFeed.onGetValue().toInt(),
+                maxFeedItemCount = prefs.itemsPerFeed.getValue().toInt(),
                 forceNetwork = forceNetwork,
                 minFeedAgeMinutes = minFeedAgeMinutes
             )

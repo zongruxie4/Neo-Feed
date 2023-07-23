@@ -24,21 +24,18 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.saulhdev.feeder.compose.navigation.LocalNavController
-import com.saulhdev.feeder.preference.FeedPreferences
-import com.saulhdev.feeder.utils.launchView
+import com.saulhdev.feeder.preference.StringPref
 
 @Composable
 fun ActionPreference(
     modifier: Modifier = Modifier,
-    pref: FeedPreferences.StringPref,
+    pref: StringPref,
     index: Int = 1,
     groupSize: Int = 1,
     isEnabled: Boolean = true,
 ) {
-    val context = LocalContext.current
     val navController = LocalNavController.current
     BasePreference(
         modifier = modifier,
@@ -57,8 +54,6 @@ fun ActionPreference(
         onClick = {
             if (pref.route != "") {
                 navController.navigate(pref.route)
-            } else if (pref.url != "") {
-                context.launchView(pref.url)
             } else {
                 pref.onClick?.invoke()
             }

@@ -101,9 +101,9 @@ object PluginConnector {
 
     private fun chainLoad(cb: IFeedInterfaceCallback) {
         index = 0
-        val prefs = FeedPreferences(NFApplication.instance)
-        serviceSize = prefs.enabledPlugins.onGetValue().size
-        prefs.enabledPlugins.onGetValue().forEach {
+        val prefs = FeedPreferences.getInstance(NFApplication.instance)
+        serviceSize = prefs.enabledPlugins.getValue().size
+        prefs.enabledPlugins.getValue().forEach {
             callbacks[it] = cb
             connectTo(it)
         }

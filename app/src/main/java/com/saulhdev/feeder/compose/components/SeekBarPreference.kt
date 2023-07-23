@@ -7,24 +7,24 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.saulhdev.feeder.preference.FeedPreferences
+import com.saulhdev.feeder.preference.FloatPref
 
 @Composable
 fun SeekBarPreference(
     modifier: Modifier = Modifier,
-    pref: FeedPreferences.FloatPref,
+    pref: FloatPref,
     index: Int = 1,
     groupSize: Int = 1,
     isEnabled: Boolean = true,
     onValueChange: ((Float) -> Unit) = {},
 ) {
-    var currentValue by remember(pref) { mutableStateOf(pref.onGetValue()) }
+    var currentValue by remember(pref) { mutableFloatStateOf(pref.getValue()) }
 
     BasePreference(
         modifier = modifier,
@@ -42,13 +42,6 @@ fun SeekBarPreference(
         },
         bottomWidget = {
             Row {
-                /*Text(
-                    text = pref.specialOutputs(currentValue),
-                    textAlign = TextAlign.Center,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    modifier = Modifier.widthIn(min = 52.dp)
-                )
-                Spacer(modifier = Modifier.requiredWidth(8.dp))*/
                 Slider(
                     modifier = Modifier
                         .requiredHeight(24.dp)
@@ -58,7 +51,7 @@ fun SeekBarPreference(
                     onValueChange = { currentValue = it },
                     steps = pref.steps,
                     onValueChangeFinished = {
-                        pref.onSetValue(currentValue)
+                        pref.setValue(currentValue)
                         onValueChange(currentValue)
                     },
                     enabled = isEnabled

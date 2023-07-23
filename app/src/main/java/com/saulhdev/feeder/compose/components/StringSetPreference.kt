@@ -20,12 +20,12 @@ package com.saulhdev.feeder.compose.components
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.saulhdev.feeder.preference.FeedPreferences
+import com.saulhdev.feeder.preference.StringSetPref
 
 @Composable
 fun StringSetPreference(
     modifier: Modifier = Modifier,
-    pref: FeedPreferences.StringSetPref,
+    pref: StringSetPref,
     index: Int = 1,
     groupSize: Int = 1,
     isEnabled: Boolean = true,
@@ -36,9 +36,6 @@ fun StringSetPreference(
         summaryId = pref.summaryId,
         index = index,
         groupSize = groupSize,
-        isEnabled = isEnabled,
-        onClick = {
-            pref.onClick?.invoke()
-        }
+        isEnabled = isEnabled
     )
 }

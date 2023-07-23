@@ -53,11 +53,11 @@ class OverlayView(val context: Context) :
     private lateinit var adapter: FeedAdapter
 
     private val list = mutableListOf<FeedItem>()
-    val prefs = FeedPreferences(context)
+    val prefs = FeedPreferences.getInstance(context)
 
     private fun setTheme(force: String?) {
         themeHolder.setTheme(
-            when (force ?: prefs.overlayTheme.onGetValue()) {
+            when (force ?: prefs.overlayTheme.getValue()) {
                 "auto_system" -> Theming.getThemeBySystem(context)
                 "dark" -> Theming.defaultDarkThemeColors
                 else -> Theming.defaultLightThemeColors
@@ -233,7 +233,7 @@ class OverlayView(val context: Context) :
 
     override fun onScroll(f: Float) {
         super.onScroll(f)
-        if (prefs.overlayTransparency.onGetValue() > 0.7f) {
+        if (prefs.overlayTransparency.getValue() > 0.7f) {
             if (themeHolder.shouldUseSN && !themeHolder.isSNApplied) {
                 themeHolder.isSNApplied = true
                 window.decorView.setLightFlags()
@@ -247,12 +247,12 @@ class OverlayView(val context: Context) :
 
         val bgColor = themeHolder.currentTheme.get(Theming.Colors.OVERLAY_BG.ordinal)
         val color =
-            (prefs.overlayTransparency.onGetValue() * 255.0f).toInt() shl 24 or (bgColor and 0x00ffffff)
+            (prefs.overlayTransparency.getValue() * 255.0f).toInt() shl 24 or (bgColor and 0x00ffffff)
         getWindow().setBackgroundDrawable(ColorDrawable(color))
     }
 
     override fun onClientMessage(action: String) {
-        if (prefs.debugging.onGetValue()) {
+        if (prefs.debugging.getValue()) {
             Log.d("OverlayView", "New message by OverlayBridge: $action")
         }
     }
@@ -262,16 +262,11 @@ class OverlayView(val context: Context) :
     }
 
     override fun applyNewTransparency(value: Float) {
-        themeHolder.prefs.overlayTransparency.onSetValue(value)
+        themeHolder.prefs.overlayTransparency.setValue(value)
     }
 
     override fun applyNewCardBg(value: String) {
         themeHolder.cardBgPref = value
-        updateTheme()
-    }
-
-    override fun applyNewOverlayBg(value: String) {
-        themeHolder.overlayBgPref = value
         updateTheme()
     }
 

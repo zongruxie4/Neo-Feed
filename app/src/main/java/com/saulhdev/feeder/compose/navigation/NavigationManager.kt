@@ -28,6 +28,7 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import com.saulhdev.feeder.compose.components.webViewerGraph
 import com.saulhdev.feeder.compose.pages.AboutPage
 import com.saulhdev.feeder.compose.pages.AddFeedPage
 import com.saulhdev.feeder.compose.pages.BookmarksPage
@@ -35,6 +36,7 @@ import com.saulhdev.feeder.compose.pages.ChangelogScreen
 import com.saulhdev.feeder.compose.pages.LicenseScreen
 import com.saulhdev.feeder.compose.pages.PreferencesPage
 import com.saulhdev.feeder.compose.pages.SourcesPage
+import com.saulhdev.feeder.compose.pages.articleGraph
 import com.saulhdev.feeder.compose.pages.editFeedGraph
 
 val LocalNavController = staticCompositionLocalOf<NavController> {
@@ -63,6 +65,8 @@ fun NavigationManager(navController: NavHostController) {
                 preferenceGraph(route = Routes.CHANGELOG, { ChangelogScreen() })
                 preferenceGraph(route = subRoute(Routes.ADD_FEED), { AddFeedPage() })
                 editFeedGraph(route = subRoute(Routes.EDIT_FEED))
+                webViewerGraph(route = subRoute(Routes.WEB_VIEW))
+                articleGraph(route = subRoute(Routes.ARTICLE_VIEW))
             }
         }
     }

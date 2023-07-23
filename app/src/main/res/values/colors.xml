@@ -6,12 +6,8 @@
     <color name="colorPrimary">#FF00668B</color>
     <color name="colorSecondary">#52B3ED</color>
 
-    <color name="overlayBg">#A0FFFFFF</color>
-    <color name="bg">#ffffff</color>
-
     <color name="bg_overlay">#ffffff</color>
     <color name="bg_dark">#121212</color>
-    <color name="cardBg">#f0f0f0</color>
 
     <color name="textColorPrimary">#000000</color>
     <color name="textColorSecondary">#707070</color>

@@ -19,24 +19,28 @@
 package com.saulhdev.feeder.compose.components
 
 import androidx.compose.runtime.Composable
-import com.saulhdev.feeder.preference.FeedPreferences
+import com.saulhdev.feeder.preference.BooleanPref
+import com.saulhdev.feeder.preference.FloatPref
+import com.saulhdev.feeder.preference.StringPref
+import com.saulhdev.feeder.preference.StringSelectionPref
+import com.saulhdev.feeder.preference.StringSetPref
 
 val PreferenceBuilder =
     @Composable { pref: Any, onDialogPref: (Any) -> Unit, index: Int, size: Int ->
         when (pref) {
-            is FeedPreferences.BooleanPref ->
+            is BooleanPref ->
                 SwitchPreference(pref = pref, index = index, groupSize = size)
 
-            is FeedPreferences.StringSetPref ->
+            is StringSetPref ->
                 StringSetPreference(pref = pref, index = index, groupSize = size)
 
-            is FeedPreferences.StringPref ->
+            is StringPref ->
                 ActionPreference(pref = pref, index = index, groupSize = size)
 
-            is FeedPreferences.FloatPref ->
+            is FloatPref ->
                 SeekBarPreference(pref = pref, index = index, groupSize = size)
 
-            is FeedPreferences.StringSelectionPref ->
+            is StringSelectionPref ->
                 StringSelectionPreference(
                     pref = pref,
                     index = index,

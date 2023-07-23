@@ -6,7 +6,7 @@ import android.util.SparseIntArray
 import android.view.View
 import coil.load
 import com.google.android.material.button.MaterialButton
-import com.saulhdev.feeder.ComposeActivity
+import com.saulhdev.feeder.MainActivity
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.databinding.FeedCardStoryLargeBinding
 import com.saulhdev.feeder.db.ArticleRepository
@@ -27,7 +27,7 @@ object StoryCardBinder : FeedBinder {
         val context = view.context
         val content = item.content as StoryCardContent
         val binding = FeedCardStoryLargeBinding.bind(view)
-        val prefs = FeedPreferences(context)
+        val prefs = FeedPreferences.getInstance(context)
         val repository = ArticleRepository(context)
         var bookmarked = item.bookmarked
         binding.storyTitle.text = content.title
@@ -65,22 +65,22 @@ object StoryCardBinder : FeedBinder {
         }
 
         binding.root.setOnClickListener {
-            if (prefs.openInBrowser.onGetValue()) {
+            if (prefs.openInBrowser.getValue()) {
                 view.context.launchView(content.link)
             } else {
                 val scope = CoroutineScope(Dispatchers.Main)
 
                 scope.launch {
-                    if (prefs.offlineReader.onGetValue()) {
+                    if (prefs.offlineReader.getValue()) {
                         view.context.startActivity(
-                            ComposeActivity.createIntent(
+                            MainActivity.createIntent(
                                 view.context,
                                 "article_page/${item.id}/"
                             )
                         )
                     } else {
                         view.context.startActivity(
-                            ComposeActivity.createIntent(
+                            MainActivity.createIntent(
                                 view.context,
                                 "web_view/${content.link.urlEncode()}/"
                             )

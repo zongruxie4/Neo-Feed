@@ -18,10 +18,13 @@
 
 package com.saulhdev.feeder
 
-import android.content.SharedPreferences
+import android.content.Context
+import android.content.Intent
+import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.core.net.toUri
+import androidx.lifecycle.asLiveData
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import androidx.work.Constraints
@@ -37,35 +40,22 @@ import com.saulhdev.feeder.viewmodel.DIAwareComponentActivity
 import org.kodein.di.compose.withDI
 import java.util.concurrent.TimeUnit
 
-class MainActivity : DIAwareComponentActivity(),
-    SharedPreferences.OnSharedPreferenceChangeListener {
+class MainActivity : DIAwareComponentActivity() {
     lateinit var prefs: FeedPreferences
-    private val prefsToWatch = arrayOf(
-        "pref_overlay_theme",
-        "pref_overlay_transparency",
-        "pref_overlay_system_colors",
-        "pref_overlay_background",
-        "pref_overlay_card_background"
-    )
+    private var isDarkTheme = false
 
     private lateinit var navController: NavHostController
 
     private var sRestart = false
-    val db
-        get() = (application as NFApplication).db
 
     override fun onCreate(savedInstanceState: Bundle?) {
         NFApplication.mainActivity = this
         super.onCreate(savedInstanceState)
 
-        prefs = FeedPreferences(this)
+        prefs = FeedPreferences.getInstance(this)
         setContent {
             AppTheme(
-                darkTheme = when (prefs.overlayTheme.onGetValue()) {
-                    "auto_system" -> isSystemInDarkTheme()
-                    "dark" -> true
-                    else -> false
-                }
+                darkTheme = isDarkTheme
             ) {
                 withDI {
                     navController = rememberNavController()
@@ -73,13 +63,45 @@ class MainActivity : DIAwareComponentActivity(),
                 }
             }
         }
-        if (prefs.enabledPlugins.onGetValue().isEmpty()) {
+        if (prefs.enabledPlugins.getValue().isEmpty()) {
             val list: ArrayList<String> = ArrayList()
             list.add(BuildConfig.APPLICATION_ID)
-            prefs.enabledPlugins.onSetValue(list.toSet())
+            prefs.enabledPlugins.setValue(list.toSet())
         }
 
         configurePeriodicSync(prefs)
+        observePrefs()
+    }
+
+    private fun observePrefs() {
+        var recreate = false
+        prefs.overlayTheme.get().asLiveData().observe(this) {
+            isDarkTheme = when (it) {
+                "auto_system" -> isSystemDark()
+                "dark" -> true
+                else -> false
+            }
+            recreate = true
+        }
+        prefs.overlayTransparency.get().asLiveData().observe(this) {
+            recreate = true
+        }
+        prefs.cardBackground.get().asLiveData().observe(this) {
+            recreate = true
+        }
+
+        if (recreate) {
+            recreate()
+            recreate = false
+        }
+    }
+
+    private fun isSystemDark(): Boolean {
+        return when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
+            Configuration.UI_MODE_NIGHT_YES -> true
+            Configuration.UI_MODE_NIGHT_NO -> false
+            else -> false
+        }
     }
 
     override fun onRestart() {
@@ -95,17 +117,17 @@ class MainActivity : DIAwareComponentActivity(),
 
     private fun configurePeriodicSync(prefs: FeedPreferences) {
         val workManager = WorkManager.getInstance(this)
-        val shouldSync = (prefs.syncFrequency.onGetValue().toDouble()) > 0
+        val shouldSync = (prefs.syncFrequency.getValue().toDouble()) > 0
         val replace = true
         if (shouldSync) {
             val constraints = Constraints.Builder()
 
-            if (prefs.syncOnlyOnWifi.onGetValue()) {
+            if (prefs.syncOnlyOnWifi.getValue()) {
                 constraints.setRequiredNetworkType(NetworkType.UNMETERED)
             } else {
                 constraints.setRequiredNetworkType(NetworkType.CONNECTED)
             }
-            val timeInterval = (prefs.syncFrequency.onGetValue().toDouble() * 60).toLong()
+            val timeInterval = (prefs.syncFrequency.getValue().toDouble() * 60).toLong()
 
             val workRequestBuilder = PeriodicWorkRequestBuilder<FeedSyncer>(
                 timeInterval,
@@ -120,7 +142,7 @@ class MainActivity : DIAwareComponentActivity(),
             workManager.enqueueUniquePeriodicWork(
                 "feeder_periodic_3",
                 when (replace) {
-                    true -> ExistingPeriodicWorkPolicy.REPLACE
+                    true -> ExistingPeriodicWorkPolicy.UPDATE
                     false -> ExistingPeriodicWorkPolicy.KEEP
                 },
                 syncWork
@@ -131,19 +153,10 @@ class MainActivity : DIAwareComponentActivity(),
         }
     }
 
-    override fun onAttachedToWindow() {
-        super.onAttachedToWindow()
-        prefs.sharedPrefs.registerOnSharedPreferenceChangeListener(this)
-    }
-
-    override fun onDetachedFromWindow() {
-        super.onDetachedFromWindow()
-        prefs.sharedPrefs.unregisterOnSharedPreferenceChangeListener(this)
-    }
-
-    override fun onSharedPreferenceChanged(prefs: SharedPreferences?, key: String?) {
-        if (prefsToWatch.contains(key)) {
-            recreate()
+    companion object {
+        fun createIntent(context: Context, destination: String): Intent {
+            val uri = "android-app://androidx.navigation//$destination".toUri()
+            return Intent(Intent.ACTION_VIEW, uri, context, MainActivity::class.java)
         }
     }
 }

@@ -32,7 +32,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.saulhdev.feeder.ComposeActivity
+import com.saulhdev.feeder.MainActivity
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.compose.components.RoundButton
 import com.saulhdev.feeder.compose.components.ViewWithActionBar
@@ -163,7 +163,7 @@ fun ArticleScreen(articleId: Long) {
                                     contentDescription = feedTitle.value
                                 }
                                 .clickable {
-                                    ComposeActivity.createIntent(
+                                    MainActivity.createIntent(
                                         context,
                                         "web_view/${article?.link?.urlEncode()}/"
                                     )

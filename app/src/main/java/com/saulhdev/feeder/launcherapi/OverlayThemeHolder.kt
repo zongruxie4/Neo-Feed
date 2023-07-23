@@ -14,7 +14,7 @@ import com.saulhdev.feeder.utils.clearLightFlags
  * */
 class OverlayThemeHolder(private val context: Context, private val overlay: OverlayView) {
 
-    val prefs = FeedPreferences(context)
+    val prefs = FeedPreferences.getInstance(context)
 
     /**
      * Current theme colors mapping
@@ -24,12 +24,7 @@ class OverlayThemeHolder(private val context: Context, private val overlay: Over
     /**
      * Card background
      */
-    var cardBgPref = prefs.cardBackground.onGetValue()
-
-    /**
-     * Overlay background
-     */
-    var overlayBgPref = prefs.overlayBackground.onGetValue()
+    var cardBgPref = prefs.cardBackground.getValue()
 
     /**
      * If we should apply light statusbar/navbar

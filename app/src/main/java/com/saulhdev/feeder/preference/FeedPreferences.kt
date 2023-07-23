@@ -15,14 +15,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-
 package com.saulhdev.feeder.preference
 
 import android.content.Context
-import android.content.SharedPreferences
-import androidx.annotation.StringRes
-import androidx.compose.ui.graphics.vector.ImageVector
-import com.saulhdev.feeder.NFApplication
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.SharedPreferencesMigration
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.floatPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.core.stringSetPreferencesKey
+import androidx.datastore.preferences.preferencesDataStore
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.compose.icon.Phosphor
 import com.saulhdev.feeder.compose.icon.phosphor.BookBookmark
@@ -36,284 +39,165 @@ import com.saulhdev.feeder.compose.icon.phosphor.Info
 import com.saulhdev.feeder.compose.icon.phosphor.PaintRoller
 import com.saulhdev.feeder.compose.icon.phosphor.SelectionBackground
 import com.saulhdev.feeder.compose.icon.phosphor.SubtractSquare
-import com.saulhdev.feeder.compose.icon.phosphor.Swatches
 import com.saulhdev.feeder.compose.icon.phosphor.WifiHigh
 import com.saulhdev.feeder.compose.navigation.Routes
 import com.saulhdev.feeder.utils.getBackgroundOptions
 import com.saulhdev.feeder.utils.getItemsPerFeed
 import com.saulhdev.feeder.utils.getSyncFrequency
 import com.saulhdev.feeder.utils.getThemes
+import java.lang.ref.WeakReference
 import kotlin.math.roundToInt
-import kotlin.reflect.KProperty
 
-class FeedPreferences(val context: Context) {
-    var sharedPrefs: SharedPreferences =
-        context.getSharedPreferences("com.saulhdev.neofeed.prefs", Context.MODE_PRIVATE)
+class FeedPreferences private constructor(val context: Context) {
+    private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(
+        name = "neo_feed",
+        produceMigrations = { context ->
+            listOf(SharedPreferencesMigration(context, "com.saulhdev.neofeed.prefs"))
+        }
+    )
+    private val dataStore: DataStore<Preferences> = context.dataStore
 
-    private var doNothing = {}
-
-    private var recreate = {
-        NFApplication.instance.restart(true)
-    }
-
-    private var restart = {
-        NFApplication.instance.restart(false)
-    }
-
-    /*=== Appearance ===*/
+    /* Theme */
     var overlayTheme = StringSelectionPref(
-        key = "pref_overlay_theme",
         titleId = R.string.pref_ovr_theme,
-        defaultValue = "auto_launcher",
-        entries = getThemes(context),
         icon = Phosphor.PaintRoller,
-        onChange = recreate
+        key = OVERLAY_THEME,
+        dataStore = dataStore,
+        defaultValue = "auto_launcher",
+        entries = getThemes(context)
     )
 
     var overlayTransparency = FloatPref(
-        key = "pref_overlay_opacity",
         titleId = R.string.pref_transparency,
         icon = Phosphor.SubtractSquare,
+        key = OVERLAY_OPACITY,
+        dataStore = dataStore,
         defaultValue = 1f,
         maxValue = 1f,
         minValue = 0f,
         steps = 100,
-        specialOutputs = { "${(it * 100).roundToInt()}%" },
-        onChange = doNothing
-    )
-
-    var overlayBackground = StringSelectionPref(
-        key = "pref_overlay_background",
-        titleId = R.string.pref_bg_color,
-        defaultValue = "theme",
-        entries = getBackgroundOptions(context),
-        icon = Phosphor.Swatches,
-        onChange = recreate
+        specialOutputs = { "${(it * 100).roundToInt()}%" }
     )
 
     var cardBackground = StringSelectionPref(
-        key = "pref_overlay_card_background",
         titleId = R.string.pref_card_bg,
-        defaultValue = "theme",
-        entries = getBackgroundOptions(context),
         icon = Phosphor.SelectionBackground,
-        onChange = recreate
+        key = OVERLAY_CARD_BACKGROUND,
+        dataStore = dataStore,
+        defaultValue = "theme",
+        entries = getBackgroundOptions(context)
     )
 
-    /*=== Sources ===*/
+    /* Sources */
     var sources = StringPref(
-        key = "pref_sources",
         titleId = R.string.title_sources,
         summaryId = R.string.summary_sources,
         icon = Phosphor.Graph,
-        route = "/${Routes.SOURCES}/",
-        onChange = doNothing
+        key = SOURCES,
+        dataStore = dataStore,
+        route = "/${Routes.SOURCES}/"
     )
 
     var bookmarks = StringPref(
-        key = "pref_bookmarks",
         titleId = R.string.title_bookmarks,
         summaryId = R.string.summary_bookmarks,
+        key = BOOKMARKS,
+        dataStore = dataStore,
         icon = Phosphor.Bookmarks,
-        route = "/${Routes.BOOKMARKS}/",
-        onChange = doNothing
+        route = "/${Routes.BOOKMARKS}/"
     )
 
     var openInBrowser = BooleanPref(
-        key = "pref_open_browser",
         titleId = R.string.pref_browser_theme,
         icon = Phosphor.Browser,
-        defaultValue = false,
-        onChange = doNothing
+        key = OPEN_IN_BROWSER,
+        dataStore = dataStore,
+        defaultValue = false
     )
 
     var offlineReader = BooleanPref(
-        key = "pref_offline_reader",
         titleId = R.string.pref_offline_reader,
         icon = Phosphor.BookBookmark,
-        defaultValue = true,
-        onChange = doNothing
-    )
-
-    /*=== Sync ===*/
-    var syncOnlyOnWifi = BooleanPref(
-        key = "pref_sync_only_wifi",
-        titleId = R.string.pref_sync_wifi,
-        icon = Phosphor.WifiHigh,
+        key = OFFLINE_READER,
+        dataStore = dataStore,
         defaultValue = true
     )
+
+    /* Sync */
+    var syncOnlyOnWifi = BooleanPref(
+        titleId = R.string.pref_sync_wifi,
+        icon = Phosphor.WifiHigh,
+        key = SYNC_ON_WIFI,
+        dataStore = dataStore,
+        defaultValue = true
+    )
+
     var syncFrequency = StringSelectionPref(
-        key = "pref_sync_frequency",
         titleId = R.string.pref_sync_frequency,
-        defaultValue = "1",
-        entries = getSyncFrequency(context),
         icon = Phosphor.Clock,
-        onChange = doNothing
+        key = SYNC_FREQUENCY,
+        dataStore = dataStore,
+        defaultValue = "1",
+        entries = getSyncFrequency(context)
     )
 
     var itemsPerFeed = StringSelectionPref(
-        key = "pref_items_per_feed",
         titleId = R.string.pref_items_per_feed,
-        defaultValue = "25",
-        entries = getItemsPerFeed(),
         icon = Phosphor.Hash,
-        onChange = doNothing
+        key = ITEMS_PER_FEED,
+        dataStore = dataStore,
+        defaultValue = "25",
+        entries = getItemsPerFeed()
     )
 
-    /*=== Others ===*/
+    /* Others */
     var enabledPlugins = StringSetPref(
-        key = "pref_enabled_plugins",
         titleId = R.string.title_plugin_list,
-        defaultValue = setOf(),
-        onChange = doNothing
+        icon = Phosphor.Hash,
+        key = PLUGINS,
+        dataStore = dataStore,
+        defaultValue = setOf()
     )
 
     var about = StringPref(
-        key = "pref_about",
         titleId = R.string.title_about,
         icon = Phosphor.Info,
-        route = "/${Routes.ABOUT}/",
-        onChange = doNothing
+        key = ABOUT,
+        dataStore = dataStore,
+        route = "/${Routes.ABOUT}/"
     )
 
     var debugging = BooleanPref(
-        key = "pref_debugging",
         titleId = R.string.debug_logcat_printing,
         defaultValue = false,
         icon = Phosphor.Bug,
-        onChange = doNothing
+        key = DEBUG,
+        dataStore = dataStore,
     )
 
-    /*HELPER CLASSES FOR PREFERENCES*/
-    inner class StringPref(
-        key: String,
-        @StringRes titleId: Int,
-        @StringRes summaryId: Int = -1,
-        defaultValue: String = "",
-        val onClick: (() -> Unit)? = null,
-        onChange: () -> Unit = doNothing,
-        val route: String = "",
-        val url: String = "",
-        val icon: ImageVector,
-    ) : PrefDelegate<String>(key, titleId, summaryId, defaultValue, onChange) {
-        override fun onGetValue(): String = sharedPrefs.getString(key, defaultValue)!!
+    companion object {
+        private var instance: WeakReference<FeedPreferences>? = null
 
-        override fun onSetValue(value: String) {
-            edit { putString(key, value) }
-        }
-    }
-
-    inner class StringSetPref(
-        key: String,
-        @StringRes titleId: Int,
-        @StringRes summaryId: Int = -1,
-        defaultValue: Set<String>,
-        val onClick: (() -> Unit)? = null,
-        onChange: () -> Unit = doNothing
-    ) : PrefDelegate<Set<String>>(key, titleId, summaryId, defaultValue, onChange) {
-        override fun onGetValue(): Set<String> = sharedPrefs.getStringSet(getKey(), defaultValue)!!
-
-        override fun onSetValue(value: Set<String>) {
-            edit { putStringSet(key, value) }
-        }
-    }
-
-    open inner class StringSelectionPref(
-        key: String,
-        @StringRes titleId: Int,
-        @StringRes summaryId: Int = -1,
-        defaultValue: String = "",
-        val entries: Map<String, String>,
-        val icon: ImageVector,
-        onChange: () -> Unit = doNothing
-    ) : PrefDelegate<String>(key, titleId, summaryId, defaultValue, onChange) {
-        override fun onGetValue(): String = sharedPrefs.getString(getKey(), defaultValue)!!
-        override fun onSetValue(value: String) {
-            edit { putString(getKey(), value) }
-        }
-    }
-
-    open inner class FloatPref(
-        key: String,
-        @StringRes titleId: Int,
-        @StringRes summaryId: Int = -1,
-        defaultValue: Float = 0f,
-        val icon: ImageVector,
-        val minValue: Float,
-        val maxValue: Float,
-        val steps: Int,
-        val specialOutputs: ((Float) -> String) = Float::toString,
-        onChange: () -> Unit = doNothing
-    ) : PrefDelegate<Float>(key, titleId, summaryId, defaultValue, onChange) {
-        override fun onGetValue(): Float = sharedPrefs.getFloat(getKey(), defaultValue)
-
-        override fun onSetValue(value: Float) {
-            edit { putFloat(getKey(), value) }
-        }
-    }
-
-    open inner class BooleanPref(
-        key: String,
-        @StringRes titleId: Int,
-        @StringRes summaryId: Int = -1,
-        defaultValue: Boolean = false,
-        val icon: ImageVector,
-        onChange: () -> Unit = doNothing
-    ) : PrefDelegate<Boolean>(key, titleId, summaryId, defaultValue, onChange) {
-        override fun onGetValue(): Boolean = sharedPrefs.getBoolean(getKey(), defaultValue)
-
-        override fun onSetValue(value: Boolean) {
-            edit { putBoolean(getKey(), value) }
-        }
-    }
-
-    abstract inner class PrefDelegate<T : Any>(
-        val key: String,
-        @StringRes val titleId: Int,
-        @StringRes var summaryId: Int = -1,
-        val defaultValue: T,
-        private val onChange: () -> Unit
-    ) {
-        private var cached = false
-        private lateinit var value: T
-
-        operator fun getValue(thisRef: Any?, property: KProperty<*>): T {
-            if (!cached) {
-                value = onGetValue()
-                cached = true
+        @JvmStatic
+        fun getInstance(context: Context): FeedPreferences {
+            if (instance == null || instance?.get() == null) {
+                instance = WeakReference(FeedPreferences(context))
             }
-            return value
+            return instance!!.get()!!
         }
 
-        operator fun setValue(thisRef: Any?, property: KProperty<*>, value: T) {
-            cached = false
-            onSetValue(value)
-        }
-
-        abstract fun onGetValue(): T
-
-        abstract fun onSetValue(value: T)
-
-        protected inline fun edit(body: SharedPreferences.Editor.() -> Unit) {
-            val editor = sharedPrefs.edit()
-            body(editor)
-            editor.apply()
-        }
-
-        internal fun getKey() = key
-
-        private fun onValueChanged() {
-            discardCachedValue()
-            onChange.invoke()
-        }
-
-        private fun discardCachedValue() {
-            if (cached) {
-                cached = false
-                value.let(::disposeOldValue)
-            }
-        }
-
-        open fun disposeOldValue(oldValue: T) {}
+        val OVERLAY_THEME = stringPreferencesKey("pref_overlay_theme")
+        val OVERLAY_OPACITY = floatPreferencesKey("pref_overlay_opacity")
+        val OVERLAY_CARD_BACKGROUND = stringPreferencesKey("pref_overlay_card_background")
+        val SOURCES = stringPreferencesKey("pref_sources")
+        val BOOKMARKS = stringPreferencesKey("pref_bookmarks")
+        val OPEN_IN_BROWSER = booleanPreferencesKey("pref_open_browser")
+        val OFFLINE_READER = booleanPreferencesKey("pref_offline_reader")
+        val SYNC_ON_WIFI = booleanPreferencesKey("pref_sync_only_wifi")
+        val SYNC_FREQUENCY = stringPreferencesKey("pref_sync_frequency")
+        val ITEMS_PER_FEED = stringPreferencesKey("pref_items_per_feed")
+        val PLUGINS = stringSetPreferencesKey("pref_enabled_plugins")
+        val ABOUT = stringPreferencesKey("pref_about")
+        val DEBUG = booleanPreferencesKey("pref_debugging")
     }
 }

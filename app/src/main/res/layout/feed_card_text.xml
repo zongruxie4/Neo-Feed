@@ -6,7 +6,7 @@
     android:layout_marginStart="@dimen/rl_margin"
     android:layout_marginBottom="8dp"
     android:layout_marginEnd="@dimen/rl_margin"
-    app:cardBackgroundColor="@color/cardBg"
+    app:cardBackgroundColor="@color/card_bg"
     app:cardCornerRadius="12dp">
     <LinearLayout
     android:id="@+id/iforeground"
