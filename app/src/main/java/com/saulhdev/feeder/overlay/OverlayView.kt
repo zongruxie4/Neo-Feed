@@ -2,7 +2,6 @@ package com.saulhdev.feeder.overlay
 
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.content.res.ColorStateList
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -43,11 +42,9 @@ import kotlinx.coroutines.plus
 
 class OverlayView(val context: Context) :
     OverlayController(context, R.style.AppTheme, R.style.WindowTheme),
-    OverlayBridge.OverlayBridgeCallback, SharedPreferences.OnSharedPreferenceChangeListener {
+    OverlayBridge.OverlayBridgeCallback {
     private var apiInstance = LauncherAPI()
     private lateinit var themeHolder: OverlayThemeHolder
-    private var sharedPrefs: SharedPreferences =
-        context.getSharedPreferences("com.saulhdev.neofeed.prefs", Context.MODE_PRIVATE)
 
     private lateinit var rootView: View
     private lateinit var adapter: FeedAdapter
@@ -195,7 +192,6 @@ class OverlayView(val context: Context) :
         initHeader()
         refreshNotifications()
         NFApplication.bridge.setCallback(this)
-        sharedPrefs.registerOnSharedPreferenceChangeListener(this)
     }
 
     private fun loadArticles() {
@@ -228,7 +224,6 @@ class OverlayView(val context: Context) :
     override fun onDestroy() {
         super.onDestroy()
         NFApplication.bridge.setCallback(null)
-        sharedPrefs.unregisterOnSharedPreferenceChangeListener(this)
     }
 
     override fun onScroll(f: Float) {
@@ -280,8 +275,5 @@ class OverlayView(val context: Context) :
     override fun applySysColors(value: Boolean) {
         themeHolder.systemColors = value
         updateTheme()
-    }
-
-    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
     }
 }
