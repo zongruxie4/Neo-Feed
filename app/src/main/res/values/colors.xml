@@ -21,4 +21,5 @@
 
     <color name="remove_bg_color">#ff453a</color>
     <color name="ic_launcher_background">#F9FCF6</color>
+    <color name="transparent">#00000000</color>
 </resources>

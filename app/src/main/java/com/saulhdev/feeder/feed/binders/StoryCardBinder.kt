@@ -10,7 +10,6 @@ import com.saulhdev.feeder.MainActivity
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.databinding.FeedCardStoryLargeBinding
 import com.saulhdev.feeder.db.ArticleRepository
-import com.saulhdev.feeder.models.StoryCardContent
 import com.saulhdev.feeder.preference.FeedPreferences
 import com.saulhdev.feeder.sdk.FeedItem
 import com.saulhdev.feeder.theme.Theming
@@ -25,7 +24,7 @@ import kotlinx.coroutines.launch
 object StoryCardBinder : FeedBinder {
     override fun bind(theme: SparseIntArray?, item: FeedItem, view: View) {
         val context = view.context
-        val content = item.content as StoryCardContent
+        val content = item.content
         val binding = FeedCardStoryLargeBinding.bind(view)
         val prefs = FeedPreferences.getInstance(context)
         val repository = ArticleRepository(context)
@@ -55,12 +54,21 @@ object StoryCardBinder : FeedBinder {
             }
         }
 
-        binding.saveButton.updateBookmark(bookmarked)
+        if (bookmarked) {
+            binding.saveButton.setImageResource(R.drawable.ic_heart_fill)
+        } else {
+            binding.saveButton.setImageResource(R.drawable.ic_heart)
+        }
+
         binding.saveButton.setOnClickListener {
             CoroutineScope(Dispatchers.Main).launch {
                 repository.bookmarkArticle(item.id, !bookmarked)
-                binding.saveButton.updateBookmark(!bookmarked)
                 bookmarked = !bookmarked
+                if (bookmarked) {
+                    binding.saveButton.setImageResource(R.drawable.ic_heart_fill)
+                } else {
+                    binding.saveButton.setImageResource(R.drawable.ic_heart)
+                }
             }
         }
 
