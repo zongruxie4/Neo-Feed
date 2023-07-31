@@ -10,7 +10,9 @@ import com.saulhdev.feeder.MainActivity
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.databinding.FeedCardStoryLargeBinding
 import com.saulhdev.feeder.db.ArticleRepository
+import com.saulhdev.feeder.models.StoryCardContent
 import com.saulhdev.feeder.preference.FeedPreferences
+import com.saulhdev.feeder.sdk.FeedItem
 import com.saulhdev.feeder.theme.Theming
 import com.saulhdev.feeder.utils.RelativeTimeHelper
 import com.saulhdev.feeder.utils.isDark
@@ -19,8 +21,6 @@ import com.saulhdev.feeder.utils.urlEncode
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import ua.itaysonlab.hfsdk.FeedItem
-import ua.itaysonlab.hfsdk.content.StoryCardContent
 
 object StoryCardBinder : FeedBinder {
     override fun bind(theme: SparseIntArray?, item: FeedItem, view: View) {

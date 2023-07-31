@@ -14,9 +14,6 @@ object PluginFetcher {
     // Required part for AIDL connection.
     const val INTENT_ACTION_SERVICE = "ua.itaysonlab.hfsdk.HOMEFEEDER_PLUGIN_SERVICE"
 
-    // Plugin settings action
-    const val INTENT_ACTION_SETTINGS = "ua.itaysonlab.hfsdk.HOMEFEEDER_PLUGIN_ENTRYPOINT"
-
     // Metadata value acting for SDK version.
     private const val METADATA_SDK_VERSION = "HF_PluginSDK_Version"
 

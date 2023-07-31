@@ -7,10 +7,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.feed.binders.StoryCardBinder
-import com.saulhdev.feeder.feed.binders.TextCardBinder
-import com.saulhdev.feeder.feed.binders.TextCardWithActionsBinder
-import ua.itaysonlab.hfsdk.FeedItem
-import ua.itaysonlab.hfsdk.FeedItemType
+import com.saulhdev.feeder.sdk.FeedItem
 
 class FeedAdapter : RecyclerView.Adapter<FeedAdapter.FeedViewHolder>() {
     private var list = listOf<FeedItem>()
@@ -38,27 +35,14 @@ class FeedAdapter : RecyclerView.Adapter<FeedAdapter.FeedViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FeedViewHolder {
         if (!::layoutInflater.isInitialized) layoutInflater = LayoutInflater.from(parent.context)
 
-        val layoutResource = when (FeedItemType.values()[viewType]) {
-            FeedItemType.TEXT_CARD -> R.layout.notification_simple
-            FeedItemType.TEXT_CARD_ACTIONS -> R.layout.feed_card_text
-            FeedItemType.STORY_CARD -> R.layout.feed_card_story_large
-        }
+        val layoutResource = R.layout.feed_card_story_large
 
         return FeedViewHolder(viewType, layoutInflater.inflate(layoutResource, parent, false))
     }
 
     override fun onBindViewHolder(holder: FeedViewHolder, position: Int) {
         val item = list[position]
-        when (FeedItemType.values()[holder.type]) {
-            FeedItemType.TEXT_CARD -> TextCardBinder.bind(theme, item, holder.itemView)
-            FeedItemType.TEXT_CARD_ACTIONS -> TextCardWithActionsBinder.bind(
-                theme,
-                item,
-                holder.itemView
-            )
-
-            FeedItemType.STORY_CARD -> StoryCardBinder.bind(theme, item, holder.itemView)
-        }
+        StoryCardBinder.bind(theme, item, holder.itemView)
     }
 
     inner class FeedViewHolder(val type: Int, itemView: View) : RecyclerView.ViewHolder(itemView)

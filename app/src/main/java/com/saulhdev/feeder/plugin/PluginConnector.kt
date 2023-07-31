@@ -10,10 +10,10 @@ import android.os.Looper
 import android.util.Log
 import com.saulhdev.feeder.NFApplication
 import com.saulhdev.feeder.preference.FeedPreferences
-import ua.itaysonlab.hfsdk.FeedCategory
-import ua.itaysonlab.hfsdk.FeedItem
-import ua.itaysonlab.hfsdk.IFeedInterface
-import ua.itaysonlab.hfsdk.IFeedInterfaceCallback
+import com.saulhdev.feeder.sdk.FeedCategory
+import com.saulhdev.feeder.sdk.FeedItem
+import com.saulhdev.feeder.sdk.IFeedInterface
+import com.saulhdev.feeder.sdk.IFeedInterfaceCallback
 
 object PluginConnector {
     const val TAG = "PluginConnector"

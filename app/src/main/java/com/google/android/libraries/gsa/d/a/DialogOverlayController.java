@@ -4,7 +4,6 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Build.VERSION;
 import android.os.Bundle;
 import android.view.ActionMode;
 import android.view.ContextThemeWrapper;
@@ -35,13 +34,7 @@ class DialogOverlayController extends ContextThemeWrapper implements Callback, D
         this.window = dialog.getWindow();
         this.window.setCallback(this);
         Window window = this.window;
-        if (VERSION.SDK_INT >= 21) {
-            //window.setStatusBarColor(0);
-            //window.setNavigationBarColor(0);
-            window.addFlags(Integer.MIN_VALUE);
-        } else if (VERSION.SDK_INT >= 19) {
-            window.addFlags(201326592);
-        }
+        window.addFlags(Integer.MIN_VALUE);
     }
 
     void onBackPressed() {
