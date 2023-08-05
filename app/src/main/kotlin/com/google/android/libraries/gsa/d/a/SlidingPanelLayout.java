@@ -2,7 +2,6 @@ package com.google.android.libraries.gsa.d.a;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.os.Build.VERSION;
 import android.util.Property;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;

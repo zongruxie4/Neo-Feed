@@ -9,7 +9,6 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.util.SparseArray;
 
-import java.io.PrintWriter;
 import java.util.Arrays;
 
 public abstract class OverlaysController {

@@ -4,7 +4,6 @@ import android.os.IInterface;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.os.Parcelable.Creator;
-import java.util.HashMap;
 
 public class c {
     private c() {
