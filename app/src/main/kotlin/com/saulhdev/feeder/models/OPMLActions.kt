@@ -51,7 +51,7 @@ suspend fun importOpml(di: DI, uri: Uri) = withContext(Dispatchers.IO) {
     val db: NeoFeedDb by di.instance()
     try {
         val time = measureTimeMillis {
-            val parser = OpmlParser(OPMLToRoom(db))
+            val parser = OPMLParser(OPMLToRoom(db))
             val contentResolver: ContentResolver by di.instance()
             contentResolver.openInputStream(uri).use {
                 it?.let { stream ->
