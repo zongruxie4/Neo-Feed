@@ -2,7 +2,6 @@ package com.google.android.libraries.gsa.d.a;
 
 import android.app.Service;
 import android.content.Intent;
-import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Handler;
@@ -48,33 +47,14 @@ public abstract class OverlaysController {
                 if (packagesForUid == null || !Arrays.asList(packagesForUid).contains(host)) {
                     iBinder = null;
                 } else {
-                    try {
-                        int i2 = this.service.getPackageManager().getApplicationInfo(host, 0).flags;
-                        /*if ((i2 & 1) == 0 && (i2 & 2) == 0) {
-                            Log.e("OverlaySController", "Only system apps are allowed to connect");
-                            iBinder = null;
-                        } else {
-                            iBinder = this.clients.get(port);
-                            if (!(iBinder == null || iBinder.mServerVersion == parseInt)) {
-                                iBinder.destroy();
-                                iBinder = null;
-                            }
-                            if (iBinder == null) {
-                                iBinder = new OverlayControllerBinder(this, port, host, parseInt, i);
-                                this.clients.put(port, iBinder);
-                            }
-                        }*/
-                        iBinder = this.clients.get(port);
-                        if (!(iBinder == null || iBinder.mServerVersion == parseInt)) {
-                            iBinder.destroy();
-                            iBinder = null;
-                        }
-                        if (iBinder == null) {
-                            iBinder = new OverlayControllerBinder(this, port, host, parseInt, i);
-                            this.clients.put(port, iBinder);
-                        }
-                    } catch (NameNotFoundException e3) {
+                    iBinder = this.clients.get(port);
+                    if (!(iBinder == null || iBinder.mServerVersion == parseInt)) {
+                        iBinder.destroy();
                         iBinder = null;
+                    }
+                    if (iBinder == null) {
+                        iBinder = new OverlayControllerBinder(this, port, host, parseInt, i);
+                        this.clients.put(port, iBinder);
                     }
                 }
             }
@@ -92,30 +72,6 @@ public abstract class OverlaysController {
             this.clients.remove(port);
         }
     }
-
-    /*public final synchronized void dump(PrintWriter printWriter) {
-        printWriter.println("OverlayServiceController, num clients : " + this.clients.size());
-        for (int size = this.clients.size() - 1; size >= 0; size--) {
-            OverlayControllerBinder overlayControllerBinderVar = this.clients.valueAt(size);
-            if (overlayControllerBinderVar != null) {
-                printWriter.println("  dump of client " + size);
-                String str = "    ";
-                printWriter.println(str + "mCallerUid: " + overlayControllerBinderVar.mCallerUid);
-                printWriter.println(str + "mServerVersion: " + overlayControllerBinderVar.mServerVersion);
-                printWriter.println(str + "mClientVersion: " + overlayControllerBinderVar.mClientVersion);
-                String str2 = overlayControllerBinderVar.mPackageName;
-                printWriter.println(str + "mPackageName: " + str2);
-                printWriter.println(str + "mOptions: " + overlayControllerBinderVar.mOptions);
-                printWriter.println(str + "mLastAttachWasLandscape: " + overlayControllerBinderVar.mLastAttachWasLandscape);
-                BaseCallback baseCallbackVar = overlayControllerBinderVar.baseCallback;
-                if (baseCallbackVar != null) {
-                    baseCallbackVar.dump(printWriter, str);
-                }
-            } else {
-                printWriter.println("  null client: " + size);
-            }
-        }
-    }*/
 
     public final synchronized void onDestroy() {
         for (int size = this.clients.size() - 1; size >= 0; size--) {

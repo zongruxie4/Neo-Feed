@@ -38,29 +38,29 @@ final class OverlayControllerBinder extends LauncherOverlayInterfaceBinder imple
         }
     }
 
-    public final synchronized void cnK() {
+    public synchronized void cnK() {
         checkCallerId();
         Message.obtain(this.mainThreadHandler, 3).sendToTarget();
     }
 
-    public final synchronized void aL(float f) {
+    public synchronized void aL(float f) {
         checkCallerId();
         Message.obtain(this.mainThreadHandler, 4, f).sendToTarget();
     }
 
-    public final synchronized void cnL() {
+    public synchronized void cnL() {
         checkCallerId();
         Message.obtain(this.mainThreadHandler, 5).sendToTarget();
     }
 
-    public final synchronized void a(LayoutParams layoutParams, d dVar, int clientOptions) {
+    public synchronized void a(LayoutParams layoutParams, d dVar, int clientOptions) {
         Bundle bundle = new Bundle();
         bundle.putParcelable("layout_params", layoutParams);
         bundle.putInt("client_options", clientOptions);
         a(bundle, dVar);
     }
 
-    public final synchronized void a(Bundle bundle, d dVar) {
+    public synchronized void a(Bundle bundle, d dVar) {
         checkCallerId();
         this.overlaysController.handler.removeCallbacks(this);
         Configuration configuration = bundle.getParcelable("configuration");
@@ -69,13 +69,13 @@ final class OverlayControllerBinder extends LauncherOverlayInterfaceBinder imple
         Message.obtain(this.mainThreadHandler, 0, 1, 0, Pair.create(bundle, dVar)).sendToTarget();
     }
 
-    public final synchronized void od(boolean z) {
+    public synchronized void od(boolean z) {
         checkCallerId();
         Message.obtain(this.mainThreadHandler, 0, 0, 0).sendToTarget();
         this.overlaysController.handler.postDelayed(this, z ? 5000 : 0);
     }
 
-    public final synchronized void BJ(int i) {
+    public synchronized void BJ(int i) {
         checkCallerId();
         this.mainThreadHandler.removeMessages(1);
         if ((i & 2) == 0) {
@@ -85,7 +85,7 @@ final class OverlayControllerBinder extends LauncherOverlayInterfaceBinder imple
         }
     }
 
-    public final synchronized void onPause() {
+    public synchronized void onPause() {
         BJ(0);
     }
 
@@ -112,17 +112,17 @@ final class OverlayControllerBinder extends LauncherOverlayInterfaceBinder imple
         }
     }
 
-    public final synchronized void onResume() {
+    public synchronized void onResume() {
         BJ(3);
     }
 
-    public final synchronized void fI(int i) {
+    public synchronized void fI(int i) {
         checkCallerId();
         this.mainThreadHandler.removeMessages(6);
         Message.obtain(this.mainThreadHandler, 6, 0, i).sendToTarget();
     }
 
-    public final synchronized void BK(int i) {
+    public synchronized void BK(int i) {
         checkCallerId();
         this.mainThreadHandler.removeMessages(6);
         Message.obtain(this.mainThreadHandler, 6, 1, i).sendToTarget();
@@ -133,7 +133,7 @@ final class OverlayControllerBinder extends LauncherOverlayInterfaceBinder imple
         return true;
     }
 
-    public final synchronized void oe(boolean z) {
+    public synchronized void oe(boolean z) {
         int i = 0;
         synchronized (this) {
             checkCallerId();
@@ -146,15 +146,15 @@ final class OverlayControllerBinder extends LauncherOverlayInterfaceBinder imple
         }
     }
 
-    public final String HB() {
+    public String HB() {
         return this.overlaysController.HA().HB();
     }
 
-    public final boolean HC() {
+    public boolean HC() {
         return this.overlaysController.HA().HC();
     }
 
-    public final void run() {
+    public void run() {
         destroy();
     }
 

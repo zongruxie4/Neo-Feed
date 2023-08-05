@@ -8,11 +8,11 @@ final class SlidingPanelLayoutProperty extends Property {
         super(cls, str);
     }
 
-    public final /* synthetic */ Object get(Object obj) {
+    public Object get(Object obj) {
         return ((SlidingPanelLayout) obj).uoC;
     }
 
-    public final /* synthetic */ void set(Object obj, Object obj2) {
+    public void set(Object obj, Object obj2) {
         ((SlidingPanelLayout) obj).BM((Integer) obj2);
     }
 }
