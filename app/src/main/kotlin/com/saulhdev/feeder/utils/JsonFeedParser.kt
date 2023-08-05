@@ -1,4 +1,4 @@
-package com.saulhdev.jsonfeed
+package com.saulhdev.feeder.utils
 
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi

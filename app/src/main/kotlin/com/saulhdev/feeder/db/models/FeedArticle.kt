@@ -25,11 +25,11 @@ import androidx.room.ForeignKey.Companion.CASCADE
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.saulhdev.feeder.db.ID_UNSET
+import com.saulhdev.feeder.utils.Item
+import com.saulhdev.feeder.utils.JsonFeed
 import com.saulhdev.feeder.utils.relativeLinkIntoAbsolute
 import com.saulhdev.feeder.utils.sloppyLinkToStrictURL
 import com.saulhdev.feeder.views.HtmlToPlainTextConverter
-import com.saulhdev.jsonfeed.Item
-import com.saulhdev.jsonfeed.JsonFeed
 import org.threeten.bp.Instant
 import org.threeten.bp.ZoneOffset
 import org.threeten.bp.ZonedDateTime

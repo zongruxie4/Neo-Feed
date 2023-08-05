@@ -1,4 +1,4 @@
-package com.saulhdev.jsonfeed
+package com.saulhdev.feeder.utils
 
 import okhttp3.OkHttpClient
 import java.security.KeyManagementException

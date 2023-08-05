@@ -12,10 +12,6 @@ import com.rometools.rome.feed.synd.SyndEntry
 import com.rometools.rome.feed.synd.SyndFeed
 import com.rometools.rome.feed.synd.SyndPerson
 import com.saulhdev.feeder.views.HtmlToPlainTextConverter
-import com.saulhdev.jsonfeed.Attachment
-import com.saulhdev.jsonfeed.Author
-import com.saulhdev.jsonfeed.Item
-import com.saulhdev.jsonfeed.JsonFeed
 import org.jsoup.parser.Parser.unescapeEntities
 import org.threeten.bp.Instant
 import org.threeten.bp.ZoneOffset

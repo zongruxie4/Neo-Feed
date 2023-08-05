@@ -11,10 +11,10 @@ import com.saulhdev.feeder.models.FeedParser
 import com.saulhdev.feeder.models.getResponse
 import com.saulhdev.feeder.models.scheduleFullTextParse
 import com.saulhdev.feeder.preference.FeedPreferences
+import com.saulhdev.feeder.utils.JsonFeed
 import com.saulhdev.feeder.utils.blobFile
 import com.saulhdev.feeder.utils.blobOutputStream
 import com.saulhdev.feeder.utils.sloppyLinkToStrictURLNoThrows
-import com.saulhdev.jsonfeed.JsonFeed
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.asCoroutineDispatcher

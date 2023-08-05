@@ -3,12 +3,12 @@ package com.saulhdev.feeder.models
 import android.util.Log
 import com.rometools.rome.io.SyndFeedInput
 import com.rometools.rome.io.XmlReader
+import com.saulhdev.feeder.utils.JsonFeed
+import com.saulhdev.feeder.utils.JsonFeedParser
 import com.saulhdev.feeder.utils.asFeed
 import com.saulhdev.feeder.utils.relativeLinkIntoAbsolute
 import com.saulhdev.feeder.utils.relativeLinkIntoAbsoluteOrThrow
 import com.saulhdev.feeder.utils.sloppyLinkToStrictURL
-import com.saulhdev.jsonfeed.JsonFeed
-import com.saulhdev.jsonfeed.JsonFeedParser
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
 import okhttp3.CacheControl
