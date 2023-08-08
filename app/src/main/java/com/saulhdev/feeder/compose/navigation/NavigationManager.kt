@@ -58,7 +58,7 @@ fun NavigationManager(navController: NavHostController) {
             popExitTransition = { fadeOut() + slideOutHorizontally { it / 2 } },
         ) {
             preferenceGraph(route = "/", { PreferencesPage() }) { subRoute ->
-                preferenceGraph(route = subRoute(Routes.SETTINGS), { PreferencesPage() })
+                preferenceGraph(route = Routes.SETTINGS, { PreferencesPage() })
                 preferenceGraph(route = subRoute(Routes.SOURCES), { SourcesPage() })
                 preferenceGraph(route = subRoute(Routes.BOOKMARKS), { BookmarksPage() })
                 preferenceGraph(route = subRoute(Routes.OVERLAY), { OverlayPage() })
