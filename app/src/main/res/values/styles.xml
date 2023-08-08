@@ -31,7 +31,15 @@
 
     <style name="AppTheme" parent="HFBaseTheme">
         <item name="android:statusBarColor">?colorSurface</item>
-        <item name="android:windowLightStatusBar">@bool/isLight</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:navigationBarColor">@android:color/black</item>
+    </style>
+
+    <style name="AppTheme.Dark" parent="HFBaseTheme">
+        <item name="android:statusBarColor">?colorSurface</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowLightStatusBar">true</item>
         <item name="android:navigationBarColor">@android:color/black</item>
     </style>
 
@@ -41,7 +49,7 @@
 
     <style name="WindowTheme" parent="Theme.MaterialComponents.DayNight">
         <item name="android:windowBackground">@android:color/transparent</item>
-        <item name="android:statusBarColor">@android:color/transparent</item>
+        <!--<item name="android:statusBarColor">@android:color/transparent</item>-->
         <item name="android:navigationBarColor">@android:color/transparent</item>
 
         <item name="android:backgroundDimEnabled">false</item>
