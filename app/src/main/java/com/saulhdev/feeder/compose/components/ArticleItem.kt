@@ -41,7 +41,6 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.saulhdev.feeder.db.ArticleRepository
-import com.saulhdev.feeder.models.StoryCardContent
 import com.saulhdev.feeder.sdk.FeedItem
 import com.saulhdev.feeder.utils.RelativeTimeHelper
 import kotlinx.coroutines.launch
@@ -50,7 +49,7 @@ import kotlinx.coroutines.launch
 fun ArticleItem(
     article: FeedItem, repository: ArticleRepository
 ) {
-    val content = article.content as StoryCardContent
+    val content = article.content
     Card(
         modifier = Modifier
             .background(MaterialTheme.colorScheme.surface)
