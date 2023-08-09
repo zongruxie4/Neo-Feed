@@ -53,9 +53,12 @@ import com.saulhdev.feeder.db.ArticleRepository
 import com.saulhdev.feeder.models.exportOpml
 import com.saulhdev.feeder.models.importOpml
 import com.saulhdev.feeder.plugin.PluginConnector
+import com.saulhdev.feeder.preference.FeedPreferences
 import com.saulhdev.feeder.sdk.FeedItem
 import com.saulhdev.feeder.sync.SyncRestClient
 import com.saulhdev.feeder.utils.ApplicationCoroutineScope
+import com.saulhdev.feeder.utils.launchView
+import com.saulhdev.feeder.utils.urlEncode
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -76,6 +79,7 @@ fun OverlayPage() {
     val repository = ArticleRepository(context)
     val scope = CoroutineScope(Dispatchers.IO) + CoroutineName("NeoFeedSync")
     val feedList: SnapshotStateList<FeedItem> = remember { mutableStateListOf() }
+    val prefs = FeedPreferences.getInstance(context)
 
     LaunchedEffect(key1 = true) {
         scope.launch {
@@ -217,7 +221,17 @@ fun OverlayPage() {
                 ArticleItem(
                     article = item,
                     repository = repository
-                )
+                ) {
+                    if (prefs.openInBrowser.getValue()) {
+                        context.launchView(item.content.link)
+                    } else {
+                        if (prefs.offlineReader.getValue()) {
+                            navController.navigate("/${Routes.ARTICLE_VIEW}/${item.id}/")
+                        } else {
+                            navController.navigate("/${Routes.WEB_VIEW}/${item.content.link.urlEncode()}/")
+                        }
+                    }
+                }
                 Spacer(modifier = Modifier.height(8.dp))
             }
         }
