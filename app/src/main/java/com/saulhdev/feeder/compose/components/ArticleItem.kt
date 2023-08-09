@@ -1,5 +1,6 @@
 package com.saulhdev.feeder.compose.components
 
+import android.content.Intent
 import android.text.Html
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
@@ -47,14 +48,22 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun ArticleItem(
-    article: FeedItem, repository: ArticleRepository
+    article: FeedItem,
+    repository: ArticleRepository,
+    onClick: () -> Unit
 ) {
     val content = article.content
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+
     Card(
         modifier = Modifier
             .background(MaterialTheme.colorScheme.surface)
             .clip(RoundedCornerShape(16.dp))
             .fillMaxWidth()
+            .clickable {
+                onClick()
+            }
     ) {
         Column {
             if (
@@ -132,9 +141,28 @@ fun ArticleItem(
                         .padding(end = 8.dp)
                 ) {
                     Row {
-                        FavoriteButton(article.id, repository)
+                        var bookmarked by remember { mutableStateOf(false) }
+
+                        FavoriteButton(bookmarked = bookmarked) {
+                            scope.launch {
+                                repository.bookmarkArticle(article.id, !bookmarked)
+                                bookmarked = !bookmarked
+                            }
+                        }
+
                         Spacer(modifier = Modifier.size(8.dp))
-                        ShareButton()
+
+                        ShareButton {
+                            val intent = Intent.createChooser(
+                                Intent(Intent.ACTION_SEND).apply {
+                                    putExtra(Intent.EXTRA_TEXT, content.link)
+                                    putExtra(Intent.EXTRA_TITLE, content.title)
+                                    type = "text/plain"
+                                },
+                                null,
+                            )
+                            context.startActivity(intent)
+                        }
                     }
                 }
             }
@@ -143,11 +171,9 @@ fun ArticleItem(
 }
 
 @Composable
-fun FavoriteButton(articleId: Long, repository: ArticleRepository) {
+fun FavoriteButton(bookmarked: Boolean, onClick: () -> Unit) {
     val interactionSource = remember { MutableInteractionSource() }
     val coroutineScope = rememberCoroutineScope()
-
-    var bookmarked by remember { mutableStateOf(false) }
 
     val scale = remember {
         Animatable(1f)
@@ -173,21 +199,18 @@ fun FavoriteButton(articleId: Long, repository: ArticleRepository) {
                         1f,
                         animationSpec = tween(100),
                     )
-                    repository.bookmarkArticle(articleId, !bookmarked)
-                    bookmarked = !bookmarked
+                    onClick()
                 }
             }
     )
 }
 
 @Composable
-fun ShareButton() {
+fun ShareButton(onClick: () -> Unit) {
     val coroutineScope = rememberCoroutineScope()
-
     val scale = remember {
         Animatable(1f)
     }
-
     Icon(
         imageVector = Icons.Outlined.Share,
         contentDescription = "Share feed",
@@ -203,6 +226,7 @@ fun ShareButton() {
                         1f,
                         animationSpec = tween(100),
                     )
+                    onClick()
                 }
             }
     )
