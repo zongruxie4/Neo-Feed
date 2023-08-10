@@ -5,9 +5,9 @@ import android.text.Html
 import android.util.SparseIntArray
 import android.view.View
 import coil.load
-import com.google.android.material.button.MaterialButton
 import com.saulhdev.feeder.MainActivity
 import com.saulhdev.feeder.R
+import com.saulhdev.feeder.compose.pages.openLinkInCustomTab
 import com.saulhdev.feeder.databinding.FeedCardStoryLargeBinding
 import com.saulhdev.feeder.db.ArticleRepository
 import com.saulhdev.feeder.preference.FeedPreferences
@@ -16,7 +16,6 @@ import com.saulhdev.feeder.theme.Theming
 import com.saulhdev.feeder.utils.RelativeTimeHelper
 import com.saulhdev.feeder.utils.isDark
 import com.saulhdev.feeder.utils.launchView
-import com.saulhdev.feeder.utils.urlEncode
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -77,6 +76,11 @@ object StoryCardBinder : FeedBinder {
                 view.context.launchView(content.link)
             } else {
                 val scope = CoroutineScope(Dispatchers.Main)
+                val toolbarColor = if (Build.VERSION.SDK_INT > 30) {
+                    context.getColor(com.google.android.material.R.color.m3_sys_color_dynamic_primary_fixed)
+                } else {
+                    context.getColor(R.color.textColorPrimary)
+                }
 
                 scope.launch {
                     if (prefs.offlineReader.getValue()) {
@@ -87,11 +91,10 @@ object StoryCardBinder : FeedBinder {
                             )
                         )
                     } else {
-                        view.context.startActivity(
-                            MainActivity.createIntent(
-                                view.context,
-                                "web_view/${content.link.urlEncode()}/"
-                            )
+                        openLinkInCustomTab(
+                            context,
+                            item.content.link,
+                            toolbarColor
                         )
                     }
                 }
@@ -107,23 +110,5 @@ object StoryCardBinder : FeedBinder {
         binding.storySource.setTextColor(themeCard.get(Theming.Colors.TEXT_COLOR_SECONDARY.ordinal))
         binding.storyDate.setTextColor(themeCard.get(Theming.Colors.TEXT_COLOR_SECONDARY.ordinal))
         binding.storySummary.setTextColor(themeCard.get(Theming.Colors.TEXT_COLOR_SECONDARY.ordinal))
-    }
-
-    private fun MaterialButton.updateBookmark(bookmarked: Boolean) = if (bookmarked) {
-        text = context.getString(R.string.bookmark_remove)
-        setIconResource(R.drawable.ic_trash_simple)
-        if (Build.VERSION.SDK_INT > 30) {
-            setBackgroundColor(context.getColor(com.google.android.material.R.color.m3_sys_color_secondary_fixed))
-        } else {
-            setBackgroundColor(context.getColor(R.color.colorSecondary))
-        }
-    } else {
-        text = context.getString(R.string.bookmark)
-        setIconResource(R.drawable.ic_archive_tray)
-        if (Build.VERSION.SDK_INT > 30) {
-            setBackgroundColor(context.getColor(com.google.android.material.R.color.m3_sys_color_dynamic_primary_fixed))
-        } else {
-            setBackgroundColor(context.getColor(R.color.textColorPrimary))
-        }
     }
 }

@@ -18,8 +18,15 @@
 
 package com.saulhdev.feeder.compose.pages
 
+import android.content.ActivityNotFoundException
+import android.content.Context
+import android.net.Uri
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.ColorInt
+import androidx.browser.customtabs.CustomTabColorSchemeParams
+import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -28,6 +35,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -35,6 +43,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -58,7 +67,6 @@ import com.saulhdev.feeder.sdk.FeedItem
 import com.saulhdev.feeder.sync.SyncRestClient
 import com.saulhdev.feeder.utils.ApplicationCoroutineScope
 import com.saulhdev.feeder.utils.launchView
-import com.saulhdev.feeder.utils.urlEncode
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -218,6 +226,7 @@ fun OverlayPage() {
         ) {
             items(feedList.size) { index ->
                 val item = feedList[index]
+                val toolbarColor = MaterialTheme.colorScheme.surface.toArgb()
                 ArticleItem(
                     article = item,
                     repository = repository
@@ -228,7 +237,11 @@ fun OverlayPage() {
                         if (prefs.offlineReader.getValue()) {
                             navController.navigate("/${Routes.ARTICLE_VIEW}/${item.id}/")
                         } else {
-                            navController.navigate("/${Routes.WEB_VIEW}/${item.content.link.urlEncode()}/")
+                            openLinkInCustomTab(
+                                context,
+                                item.content.link,
+                                toolbarColor
+                            )
                         }
                     }
                 }
@@ -236,4 +249,26 @@ fun OverlayPage() {
             }
         }
     }
+}
+
+fun openLinkInCustomTab(
+    context: Context,
+    link: String,
+    @ColorInt toolbarColor: Int,
+): Boolean {
+    try {
+        val colorParams = CustomTabColorSchemeParams.Builder()
+            .setToolbarColor(toolbarColor)
+            .build()
+
+        val intent = CustomTabsIntent.Builder()
+            .setColorSchemeParams(CustomTabsIntent.COLOR_SCHEME_DARK, colorParams)
+            .setShareState(CustomTabsIntent.SHARE_STATE_ON)
+            .build()
+        intent.launchUrl(context, Uri.parse(link))
+    } catch (e: ActivityNotFoundException) {
+        Toast.makeText(context, R.string.app_name, Toast.LENGTH_SHORT).show()
+        return false
+    }
+    return true
 }

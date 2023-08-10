@@ -22,9 +22,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -35,7 +37,6 @@ import com.saulhdev.feeder.compose.components.ViewWithActionBar
 import com.saulhdev.feeder.db.ArticleRepository
 import com.saulhdev.feeder.preference.FeedPreferences
 import com.saulhdev.feeder.utils.launchView
-import com.saulhdev.feeder.utils.urlEncode
 import kotlinx.coroutines.launch
 
 @Composable
@@ -49,6 +50,7 @@ fun BookmarksPage() {
     ViewWithActionBar(
         title = stringResource(id = R.string.title_bookmarks),
     ) { paddingValues ->
+        val toolbarColor = MaterialTheme.colorScheme.primary.toArgb()
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(4.dp),
             contentPadding = PaddingValues(
@@ -75,11 +77,10 @@ fun BookmarksPage() {
                                         )
                                     )
                                 } else {
-                                    context.startActivity(
-                                        MainActivity.createIntent(
-                                            context,
-                                            "web_view/${article.link?.urlEncode()}/"
-                                        )
+                                    openLinkInCustomTab(
+                                        context,
+                                        article.link!!,
+                                        toolbarColor
                                     )
                                 }
                             }

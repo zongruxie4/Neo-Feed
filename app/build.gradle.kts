@@ -171,6 +171,7 @@ dependencies {
     implementation("androidx.room:room-runtime:$vRoom")
     implementation("androidx.room:room-ktx:$vRoom")
     implementation("androidx.room:room-paging:$vRoom")
+    implementation("androidx.browser:browser:1.5.0")
     kapt("androidx.room:room-compiler:$vRoom")
 
     //Squareup
