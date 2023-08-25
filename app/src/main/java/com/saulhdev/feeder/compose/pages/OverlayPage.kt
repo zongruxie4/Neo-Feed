@@ -20,6 +20,7 @@ package com.saulhdev.feeder.compose.pages
 
 import android.content.ActivityNotFoundException
 import android.content.Context
+import android.graphics.Color
 import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -35,7 +36,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -43,11 +43,11 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import com.saulhdev.feeder.NFApplication
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.compose.components.ArticleItem
@@ -75,6 +75,7 @@ import kotlinx.coroutines.plus
 import org.kodein.di.compose.LocalDI
 import org.kodein.di.instance
 import java.time.LocalDateTime
+
 
 @Composable
 fun OverlayPage() {
@@ -226,7 +227,6 @@ fun OverlayPage() {
         ) {
             items(feedList.size) { index ->
                 val item = feedList[index]
-                val toolbarColor = MaterialTheme.colorScheme.surface.toArgb()
                 ArticleItem(
                     article = item,
                     repository = repository
@@ -239,8 +239,7 @@ fun OverlayPage() {
                         } else {
                             openLinkInCustomTab(
                                 context,
-                                item.content.link,
-                                toolbarColor
+                                item.content.link
                             )
                         }
                     }
@@ -253,17 +252,30 @@ fun OverlayPage() {
 
 fun openLinkInCustomTab(
     context: Context,
-    link: String,
-    @ColorInt toolbarColor: Int,
+    link: String
 ): Boolean {
+    @ColorInt val colorPrimaryLight =
+        ContextCompat.getColor(context, R.color.md_theme_light_primary)
+    @ColorInt val colorPrimaryDark =
+        ContextCompat.getColor(context, R.color.md_theme_light_primary)
     try {
         val colorParams = CustomTabColorSchemeParams.Builder()
-            .setToolbarColor(toolbarColor)
+            .setSecondaryToolbarColor(Color.BLACK)
+            .setToolbarColor(colorPrimaryLight)
             .build()
 
         val intent = CustomTabsIntent.Builder()
-            .setColorSchemeParams(CustomTabsIntent.COLOR_SCHEME_DARK, colorParams)
             .setShareState(CustomTabsIntent.SHARE_STATE_ON)
+            .setDefaultColorSchemeParams(
+                CustomTabColorSchemeParams.Builder()
+                    .setToolbarColor(colorPrimaryLight)
+                    .build()
+            )
+            .setColorSchemeParams(
+                CustomTabsIntent.COLOR_SCHEME_DARK, CustomTabColorSchemeParams.Builder()
+                    .setToolbarColor(colorPrimaryDark)
+                    .build()
+            )
             .build()
         intent.launchUrl(context, Uri.parse(link))
     } catch (e: ActivityNotFoundException) {

@@ -1,6 +1,5 @@
 package com.saulhdev.feeder.feed.binders
 
-import android.os.Build
 import android.text.Html
 import android.util.SparseIntArray
 import android.view.View
@@ -76,11 +75,6 @@ object StoryCardBinder : FeedBinder {
                 view.context.launchView(content.link)
             } else {
                 val scope = CoroutineScope(Dispatchers.Main)
-                val toolbarColor = if (Build.VERSION.SDK_INT > 30) {
-                    context.getColor(com.google.android.material.R.color.m3_sys_color_dynamic_primary_fixed)
-                } else {
-                    context.getColor(R.color.textColorPrimary)
-                }
 
                 scope.launch {
                     if (prefs.offlineReader.getValue()) {
@@ -93,8 +87,7 @@ object StoryCardBinder : FeedBinder {
                     } else {
                         openLinkInCustomTab(
                             context,
-                            item.content.link,
-                            toolbarColor
+                            item.content.link
                         )
                     }
                 }

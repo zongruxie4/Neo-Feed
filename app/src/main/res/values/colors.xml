@@ -18,6 +18,9 @@
     <color name="text_color_primary_dark">#ffffff</color>
     <color name="text_color_secondary">#a0000000</color>
     <color name="text_color_secondary_dark">#a0FFFFFF</color>
+    <color name="md_theme_light_primary">#6750A4</color>
+    <color name="md_theme_dark_primary">#D0BCFF</color>
+
 
     <color name="remove_bg_color">#ff453a</color>
     <color name="ic_launcher_background">#F9FCF6</color>
