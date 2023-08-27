@@ -1,5 +1,6 @@
 package com.saulhdev.feeder.feed.binders
 
+import android.content.Intent
 import android.text.Html
 import android.util.SparseIntArray
 import android.view.View
@@ -9,6 +10,7 @@ import com.saulhdev.feeder.R
 import com.saulhdev.feeder.compose.pages.openLinkInCustomTab
 import com.saulhdev.feeder.databinding.FeedCardStoryLargeBinding
 import com.saulhdev.feeder.db.ArticleRepository
+import com.saulhdev.feeder.db.ID_UNSET
 import com.saulhdev.feeder.preference.FeedPreferences
 import com.saulhdev.feeder.sdk.FeedItem
 import com.saulhdev.feeder.theme.Theming
@@ -66,6 +68,22 @@ object StoryCardBinder : FeedBinder {
                     binding.saveButton.setImageResource(R.drawable.ic_heart_fill)
                 } else {
                     binding.saveButton.setImageResource(R.drawable.ic_heart)
+                }
+            }
+        }
+
+        binding.shareButton.setOnClickListener {
+            CoroutineScope(Dispatchers.Main).launch {
+                if (item.id > ID_UNSET) {
+                    val intent = Intent.createChooser(
+                        Intent(Intent.ACTION_SEND).apply {
+                            putExtra(Intent.EXTRA_TEXT, item.content.link)
+                            putExtra(Intent.EXTRA_TITLE, item.title)
+                            type = "text/plain"
+                        },
+                        null
+                    )
+                    context.startActivity(intent)
                 }
             }
         }

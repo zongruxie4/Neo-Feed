@@ -92,19 +92,34 @@
                     android:id="@+id/actions"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
+                    android:layout_marginEnd="4dp"
                     android:gravity="end"
-                    android:layout_weight="3"
+                    android:layout_weight="2"
                     android:orientation="horizontal">
 
                     <ImageButton
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
                         android:src="@drawable/ic_heart_fill"
-                        android:layout_gravity="center"
                         android:id="@+id/save_button"
+                        android:padding="8dp"
                         android:scaleType="fitCenter"
-                        android:background="@color/transparent" />
+                        android:contentDescription="@string/title_bookmarks"
+                        android:background="@drawable/ic_filter_state" />
+
+                    <Space
+                        android:layout_width="8dp"
+                        android:layout_height="match_parent" />
+
+                    <ImageButton
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/ic_share"
+                        android:id="@+id/share_button"
+                        android:padding="8dp"
+                        android:scaleType="center"
+                        android:contentDescription="@string/share"
+                        android:background="@drawable/ic_filter_state" />
 
                 </androidx.appcompat.widget.LinearLayoutCompat>
             </androidx.appcompat.widget.LinearLayoutCompat>
