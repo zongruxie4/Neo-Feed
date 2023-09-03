@@ -18,64 +18,68 @@
 
 package com.saulhdev.feeder.compose.pages
 
-import android.content.ActivityNotFoundException
-import android.content.Context
-import android.graphics.Color
-import android.net.Uri
-import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.ColorInt
-import androidx.browser.customtabs.CustomTabColorSchemeParams
-import androidx.browser.customtabs.CustomTabsIntent
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Divider
+import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
+import androidx.compose.ui.unit.sp
 import com.saulhdev.feeder.NFApplication
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.compose.components.ArticleItem
-import com.saulhdev.feeder.compose.components.OverflowMenu
-import com.saulhdev.feeder.compose.components.ViewWithActionBar
-import com.saulhdev.feeder.compose.icon.Phosphor
-import com.saulhdev.feeder.compose.icon.phosphor.CloudArrowDown
-import com.saulhdev.feeder.compose.icon.phosphor.CloudArrowUp
 import com.saulhdev.feeder.compose.navigation.LocalNavController
 import com.saulhdev.feeder.compose.navigation.Routes
 import com.saulhdev.feeder.db.ArticleRepository
+import com.saulhdev.feeder.icon.Phosphor
+import com.saulhdev.feeder.icon.phosphor.CloudArrowDown
+import com.saulhdev.feeder.icon.phosphor.CloudArrowUp
+import com.saulhdev.feeder.icon.phosphor.GearSix
+import com.saulhdev.feeder.icon.phosphor.Nut
 import com.saulhdev.feeder.models.exportOpml
 import com.saulhdev.feeder.models.importOpml
 import com.saulhdev.feeder.plugin.PluginConnector
 import com.saulhdev.feeder.preference.FeedPreferences
 import com.saulhdev.feeder.sdk.FeedItem
 import com.saulhdev.feeder.sync.SyncRestClient
-import com.saulhdev.feeder.utils.ApplicationCoroutineScope
 import com.saulhdev.feeder.utils.launchView
+import com.saulhdev.feeder.utils.openLinkInCustomTab
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 import org.kodein.di.compose.LocalDI
-import org.kodein.di.instance
 import java.time.LocalDateTime
-
 
 @Composable
 fun OverlayPage() {
@@ -87,7 +91,11 @@ fun OverlayPage() {
     val articles = SyncRestClient(context)
     val repository = ArticleRepository(context)
     val scope = CoroutineScope(Dispatchers.IO) + CoroutineName("NeoFeedSync")
-    val feedList: SnapshotStateList<FeedItem> = remember { mutableStateListOf() }
+    val feedList: MutableList<FeedItem> = remember { mutableStateListOf() }
+    var list = remember {
+        mutableListOf(feedList)
+    }
+
     val prefs = FeedPreferences.getInstance(context)
 
     LaunchedEffect(key1 = true) {
@@ -96,7 +104,6 @@ fun OverlayPage() {
             for (feed in feeds) {
                 articles.getArticleList(feed)
             }
-
             PluginConnector.getFeedAsItLoads(0, { feed ->
                 feedList.addAll(feed)
             }) {
@@ -109,8 +116,7 @@ fun OverlayPage() {
         ActivityResultContracts.OpenDocument()
     ) { uri ->
         if (uri != null) {
-            val applicationCoroutineScope: ApplicationCoroutineScope by di.instance()
-            applicationCoroutineScope.launch {
+            scope.launch {
                 importOpml(di, uri)
             }
         }
@@ -120,111 +126,149 @@ fun OverlayPage() {
         ActivityResultContracts.CreateDocument("application/xml")
     ) { uri ->
         if (uri != null) {
-            val applicationCoroutineScope: ApplicationCoroutineScope by di.instance()
-            applicationCoroutineScope.launch {
+            scope.launch {
                 exportOpml(di, uri)
             }
         }
     }
 
-    ViewWithActionBar(
-        title = stringResource(id = R.string.app_name),
-        floatingActionButton = { },
-        showBackButton = false,
-        actions = {
-            OverflowMenu {
-                DropdownMenuItem(
-                    text = {
-                        Text(text = stringResource(id = R.string.action_reload))
-                    },
-                    onClick = {
-                        hideMenu()
-                        //refreshFeed()
-                    },
-                    leadingIcon = {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_replay_24),
-                            contentDescription = null,
-                        )
-                    }
-                )
-                Divider()
-                DropdownMenuItem(
-                    text = {
-                        Text(text = stringResource(id = R.string.sources_import_opml))
-                    },
-                    onClick = {
-                        hideMenu()
-                        opmlImporter.launch(arrayOf("text/plain", "text/xml", "text/opml", "*/*"))
-                    },
-                    leadingIcon = {
-                        Icon(
-                            Phosphor.CloudArrowDown,
-                            contentDescription = null,
-                        )
-                    }
-                )
-                DropdownMenuItem(
-                    text = {
-                        Text(text = stringResource(id = R.string.sources_export_opml))
-                    },
-                    onClick = {
-                        hideMenu()
-                        opmlExporter.launch("NF-${localTime}.opml")
-                    },
-                    leadingIcon = {
-                        Icon(
-                            Phosphor.CloudArrowUp,
-                            contentDescription = null,
-                        )
-                    }
-                )
-                Divider()
-
-                DropdownMenuItem(
-                    text = {
-                        Text(text = stringResource(id = R.string.title_settings))
-                    },
-                    onClick = {
-                        hideMenu()
-                        navController.navigate(Routes.SETTINGS)
-                    },
-                    leadingIcon = {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_settings_outline_28),
-                            contentDescription = null,
-                        )
-                    }
-                )
-
-                DropdownMenuItem(
-                    text = {
-                        Text(text = stringResource(id = R.string.action_restart))
-                    },
-                    onClick = {
-                        hideMenu()
-                        NFApplication.instance.restart(false)
-                    },
-                    leadingIcon = {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_restart),
-                            contentDescription = null,
-                        )
-                    }
-                )
-            }
-        }
-    ) { paddingValues ->
+    Column {
+        var showMenu by remember { mutableStateOf(false) }
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(
-                    top = paddingValues.calculateTopPadding(),
-                    bottom = paddingValues.calculateBottomPadding(),
                     start = 8.dp,
                     end = 8.dp
                 )
         ) {
+            item {
+                Row(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(all = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.app_name),
+                        modifier = Modifier.padding(start = 4.dp),
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    Spacer(modifier = Modifier.weight(1f))
+                    IconButton(
+                        modifier = Modifier
+                            .size(size = 40.dp)
+                            .clip(CircleShape),
+                        onClick = {
+                            showMenu = true
+                        }
+
+                    ) {
+                        Icon(
+                            imageVector = Phosphor.Nut,
+                            contentDescription = "Settings",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+
+                        // OverflowMenu
+                        DropdownMenu(
+                            expanded = showMenu,
+                            onDismissRequest = { showMenu = false }
+                        ) {
+                            DropdownMenuItem(
+                                text = {
+                                    Text(text = stringResource(id = R.string.action_reload))
+                                },
+                                onClick = {
+                                    showMenu = false
+                                },
+                                leadingIcon = {
+                                    Icon(
+                                        imageVector = Icons.Filled.Refresh,
+                                        contentDescription = null,
+                                    )
+                                }
+                            )
+                            Divider()
+                            DropdownMenuItem(
+                                text = {
+                                    Text(text = stringResource(id = R.string.sources_import_opml))
+                                },
+                                onClick = {
+                                    showMenu = false
+                                    opmlImporter.launch(
+                                        arrayOf(
+                                            "text/plain",
+                                            "text/xml",
+                                            "text/opml",
+                                            ""
+                                        )
+                                    )
+                                },
+                                leadingIcon = {
+                                    Icon(
+                                        imageVector = Phosphor.CloudArrowDown,
+                                        contentDescription = null,
+                                    )
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = {
+                                    Text(text = stringResource(id = R.string.sources_export_opml))
+                                },
+                                onClick = {
+                                    showMenu = false
+                                    opmlExporter.launch("NF-${localTime}.opml")
+                                },
+                                leadingIcon = {
+                                    Icon(
+                                        imageVector = Phosphor.CloudArrowUp,
+                                        contentDescription = null,
+                                    )
+                                }
+                            )
+                            Divider()
+
+                            DropdownMenuItem(
+                                text = {
+                                    Text(text = stringResource(id = R.string.title_settings))
+                                },
+                                onClick = {
+                                    showMenu = false
+                                    navController.navigate(Routes.SETTINGS)
+                                },
+                                leadingIcon = {
+                                    Icon(
+                                        imageVector = Phosphor.GearSix,
+                                        contentDescription = null,
+                                    )
+                                }
+                            )
+
+                            DropdownMenuItem(
+                                text = {
+                                    Text(text = stringResource(id = R.string.action_restart))
+                                },
+                                onClick = {
+                                    showMenu = false
+                                    NFApplication.instance.restart(false)
+                                },
+                                leadingIcon = {
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.ic_restart),
+                                        contentDescription = null,
+                                    )
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+
+            // sort list ascending by time
+            feedList.sortedByDescending { it.time }
             items(feedList.size) { index ->
                 val item = feedList[index]
                 ArticleItem(
@@ -248,39 +292,4 @@ fun OverlayPage() {
             }
         }
     }
-}
-
-fun openLinkInCustomTab(
-    context: Context,
-    link: String
-): Boolean {
-    @ColorInt val colorPrimaryLight =
-        ContextCompat.getColor(context, R.color.md_theme_light_primary)
-    @ColorInt val colorPrimaryDark =
-        ContextCompat.getColor(context, R.color.md_theme_light_primary)
-    try {
-        val colorParams = CustomTabColorSchemeParams.Builder()
-            .setSecondaryToolbarColor(Color.BLACK)
-            .setToolbarColor(colorPrimaryLight)
-            .build()
-
-        val intent = CustomTabsIntent.Builder()
-            .setShareState(CustomTabsIntent.SHARE_STATE_ON)
-            .setDefaultColorSchemeParams(
-                CustomTabColorSchemeParams.Builder()
-                    .setToolbarColor(colorPrimaryLight)
-                    .build()
-            )
-            .setColorSchemeParams(
-                CustomTabsIntent.COLOR_SCHEME_DARK, CustomTabColorSchemeParams.Builder()
-                    .setToolbarColor(colorPrimaryDark)
-                    .build()
-            )
-            .build()
-        intent.launchUrl(context, Uri.parse(link))
-    } catch (e: ActivityNotFoundException) {
-        Toast.makeText(context, R.string.app_name, Toast.LENGTH_SHORT).show()
-        return false
-    }
-    return true
 }

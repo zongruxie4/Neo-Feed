@@ -121,9 +121,6 @@ data class FeedArticle(
         primarySortTime = minOf(firstSyncedTime, pubDate?.toInstant() ?: firstSyncedTime)
     }
 
-    val pubDateString: String?
-        get() = pubDate?.toString()
-
     val enclosureFilename: String?
         get() {
             enclosureLink?.let { enclosureLink ->

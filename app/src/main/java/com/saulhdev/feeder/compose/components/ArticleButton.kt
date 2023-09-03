@@ -66,7 +66,7 @@ fun FavoriteButton(bookmarked: Boolean, onClick: () -> Unit) {
     ) {
         Icon(
             imageVector = Icons.Outlined.Favorite,
-            contentDescription = "Like the product",
+            contentDescription = " ",
             tint = if (bookmarked) Color.Red else Color.LightGray,
             modifier = Modifier
                 .scale(scale = scale.value)

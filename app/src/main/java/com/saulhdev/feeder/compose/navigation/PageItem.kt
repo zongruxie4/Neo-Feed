@@ -3,9 +3,9 @@ package com.saulhdev.feeder.compose.navigation
 import androidx.annotation.StringRes
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.saulhdev.feeder.R
-import com.saulhdev.feeder.compose.icon.Phosphor
-import com.saulhdev.feeder.compose.icon.phosphor.Copyleft
-import com.saulhdev.feeder.compose.icon.phosphor.ListDashes
+import com.saulhdev.feeder.icon.Phosphor
+import com.saulhdev.feeder.icon.phosphor.Copyleft
+import com.saulhdev.feeder.icon.phosphor.ListDashes
 
 open class PageItem(
     @StringRes val titleId: Int,

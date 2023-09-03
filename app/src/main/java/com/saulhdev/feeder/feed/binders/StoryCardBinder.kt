@@ -7,7 +7,6 @@ import android.view.View
 import coil.load
 import com.saulhdev.feeder.MainActivity
 import com.saulhdev.feeder.R
-import com.saulhdev.feeder.compose.pages.openLinkInCustomTab
 import com.saulhdev.feeder.databinding.FeedCardStoryLargeBinding
 import com.saulhdev.feeder.db.ArticleRepository
 import com.saulhdev.feeder.db.ID_UNSET
@@ -17,6 +16,7 @@ import com.saulhdev.feeder.theme.Theming
 import com.saulhdev.feeder.utils.RelativeTimeHelper
 import com.saulhdev.feeder.utils.isDark
 import com.saulhdev.feeder.utils.launchView
+import com.saulhdev.feeder.utils.openLinkInCustomTab
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

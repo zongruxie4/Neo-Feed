@@ -37,11 +37,10 @@ import com.saulhdev.feeder.R
 import com.saulhdev.feeder.compose.components.RoundButton
 import com.saulhdev.feeder.compose.components.ViewWithActionBar
 import com.saulhdev.feeder.compose.components.WithBidiDeterminedLayoutDirection
-import com.saulhdev.feeder.compose.icon.Phosphor
-import com.saulhdev.feeder.compose.icon.phosphor.ArrowSquareOut
-import com.saulhdev.feeder.compose.icon.phosphor.ShareNetwork
 import com.saulhdev.feeder.compose.navigation.preferenceGraph
 import com.saulhdev.feeder.db.ArticleRepository
+import com.saulhdev.feeder.icon.phosphor.ArrowSquareOut
+import com.saulhdev.feeder.icon.phosphor.ShareNetwork
 import com.saulhdev.feeder.theme.LinkTextStyle
 import com.saulhdev.feeder.utils.blobFile
 import com.saulhdev.feeder.utils.blobFullFile
@@ -117,13 +116,13 @@ fun ArticleScreen(articleId: Long) {
         showBackButton = true,
         actions = {
             RoundButton(
-                icon = Phosphor.ArrowSquareOut,
+                icon = com.saulhdev.feeder.icon.Phosphor.ArrowSquareOut,
                 description = stringResource(id = R.string.pref_browser_theme),
             ) {
                 context.launchView(currentUrl)
             }
             RoundButton(
-                icon = Phosphor.ShareNetwork,
+                icon = com.saulhdev.feeder.icon.Phosphor.ShareNetwork,
                 description = stringResource(id = R.string.share),
             ) {
                 context.shareIntent(currentUrl, title.value)

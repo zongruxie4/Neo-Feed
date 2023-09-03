@@ -35,6 +35,7 @@ import com.saulhdev.feeder.compose.components.ViewWithActionBar
 import com.saulhdev.feeder.db.ArticleRepository
 import com.saulhdev.feeder.preference.FeedPreferences
 import com.saulhdev.feeder.utils.launchView
+import com.saulhdev.feeder.utils.openLinkInCustomTab
 import kotlinx.coroutines.launch
 
 @Composable

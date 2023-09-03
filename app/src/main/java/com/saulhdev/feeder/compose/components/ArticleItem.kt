@@ -2,11 +2,8 @@ package com.saulhdev.feeder.compose.components
 
 import android.content.Intent
 import android.text.Html
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -15,11 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Favorite
-import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.Card
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,10 +24,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.PlatformTextStyle
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -66,10 +59,8 @@ fun ArticleItem(
             }
     ) {
         Column {
-            if (
-                content.background_url.isNotEmpty() ||
-                content.background_url != "null" ||
-                !content.background_url.contains(".rss")
+            if (content.background_url.isNotEmpty()
+                && !content.background_url.contains(".rss")
             ) {
                 AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
@@ -89,7 +80,7 @@ fun ArticleItem(
             Text(
                 text = content.title,
                 modifier = Modifier.padding(8.dp),
-                fontSize = 20.sp,
+                fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 maxLines = 5,
                 color = MaterialTheme.colorScheme.onSurface
@@ -118,6 +109,11 @@ fun ArticleItem(
                 ) {
                     Text(
                         text = content.source.title,
+                        style = TextStyle(
+                            platformStyle = PlatformTextStyle(
+                                includeFontPadding = false
+                            )
+                        ),
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Medium,
                         maxLines = 1,
@@ -129,6 +125,11 @@ fun ArticleItem(
                             LocalContext.current,
                             (article.time / 1000) - 1000
                         ),
+                        style = TextStyle(
+                            platformStyle = PlatformTextStyle(
+                                includeFontPadding = false
+                            )
+                        ),
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Medium,
                         maxLines = 1,
@@ -136,98 +137,31 @@ fun ArticleItem(
                         overflow = TextOverflow.Ellipsis
                     )
                 }
-                Column(
-                    modifier = Modifier
-                        .padding(end = 8.dp)
-                ) {
-                    Row {
-                        var bookmarked by remember { mutableStateOf(false) }
+                Row {
+                    var bookmarked by remember { mutableStateOf(false) }
 
-                        FavoriteButton(bookmarked = bookmarked) {
-                            scope.launch {
-                                repository.bookmarkArticle(article.id, !bookmarked)
-                                bookmarked = !bookmarked
-                            }
+                    FavoriteButton(bookmarked = bookmarked) {
+                        scope.launch {
+                            repository.bookmarkArticle(article.id, !bookmarked)
+                            bookmarked = !bookmarked
                         }
+                    }
 
-                        Spacer(modifier = Modifier.size(8.dp))
+                    Spacer(modifier = Modifier.size(8.dp))
 
-                        ShareButton {
-                            val intent = Intent.createChooser(
-                                Intent(Intent.ACTION_SEND).apply {
-                                    putExtra(Intent.EXTRA_TEXT, content.link)
-                                    putExtra(Intent.EXTRA_TITLE, content.title)
-                                    type = "text/plain"
-                                },
-                                null,
-                            )
-                            context.startActivity(intent)
-                        }
+                    ShareButton {
+                        val intent = Intent.createChooser(
+                            Intent(Intent.ACTION_SEND).apply {
+                                putExtra(Intent.EXTRA_TEXT, content.link)
+                                putExtra(Intent.EXTRA_TITLE, content.title)
+                                type = "text/plain"
+                            },
+                            null,
+                        )
+                        context.startActivity(intent)
                     }
                 }
             }
         }
     }
-}
-
-@Composable
-fun FavoriteButton(bookmarked: Boolean, onClick: () -> Unit) {
-    val interactionSource = remember { MutableInteractionSource() }
-    val coroutineScope = rememberCoroutineScope()
-
-    val scale = remember {
-        Animatable(1f)
-    }
-
-    Icon(
-        imageVector = Icons.Outlined.Favorite,
-        contentDescription = "Like the product",
-        tint = if (bookmarked) Color.Red else Color.LightGray,
-        modifier = Modifier
-            .scale(scale = scale.value)
-            .size(size = 28.dp)
-            .clickable(
-                interactionSource = interactionSource,
-                indication = null
-            ) {
-                coroutineScope.launch {
-                    scale.animateTo(
-                        0.8f,
-                        animationSpec = tween(100),
-                    )
-                    scale.animateTo(
-                        1f,
-                        animationSpec = tween(100),
-                    )
-                    onClick()
-                }
-            }
-    )
-}
-
-@Composable
-fun ShareButton(onClick: () -> Unit) {
-    val coroutineScope = rememberCoroutineScope()
-    val scale = remember {
-        Animatable(1f)
-    }
-    Icon(
-        imageVector = Icons.Outlined.Share,
-        contentDescription = "Share feed",
-        modifier = Modifier
-            .size(size = 28.dp)
-            .clickable {
-                coroutineScope.launch {
-                    scale.animateTo(
-                        0.8f,
-                        animationSpec = tween(100),
-                    )
-                    scale.animateTo(
-                        1f,
-                        animationSpec = tween(100),
-                    )
-                    onClick()
-                }
-            }
-    )
 }

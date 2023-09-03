@@ -65,13 +65,13 @@ import com.saulhdev.feeder.R
 import com.saulhdev.feeder.compose.components.FeedItem
 import com.saulhdev.feeder.compose.components.OverflowMenu
 import com.saulhdev.feeder.compose.components.ViewWithActionBar
-import com.saulhdev.feeder.compose.icon.Phosphor
-import com.saulhdev.feeder.compose.icon.phosphor.CloudArrowDown
-import com.saulhdev.feeder.compose.icon.phosphor.CloudArrowUp
 import com.saulhdev.feeder.compose.navigation.LocalNavController
 import com.saulhdev.feeder.compose.navigation.Routes
 import com.saulhdev.feeder.db.SourceRepository
 import com.saulhdev.feeder.db.models.Feed
+import com.saulhdev.feeder.icon.Phosphor
+import com.saulhdev.feeder.icon.phosphor.CloudArrowDown
+import com.saulhdev.feeder.icon.phosphor.CloudArrowUp
 import com.saulhdev.feeder.models.exportOpml
 import com.saulhdev.feeder.models.importOpml
 import com.saulhdev.feeder.utils.ApplicationCoroutineScope
