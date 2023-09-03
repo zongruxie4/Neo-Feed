@@ -92,9 +92,6 @@ fun OverlayPage() {
     val repository = ArticleRepository(context)
     val scope = CoroutineScope(Dispatchers.IO) + CoroutineName("NeoFeedSync")
     val feedList: MutableList<FeedItem> = remember { mutableStateListOf() }
-    var list = remember {
-        mutableListOf(feedList)
-    }
 
     val prefs = FeedPreferences.getInstance(context)
 
@@ -104,12 +101,14 @@ fun OverlayPage() {
             for (feed in feeds) {
                 articles.getArticleList(feed)
             }
-            PluginConnector.getFeedAsItLoads(0, { feed ->
-                feedList.addAll(feed)
-            }) {
-                feedList.sortedByDescending { it.time }
-            }
         }
+
+        PluginConnector.getFeedAsItLoads(0, { feed ->
+            feedList.addAll(feed)
+        }, {
+
+            feedList.sortByDescending { it.time }
+        })
     }
 
     val opmlImporter = rememberLauncherForActivityResult(
@@ -267,8 +266,6 @@ fun OverlayPage() {
                 }
             }
 
-            // sort list ascending by time
-            feedList.sortedByDescending { it.time }
             items(feedList.size) { index ->
                 val item = feedList[index]
                 ArticleItem(
