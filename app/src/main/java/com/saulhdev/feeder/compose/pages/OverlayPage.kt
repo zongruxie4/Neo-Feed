@@ -96,20 +96,16 @@ fun OverlayPage() {
 
     val prefs = FeedPreferences.getInstance(context)
 
-    LaunchedEffect(key1 = true) {
-        scope.launch {
-            val feeds = repository.getAllFeeds()
-            for (feed in feeds) {
-                articles.getArticleList(feed)
-            }
+    LaunchedEffect(key1 = null) {
+        refreshFeed(repository, articles, scope) {
+            feedList.clear()
+            PluginConnector.getFeedAsItLoads(0, { feed ->
+                feedList.addAll(feed)
+            }, {
+
+                feedList.sortByDescending { it.time }
+            })
         }
-
-        PluginConnector.getFeedAsItLoads(0, { feed ->
-            feedList.addAll(feed)
-        }, {
-
-            feedList.sortByDescending { it.time }
-        })
     }
 
     val opmlImporter = rememberLauncherForActivityResult(
@@ -190,6 +186,15 @@ fun OverlayPage() {
                                 },
                                 onClick = {
                                     showMenu = false
+                                    refreshFeed(repository, articles, scope) {
+                                        feedList.clear()
+                                        PluginConnector.getFeedAsItLoads(0, { feed ->
+                                            feedList.addAll(feed)
+                                        }, {
+
+                                            feedList.sortByDescending { it.time }
+                                        })
+                                    }
                                 },
                                 leadingIcon = {
                                     Icon(
@@ -297,4 +302,19 @@ fun OverlayPage() {
             }
         }
     }
+}
+
+fun refreshFeed(
+    repository: ArticleRepository,
+    articles: SyncRestClient,
+    scope: CoroutineScope,
+    callback: () -> Unit
+) {
+    scope.launch {
+        val feeds = repository.getAllFeeds()
+        for (feed in feeds) {
+            articles.getArticleList(feed)
+        }
+    }
+    callback.invoke()
 }
