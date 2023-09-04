@@ -23,7 +23,11 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.compose.setContent
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.ui.graphics.Color
 import androidx.core.net.toUri
+import androidx.core.view.WindowCompat
 import androidx.lifecycle.asLiveData
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
@@ -32,6 +36,7 @@ import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.saulhdev.feeder.compose.navigation.NavigationManager
 import com.saulhdev.feeder.preference.FeedPreferences
 import com.saulhdev.feeder.sync.FeedSyncer
@@ -52,11 +57,13 @@ class MainActivity : DIAwareComponentActivity() {
         NFApplication.mainActivity = this
         super.onCreate(savedInstanceState)
 
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         prefs = FeedPreferences.getInstance(this)
         setContent {
             AppTheme(
                 darkTheme = isDarkTheme
             ) {
+                TransparentSystemBars()
                 withDI {
                     navController = rememberNavController()
                     NavigationManager(navController = navController)
@@ -71,6 +78,30 @@ class MainActivity : DIAwareComponentActivity() {
 
         configurePeriodicSync(prefs)
         observePrefs()
+    }
+
+    @Composable
+    fun TransparentSystemBars() {
+        val systemUiController = rememberSystemUiController()
+        val useDarkIcons = !isDarkTheme
+
+        DisposableEffect(systemUiController, useDarkIcons) {
+            systemUiController.setSystemBarsColor(
+                color = statusBarColor(),
+                darkIcons = useDarkIcons
+            )
+
+            onDispose {}
+        }
+    }
+
+    private fun statusBarColor(): Color {
+
+        return if (isDarkTheme) {
+            Color(0x80000000)
+        } else {
+            Color(0x80FFFFFF)
+        }
     }
 
     private fun observePrefs() {

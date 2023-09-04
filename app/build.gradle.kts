@@ -166,6 +166,7 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview:$vCompose")
     implementation("androidx.navigation:navigation-compose:2.7.0-beta02")
     implementation("com.google.accompanist:accompanist-webview:$vAccompanist")
+    implementation("com.google.accompanist:accompanist-systemuicontroller:$vAccompanist")
 
     //Room
     implementation("androidx.room:room-runtime:$vRoom")

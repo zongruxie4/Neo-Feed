@@ -51,9 +51,9 @@ fun ArticleItem(
 
     Card(
         modifier = Modifier
-            .background(MaterialTheme.colorScheme.surface)
-            .clip(RoundedCornerShape(16.dp))
             .fillMaxWidth()
+            .clip(RoundedCornerShape(16.dp))
+            .background(MaterialTheme.colorScheme.surface)
             .clickable {
                 onClick()
             }

@@ -195,6 +195,7 @@ class FeedPreferences private constructor(val context: Context) {
         }
 
         val OVERLAY_THEME = stringPreferencesKey("pref_overlay_theme")
+        val OVERLAY_DYNAMIC_THEME = booleanPreferencesKey("pref_dynamic_theme")
         val OVERLAY_OPACITY = floatPreferencesKey("pref_overlay_opacity")
         val OVERLAY_CARD_BACKGROUND = stringPreferencesKey("pref_overlay_card_background")
         val SOURCES = stringPreferencesKey("pref_sources")

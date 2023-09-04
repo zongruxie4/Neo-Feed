@@ -20,6 +20,7 @@ package com.saulhdev.feeder.compose.pages
 
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -131,7 +132,9 @@ fun OverlayPage() {
         }
     }
 
-    Column {
+    Column(
+        modifier = Modifier.background(MaterialTheme.colorScheme.background)
+    ) {
         var showMenu by remember { mutableStateOf(false) }
         LazyColumn(
             modifier = Modifier
@@ -145,13 +148,18 @@ fun OverlayPage() {
                 Row(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(all = 4.dp),
+                        .padding(
+                            top = 26.dp,
+                            start = 4.dp,
+                            end = 4.dp,
+                            bottom = 4.dp
+                        ),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
                         text = stringResource(id = R.string.app_name),
                         modifier = Modifier.padding(start = 4.dp),
-                        fontSize = 16.sp,
+                        fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurface
                     )
