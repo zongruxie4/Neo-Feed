@@ -21,7 +21,8 @@ package com.saulhdev.feeder.compose.pages
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -30,8 +31,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -82,6 +87,7 @@ import kotlinx.coroutines.plus
 import org.kodein.di.compose.LocalDI
 import java.time.LocalDateTime
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun OverlayPage() {
     val context = LocalContext.current
@@ -128,8 +134,29 @@ fun OverlayPage() {
         }
     }
 
-    Column(
-        modifier = Modifier.background(MaterialTheme.colorScheme.background)
+    var isRefreshing by remember { mutableStateOf(false) }
+
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = isRefreshing,
+        onRefresh = {
+            isRefreshing = true
+            refreshFeed(repository, articles, scope) {
+                feedList.clear()
+                PluginConnector.getFeedAsItLoads(0, { feed ->
+                    feedList.addAll(feed)
+                }, {
+
+                    feedList.sortByDescending { it.time }
+                    isRefreshing = false
+                })
+            }
+        }
+    )
+    Box(
+        modifier = Modifier
+            .background(MaterialTheme.colorScheme.background)
+            .pullRefresh(pullRefreshState)
+
     ) {
         var showMenu by remember { mutableStateOf(false) }
         LazyColumn(
@@ -275,6 +302,19 @@ fun OverlayPage() {
                                 }
                             )
                         }
+                    }
+                }
+            }
+            if (isRefreshing) {
+                item {
+                    Row(
+                        horizontalArrangement = Arrangement.Center,
+                    ) {
+
+                        PullRefreshIndicator(
+                            refreshing = isRefreshing,
+                            state = pullRefreshState
+                        )
                     }
                 }
             }

@@ -93,7 +93,6 @@ class ArticleRepository(context: Context) {
         }
     }
 
-
     /* Articles */
     private val feedArticleDao = NeoFeedDb.getInstance(context).feedArticleDao()
 
