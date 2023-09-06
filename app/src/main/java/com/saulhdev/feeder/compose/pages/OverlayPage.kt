@@ -26,6 +26,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -85,7 +86,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 import org.kodein.di.compose.LocalDI
-import java.time.LocalDateTime
+import org.threeten.bp.LocalDateTime
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -308,12 +309,14 @@ fun OverlayPage() {
             if (isRefreshing) {
                 item {
                     Row(
-                        horizontalArrangement = Arrangement.Center,
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center
                     ) {
 
                         PullRefreshIndicator(
                             refreshing = isRefreshing,
-                            state = pullRefreshState
+                            state = pullRefreshState,
+                            contentColor = MaterialTheme.colorScheme.primary
                         )
                     }
                 }
