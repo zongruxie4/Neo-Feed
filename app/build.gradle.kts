@@ -1,14 +1,3 @@
-val vRoom = "2.5.2"
-val vCompose = "1.5.0-beta03"
-val vCoil = "2.4.0"
-val vKoin = "3.4.2"
-val vAccompanist = "0.31.4-beta"
-val vComposeCompiler = "1.4.8"
-val vKotlin = "1.8.22"
-val vMaterial = "1.5.0-beta02"
-val vMaterial3 = "1.2.0-alpha03"
-val vRome = "2.1.0"
-
 plugins {
     id("com.android.application")
     kotlin("android")
@@ -32,7 +21,6 @@ android {
 
     namespace = "com.saulhdev.feeder"
     compileSdk = 34
-
     defaultConfig {
         applicationId = "com.saulhdev.neofeed"
         minSdk = 26
@@ -41,6 +29,7 @@ android {
         versionName = name
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
+        multiDexEnabled = true
 
         javaCompileOptions {
             annotationProcessorOptions {
@@ -105,9 +94,8 @@ android {
     }
 
     kotlinOptions {
-        jvmTarget = compileOptions.sourceCompatibility.toString()
+        jvmTarget = "17"
     }
-
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
         kotlinOptions {
             jvmTarget = compileOptions.sourceCompatibility.toString()
@@ -123,7 +111,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = vComposeCompiler
+        kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
     }
 
     packaging {
@@ -140,68 +128,69 @@ android {
 dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
 
-    implementation("com.google.devtools.ksp:symbol-processing-api:$vKotlin-1.0.11")
-    implementation(kotlin("stdlib", vKotlin))
+    implementation(libs.symbol.processing.api)
+    implementation(libs.stdlib)
 
     //Core
-    implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("androidx.core:core-ktx:1.11.0-beta02")
-    implementation("androidx.multidex:multidex:2.0.1")
-    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
-    implementation("androidx.work:work-runtime-ktx:2.8.1")
-    implementation("com.google.android.material:material:1.9.0")
-    implementation("androidx.compose.material:material:1.4.3")
+    implementation(libs.appcompat)
+    implementation(libs.core.ktx)
+    implementation(libs.multidex)
+    implementation(libs.swiperefreshlayout)
+    implementation(libs.work.runtime.ktx)
+    implementation(libs.material)
 
-    implementation("androidx.datastore:datastore-preferences:1.0.0")
-    implementation("androidx.lifecycle:lifecycle-common-java8:2.6.1")
-    implementation("androidx.lifecycle:lifecycle-extensions:2.2.0")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.1")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1")
+    implementation(libs.datastore.preferences)
+    implementation(libs.lifecycle.common.java8)
+    implementation(libs.lifecycle.livedata.ktx)
+    implementation(libs.lifecycle.runtime.ktx)
+    implementation(libs.lifecycle.service)
+    implementation(libs.lifecycle.viewmodel.ktx)
 
     //Compose
-    implementation("androidx.compose.material3:material3:$vMaterial3")
-    implementation("androidx.compose.ui:ui:$vCompose")
-    implementation("androidx.compose.ui:ui-tooling:$vCompose")
-    implementation("androidx.compose.ui:ui-tooling-preview:$vCompose")
-    implementation("androidx.navigation:navigation-compose:2.7.0-beta02")
-    implementation("com.google.accompanist:accompanist-webview:$vAccompanist")
-    implementation("com.google.accompanist:accompanist-systemuicontroller:$vAccompanist")
+    implementation(libs.browser)
+    implementation(libs.compose.animation)
+    implementation(libs.compose.foundation)
+    implementation(libs.compose.material)
+    implementation(libs.compose.material3)
+    implementation(libs.compose.ui)
+    implementation(libs.compose.ui.tooling)
+    implementation(libs.compose.ui.tooling.preview)
+    implementation(libs.navigation.compose)
+    implementation(libs.accompanist.webview)
+    implementation(libs.accompanist.systemuicontroller)
 
     //Room
-    implementation("androidx.room:room-runtime:$vRoom")
-    implementation("androidx.room:room-ktx:$vRoom")
-    implementation("androidx.room:room-paging:$vRoom")
-    implementation("androidx.browser:browser:1.5.0")
-    kapt("androidx.room:room-compiler:$vRoom")
+    implementation(libs.room.ktx)
+    implementation(libs.room.paging)
+    implementation(libs.room.runtime)
+    kapt(libs.room.compiler)
 
     //Squareup
-    implementation("com.squareup.moshi:moshi:1.15.0")
-    implementation("com.squareup.moshi:moshi-kotlin:1.15.0")
-    implementation("com.squareup.okhttp3:okhttp:5.0.0-alpha.11")
-    implementation("com.squareup.retrofit2:retrofit:2.9.0") { exclude(module = "okhttp") }
-    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation(libs.moshi)
+    implementation(libs.moshi.kotlin)
+    implementation(libs.okhttp)
+    implementation(libs.retrofit) { exclude(module = "okhttp") }
+    implementation(libs.retrofit.converter.gson)
 
     //Coil
-    implementation("io.coil-kt:coil:$vCoil")
-    implementation("io.coil-kt:coil-compose:$vCoil")
+    implementation(libs.coil)
+    implementation(libs.coil.compose)
 
     //Koin
-    implementation("io.insert-koin:koin-android:$vKoin")
-    implementation("io.insert-koin:koin-android-compat:$vKoin")
-    implementation("io.insert-koin:koin-androidx-workmanager:$vKoin")
-    implementation("io.insert-koin:koin-androidx-navigation:$vKoin")
-    implementation("io.insert-koin:koin-androidx-compose:$vKoin")
-    ksp("io.insert-koin:koin-ksp-compiler:1.2.2")
+    implementation(libs.koin.android)
+    implementation(libs.koin.android.compat)
+    implementation(libs.koin.compose)
+    implementation(libs.koin.navigation)
+    implementation(libs.koin.workmanager)
+    ksp(libs.koin.ksp.compiler)
 
     //Libs
-    implementation("com.jakewharton.threetenabp:threetenabp:1.4.6")
-    implementation("com.rometools:rome:$vRome") { exclude(module = "rome-utils") }
-    implementation("com.rometools:rome-modules:$vRome")
-    implementation("net.dankito.readability4j:readability4j:1.0.8")
-    implementation("org.ccil.cowan.tagsoup:tagsoup:1.2.1")
-    implementation("org.jsoup:jsoup:1.16.1")
-    implementation("org.kodein.di:kodein-di-framework-android-x:7.20.2")
-    implementation("com.github.kenglxn.qrgen:android:2.6.0")
-    implementation("org.slf4j:slf4j-android:1.7.36")
+    implementation(libs.threetenabp)
+    implementation(libs.rome) { exclude(module = "rome-utils") }
+    implementation(libs.rome.modules)
+    implementation(libs.readability4j)
+    implementation(libs.tagsoup)
+    implementation(libs.jsoup)
+    implementation(libs.kodein)
+    implementation(libs.slf4j)
 }

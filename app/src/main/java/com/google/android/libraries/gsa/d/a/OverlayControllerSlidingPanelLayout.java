@@ -3,16 +3,30 @@ package com.google.android.libraries.gsa.d.a;
 import android.graphics.Rect;
 import android.view.MotionEvent;
 
-public final class OverlayControllerSlidingPanelLayout extends SlidingPanelLayout {
+import androidx.annotation.NonNull;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.LifecycleRegistry;
+import androidx.lifecycle.ViewTreeLifecycleOwner;
+import androidx.savedstate.SavedStateRegistry;
+import androidx.savedstate.SavedStateRegistryController;
+import androidx.savedstate.SavedStateRegistryOwner;
+
+public final class OverlayControllerSlidingPanelLayout extends SlidingPanelLayout implements
+        LifecycleOwner, SavedStateRegistryOwner {
 
     private final OverlayController overlayController;
+    private SavedStateRegistryController savedStateRegistryController = SavedStateRegistryController.create(this);
+    private SavedStateRegistry savedStateRegistry = savedStateRegistryController.getSavedStateRegistry();
+    public LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
 
     public OverlayControllerSlidingPanelLayout(OverlayController overlayControllerVar) {
         super(overlayControllerVar);
         this.overlayController = overlayControllerVar;
+        ViewTreeLifecycleOwner.set(this, this);
     }
 
-    protected final void determineScrollingStart(MotionEvent motionEvent, float f) {
+    protected void determineScrollingStart(MotionEvent motionEvent, float f) {
         Object obj = 1;
         if (motionEvent.findPointerIndex(this.mActivePointerId) != -1) {
             float x = motionEvent.getX() - this.mDownX;
@@ -46,7 +60,19 @@ public final class OverlayControllerSlidingPanelLayout extends SlidingPanelLayou
         }
     }
 
-    protected final boolean fitSystemWindows(Rect rect) {
+    protected boolean fitSystemWindows(Rect rect) {
         return !this.overlayController.unZ || super.fitSystemWindows(rect);
+    }
+
+    @NonNull
+    @Override
+    public Lifecycle getLifecycle() {
+        return lifecycleRegistry;
+    }
+
+    @NonNull
+    @Override
+    public SavedStateRegistry getSavedStateRegistry() {
+        return savedStateRegistry;
     }
 }

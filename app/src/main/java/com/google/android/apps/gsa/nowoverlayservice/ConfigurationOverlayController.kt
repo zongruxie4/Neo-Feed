@@ -6,7 +6,7 @@ import android.content.res.Configuration
 import com.google.android.libraries.gsa.d.a.OverlayController
 import com.google.android.libraries.gsa.d.a.OverlaysController
 import com.google.android.libraries.gsa.d.a.v
-import com.saulhdev.feeder.overlay.OverlayView
+import com.saulhdev.feeder.overlay.ComposeOverlayView
 
 class ConfigurationOverlayController(private val service: Service) : OverlaysController(service) {
     override fun Hx() = 24
@@ -15,8 +15,9 @@ class ConfigurationOverlayController(private val service: Service) : OverlaysCon
         configuration: Configuration?,
         i: Int,
         i2: Int
-    ): OverlayController =
-        OverlayView(if (configuration != null) service.createConfigurationContext(configuration) else service)
+    ): OverlayController = ComposeOverlayView(
+        if (configuration != null) service.createConfigurationContext(configuration) else service
+    )
 
     override fun HA() = v()
 }

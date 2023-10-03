@@ -186,7 +186,7 @@ class OverlayView(val context: Context) :
             this.container
         )
 
-        themeHolder = OverlayThemeHolder(context, this)
+        //themeHolder = OverlayThemeHolder(context, this)
 
         initRecyclerView()
         initHeader()

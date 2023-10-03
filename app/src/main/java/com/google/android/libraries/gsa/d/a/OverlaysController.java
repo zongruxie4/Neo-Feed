@@ -62,7 +62,7 @@ public abstract class OverlaysController {
         return iBinder;
     }
 
-    public final synchronized void unUnbind(Intent intent) {
+    public final synchronized void onUnbind(Intent intent) {
         int port = intent.getData().getPort();
         if (port != -1) {
             OverlayControllerBinder overlayControllerBinderVar = this.clients.get(port);

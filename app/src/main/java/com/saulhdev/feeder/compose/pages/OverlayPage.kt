@@ -65,6 +65,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.saulhdev.feeder.NFApplication
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.compose.components.ArticleItem
@@ -94,9 +95,8 @@ import org.threeten.bp.LocalDateTime
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun OverlayPage() {
+fun OverlayPage(navController: NavController = LocalNavController.current) {
     val context = LocalContext.current
-    val navController = LocalNavController.current
     val di = LocalDI.current
     val localTime = LocalDateTime.now().toString().replace(":", "_").substring(0, 19)
 

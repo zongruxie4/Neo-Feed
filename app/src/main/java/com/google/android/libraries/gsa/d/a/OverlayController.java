@@ -24,7 +24,7 @@ public class OverlayController extends DialogOverlayController {
     public PanelState panelState = PanelState.CLOSED;
     private int mActivityStateFlags = 0;
 
-    protected OverlayController(Context context, int theme, int dialogTheme) {
+    public OverlayController(Context context, int theme, int dialogTheme) {
         super(context, theme, dialogTheme);
     }
 
@@ -179,7 +179,7 @@ public class OverlayController extends DialogOverlayController {
     private void onStart() {
     }
 
-    private void onResume() {
+    public void onResume() {
     }
 
     protected Window getWindow() {

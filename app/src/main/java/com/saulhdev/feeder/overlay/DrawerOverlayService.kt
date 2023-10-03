@@ -8,7 +8,6 @@ import com.google.android.libraries.gsa.d.a.OverlaysController
 
 class DrawerOverlayService : Service() {
     private lateinit var overlaysController: OverlaysController
-
     override fun onCreate() {
         super.onCreate()
         this.overlaysController = ConfigurationOverlayController(this)
@@ -22,7 +21,7 @@ class DrawerOverlayService : Service() {
     override fun onBind(intent: Intent): IBinder? = this.overlaysController.onBind(intent)
 
     override fun onUnbind(intent: Intent): Boolean {
-        this.overlaysController.unUnbind(intent)
+        this.overlaysController.onUnbind(intent)
         return false
     }
 }
