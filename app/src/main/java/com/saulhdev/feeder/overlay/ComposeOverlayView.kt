@@ -91,7 +91,6 @@ class ComposeOverlayView(val context: Context) :
             navController = rememberNavController()
             AppTheme {
                 withDI(di = parentDI) {
-                    navController = rememberNavController()
                     OverlayPage(navController = navController)
 
                 }
