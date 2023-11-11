@@ -70,4 +70,16 @@
     <string name="transparency_non_transparent">Непрозрачно</string>
     <string name="add_feed_search_hint">URL-адрес ленты</string>
     <string name="sync_one_hour">Один час</string>
+    <string name="background_primary_color">Лончер: главный цвет</string>
+    <string name="transparency_high_transparency">Прозрачно на 25%</string>
+    <string name="by_author_on_date">%1$s, %2$s</string>
+    <string name="debug_logcat_printing">Расширенная запись logcat</string>
+    <string name="transparency_low_transparency">Прозрачно на 75%</string>
+    <string name="debug_content_printing">Запись содержимого уведомлений</string>
+    <string name="background_theme_option">В зависимости от темы</string>
+    <string name="about_changelog">Список изменений</string>
+    <string name="article_not_found">Статья не найдена на устройстве</string>
+    <string name="background_secondary_color">Лончер: второстепенный цвет</string>
+    <string name="background_tertiary_color">Лончер: третьестепенный цвет</string>
+    <string name="transparency_mid_transparency">Прозрачно на 50%</string>
 </resources>
