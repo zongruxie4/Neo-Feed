@@ -1,2 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="pref_cat_overlay">Apparentia</string>
+    <string name="pref_git">Codice fonte</string>
+    <string name="pref_browser_theme">Aperir in le navigator</string>
+    <string name="pref_cat_debug">Depuration</string>
+    <string name="title_about">A proposito de</string>
+    <string name="date_ago_now">ora</string>
+    <string name="action_restart">Reinitiar le application</string>
+    <string name="tomorrow">deman</string>
+    <string name="title_settings">Parametros</string>
+    <string name="pref_cat_contact">Contactos</string>
+    <string name="about_licenses">Licentia</string>
+    <string name="today">hodie</string>
+</resources>
