@@ -12,4 +12,19 @@
     <string name="pref_cat_contact">Contactos</string>
     <string name="about_licenses">Licentia</string>
     <string name="today">hodie</string>
+    <string name="invalid_url">Non es un URL valide</string>
+    <string name="theme_light">Clar</string>
+    <string name="by_author_on_date">%1$s, %2$s</string>
+    <string name="theme_dark">Obscur</string>
+    <string name="touch_to_play_video">Tocca pro reproducer le video</string>
+    <string name="remove_action_yes">Si</string>
+    <string name="allow_notify_to_settings">Aperir parametros</string>
+    <string name="summary_feed_list">Adder o remover fontes RSS</string>
+    <string name="background_white">Blanc</string>
+    <string name="background_amoled">Nigre</string>
+    <string name="news_image_text">imagine del nova</string>
+    <string name="background_theme_option">Basate in themas</string>
+    <string name="add_rss">Adder un nove RSS</string>
+    <string name="article_not_found">Articulo local non trovate</string>
+    <string name="pref_syscolors_disabled">Require Android 8.1 o plus nove</string>
 </resources>
