@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -52,13 +51,16 @@ fun ArticleItem(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(16.dp))
+            .clip(MaterialTheme.shapes.large)
             .background(MaterialTheme.colorScheme.surface)
             .clickable {
                 onClick()
             }
     ) {
-        Column {
+        Column(
+            modifier = Modifier
+                .padding(8.dp),
+        ) {
             if (content.background_url.isNotEmpty()
                 && !content.background_url.contains(".rss")
             ) {
@@ -71,7 +73,7 @@ fun ArticleItem(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(240.dp)
-                        .clip(RoundedCornerShape(16.dp)),
+                        .clip(MaterialTheme.shapes.medium),
                     contentScale = ContentScale.Crop,
                     contentDescription = ""
                 )

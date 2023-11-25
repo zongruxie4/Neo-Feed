@@ -18,6 +18,7 @@
 
 package com.saulhdev.feeder.compose.components
 
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
@@ -26,10 +27,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Favorite
+import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -45,6 +50,15 @@ fun FavoriteButton(bookmarked: Boolean, onClick: () -> Unit) {
     val interactionSource = remember { MutableInteractionSource() }
     val coroutineScope = rememberCoroutineScope()
     val scale = remember { Animatable(1f) }
+    val favoriteIcon by remember(bookmarked) {
+        mutableStateOf(
+            if (bookmarked) Icons.Outlined.Favorite else Icons.Outlined.FavoriteBorder
+        )
+    }
+    val favoriteColor by animateColorAsState(
+        targetValue = if (bookmarked) Color.Red else MaterialTheme.colorScheme.onSurface,
+        label = "favoriteColor",
+    )
 
     IconButton(
         modifier = Modifier
@@ -65,9 +79,9 @@ fun FavoriteButton(bookmarked: Boolean, onClick: () -> Unit) {
         }
     ) {
         Icon(
-            imageVector = Icons.Outlined.Favorite,
+            imageVector = favoriteIcon,
             contentDescription = " ",
-            tint = if (bookmarked) Color.Red else Color.LightGray,
+            tint = favoriteColor,
             modifier = Modifier
                 .scale(scale = scale.value)
                 .size(size = 28.dp)
