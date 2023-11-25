@@ -70,7 +70,6 @@ fun PreferencesPage() {
             prefs.overlayTransparency,
         )
         val debugPrefs = listOf(
-            prefs.overlay,
             prefs.about,
         )
 
