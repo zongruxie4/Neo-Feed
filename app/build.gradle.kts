@@ -1,10 +1,10 @@
 plugins {
-    id("com.android.application")
-    kotlin("android")
-    kotlin("kapt")
-    kotlin("plugin.parcelize")
-    kotlin("plugin.serialization") version ("1.8.22")
-    id("com.google.devtools.ksp") version ("1.8.22-1.0.11")
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.kotlin.parcelize)
+    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.ksp)
 }
 
 allprojects {
@@ -116,6 +116,9 @@ android {
 
     packaging {
         resources.pickFirsts.add("rome-utils-2.1.0.jar")
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
     }
 
     lint {

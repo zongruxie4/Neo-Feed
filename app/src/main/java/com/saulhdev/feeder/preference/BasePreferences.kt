@@ -34,7 +34,7 @@ class StringPref(
     val icon: ImageVector,
     val key: Preferences.Key<String>,
     val dataStore: DataStore<Preferences>,
-    val defaultValue: String = "",
+    defaultValue: String = "",
     val onClick: (() -> Unit)? = null,
     val route: String = "",
 ) : PrefDelegate<String>(titleId, summaryId, dataStore, key, defaultValue)

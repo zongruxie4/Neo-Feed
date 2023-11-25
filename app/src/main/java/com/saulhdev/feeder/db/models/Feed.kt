@@ -38,7 +38,7 @@ class Feed(
     @PrimaryKey(autoGenerate = true)
     var id: Long = ID_UNSET,
     var title: String = "",
-    val description: String = "",
+    var description: String = "",
     var url: URL = sloppyLinkToStrictURL(""),
     var feedImage: URL = sloppyLinkToStrictURL(""),
     @ColumnInfo(typeAffinity = ColumnInfo.INTEGER) var lastSync: Instant = Instant.EPOCH,

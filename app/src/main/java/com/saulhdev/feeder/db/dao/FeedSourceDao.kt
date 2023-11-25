@@ -42,7 +42,7 @@ interface FeedSourceDao {
     suspend fun delete(feed: Feed): Int
 
     @Query("SELECT * FROM Feeds WHERE url = :url")
-    suspend fun getFeedByURL(url: URL): Feed?
+    suspend fun getFeedByURL(url: URL): Feed
 
     @Query("SELECT * FROM Feeds WHERE id = :id")
     fun getFeedById(id: Long): Flow<Feed>
@@ -81,7 +81,7 @@ interface FeedSourceDao {
             WHERE id IS :feedId
         """
     )
-    suspend fun setCurrentlySyncingOn(feedId: Long, syncing: Boolean)
+    suspend fun setCurrentlySyncingOn(feedId: Long, syncing: Boolean): Int
 
     @Query(
         """

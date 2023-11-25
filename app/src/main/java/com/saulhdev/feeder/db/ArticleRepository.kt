@@ -19,7 +19,6 @@
 package com.saulhdev.feeder.db
 
 import android.content.Context
-import android.util.Log
 import com.saulhdev.feeder.db.dao.insertOrUpdate
 import com.saulhdev.feeder.db.models.Feed
 import com.saulhdev.feeder.db.models.FeedArticle
@@ -50,14 +49,11 @@ class ArticleRepository(context: Context) {
     fun updateFeed(title: String, url: URL, fullTextByDefault: Boolean, isEnabled: Boolean) {
         scope.launch {
             val feed = articleDao.getFeedByURL(url)
-            Log.d("FeedRepository", "updateFeed: ${feed?.url}")
-            if (feed != null) {
-                feed.title = title
-                feed.url = url
-                feed.fullTextByDefault = fullTextByDefault
-                feed.isEnabled = isEnabled
-                articleDao.update(feed)
-            }
+            feed.title = title
+            feed.url = url
+            feed.fullTextByDefault = fullTextByDefault
+            feed.isEnabled = isEnabled
+            articleDao.update(feed)
         }
     }
 
