@@ -39,10 +39,10 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
-import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -60,7 +60,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -241,7 +240,7 @@ fun OverlayPage(navController: NavController = LocalNavController.current) {
                                     )
                                 }
                             )
-                            Divider()
+                            HorizontalDivider()
                             DropdownMenuItem(
                                 text = {
                                     Text(text = stringResource(id = R.string.sources_import_opml))
@@ -279,7 +278,7 @@ fun OverlayPage(navController: NavController = LocalNavController.current) {
                                     )
                                 }
                             )
-                            Divider()
+                            HorizontalDivider()
 
                             DropdownMenuItem(
                                 text = {

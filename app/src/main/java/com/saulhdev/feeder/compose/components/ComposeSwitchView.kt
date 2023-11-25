@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -40,7 +39,6 @@ fun ComposeSwitchView(
     onCheckedChange: ((Boolean) -> Unit),
     isChecked: Boolean = false,
     isEnabled: Boolean = true,
-    showDivider: Boolean = false,
     applyPaddings: Boolean = false,
     horizontalPadding: Dp = 16.dp,
     verticalPadding: Dp = 16.dp,
@@ -68,9 +66,6 @@ fun ComposeSwitchView(
                 onCheckedChange(!checked)
             }
     ) {
-        if (showDivider) {
-            Divider(modifier = Modifier.padding(horizontal = 16.dp))
-        }
         Row(
             modifier = modifier
                 .fillMaxWidth()

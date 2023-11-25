@@ -17,11 +17,11 @@ object RelativeTimeHelper {
         val resources = context.resources
         val j = i * 1000
         val calendar = calendar
-        val i2 = calendar.get(Calendar.YEAR)
-        calendar.set(Calendar.MINUTE, 0)
-        calendar.set(Calendar.HOUR_OF_DAY, 0)
-        calendar.set(Calendar.SECOND, 0)
-        calendar.set(Calendar.MILLISECOND, 0)
+        val i2 = calendar[Calendar.YEAR]
+        calendar[Calendar.MINUTE] = 0
+        calendar[Calendar.HOUR_OF_DAY] = 0
+        calendar[Calendar.SECOND] = 0
+        calendar[Calendar.MILLISECOND] = 0
         val timeInMillis = calendar.timeInMillis
         var j2 = 86400000.toLong()
         var j3 = timeInMillis + j2
@@ -37,66 +37,72 @@ object RelativeTimeHelper {
             str = "%s %s %d:%02d"
             val tomorrow = resources.getString(R.string.tomorrow)
             val at =
-                resources.getString(if (calendar.get(Calendar.HOUR_OF_DAY) == 1) R.string.date_at_1am else R.string.date_at)
-            val hourOfDay = calendar.get(Calendar.HOUR_OF_DAY)
-            val minute = calendar.get(Calendar.MINUTE)
+                resources.getString(if (calendar[Calendar.HOUR_OF_DAY] == 1) R.string.date_at_1am else R.string.date_at)
+            val hourOfDay = calendar[Calendar.HOUR_OF_DAY]
+            val minute = calendar[Calendar.MINUTE]
             format = String.format(locale, str, tomorrow, at, hourOfDay, minute)
             return format
         }
         j3--
-        if (j in timeInMillis..j3) {
-            locale = Locale.ENGLISH
-            str = "%s %s %d:%02d"
-            val today = resources.getString(R.string.today)
-            val at =
-                resources.getString(if (calendar.get(Calendar.HOUR_OF_DAY) == 1) R.string.date_at_1am else R.string.date_at)
-            val hourOfDay = calendar.get(Calendar.HOUR_OF_DAY)
-            val minute = calendar.get(Calendar.MINUTE)
-            format = String.format(locale, str, today, at, hourOfDay, minute)
-            return format
-        } else if (j < j2 || j >= timeInMillis) {
-            val string: String = if (calendar.get(Calendar.YEAR) != i2) {
-                resources.getString(
-                    R.string.date_format_day_month_year,
-                    calendar.get(Calendar.DAY_OF_MONTH),
-                    resources.getStringArray(R.array.date_shortmonths)[min(
-                        calendar.get(2),
-                        Calendar.HOUR_OF_DAY
-                    )],
-                    calendar.get(Calendar.YEAR)
-                )
-            } else {
-                resources.getString(
-                    R.string.date_format_day_month,
-                    calendar.get(Calendar.DAY_OF_MONTH),
-                    resources.getStringArray(R.array.date_shortmonths)[min(
-                        calendar.get(2),
-                        Calendar.HOUR_OF_DAY
-                    )]
-                )
+        return when {
+            j in timeInMillis..j3 -> {
+                locale = Locale.ENGLISH
+                str = "%s %s %d:%02d"
+                val today = resources.getString(R.string.today)
+                val at =
+                    resources.getString(if (calendar[Calendar.HOUR_OF_DAY] == 1) R.string.date_at_1am else R.string.date_at)
+                val hourOfDay = calendar[Calendar.HOUR_OF_DAY]
+                val minute = calendar[Calendar.MINUTE]
+                format = String.format(locale, str, today, at, hourOfDay, minute)
+                format
             }
-            val stringBuilder = StringBuilder()
-            stringBuilder.append(string)
-            locale = Locale.ENGLISH
-            val str2 = " %s %d:%02d"
-            val at =
-                resources.getString(if (calendar.get(Calendar.HOUR_OF_DAY) == 1) R.string.date_at_1am else R.string.date_at)
-            val hourOfDay = calendar.get(Calendar.HOUR_OF_DAY)
-            val minute = calendar.get(Calendar.MINUTE)
-            format = String.format(locale, str2, at, hourOfDay, minute)
-            stringBuilder.append(format)
-            format = stringBuilder.toString()
-            return format
-        } else {
-            locale = Locale.ENGLISH
-            str = "%s %s %d:%02d"
-            val yesterday = resources.getString(R.string.yesterday)
-            val at =
-                resources.getString(if (calendar.get(Calendar.HOUR_OF_DAY) == 1) R.string.date_at_1am else R.string.date_at)
-            val hourOfDay = calendar.get(Calendar.HOUR_OF_DAY)
-            val minute = calendar.get(Calendar.MINUTE)
-            format = String.format(locale, str, yesterday, at, hourOfDay, minute)
-            return format
+
+            j < j2 || j >= timeInMillis -> {
+                val string: String = if (calendar[Calendar.YEAR] != i2) {
+                    resources.getString(
+                        R.string.date_format_day_month_year,
+                        calendar[Calendar.DAY_OF_MONTH],
+                        resources.getStringArray(R.array.date_shortmonths)[min(
+                            calendar[2],
+                            Calendar.HOUR_OF_DAY
+                        )],
+                        calendar[Calendar.YEAR]
+                    )
+                } else {
+                    resources.getString(
+                        R.string.date_format_day_month,
+                        calendar[Calendar.DAY_OF_MONTH],
+                        resources.getStringArray(R.array.date_shortmonths)[min(
+                            calendar[2],
+                            Calendar.HOUR_OF_DAY
+                        )]
+                    )
+                }
+                val stringBuilder = StringBuilder()
+                stringBuilder.append(string)
+                locale = Locale.ENGLISH
+                val str2 = " %s %d:%02d"
+                val at =
+                    resources.getString(if (calendar[Calendar.HOUR_OF_DAY] == 1) R.string.date_at_1am else R.string.date_at)
+                val hourOfDay = calendar[Calendar.HOUR_OF_DAY]
+                val minute = calendar[Calendar.MINUTE]
+                format = String.format(locale, str2, at, hourOfDay, minute)
+                stringBuilder.append(format)
+                format = stringBuilder.toString()
+                format
+            }
+
+            else -> {
+                locale = Locale.ENGLISH
+                str = "%s %s %d:%02d"
+                val yesterday = resources.getString(R.string.yesterday)
+                val at =
+                    resources.getString(if (calendar[Calendar.HOUR_OF_DAY] == 1) R.string.date_at_1am else R.string.date_at)
+                val hourOfDay = calendar[Calendar.HOUR_OF_DAY]
+                val minute = calendar[Calendar.MINUTE]
+                format = String.format(locale, str, yesterday, at, hourOfDay, minute)
+                format
+            }
         }
     }
 
