@@ -67,7 +67,6 @@ import com.saulhdev.feeder.compose.components.PagePreference
 import com.saulhdev.feeder.compose.components.PreferenceGroupHeading
 import com.saulhdev.feeder.compose.components.ViewWithActionBar
 import com.saulhdev.feeder.compose.navigation.PageItem
-import com.saulhdev.feeder.compose.util.blockBorder
 import com.saulhdev.feeder.icon.Phosphor
 import com.saulhdev.feeder.icon.phosphor.BracketsSquare
 import com.saulhdev.feeder.icon.phosphor.GithubLogo
@@ -88,8 +87,7 @@ fun AboutPage() {
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
-                .blockBorder(),
+                .padding(paddingValues),
             verticalArrangement = Arrangement.spacedBy(4.dp),
             contentPadding = PaddingValues(8.dp),
         ) {
