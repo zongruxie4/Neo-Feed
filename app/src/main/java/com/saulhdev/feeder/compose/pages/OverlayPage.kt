@@ -73,10 +73,12 @@ import com.saulhdev.feeder.compose.navigation.LocalNavController
 import com.saulhdev.feeder.compose.navigation.Routes
 import com.saulhdev.feeder.db.ArticleRepository
 import com.saulhdev.feeder.icon.Phosphor
+import com.saulhdev.feeder.icon.phosphor.CaretUp
 import com.saulhdev.feeder.icon.phosphor.CloudArrowDown
 import com.saulhdev.feeder.icon.phosphor.CloudArrowUp
 import com.saulhdev.feeder.icon.phosphor.GearSix
 import com.saulhdev.feeder.icon.phosphor.Nut
+import com.saulhdev.feeder.icon.phosphor.Power
 import com.saulhdev.feeder.models.exportOpml
 import com.saulhdev.feeder.models.importOpml
 import com.saulhdev.feeder.plugin.PluginConnector
@@ -305,7 +307,7 @@ fun OverlayPage(navController: NavController = LocalNavController.current) {
                                 },
                                 leadingIcon = {
                                     Icon(
-                                        painter = painterResource(id = R.drawable.ic_restart),
+                                        imageVector = Phosphor.Power,
                                         contentDescription = null,
                                     )
                                 }
@@ -369,7 +371,7 @@ fun OverlayPage(navController: NavController = LocalNavController.current) {
                 shape = CircleShape
             ) {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_arrow_upward),
+                    imageVector = Phosphor.CaretUp,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onPrimary
                 )
