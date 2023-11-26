@@ -22,7 +22,7 @@ class HtmlToPlainTextConverter : ContentHandler {
     private var lastImageAlt: String? = null
 
     private val isOrderedList: Boolean
-        get() = !listings.isEmpty() && listings.peek().ordered
+        get() = listings.isNotEmpty() && listings.peek().ordered
 
     init {
         try {

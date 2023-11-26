@@ -39,10 +39,10 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
-import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -60,7 +60,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -73,10 +72,12 @@ import com.saulhdev.feeder.compose.navigation.LocalNavController
 import com.saulhdev.feeder.compose.navigation.Routes
 import com.saulhdev.feeder.db.ArticleRepository
 import com.saulhdev.feeder.icon.Phosphor
+import com.saulhdev.feeder.icon.phosphor.CaretUp
 import com.saulhdev.feeder.icon.phosphor.CloudArrowDown
 import com.saulhdev.feeder.icon.phosphor.CloudArrowUp
 import com.saulhdev.feeder.icon.phosphor.GearSix
 import com.saulhdev.feeder.icon.phosphor.Nut
+import com.saulhdev.feeder.icon.phosphor.Power
 import com.saulhdev.feeder.models.exportOpml
 import com.saulhdev.feeder.models.importOpml
 import com.saulhdev.feeder.plugin.PluginConnector
@@ -239,7 +240,7 @@ fun OverlayPage(navController: NavController = LocalNavController.current) {
                                     )
                                 }
                             )
-                            Divider()
+                            HorizontalDivider()
                             DropdownMenuItem(
                                 text = {
                                     Text(text = stringResource(id = R.string.sources_import_opml))
@@ -277,7 +278,7 @@ fun OverlayPage(navController: NavController = LocalNavController.current) {
                                     )
                                 }
                             )
-                            Divider()
+                            HorizontalDivider()
 
                             DropdownMenuItem(
                                 text = {
@@ -305,7 +306,7 @@ fun OverlayPage(navController: NavController = LocalNavController.current) {
                                 },
                                 leadingIcon = {
                                     Icon(
-                                        painter = painterResource(id = R.drawable.ic_restart),
+                                        imageVector = Phosphor.Power,
                                         contentDescription = null,
                                     )
                                 }
@@ -369,7 +370,7 @@ fun OverlayPage(navController: NavController = LocalNavController.current) {
                 shape = CircleShape
             ) {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_arrow_upward),
+                    imageVector = Phosphor.CaretUp,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onPrimary
                 )

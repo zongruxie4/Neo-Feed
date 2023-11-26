@@ -116,9 +116,6 @@ android {
 
     packaging {
         resources.pickFirsts.add("rome-utils-2.1.0.jar")
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
     }
 
     lint {

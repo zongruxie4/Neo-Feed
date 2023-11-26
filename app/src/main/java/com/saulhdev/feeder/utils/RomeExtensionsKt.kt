@@ -145,7 +145,7 @@ fun SyndPerson.asAuthor(): Author {
 
 fun SyndEntry.contentText(): String {
     val possiblyHtml = when {
-        contents != null && contents.isNotEmpty() -> { // Atom
+        !contents.isNullOrEmpty() -> { // Atom
             val contents = contents
             var possiblyHtml: String? = null
 

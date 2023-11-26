@@ -15,7 +15,7 @@ class Utilities {
         intent.addCategory(Intent.CATEGORY_HOME)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         val componentName: ComponentName = intent.resolveActivity(pm)
-        if (!context.packageName.equals(componentName.packageName)) {
+        if (context.packageName != componentName.packageName) {
             intent = pm.getLaunchIntentForPackage(context.packageName)!!
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         }
@@ -34,7 +34,7 @@ class Utilities {
             PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
         val mgr: AlarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent)
+        mgr[AlarmManager.RTC, System.currentTimeMillis() + 100] = mPendingIntent
 
         // Kill the application
         exitProcess(0)
