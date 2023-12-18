@@ -27,4 +27,6 @@
     <string name="add_rss">Adder un nove RSS</string>
     <string name="article_not_found">Articulo local non trovate</string>
     <string name="pref_syscolors_disabled">Require Android 8.1 o plus nove</string>
+    <string name="title_plugin_list">Lista de additivos</string>
+    <string name="description">Description</string>
 </resources>
