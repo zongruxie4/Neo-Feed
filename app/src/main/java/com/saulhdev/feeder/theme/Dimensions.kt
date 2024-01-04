@@ -48,16 +48,6 @@ val phoneDimensions = Dimensions(
     feedScreenColumns = 1,
 )
 
-val tabletDimensions = Dimensions(
-    maxContentWidth = 840.dp,
-    navIconMargin = 32.dp,
-    margin = 32.dp,
-    gutter = 32.dp,
-    layoutColumns = 8,
-    feedScreenColumns = 2
-)
-
-
 val LocalDimens = staticCompositionLocalOf {
     phoneDimensions
 }
