@@ -41,12 +41,12 @@ android {
         }
     }
 
-    applicationVariants.all { variant ->
-        variant.outputs.all {
+    applicationVariants.all {
+        val variant = this
+        outputs.all {
             (this as com.android.build.gradle.internal.api.BaseVariantOutputImpl).outputFileName =
-                "Neo_Feed_v" + variant.versionName + "_Build_" + variant.versionCode + ".apk"
+                "NeoFeed_v${variant.versionName}_build_${variant.versionCode}.apk"
         }
-        true
     }
     buildTypes {
         named("debug") {
