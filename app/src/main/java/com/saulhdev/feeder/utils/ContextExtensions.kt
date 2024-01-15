@@ -23,3 +23,13 @@ fun Context.launchView(url: String) {
         )
     )
 }
+
+fun Context.shareIntent(url: String, title: String) {
+    val shareIntent = Intent(Intent.ACTION_SEND)
+    shareIntent.type = "text/plain"
+    shareIntent.putExtra(Intent.EXTRA_TITLE, title)
+    shareIntent.putExtra(Intent.EXTRA_SUBJECT, title)
+    shareIntent.putExtra(Intent.EXTRA_TEXT, url)
+
+    startActivity(Intent.createChooser(shareIntent, "Where to Send?"))
+}
