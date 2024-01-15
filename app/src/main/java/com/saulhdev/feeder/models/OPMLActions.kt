@@ -10,19 +10,17 @@ import com.saulhdev.feeder.sync.requestFeedSync
 import com.saulhdev.feeder.utils.ToastMaker
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.kodein.di.DI
-import org.kodein.di.direct
-import org.kodein.di.instance
 import org.koin.java.KoinJavaComponent.inject
+
 import kotlin.system.measureTimeMillis
 
 /**
  * Exports OPML on a background thread
  */
-suspend fun exportOpml(di: DI, uri: Uri) = withContext(Dispatchers.IO) {
+suspend fun exportOpml(uri: Uri) = withContext(Dispatchers.IO) {
     try {
         val time = measureTimeMillis {
-            val contentResolver: ContentResolver by di.instance()
+            val contentResolver: ContentResolver by inject(ContentResolver::class.java)
             val sourceRepository: SourceRepository by inject(SourceRepository::class.java)
             contentResolver.openOutputStream(uri)?.let {
                 writeOutputStream(
@@ -36,7 +34,7 @@ suspend fun exportOpml(di: DI, uri: Uri) = withContext(Dispatchers.IO) {
         Log.d("OPML", "Exported OPML in $time ms on ${Thread.currentThread().name}")
     } catch (e: Throwable) {
         Log.e("OMPL", "Failed to export OPML", e)
-        val toastMaker = di.direct.instance<ToastMaker>()
+        val toastMaker: ToastMaker by inject(ToastMaker::class.java)
         toastMaker.makeToast(R.string.failed_to_export_OPML)
         (e.localizedMessage ?: e.message)?.let { message ->
             toastMaker.makeToast(message)
@@ -47,23 +45,23 @@ suspend fun exportOpml(di: DI, uri: Uri) = withContext(Dispatchers.IO) {
 /**
  * Imports OPML on a background thread
  */
-suspend fun importOpml(di: DI, uri: Uri) = withContext(Dispatchers.IO) {
-    val db: NeoFeedDb by di.instance()
+suspend fun importOpml(uri: Uri) = withContext(Dispatchers.IO) {
+    val db: NeoFeedDb by inject(NeoFeedDb::class.java)
     try {
         val time = measureTimeMillis {
             val parser = OPMLParser(OPMLToRoom(db))
-            val contentResolver: ContentResolver by di.instance()
+            val contentResolver: ContentResolver by inject(ContentResolver::class.java)
             contentResolver.openInputStream(uri).use {
                 it?.let { stream ->
                     parser.parseInputStream(stream)
                 }
             }
-            requestFeedSync(di = di)
+            requestFeedSync()
         }
         Log.d("OPML", "Imported OPML in $time ms on ${Thread.currentThread().name}")
     } catch (e: Throwable) {
         Log.e("OMPL", "Failed to import OPML", e)
-        val toastMaker = di.direct.instance<ToastMaker>()
+        val toastMaker: ToastMaker by inject(ToastMaker::class.java)
         toastMaker.makeToast(R.string.failed_to_import_OPML)
         (e.localizedMessage ?: e.message)?.let { message ->
             toastMaker.makeToast(message)

@@ -61,15 +61,14 @@ import com.saulhdev.feeder.compose.util.interceptKey
 import com.saulhdev.feeder.db.ArticleRepository
 import com.saulhdev.feeder.models.EditFeedViewState
 import com.saulhdev.feeder.utils.sloppyLinkToStrictURL
-import com.saulhdev.feeder.viewmodel.DIAwareViewModel
 import com.saulhdev.feeder.viewmodel.EditFeedViewModel
+import org.koin.java.KoinJavaComponent.inject
 
 @Composable
-fun EditFeedPage(
-    editFeedViewModel: EditFeedViewModel,
-    feedId: Long = -1
-) {
+fun EditFeedPage(feedId: Long = -1) {
     val title = stringResource(id = R.string.edit_rss)
+    val editFeedViewModel: EditFeedViewModel by inject(EditFeedViewModel::class.java)
+
     editFeedViewModel.setFeedId(feedId)
     val viewState by editFeedViewModel.viewState.collectAsState()
 
@@ -80,7 +79,9 @@ fun EditFeedPage(
         Column(
             modifier = Modifier.padding(
                 top = paddingValues.calculateTopPadding(),
-                bottom = paddingValues.calculateBottomPadding(), start = 8.dp, end = 8.dp
+                bottom = paddingValues.calculateBottomPadding(),
+                start = 8.dp,
+                end = 8.dp
             ),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -230,7 +231,6 @@ fun NavGraphBuilder.editFeedGraph(route: String) {
             val args = backStackEntry.arguments!!
             val feedId = args.getLong("feedId")
             EditFeedPage(
-                editFeedViewModel = backStackEntry.DIAwareViewModel(),
                 feedId = feedId
             )
         }

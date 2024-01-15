@@ -1,8 +1,6 @@
 package com.saulhdev.feeder
 
 import android.app.Activity
-import android.app.Application
-import android.content.ContentResolver
 import android.os.Bundle
 import android.widget.Toast
 import androidx.lifecycle.SavedStateHandle
@@ -22,14 +20,8 @@ import com.saulhdev.feeder.utils.Utilities
 import com.saulhdev.feeder.viewmodel.EditFeedViewModel
 import com.saulhdev.feeder.viewmodel.SearchFeedViewModel
 import com.saulhdev.feeder.viewmodel.SourcesViewModel
-import com.saulhdev.feeder.viewmodel.bindWithComposableViewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.kodein.di.DI
-import org.kodein.di.DIAware
-import org.kodein.di.bind
-import org.kodein.di.instance
-import org.kodein.di.singleton
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.androidx.viewmodel.dsl.viewModelOf
@@ -37,37 +29,12 @@ import org.koin.core.context.GlobalContext
 import org.koin.dsl.module
 import java.lang.ref.WeakReference
 
-class NFApplication : MultiDexApplication(), DIAware {
+class NFApplication : MultiDexApplication() {
 
     private val activityHandler = ActivityHandler()
     lateinit var db: NeoFeedDb
     private val applicationCoroutineScope = ApplicationCoroutineScope()
 
-    override val di by DI.lazy {
-
-        bind<Application>() with singleton { this@NFApplication }
-        bind<NeoFeedDb>() with singleton { NeoFeedDb.getInstance(this@NFApplication) }
-        bind<WorkManager>() with singleton { WorkManager.getInstance(this@NFApplication) }
-
-        bind<ApplicationCoroutineScope>() with instance(applicationCoroutineScope)
-
-        bind<ContentResolver>() with singleton { contentResolver }
-        bind<ToastMaker>() with singleton {
-            object : ToastMaker {
-                override suspend fun makeToast(text: String) = withContext(Dispatchers.Main) {
-                    Toast.makeText(this@NFApplication, text, Toast.LENGTH_SHORT).show()
-                }
-
-                override suspend fun makeToast(resId: Int) {
-                    Toast.makeText(this@NFApplication, resId, Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
-
-        bindWithComposableViewModelScope<EditFeedViewModel>()
-    }
-
-    //Saved State Handle
     private fun savedStateHandle() = SavedStateHandle()
 
     private val modelModule = module {
@@ -79,19 +46,37 @@ class NFApplication : MultiDexApplication(), DIAware {
         viewModelOf(::SourcesViewModel)
     }
 
-    private val repositoryModule = module {
+    private val dataModule = module {
+        single<NeoFeedDb> { NeoFeedDb.getInstance(this@NFApplication) }
         single { ArticleRepository(this@NFApplication) }
         single { SourceRepository(this@NFApplication) }
     }
 
+    private val coreModule = module {
+        single { contentResolver }
+        single { WorkManager.getInstance(this@NFApplication) }
+        single<ToastMaker> {
+            object : ToastMaker {
+                override suspend fun makeToast(text: String) = withContext(Dispatchers.Main) {
+                    Toast.makeText(get(), text, Toast.LENGTH_SHORT).show()
+                }
+
+                override suspend fun makeToast(resId: Int) = withContext(Dispatchers.Main) {
+                    Toast.makeText(get(), resId, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+        single { applicationCoroutineScope }
+    }
+
     override fun onCreate() {
         super.onCreate()
+        instance = this
         AndroidThreeTen.init(this)
         GlobalContext.startKoin {
             androidLogger()
             androidContext(this@NFApplication)
-            modules(repositoryModule)
-            modules(modelModule)
+            modules(coreModule, dataModule, modelModule)
         }
         DynamicColors.applyToActivitiesIfAvailable(
             this,
@@ -99,8 +84,7 @@ class NFApplication : MultiDexApplication(), DIAware {
                 .setPrecondition { _, _ -> DynamicColors.isDynamicColorAvailable() }
                 .build()
         )
-        instance = this
-        PluginFetcher.init(instance)
+        PluginFetcher.init(this)
         db = NeoFeedDb.getInstance(applicationContext)
     }
 

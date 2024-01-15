@@ -26,8 +26,6 @@ import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Response
-import org.kodein.di.DI
-import org.kodein.di.android.closestDI
 import org.threeten.bp.Instant
 import org.threeten.bp.temporal.ChronoUnit
 import java.io.File
@@ -48,11 +46,9 @@ suspend fun syncFeeds(
     minFeedAgeMinutes: Int = 5
 ): Boolean {
     val prefs = FeedPreferences.getInstance(context)
-    val di: DI by closestDI(context)
     return syncMutex.withLock {
         withContext(singleThreadedSync) {
             syncFeeds(
-                di,
                 context = context,
                 feedId = feedId,
                 feedTag = feedTag,
@@ -65,7 +61,6 @@ suspend fun syncFeeds(
 }
 
 internal suspend fun syncFeeds(
-    di: DI,
     context: Context,
     feedId: Long = ID_UNSET,
     feedTag: String = "",
@@ -132,7 +127,7 @@ internal suspend fun syncFeeds(
             Log.e(TAG, "Outer error", e)
         } finally {
             if (needFullTextSync) {
-                scheduleFullTextParse(di = di)
+                scheduleFullTextParse()
             }
         }
     }

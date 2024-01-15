@@ -17,7 +17,7 @@ allprojects {
 
 android {
     val name = "1.6.3"
-    val code = 57
+    val code = 58
 
     namespace = "com.saulhdev.feeder"
     compileSdk = 34
@@ -191,6 +191,5 @@ dependencies {
     implementation(libs.readability4j)
     implementation(libs.tagsoup)
     implementation(libs.jsoup)
-    implementation(libs.kodein)
     implementation(libs.slf4j)
 }

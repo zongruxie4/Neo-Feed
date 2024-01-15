@@ -45,15 +45,11 @@ import com.saulhdev.feeder.NFApplication
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.compose.pages.OverlayPage
 import com.saulhdev.feeder.theme.AppTheme
-import org.kodein.di.DI
-import org.kodein.di.DIAware
-import org.kodein.di.android.closestDI
-import org.kodein.di.compose.withDI
 
 class ComposeOverlayView(val context: Context) :
     OverlayController(context, R.style.AppTheme, R.style.WindowTheme),
     SavedStateRegistryOwner, ViewModelStoreOwner, OnBackPressedDispatcherOwner,
-    ActivityResultRegistryOwner, DIAware {
+    ActivityResultRegistryOwner {
     private lateinit var rootView: View
     private lateinit var composeView: ComposeView
     private lateinit var navController: NavHostController
@@ -65,8 +61,6 @@ class ComposeOverlayView(val context: Context) :
     private val savedStateRegistryController = SavedStateRegistryController.create(this)
     override val savedStateRegistry: SavedStateRegistry
         get() = savedStateRegistryController.savedStateRegistry
-    private val parentDI: DI by closestDI()
-    override val di: DI by DI.lazy { extend(parentDI) }
 
     init {
         savedStateRegistryController.performAttach()
@@ -90,12 +84,8 @@ class ComposeOverlayView(val context: Context) :
         composeView.setContent {
             navController = rememberNavController()
             AppTheme {
-                withDI(di = parentDI) {
-                    OverlayPage(navController = navController)
-
-                }
+                OverlayPage(navController = navController)
             }
-
         }
     }
 

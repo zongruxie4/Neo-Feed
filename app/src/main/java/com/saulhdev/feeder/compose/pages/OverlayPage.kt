@@ -91,18 +91,17 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
-import org.kodein.di.compose.LocalDI
+import org.koin.java.KoinJavaComponent.inject
 import org.threeten.bp.LocalDateTime
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun OverlayPage(navController: NavController = LocalNavController.current) {
     val context = LocalContext.current
-    val di = LocalDI.current
     val localTime = LocalDateTime.now().toString().replace(":", "_").substring(0, 19)
 
     val articles = SyncRestClient(context)
-    val repository = ArticleRepository(context)
+    val repository: ArticleRepository by inject(ArticleRepository::class.java)
     val scope = CoroutineScope(Dispatchers.IO) + CoroutineName("NeoFeedSync")
     val feedList: MutableList<FeedItem> = remember { mutableStateListOf() }
 
@@ -125,7 +124,7 @@ fun OverlayPage(navController: NavController = LocalNavController.current) {
     ) { uri ->
         if (uri != null) {
             scope.launch {
-                importOpml(di, uri)
+                importOpml(uri)
             }
         }
     }
@@ -135,7 +134,7 @@ fun OverlayPage(navController: NavController = LocalNavController.current) {
     ) { uri ->
         if (uri != null) {
             scope.launch {
-                exportOpml(di, uri)
+                exportOpml(uri)
             }
         }
     }
@@ -212,7 +211,6 @@ fun OverlayPage(navController: NavController = LocalNavController.current) {
                             tint = MaterialTheme.colorScheme.primary
                         )
 
-                        // OverflowMenu
                         DropdownMenu(
                             expanded = showMenu,
                             onDismissRequest = { showMenu = false }

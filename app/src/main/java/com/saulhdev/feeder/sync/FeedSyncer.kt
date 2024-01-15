@@ -18,8 +18,7 @@ import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.db.ID_UNSET
-import org.kodein.di.DI
-import org.kodein.di.instance
+import org.koin.java.KoinJavaComponent.inject
 import java.util.concurrent.TimeUnit
 
 class FeedSyncer(val context: Context, workerParams: WorkerParameters) :
@@ -107,7 +106,6 @@ fun createForegroundInfo(
 }
 
 fun requestFeedSync(
-    di: DI,
     feedId: Long = ID_UNSET,
     feedTag: String = "",
     forceNetwork: Boolean = false,
@@ -124,7 +122,9 @@ fun requestFeedSync(
     )
 
     workRequest.setInputData(data)
-    val workManager by di.instance<WorkManager>()
+    //get work manager by injecting from koin
+    val workManager: WorkManager by inject(WorkManager::class.java)
+
     workManager.enqueueUniqueWork(
         "feeder_sync_onetime",
         ExistingWorkPolicy.KEEP,

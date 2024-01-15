@@ -87,9 +87,7 @@ class JsonFeedParser(
             throw IOException("Failed to download feed: $response")
         }
 
-        return response.body?.let {
-            parseJson(it)
-        } ?: throw IOException("Failed to parse feed: body was NULL")
+        return parseJson(response.body)
     }
 
     /**

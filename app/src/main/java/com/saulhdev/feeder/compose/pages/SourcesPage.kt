@@ -76,8 +76,7 @@ import com.saulhdev.feeder.models.exportOpml
 import com.saulhdev.feeder.models.importOpml
 import com.saulhdev.feeder.utils.ApplicationCoroutineScope
 import kotlinx.coroutines.launch
-import org.kodein.di.compose.LocalDI
-import org.kodein.di.instance
+import org.koin.java.KoinJavaComponent.inject
 import java.time.LocalDateTime
 
 @Composable
@@ -87,15 +86,14 @@ fun SourcesPage() {
     val navController = LocalNavController.current
     val repository = SourceRepository(context)
     val localTime = LocalDateTime.now().toString().replace(":", "_").substring(0, 19)
+    val coroutineScope: ApplicationCoroutineScope by inject(ApplicationCoroutineScope::class.java)
 
-    val di = LocalDI.current
     val opmlExporter = rememberLauncherForActivityResult(
         ActivityResultContracts.CreateDocument("application/xml")
     ) { uri ->
         if (uri != null) {
-            val applicationCoroutineScope: ApplicationCoroutineScope by di.instance()
-            applicationCoroutineScope.launch {
-                exportOpml(di, uri)
+            coroutineScope.launch {
+                exportOpml(uri)
             }
         }
     }
@@ -104,9 +102,8 @@ fun SourcesPage() {
         ActivityResultContracts.OpenDocument()
     ) { uri ->
         if (uri != null) {
-            val applicationCoroutineScope: ApplicationCoroutineScope by di.instance()
-            applicationCoroutineScope.launch {
-                importOpml(di, uri)
+            coroutineScope.launch {
+                importOpml(uri)
             }
         }
     }

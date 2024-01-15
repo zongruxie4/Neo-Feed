@@ -44,7 +44,6 @@ compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
 datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore-preferences" }
 jsoup = { group = "org.jsoup", name = "jsoup", version = "1.16.2" }
-kodein = { group = "org.kodein.di", name = "kodein-di-framework-android-x", version = "7.21.0" }
 koin-android = { group = "io.insert-koin", name = "koin-android", version.ref = "koin" }
 koin-android-compat = { group = "io.insert-koin", name = "koin-android-compat", version.ref = "koin" }
 koin-compose = { group = "io.insert-koin", name = "koin-androidx-compose", version.ref = "koin" }

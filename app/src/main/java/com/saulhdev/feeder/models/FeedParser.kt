@@ -189,7 +189,7 @@ class FeedParser {
             // OkHttp string method handles BOM and Content-Type header in request
             parseFeedResponse(
                 response.request.url.toUrl(),
-                it!!,
+                it,
             )
         }
     }

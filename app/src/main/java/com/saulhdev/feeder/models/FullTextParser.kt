@@ -15,19 +15,17 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.withContext
 import net.dankito.readability4j.extended.Readability4JExtended
 import okhttp3.OkHttpClient
-import org.kodein.di.DI
-import org.kodein.di.instance
+import org.koin.java.KoinJavaComponent.inject
 import java.io.File
 import java.net.URL
 import java.util.concurrent.TimeUnit
 
-fun scheduleFullTextParse(di: DI) {
+fun scheduleFullTextParse() {
     Log.i("FeederFullText", "Scheduling a full text parse work")
     val workRequest = OneTimeWorkRequestBuilder<FullTextWorker>()
         .addTag("feeder")
         .keepResultsForAtLeast(1, TimeUnit.MINUTES)
-
-    val workManager by di.instance<WorkManager>()
+    val workManager: WorkManager by inject(WorkManager::class.java)
     workManager.enqueue(workRequest.build())
 }
 

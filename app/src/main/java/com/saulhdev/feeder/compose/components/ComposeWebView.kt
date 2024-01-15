@@ -89,10 +89,10 @@ fun ComposeWebView(
         ) {
             if (loadingState is LoadingState.Loading) {
                 LinearProgressIndicator(
-                    progress = loadingState.progress,
+                    progress = { loadingState.progress },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .wrapContentHeight()
+                        .wrapContentHeight(),
                 )
             } else {
                 title.value = state.pageTitle ?: "Neo Feed"

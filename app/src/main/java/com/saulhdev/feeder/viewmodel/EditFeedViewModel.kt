@@ -19,6 +19,7 @@
 package com.saulhdev.feeder.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.saulhdev.feeder.db.ArticleRepository
 import com.saulhdev.feeder.models.EditFeedViewState
@@ -28,10 +29,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.kodein.di.DI
 import org.koin.java.KoinJavaComponent.inject
 
-class EditFeedViewModel(di: DI, private val state: SavedStateHandle) : DIAwareViewModel(di) {
+class EditFeedViewModel(private val state: SavedStateHandle) : ViewModel() {
     private val repository: ArticleRepository by inject(ArticleRepository::class.java)
 
     private val _viewState = MutableStateFlow(EditFeedViewState())

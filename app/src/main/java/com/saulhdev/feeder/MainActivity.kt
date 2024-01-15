@@ -22,6 +22,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -31,6 +32,7 @@ import androidx.core.view.WindowCompat
 import androidx.lifecycle.asLiveData
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import androidx.savedstate.SavedStateRegistryOwner
 import androidx.work.Constraints
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.NetworkType
@@ -41,11 +43,9 @@ import com.saulhdev.feeder.compose.navigation.NavigationManager
 import com.saulhdev.feeder.preference.FeedPreferences
 import com.saulhdev.feeder.sync.FeedSyncer
 import com.saulhdev.feeder.theme.AppTheme
-import com.saulhdev.feeder.viewmodel.DIAwareComponentActivity
-import org.kodein.di.compose.withDI
 import java.util.concurrent.TimeUnit
 
-class MainActivity : DIAwareComponentActivity() {
+class MainActivity : ComponentActivity(), SavedStateRegistryOwner {
     lateinit var prefs: FeedPreferences
     private var isDarkTheme = false
 
@@ -54,7 +54,6 @@ class MainActivity : DIAwareComponentActivity() {
     private var sRestart = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        NFApplication.mainActivity = this
         super.onCreate(savedInstanceState)
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
@@ -64,10 +63,8 @@ class MainActivity : DIAwareComponentActivity() {
                 darkTheme = isDarkTheme
             ) {
                 TransparentSystemBars()
-                withDI {
-                    navController = rememberNavController()
-                    NavigationManager(navController = navController)
-                }
+                navController = rememberNavController()
+                NavigationManager(navController = navController)
             }
         }
         if (prefs.enabledPlugins.getValue().isEmpty()) {
@@ -78,6 +75,7 @@ class MainActivity : DIAwareComponentActivity() {
 
         configurePeriodicSync(prefs)
         observePrefs()
+        NFApplication.mainActivity = this
     }
 
     @Composable
