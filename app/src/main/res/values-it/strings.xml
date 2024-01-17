@@ -19,7 +19,7 @@
     <string name="allow_notify_to_settings">Apri impostazioni</string>
     <string name="overlay_no_permission_desc">HomeFeeder ha bisogno di \"Accesso alle notifiche\" per mostrare le notifiche sopra altre app.</string>
     <string name="overlay_no_permission_snackbar">Verifica di aver concesso l\'autorizzazione \"Accesso alle notifiche\" e riprova.</string>
-    <string name="pm_desc">HomeFeeder li utilizza per visualizzare i dati</string>
+    <string name="pm_desc">HomeFeeder li usa per visualizzare i dati</string>
     <string name="remove_desc">Rimuovere %s dalle fonti feed\?</string>
     <string name="title_feed_list">Elenco feed</string>
     <string name="today">oggi</string>
