@@ -46,7 +46,7 @@ class DialogMenu(private val d: View) {
     }
 
     @SuppressLint("InflateParams")
-    fun a(
+    fun show(
         list: List<MenuItem>,
         setListViewParams: ((Pair<View, MenuListView>) -> Unit)? = null,
         onClick: (MenuItem) -> Unit
