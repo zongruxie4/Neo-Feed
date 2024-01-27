@@ -4,7 +4,7 @@ import android.content.Context
 import android.util.SparseIntArray
 import androidx.core.content.ContextCompat
 import com.saulhdev.feeder.R
-import com.saulhdev.feeder.overlay.ComposeOverlayView
+import com.saulhdev.feeder.overlay.OverlayView
 import com.saulhdev.feeder.preference.FeedPreferences
 import com.saulhdev.feeder.theme.Theming
 import com.saulhdev.feeder.utils.clearLightFlags
@@ -12,7 +12,7 @@ import com.saulhdev.feeder.utils.clearLightFlags
 /**
  * A class which manages overlay styling.
  * */
-class OverlayThemeHolder(private val context: Context, private val overlay: ComposeOverlayView) {
+class OverlayThemeHolder(private val context: Context, private val overlay: OverlayView) {
 
     val prefs = FeedPreferences.getInstance(context)
 

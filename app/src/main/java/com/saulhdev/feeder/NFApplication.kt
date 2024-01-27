@@ -1,6 +1,7 @@
 package com.saulhdev.feeder
 
 import android.app.Activity
+import android.app.Application
 import android.os.Bundle
 import android.widget.Toast
 import androidx.lifecycle.SavedStateHandle
@@ -67,6 +68,7 @@ class NFApplication : MultiDexApplication() {
             }
         }
         single { applicationCoroutineScope }
+        single<Application> { this@NFApplication }
     }
 
     override fun onCreate() {

@@ -59,11 +59,11 @@ class MainActivity : ComponentActivity(), SavedStateRegistryOwner {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         prefs = FeedPreferences.getInstance(this)
         setContent {
+            navController = rememberNavController()
             AppTheme(
                 darkTheme = isDarkTheme
             ) {
                 TransparentSystemBars()
-                navController = rememberNavController()
                 NavigationManager(navController = navController)
             }
         }
@@ -76,6 +76,7 @@ class MainActivity : ComponentActivity(), SavedStateRegistryOwner {
         configurePeriodicSync(prefs)
         observePrefs()
         NFApplication.mainActivity = this
+
     }
 
     @Composable

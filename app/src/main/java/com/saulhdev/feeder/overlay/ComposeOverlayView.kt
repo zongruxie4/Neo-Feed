@@ -41,15 +41,16 @@ import androidx.savedstate.SavedStateRegistryController
 import androidx.savedstate.SavedStateRegistryOwner
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import com.google.android.libraries.gsa.d.a.OverlayController
-import com.saulhdev.feeder.NFApplication
+import com.saulhdev.feeder.MainActivity
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.compose.pages.OverlayPage
 import com.saulhdev.feeder.theme.AppTheme
+import org.koin.java.KoinJavaComponent.inject
 
 class ComposeOverlayView(val context: Context) :
     OverlayController(context, R.style.AppTheme, R.style.WindowTheme),
-    SavedStateRegistryOwner, ViewModelStoreOwner, OnBackPressedDispatcherOwner,
-    ActivityResultRegistryOwner {
+    SavedStateRegistryOwner, ViewModelStoreOwner,
+    OnBackPressedDispatcherOwner, ActivityResultRegistryOwner {
     private lateinit var rootView: View
     private lateinit var composeView: ComposeView
     private lateinit var navController: NavHostController
@@ -61,6 +62,8 @@ class ComposeOverlayView(val context: Context) :
     private val savedStateRegistryController = SavedStateRegistryController.create(this)
     override val savedStateRegistry: SavedStateRegistry
         get() = savedStateRegistryController.savedStateRegistry
+
+    val mainActivity: MainActivity by inject(MainActivity::class.java)
 
     init {
         savedStateRegistryController.performAttach()
@@ -101,7 +104,9 @@ class ComposeOverlayView(val context: Context) :
 
     override val viewModelStore: ViewModelStore
         get() = ViewModelStore()
+
     override val activityResultRegistry: ActivityResultRegistry
-        get() = NFApplication.mainActivity!!.activityResultRegistry
+        get() = mainActivity.activityResultRegistry
+    //get() = NFApplication.mainActivity!!.activityResultRegistry
 
 }

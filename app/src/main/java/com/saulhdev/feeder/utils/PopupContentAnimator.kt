@@ -29,6 +29,7 @@ import android.os.Handler
 import android.os.Looper
 import android.view.View
 import androidx.annotation.UiThread
+import androidx.core.os.postDelayed
 import androidx.interpolator.view.animation.FastOutLinearInInterpolator
 import androidx.interpolator.view.animation.LinearOutSlowInInterpolator
 import kotlin.math.ceil
@@ -49,7 +50,7 @@ class PopupContentAnimator(private val g: View) {
 
     var b: Animator? = null
     var c: Animator? = null
-    private val d = Handler(Looper.getMainLooper())
+    private val handler = Handler(Looper.getMainLooper())
     private var e: (() -> Unit)? = null
     private var f: (() -> Unit)? = null
 
@@ -157,7 +158,7 @@ class PopupContentAnimator(private val g: View) {
 
     private fun b(aVar: () -> Unit) {
         this.g.visibility = View.INVISIBLE
-        this.d.postDelayed(50) {
+        this.handler.postDelayed(50L) {
             aVar.invoke()
         }
     }
@@ -167,7 +168,7 @@ class PopupContentAnimator(private val g: View) {
         this.b = null
         this.c?.cancel()
         this.c = null
-        this.d.removeCallbacksAndMessages(null)
+        this.handler.removeCallbacksAndMessages(null)
     }
 
     private fun a(): Boolean {
