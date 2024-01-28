@@ -26,6 +26,6 @@
         app:optionIconTint="?colorAccent"
         app:optionLabelTextColor="?android:textColorPrimary"
         app:optionLabelTextSize="13sp"
-        app:optionPaddingEnd="8dp"
-        app:optionPaddingStart="8dp" />
+        app:optionPaddingEnd="16dp"
+        app:optionPaddingStart="16dp" />
 </LinearLayout>
