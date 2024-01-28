@@ -33,7 +33,6 @@ import java.lang.ref.WeakReference
 class NFApplication : MultiDexApplication() {
 
     private val activityHandler = ActivityHandler()
-    lateinit var db: NeoFeedDb
     private val applicationCoroutineScope = ApplicationCoroutineScope()
 
     private fun savedStateHandle() = SavedStateHandle()
@@ -87,7 +86,6 @@ class NFApplication : MultiDexApplication() {
                 .build()
         )
         PluginFetcher.init(this)
-        db = NeoFeedDb.getInstance(applicationContext)
     }
 
     override fun onTerminate() {
