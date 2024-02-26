@@ -18,12 +18,18 @@
 
 package com.saulhdev.feeder
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.os.ResultReceiver
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.graphics.Color
@@ -40,10 +46,18 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.saulhdev.feeder.compose.navigation.NavigationManager
+import com.saulhdev.feeder.models.exportOpml
+import com.saulhdev.feeder.models.importOpml
 import com.saulhdev.feeder.preference.FeedPreferences
 import com.saulhdev.feeder.sync.FeedSyncer
 import com.saulhdev.feeder.theme.AppTheme
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
+import org.threeten.bp.LocalDateTime
 import java.util.concurrent.TimeUnit
+import kotlin.coroutines.resume
 
 class MainActivity : ComponentActivity(), SavedStateRegistryOwner {
     lateinit var prefs: FeedPreferences
@@ -53,11 +67,42 @@ class MainActivity : ComponentActivity(), SavedStateRegistryOwner {
 
     private var sRestart = false
 
+    private val localTime = LocalDateTime.now().toString().replace(":", "_").substring(0, 19)
+    private val opmlImporterLauncher =
+        registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+            if (uri != null) {
+                CoroutineScope(Dispatchers.Main).launch {
+                    importOpml(uri)
+                }
+            }
+        }
+
+    val opmlExporter = registerForActivityResult(
+        ActivityResultContracts.CreateDocument("application/xml")
+    ) { uri ->
+        if (uri != null) {
+            CoroutineScope(Dispatchers.Main).launch {
+                exportOpml(uri)
+            }
+        }
+    }
+
+    private fun launchOpmlImporter() {
+        opmlImporterLauncher.launch(arrayOf("application/xml", "text/xml", "text/opml"))
+    }
+
+    private fun launchOpmlExporter() {
+        opmlExporter.launch("NF-${localTime}.opml")
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
         prefs = FeedPreferences.getInstance(this)
+        if (intent.hasExtra("import") || intent.hasExtra("export")) {
+            startTargetActivity()
+        }
         setContent {
             navController = rememberNavController()
             AppTheme(
@@ -76,7 +121,24 @@ class MainActivity : ComponentActivity(), SavedStateRegistryOwner {
         configurePeriodicSync(prefs)
         observePrefs()
         NFApplication.mainActivity = this
+    }
 
+    private fun startTargetActivity() {
+        when {
+            intent.hasExtra("import") -> {
+                registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+                    launchOpmlImporter()
+                    finish()
+                }.launch(intent.getParcelableExtra("import"))
+            }
+
+            else -> {
+                registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+                    launchOpmlExporter()
+                    finish()
+                }.launch(intent.getParcelableExtra("export"))
+            }
+        }
     }
 
     @Composable
@@ -187,6 +249,50 @@ class MainActivity : ComponentActivity(), SavedStateRegistryOwner {
         fun createIntent(context: Context, destination: String): Intent {
             val uri = "android-app://androidx.navigation//$destination".toUri()
             return Intent(Intent.ACTION_VIEW, uri, context, MainActivity::class.java)
+        }
+
+        fun createIntent(context: Context, destination: String, action: String): Intent {
+            val intent = Intent(context, MainActivity::class.java)
+            intent.putExtra("action", action)
+            return intent
+        }
+
+        suspend fun startActivityForResult(
+            activity: Activity,
+            targetIntent: Intent
+        ): ActivityResult {
+            return start(activity, targetIntent, Bundle.EMPTY)
+        }
+
+        private suspend fun start(
+            activity: Activity,
+            targetIntent: Intent,
+            extras: Bundle
+        ): ActivityResult {
+            return suspendCancellableCoroutine { continuation ->
+                val intent = Intent(activity, MainActivity::class.java)
+                    .putExtras(extras)
+                    .putExtra("intent", targetIntent)
+                val resultReceiver = createResultReceiver {
+                    if (continuation.isActive) {
+                        continuation.resume(it)
+                    }
+                }
+                activity.startActivity(intent.putExtra("callback", resultReceiver))
+            }
+        }
+
+        private fun createResultReceiver(callback: (ActivityResult) -> Unit): ResultReceiver {
+            return object : ResultReceiver(Handler(Looper.myLooper()!!)) {
+
+                override fun onReceiveResult(resultCode: Int, resultData: Bundle?) {
+                    val data = Intent()
+                    if (resultData != null) {
+                        data.putExtras(resultData)
+                    }
+                    callback(ActivityResult(resultCode, data))
+                }
+            }
         }
     }
 }
