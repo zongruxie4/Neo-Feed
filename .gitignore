@@ -8,6 +8,7 @@
 bin/
 gen/
 out/
+.idea/
 
 # Gradle files
 .gradle/
@@ -21,7 +22,9 @@ local.properties
 *.ap_
 *.aab
 app/release/
+app/neo/
 
 # IntelliJ
+.kotlin/
 *.iml
 .idea
