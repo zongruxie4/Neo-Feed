@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.kapt)
     alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.kotlin.serialization)
@@ -110,10 +111,6 @@ android {
         aidl = true
     }
 
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
-    }
-
     packaging {
         resources.pickFirsts.add("rome-utils-2.1.0.jar")
     }
@@ -138,6 +135,7 @@ dependencies {
     implementation(libs.swiperefreshlayout)
     implementation(libs.work.runtime.ktx)
     implementation(libs.material)
+    implementation(libs.browser)
 
     implementation(libs.datastore.preferences)
     implementation(libs.lifecycle.common.java8)
@@ -147,7 +145,7 @@ dependencies {
     implementation(libs.lifecycle.viewmodel.ktx)
 
     //Compose
-    implementation(libs.browser)
+    api(platform(libs.compose.bom))
     implementation(libs.compose.animation)
     implementation(libs.compose.foundation)
     implementation(libs.compose.material)
@@ -163,7 +161,7 @@ dependencies {
     implementation(libs.room.ktx)
     implementation(libs.room.paging)
     implementation(libs.room.runtime)
-    kapt(libs.room.compiler)
+    ksp(libs.room.compiler)
 
     //Squareup
     implementation(libs.moshi)
