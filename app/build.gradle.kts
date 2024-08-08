@@ -58,6 +58,13 @@ android {
         named("release") {
             isMinifyEnabled = false
             /*isShrinkResources = true*/
+        }
+        create("neo") {
+            isMinifyEnabled = false
+            isShrinkResources = false
+            applicationIdSuffix = ".neo"
+        }
+        all {
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
