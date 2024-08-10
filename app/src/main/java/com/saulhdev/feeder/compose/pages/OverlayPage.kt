@@ -18,68 +18,49 @@
 
 package com.saulhdev.feeder.compose.pages
 
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.pullrefresh.PullRefreshIndicator
-import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.saulhdev.feeder.MainActivity
 import com.saulhdev.feeder.NFApplication
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.compose.components.ArticleItem
+import com.saulhdev.feeder.compose.components.PullToRefreshLazyColumn
 import com.saulhdev.feeder.compose.navigation.LocalNavController
 import com.saulhdev.feeder.compose.navigation.Routes
 import com.saulhdev.feeder.db.ArticleRepository
 import com.saulhdev.feeder.icon.Phosphor
-import com.saulhdev.feeder.icon.phosphor.CaretUp
-import com.saulhdev.feeder.icon.phosphor.CloudArrowDown
-import com.saulhdev.feeder.icon.phosphor.CloudArrowUp
 import com.saulhdev.feeder.icon.phosphor.GearSix
 import com.saulhdev.feeder.icon.phosphor.Nut
 import com.saulhdev.feeder.icon.phosphor.Power
-import com.saulhdev.feeder.models.exportOpml
-import com.saulhdev.feeder.models.importOpml
 import com.saulhdev.feeder.plugin.PluginConnector
 import com.saulhdev.feeder.preference.FeedPreferences
 import com.saulhdev.feeder.sdk.FeedItem
@@ -94,7 +75,7 @@ import kotlinx.coroutines.plus
 import org.koin.java.KoinJavaComponent.inject
 import org.threeten.bp.LocalDateTime
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OverlayPage(navController: NavController = LocalNavController.current) {
     val context = LocalContext.current
@@ -119,7 +100,7 @@ fun OverlayPage(navController: NavController = LocalNavController.current) {
         }
     }
 
-    val opmlImporter = rememberLauncherForActivityResult(
+    /*val opmlImporter = rememberLauncherForActivityResult(
         ActivityResultContracts.OpenDocument()
     ) { uri ->
         if (uri != null) {
@@ -137,65 +118,24 @@ fun OverlayPage(navController: NavController = LocalNavController.current) {
                 exportOpml(uri)
             }
         }
-    }
+    }*/
 
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
     var isRefreshing by remember { mutableStateOf(false) }
+    var showMenu by remember { mutableStateOf(false) }
 
-    val pullRefreshState = rememberPullRefreshState(
-        refreshing = isRefreshing,
-        onRefresh = {
-            isRefreshing = true
-            refreshFeed(repository, articles, scope) {
-                feedList.clear()
-                PluginConnector.getFeedAsItLoads(0, { feed ->
-                    feedList.addAll(feed)
-                }, {
-
-                    feedList.sortByDescending { it.time }
-                    isRefreshing = false
-                })
-            }
-        }
-    )
-    Box(
-        modifier = Modifier
-            .background(MaterialTheme.colorScheme.background)
-            .pullRefresh(pullRefreshState)
-
-    ) {
-        var showMenu by remember { mutableStateOf(false) }
-        val listState = rememberLazyListState()
-        val firstVisibleItem = remember { derivedStateOf { listState.firstVisibleItemIndex } }
-
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(
-                    start = 8.dp,
-                    end = 8.dp
+    Scaffold(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        containerColor = MaterialTheme.colorScheme.background,
+        topBar = {
+            CenterAlignedTopAppBar(
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.background,
+                    scrolledContainerColor = MaterialTheme.colorScheme.background,
                 ),
-            state = listState
-        ) {
-            item {
-                Row(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(
-                            top = 26.dp,
-                            start = 4.dp,
-                            end = 4.dp,
-                            bottom = 4.dp
-                        ),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.app_name),
-                        modifier = Modifier.padding(start = 4.dp),
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                    Spacer(modifier = Modifier.weight(1f))
+                title = { Text(text = stringResource(id = R.string.app_name)) },
+                scrollBehavior = scrollBehavior,
+                actions = {
                     IconButton(
                         modifier = Modifier
                             .size(size = 40.dp)
@@ -203,7 +143,6 @@ fun OverlayPage(navController: NavController = LocalNavController.current) {
                         onClick = {
                             showMenu = true
                         }
-
                     ) {
                         Icon(
                             imageVector = Phosphor.Nut,
@@ -221,15 +160,7 @@ fun OverlayPage(navController: NavController = LocalNavController.current) {
                                 },
                                 onClick = {
                                     showMenu = false
-                                    refreshFeed(repository, articles, scope) {
-                                        feedList.clear()
-                                        PluginConnector.getFeedAsItLoads(0, { feed ->
-                                            feedList.addAll(feed)
-                                        }, {
-
-                                            feedList.sortByDescending { it.time }
-                                        })
-                                    }
+                                    isRefreshing = true
                                 },
                                 leadingIcon = {
                                     Icon(
@@ -239,6 +170,7 @@ fun OverlayPage(navController: NavController = LocalNavController.current) {
                                 }
                             )
                             HorizontalDivider()
+                            /*
                             DropdownMenuItem(
                                 text = {
                                     Text(text = stringResource(id = R.string.sources_import_opml))
@@ -277,6 +209,7 @@ fun OverlayPage(navController: NavController = LocalNavController.current) {
                                 }
                             )
                             HorizontalDivider()
+                            */
 
                             DropdownMenuItem(
                                 text = {
@@ -312,26 +245,25 @@ fun OverlayPage(navController: NavController = LocalNavController.current) {
                         }
                     }
                 }
-            }
-
-            if (isRefreshing) {
-                item {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-
-                        PullRefreshIndicator(
-                            refreshing = isRefreshing,
-                            state = pullRefreshState,
-                            contentColor = MaterialTheme.colorScheme.primary
-                        )
-                    }
+            )
+        }
+    ) { paddingValues ->
+        PullToRefreshLazyColumn(
+            items = feedList,
+            isRefreshing = isRefreshing,
+            onRefresh = {
+                isRefreshing = true
+                refreshFeed(repository, articles, scope) {
+                    feedList.clear()
+                    PluginConnector.getFeedAsItLoads(0, { feed ->
+                        feedList.addAll(feed)
+                    }, {
+                        feedList.sortByDescending { it.time }
+                        isRefreshing = false
+                    })
                 }
-            }
-
-            items(feedList.size) { index ->
-                val item = feedList[index]
+            },
+            content = { item ->
                 ArticleItem(
                     article = item,
                     repository = repository
@@ -340,7 +272,13 @@ fun OverlayPage(navController: NavController = LocalNavController.current) {
                         context.launchView(item.content.link)
                     } else {
                         if (prefs.offlineReader.getValue()) {
-                            navController.navigate("/${Routes.ARTICLE_VIEW}/${item.id}/")
+                            //navController.navigate("/${Routes.ARTICLE_VIEW}/${item.id}/")
+                            context.startActivity(
+                                MainActivity.createIntent(
+                                    context,
+                                    "article_page/${item.id}/"
+                                )
+                            )
                         } else {
                             openLinkInCustomTab(
                                 context,
@@ -349,31 +287,9 @@ fun OverlayPage(navController: NavController = LocalNavController.current) {
                         }
                     }
                 }
-                Spacer(modifier = Modifier.height(8.dp))
-
-            }
-        }
-
-        if (firstVisibleItem.value > 4) {
-            val scopeLaunch = rememberCoroutineScope()
-            FloatingActionButton(
-                onClick = {
-                    scopeLaunch.launch {
-                        listState.animateScrollToItem(0)
-                    }
-                },
-                modifier = Modifier
-                    .padding(end = 16.dp, bottom = 64.dp)
-                    .align(Alignment.BottomEnd),
-                shape = CircleShape
-            ) {
-                Icon(
-                    imageVector = Phosphor.CaretUp,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onPrimary
-                )
-            }
-        }
+            },
+            modifier = Modifier.padding(paddingValues),
+        )
     }
 }
 

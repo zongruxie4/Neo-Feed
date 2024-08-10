@@ -26,14 +26,13 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.ImageButton
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.libraries.gsa.d.a.OverlayController
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.saulhdev.feeder.MainActivity
 import com.saulhdev.feeder.NFApplication
@@ -80,8 +79,8 @@ class OverlayView(val context: Context) :
         themeHolder.setTheme(
             when (force ?: prefs.overlayTheme.getValue()) {
                 "auto_system" -> Theming.getThemeBySystem(context)
-                "dark" -> Theming.defaultDarkThemeColors
-                else -> Theming.defaultLightThemeColors
+                "dark"        -> Theming.defaultDarkThemeColors
+                else          -> Theming.defaultLightThemeColors
             }
         )
         setCustomTheme()
@@ -103,7 +102,7 @@ class OverlayView(val context: Context) :
         val theme = if (themeHolder.currentTheme.get(Theming.Colors.OVERLAY_BG.ordinal)
                 .isDark()
         ) Theming.defaultDarkThemeColors else Theming.defaultLightThemeColors
-        rootView.findViewById<ImageView>(R.id.header_preferences).imageTintList =
+        rootView.findViewById<MaterialButton>(R.id.header_preferences).iconTint =
             ColorStateList.valueOf(
                 theme.get(
                     Theming.Colors.TEXT_COLOR_PRIMARY.ordinal
@@ -155,8 +154,7 @@ class OverlayView(val context: Context) :
 
     private fun initHeader() {
 
-        rootView.findViewById<ImageButton>(R.id.header_preferences).apply {
-
+        rootView.findViewById<MaterialButton>(R.id.header_preferences).apply {
             setOnClickListener {
                 openMenu(it)
             }
@@ -165,27 +163,16 @@ class OverlayView(val context: Context) :
 
     private fun openMenu(view: View) {
         val popup = DialogMenu(view)
-        popup.show(createMenuList(), {
-            it.first.backgroundTintList = ColorStateList.valueOf(
-                themeHolder.currentTheme.get(
-                    Theming.Colors.OVERLAY_BG.ordinal
-                )
-            )
-            it.second.apply {
-                setActionLabelTextColor(themeHolder.currentTheme.get(Theming.Colors.TEXT_COLOR_PRIMARY.ordinal))
-                setDividerColor(themeHolder.currentTheme.get(Theming.Colors.TEXT_COLOR_SECONDARY.ordinal))
-                setActionIconTint(themeHolder.currentTheme.get(Theming.Colors.TEXT_COLOR_PRIMARY.ordinal))
-            }
-        }) {
+        popup.show(createMenuList()) {
             popup.dismiss()
             val scope = CoroutineScope(Dispatchers.Main)
             when (it.id) {
-                "config" -> {
+                "config"  -> {
                     scope.launch {
                         view.context.startActivity(
                             MainActivity.createIntent(
                                 view.context,
-                                "settings/"
+                                "/"
                             )
                         )
                     }
@@ -213,7 +200,7 @@ class OverlayView(val context: Context) :
                 }
                 */
 
-                "reload" -> {
+                "reload"  -> {
                     refreshNotifications()
                 }
 
@@ -325,10 +312,10 @@ class OverlayView(val context: Context) :
         themeHolder.prefs.overlayTransparency.setValue(value)
     }
 
-    override fun applyNewCardBg(value: String) {
+    /*override fun applyNewCardBg(value: String) {
         themeHolder.cardBgPref = value
         updateTheme()
-    }
+    }*/
 
     override fun applyCompactCard(value: Boolean) {
         adapter = FeedAdapter()

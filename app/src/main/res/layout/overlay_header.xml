@@ -17,36 +17,31 @@
   -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingStart="@dimen/rl_margin_less"
-    android:paddingEnd="@dimen/rl_margin_less"
-    android:paddingTop="4dp"
-    android:paddingBottom="8dp"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:padding="8dp">
 
     <TextView
+        android:id="@+id/header_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="@string/app_name"
-        android:textColor="@color/textColorPrimary"
-        android:textSize="22sp"
         android:layout_gravity="center"
-        android:id="@+id/header_title"
         android:layout_weight="1"
-        android:textStyle="bold"
+        android:gravity="center"
+        android:text="@string/app_name"
+        android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall"
         tools:targetApi="p" />
 
-    <androidx.appcompat.widget.AppCompatImageButton
-        android:layout_width="36dp"
-        android:layout_height="36dp"
-        android:padding="8dp"
-        android:layout_gravity="center"
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/header_preferences"
-        android:background="?selectableItemBackground"
-        android:src="@drawable/ic_settings"
-        android:tint="@color/textColorPrimary" />
-
-
+        style="@style/Widget.Material3.Button.IconButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        app:icon="@drawable/ic_settings"
+        app:iconSize="24dp"
+        app:iconTint="@color/textColorPrimary" />
 </LinearLayout>
