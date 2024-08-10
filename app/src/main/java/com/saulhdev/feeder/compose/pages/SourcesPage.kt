@@ -20,51 +20,38 @@ package com.saulhdev.feeder.compose.pages
 
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.compose.components.FeedItem
 import com.saulhdev.feeder.compose.components.OverflowMenu
 import com.saulhdev.feeder.compose.components.ViewWithActionBar
+import com.saulhdev.feeder.compose.components.dialog.ActionsDialogUI
 import com.saulhdev.feeder.compose.navigation.LocalNavController
 import com.saulhdev.feeder.compose.navigation.Routes
 import com.saulhdev.feeder.db.SourceRepository
@@ -124,7 +111,6 @@ fun SourcesPage() {
                     tint = MaterialTheme.colorScheme.onPrimary
                 )
             }
-
         },
         actions = {
             OverflowMenu {
@@ -157,131 +143,61 @@ fun SourcesPage() {
             }
         }
     ) { paddingValues ->
-        Column(
+        val showDialog = remember { mutableStateOf(false) }
+        val list: State<List<Feed>> =
+            repository.getAllFeeds().collectAsState(initial = listOf())
+        val removeItem: MutableState<Feed?> =
+            remember { mutableStateOf(list.value.firstOrNull()) }
+
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
                 .padding(
                     top = paddingValues.calculateTopPadding(),
-                    bottom = paddingValues.calculateBottomPadding(), start = 8.dp, end = 8.dp
-                )
+                    bottom = paddingValues.calculateBottomPadding(),
+                ),
+            contentPadding = PaddingValues(horizontal = 8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            val showDialog = remember { mutableStateOf(false) }
-            val list: State<List<Feed>> =
-                repository.getAllFeeds().collectAsState(initial = listOf())
-            val removeItem: MutableState<Feed?> =
-                remember { mutableStateOf(list.value.firstOrNull()) }
-            Spacer(modifier = Modifier.height(8.dp))
-
-            LazyColumn {
-                items(list.value) { item ->
-                    FeedItem(
-                        feed = item,
-                        onClickAction = {
-                            navController.navigate(
-                                "/edit_feed/${item.id}/"
-                            )
-                        },
-                        onRemoveAction = {
-                            showDialog.value = true
-                            removeItem.value = item
-                        }
-                    )
-                    Spacer(modifier = Modifier.height(2.dp))
-                    if (showDialog.value) {
-                        Dialog(
-                            onDismissRequest = { showDialog.value = false },
-                            DialogProperties(
-                                dismissOnBackPress = true,
-                                dismissOnClickOutside = true
-                            )
-                        ) {
-                            Surface(
-                                shape = RoundedCornerShape(16.dp),
-                                color = MaterialTheme.colorScheme.background
-                            ) {
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .wrapContentHeight(),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Column(modifier = Modifier.padding(16.dp)) {
-                                        Row(
-                                            modifier = Modifier.fillMaxWidth(),
-                                            horizontalArrangement = Arrangement.Center,
-                                            verticalAlignment = Alignment.CenterVertically
-                                        ) {
-                                            Text(
-                                                text = stringResource(id = R.string.remove_title),
-                                                style = TextStyle(
-                                                    fontSize = 20.sp,
-                                                    fontFamily = FontFamily.Default,
-                                                    fontWeight = FontWeight.Bold
-                                                )
-                                            )
-                                        }
-
-                                        Spacer(modifier = Modifier.height(16.dp))
-                                        Text(
-                                            text = stringResource(
-                                                id = R.string.remove_desc,
-                                                removeItem.value!!.title
-                                            ),
-                                            style = TextStyle(
-                                                fontSize = 16.sp,
-                                                fontFamily = FontFamily.Default
-                                            )
-                                        )
-                                        Spacer(Modifier.height(16.dp))
-                                        Row(modifier = Modifier.fillMaxWidth()) {
-                                            TextButton(
-                                                shape = RoundedCornerShape(16.dp),
-                                                onClick = {
-                                                    showDialog.value = false
-                                                }
-                                            ) {
-                                                Text(
-                                                    text = stringResource(id = android.R.string.cancel),
-                                                    fontWeight = FontWeight.ExtraBold,
-                                                    modifier = Modifier.padding(
-                                                        vertical = 5.dp,
-                                                        horizontal = 8.dp
-                                                    )
-                                                )
-                                            }
-
-                                            Spacer(Modifier.weight(1f))
-
-                                            TextButton(
-                                                shape = RoundedCornerShape(16.dp),
-                                                onClick = {
-                                                    repository.deleteFeed(removeItem.value!!)
-                                                    showDialog.value = false
-                                                },
-                                                colors = ButtonDefaults.buttonColors(
-                                                    containerColor = MaterialTheme.colorScheme.primary.copy(
-                                                        0.65f
-                                                    ),
-                                                    contentColor = MaterialTheme.colorScheme.onPrimary
-                                                )
-                                            ) {
-                                                Text(
-                                                    text = stringResource(id = android.R.string.ok),
-                                                    fontWeight = FontWeight.ExtraBold,
-                                                    modifier = Modifier.padding(
-                                                        top = 5.dp,
-                                                        bottom = 5.dp
-                                                    )
-                                                )
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
+            items(list.value, key = { it.id }) { item ->
+                FeedItem(
+                    feed = item,
+                    onClickAction = {
+                        navController.navigate(
+                            "/${Routes.EDIT_FEED}/${item.id}/"
+                        )
+                    },
+                    onRemoveAction = {
+                        showDialog.value = true
+                        removeItem.value = item
                     }
-                }
+                )
+            }
+            item {
+                Spacer(modifier = Modifier.height(64.dp))
+            }
+        }
+
+        if (showDialog.value) {
+            Dialog(
+                onDismissRequest = { showDialog.value = false },
+                DialogProperties(
+                    dismissOnBackPress = true,
+                    dismissOnClickOutside = true
+                )
+            ) {
+                ActionsDialogUI(
+                    titleText = stringResource(id = R.string.remove_title),
+                    messageText = stringResource(
+                        id = R.string.remove_desc,
+                        removeItem.value!!.title
+                    ),
+                    openDialogCustom = showDialog,
+                    primaryText = stringResource(id = android.R.string.ok),
+                    primaryAction = {
+                        repository.deleteFeed(removeItem.value!!)
+                    }
+                )
             }
         }
     }
