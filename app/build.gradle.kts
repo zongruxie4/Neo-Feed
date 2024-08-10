@@ -143,6 +143,7 @@ dependencies {
     implementation(libs.work.runtime.ktx)
     implementation(libs.material)
     implementation(libs.browser)
+    implementation(libs.collections.immutable)
 
     implementation(libs.datastore.preferences)
     implementation(libs.lifecycle.common.java8)
