@@ -135,7 +135,7 @@ class MainActivity : ComponentActivity(), SavedStateRegistryOwner {
                 }.launch(intent.getParcelableExtra("import"))
             }
 
-            else -> {
+            else                      -> {
                 registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
                     launchOpmlExporter()
                     finish()
@@ -162,34 +162,25 @@ class MainActivity : ComponentActivity(), SavedStateRegistryOwner {
     }
 
     private fun observePrefs() {
-        var recreate = false
+        val oldTheme = prefs.overlayTheme.getValue()
+        val oldTransparency = prefs.overlayTransparency.getValue()
+        //val oldCardBackground = prefs.cardBackground.getValue()
+
         prefs.overlayTheme.get().asLiveData().observe(this) {
-            isDarkTheme = when (it) {
-                "auto_system" -> isSystemDark()
-                "dark" -> true
-                else -> false
+            if (it != oldTheme) {
+                recreate()
             }
-            recreate = true
         }
         prefs.overlayTransparency.get().asLiveData().observe(this) {
-            recreate = true
+            if (it != oldTransparency) {
+                recreate()
+            }
         }
-        prefs.cardBackground.get().asLiveData().observe(this) {
-            recreate = true
-        }
-
-        if (recreate) {
-            recreate()
-            recreate = false
-        }
-    }
-
-    private fun isSystemDark(): Boolean {
-        return when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
-            Configuration.UI_MODE_NIGHT_YES -> true
-            Configuration.UI_MODE_NIGHT_NO -> false
-            else -> false
-        }
+        /*prefs.cardBackground.get().asLiveData().observe(this) {
+            if (it != oldCardBackground) {
+                recreate()
+            }
+        }*/
     }
 
     override fun onRestart() {
@@ -230,7 +221,7 @@ class MainActivity : ComponentActivity(), SavedStateRegistryOwner {
             workManager.enqueueUniquePeriodicWork(
                 "feeder_periodic_3",
                 when (replace) {
-                    true -> ExistingPeriodicWorkPolicy.UPDATE
+                    true  -> ExistingPeriodicWorkPolicy.UPDATE
                     false -> ExistingPeriodicWorkPolicy.KEEP
                 },
                 syncWork

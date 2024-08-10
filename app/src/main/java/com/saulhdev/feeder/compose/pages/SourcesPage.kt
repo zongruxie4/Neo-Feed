@@ -168,8 +168,8 @@ fun SourcesPage() {
                         )
                     },
                     onRemoveAction = {
-                        showDialog.value = true
                         removeItem.value = item
+                        showDialog.value = true
                     }
                 )
             }

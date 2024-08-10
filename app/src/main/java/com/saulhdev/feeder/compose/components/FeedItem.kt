@@ -53,8 +53,8 @@ fun FeedItem(
         mutableStateOf(feed.isEnabled)
     }
     val backgroundColor by animateColorAsState(
-        targetValue = if (isEnabled) MaterialTheme.colorScheme.primaryContainer
-        else MaterialTheme.colorScheme.surfaceContainer, label = ""
+        targetValue = if (isEnabled) MaterialTheme.colorScheme.surfaceContainerHighest
+        else MaterialTheme.colorScheme.surfaceContainerLowest, label = ""
     )
 
     ListItem(

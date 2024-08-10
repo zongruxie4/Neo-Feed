@@ -49,6 +49,7 @@ fun PreferencesPage() {
     val title = stringResource(id = R.string.title_settings)
     ViewWithActionBar(
         title = title,
+        showBackButton = false,
     ) { paddingValues ->
         val prefs = FeedPreferences.getInstance(LocalContext.current)
         val navController = LocalNavController.current
@@ -66,7 +67,7 @@ fun PreferencesPage() {
         )
         val themePrefs = listOf(
             prefs.overlayTheme,
-            prefs.cardBackground,
+            //prefs.cardBackground,
             prefs.overlayTransparency,
         )
         val debugPrefs = listOf(

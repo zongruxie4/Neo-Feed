@@ -38,54 +38,56 @@ import java.net.URL
 
 class ArticleRepository(context: Context) {
     private val scope = CoroutineScope(Dispatchers.IO) + CoroutineName("FeedArticleRepository")
-    private val articleDao = NeoFeedDb.getInstance(context).feedSourceDao()
+    private val feedSourceDao = NeoFeedDb.getInstance(context).feedSourceDao()
 
     fun insertFeed(feed: Feed) {
         scope.launch {
-            articleDao.insert(feed)
+            feedSourceDao.insert(feed)
         }
     }
 
     fun updateFeed(title: String, url: URL, fullTextByDefault: Boolean, isEnabled: Boolean) {
         scope.launch {
-            val feed = articleDao.getFeedByURL(url)
-            feed.title = title
-            feed.url = url
-            feed.fullTextByDefault = fullTextByDefault
-            feed.isEnabled = isEnabled
-            articleDao.update(feed)
+            val feed = feedSourceDao.getFeedByURL(url)
+                .copy(
+                    title = title,
+                    url = url,
+                    fullTextByDefault = fullTextByDefault,
+                    isEnabled = isEnabled
+                )
+            feedSourceDao.update(feed)
         }
     }
 
     fun updateFeed(feed: Feed) {
         scope.launch {
-            val list: List<Feed> = articleDao.findFeedById(feed.id)
+            val list: List<Feed> = feedSourceDao.findFeedById(feed.id)
             if (list.isNotEmpty()) {
                 feed.lastSync = ZonedDateTime.now().toInstant()
-                articleDao.update(feed)
+                feedSourceDao.update(feed)
             }
         }
     }
 
-    suspend fun getFeed(feedId: Long): Feed = articleDao.loadFeedById(feedId)
+    suspend fun getFeed(feedId: Long): Feed = feedSourceDao.loadFeedById(feedId)
 
     fun getAllFeeds(): List<Feed> {
-        return articleDao.loadFeeds()
+        return feedSourceDao.loadFeeds()
     }
 
     fun getFeedById(id: Long): Flow<Feed> {
-        return articleDao.getFeedById(id)
+        return feedSourceDao.getFeedById(id)
     }
 
     fun setCurrentlySyncingOn(feedId: Long, syncing: Boolean) {
         scope.launch {
-            articleDao.setCurrentlySyncingOn(feedId, syncing)
+            feedSourceDao.setCurrentlySyncingOn(feedId, syncing)
         }
     }
 
     fun setCurrentlySyncingOn(feedId: Long, syncing: Boolean, lastSync: Instant) {
         scope.launch {
-            articleDao.setCurrentlySyncingOn(feedId, syncing, lastSync)
+            feedSourceDao.setCurrentlySyncingOn(feedId, syncing, lastSync)
         }
     }
 
@@ -141,7 +143,7 @@ class ArticleRepository(context: Context) {
     fun getBookmarkedArticlesMap(): Flow<Map<FeedArticle, Feed>> =
         feedArticleDao.allBookmarked.mapLatest {
             it.associateWith { fa ->
-                articleDao.findFeedById(fa.feedId).first()
+                feedSourceDao.findFeedById(fa.feedId).first()
             }
         }
 }

@@ -1,6 +1,7 @@
 package com.saulhdev.feeder
 
 import android.app.Activity
+import android.content.Context
 import android.os.Bundle
 import android.widget.Toast
 import androidx.lifecycle.SavedStateHandle
@@ -26,6 +27,7 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.core.context.GlobalContext
+import org.koin.core.context.startKoin
 import org.koin.dsl.module
 import java.lang.ref.WeakReference
 
@@ -73,11 +75,6 @@ class NFApplication : MultiDexApplication() {
         super.onCreate()
         instance = this
         AndroidThreeTen.init(this)
-        GlobalContext.startKoin {
-            androidLogger()
-            androidContext(this@NFApplication)
-            modules(coreModule, dataModule, modelModule)
-        }
         DynamicColors.applyToActivitiesIfAvailable(
             this,
             DynamicColorsOptions.Builder()
@@ -85,6 +82,16 @@ class NFApplication : MultiDexApplication() {
                 .build()
         )
         PluginFetcher.init(this)
+    }
+
+    override fun attachBaseContext(base: Context?) {
+        super.attachBaseContext(base)
+
+        startKoin {
+            androidLogger()
+            androidContext(this@NFApplication)
+            modules(coreModule, dataModule, modelModule)
+        }
     }
 
     override fun onTerminate() {

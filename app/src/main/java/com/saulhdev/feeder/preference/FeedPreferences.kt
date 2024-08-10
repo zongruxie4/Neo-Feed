@@ -38,10 +38,8 @@ import com.saulhdev.feeder.icon.phosphor.Graph
 import com.saulhdev.feeder.icon.phosphor.Hash
 import com.saulhdev.feeder.icon.phosphor.Info
 import com.saulhdev.feeder.icon.phosphor.PaintRoller
-import com.saulhdev.feeder.icon.phosphor.SelectionBackground
 import com.saulhdev.feeder.icon.phosphor.SubtractSquare
 import com.saulhdev.feeder.icon.phosphor.WifiHigh
-import com.saulhdev.feeder.utils.getBackgroundOptions
 import com.saulhdev.feeder.utils.getItemsPerFeed
 import com.saulhdev.feeder.utils.getSyncFrequency
 import com.saulhdev.feeder.utils.getThemes
@@ -79,14 +77,14 @@ class FeedPreferences private constructor(val context: Context) {
         specialOutputs = { "${(it * 100).roundToInt()}%" }
     )
 
-    var cardBackground = StringSelectionPref(
+    /*var cardBackground = StringSelectionPref(
         titleId = R.string.pref_card_bg,
         icon = Phosphor.SelectionBackground,
         key = OVERLAY_CARD_BACKGROUND,
         dataStore = dataStore,
         defaultValue = "theme",
         entries = getBackgroundOptions(context)
-    )
+    )*/
 
     /* Sources */
     var sources = StringPref(

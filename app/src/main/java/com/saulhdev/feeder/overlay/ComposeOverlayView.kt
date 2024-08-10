@@ -45,6 +45,7 @@ import com.saulhdev.feeder.MainActivity
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.compose.pages.OverlayPage
 import com.saulhdev.feeder.theme.AppTheme
+import com.saulhdev.feeder.utils.isDarkTheme
 import org.koin.java.KoinJavaComponent.inject
 
 class ComposeOverlayView(val context: Context) :
@@ -86,7 +87,9 @@ class ComposeOverlayView(val context: Context) :
         composeView = rootView.findViewById(R.id.compose_view)
         composeView.setContent {
             navController = rememberNavController()
-            AppTheme {
+            AppTheme(
+                darkTheme = context.isDarkTheme
+            ) {
                 OverlayPage(navController = navController)
             }
         }

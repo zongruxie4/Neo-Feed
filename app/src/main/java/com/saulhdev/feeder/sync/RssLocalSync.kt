@@ -157,7 +157,7 @@ private suspend fun syncFeed(
                     throw ResponseFailure("${response.code} when fetching ${feedSql.title}: ${feedSql.url}")
                 }
 
-                else -> {
+                else                   -> {
                     Log.d(TAG, "Fetching correct ${feedSql.title}")
                     feedParser.parseFeedResponse(
                         url = response.request.url.toUrl(),
@@ -169,7 +169,7 @@ private suspend fun syncFeed(
     }.let {
         when {
             it.icon?.startsWith("data") == true -> it.copy(icon = null)
-            else -> it
+            else                                -> it
         }
     }
 
@@ -197,11 +197,12 @@ private suspend fun syncFeed(
             }
         }
     }
-    feedSql.title = feedSql.title
 
-    feedSql.feedImage = feed.icon?.let { sloppyLinkToStrictURLNoThrows(it) }
-        ?: feedSql.feedImage
-    repository.updateFeed(feedSql)
+    repository.updateFeed(feedSql.copy(
+        title = feedSql.title,
+        feedImage = feed.icon?.let { sloppyLinkToStrictURLNoThrows(it) }
+            ?: feedSql.feedImage
+    ))
 
     val ids = repository.getItemsToBeCleanedFromFeed(
         feedId = feedSql.id,
@@ -253,6 +254,6 @@ internal suspend fun feedsToSync(
             feedDao.loadFeed(feedId)?.let { listOf(it) } ?: emptyList()
         }*/
 
-        else -> repository.loadFeeds()
+        else       -> repository.loadFeeds()
     }
 }
