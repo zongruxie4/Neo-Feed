@@ -25,9 +25,11 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import com.saulhdev.feeder.R
 import com.saulhdev.feeder.compose.components.webViewerGraph
 import com.saulhdev.feeder.compose.pages.AboutPage
 import com.saulhdev.feeder.compose.pages.AddFeedPage
@@ -39,6 +41,9 @@ import com.saulhdev.feeder.compose.pages.PreferencesPage
 import com.saulhdev.feeder.compose.pages.SourcesPage
 import com.saulhdev.feeder.compose.pages.articleGraph
 import com.saulhdev.feeder.compose.pages.editFeedGraph
+import com.saulhdev.feeder.icon.Phosphor
+import com.saulhdev.feeder.icon.phosphor.GearSix
+import com.saulhdev.feeder.icon.phosphor.Info
 
 val LocalNavController = staticCompositionLocalOf<NavController> {
     error("CompositionLocal LocalNavController not present")
@@ -86,4 +91,21 @@ object Routes {
     const val ARTICLE_VIEW = "article_page"
     const val LICENSE = "license"
     const val CHANGELOG = "changelog"
+}
+
+sealed class NavItem(
+    val title: Int,
+    val icon: ImageVector,
+    val route: String,
+    val content: @Composable () -> Unit = {}
+) {
+    data object Overlay :
+        NavItem(R.string.app_name, Phosphor.Info, Routes.OVERLAY, {
+            OverlayPage()
+        })
+
+    data object Settings :
+        NavItem(R.string.title_settings, Phosphor.GearSix, Routes.SETTINGS, {
+            PreferencesPage()
+        })
 }
