@@ -1,6 +1,6 @@
 <resources>
 
-    <style name="HFBaseTheme" parent="Theme.Material3.DynamicColors.DayNight">
+    <style name="HFBaseTheme" parent="Theme.Material3.DynamicColors.Light">
         <item name="toolbarStyle">@style/Widget.MaterialComponents.Toolbar.Surface</item>
         <item name="materialCardViewStyle">@style/HFMaterialCard</item>
         <item name="windowActionBar">false</item>
@@ -19,14 +19,14 @@
         <item name="shapeAppearanceMediumComponent">@style/RoundShapeAppearance</item>
     </style>
 
-    <style name="RoundShapeAppearance" parent="ShapeAppearance.MaterialComponents.MediumComponent">
+    <style name="RoundShapeAppearance" parent="ShapeAppearance.Material3.MediumComponent">
 
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">16dp</item>
     </style>
 
     <style name="HFMaterialCard" parent="Widget.Material3.CardView.Filled">
-        <item name="cardCornerRadius">8dp</item>
+        <item name="cardCornerRadius">16dp</item>
     </style>
 
     <style name="AppTheme" parent="HFBaseTheme">
@@ -45,11 +45,7 @@
         <item name="android:navigationBarColor">@android:color/black</item>
     </style>
 
-    <style name="BoldText" parent="@style/TextAppearance.MaterialComponents.Headline6">
-        <item name="android:textStyle">bold</item>
-    </style>
-
-    <style name="WindowTheme" parent="Theme.MaterialComponents.DayNight">
+    <style name="WindowTheme" parent="Theme.Material3.DayNight">
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>

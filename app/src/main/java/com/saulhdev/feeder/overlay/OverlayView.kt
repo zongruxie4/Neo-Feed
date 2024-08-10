@@ -52,6 +52,7 @@ import com.saulhdev.feeder.utils.LinearLayoutManagerWrapper
 import com.saulhdev.feeder.utils.OverlayBridge
 import com.saulhdev.feeder.utils.clearLightFlags
 import com.saulhdev.feeder.utils.isDark
+import com.saulhdev.feeder.utils.setCustomTheme
 import com.saulhdev.feeder.utils.setLightFlags
 import com.saulhdev.feeder.views.DialogMenu
 import kotlinx.coroutines.CoroutineName
@@ -83,6 +84,7 @@ class OverlayView(val context: Context) :
                 else -> Theming.defaultLightThemeColors
             }
         )
+        setCustomTheme()
     }
 
     override fun onOptionsUpdated(bundle: Bundle) {

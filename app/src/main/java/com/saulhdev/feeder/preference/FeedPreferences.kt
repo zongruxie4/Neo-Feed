@@ -63,7 +63,7 @@ class FeedPreferences private constructor(val context: Context) {
         icon = Phosphor.PaintRoller,
         key = OVERLAY_THEME,
         dataStore = dataStore,
-        defaultValue = "auto_launcher",
+        defaultValue = "auto_system",
         entries = getThemes(context)
     )
 

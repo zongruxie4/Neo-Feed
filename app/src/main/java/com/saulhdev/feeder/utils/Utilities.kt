@@ -6,6 +6,11 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.res.Configuration
+import androidx.appcompat.app.AppCompatDelegate
+import com.google.android.material.color.DynamicColors
+import com.saulhdev.feeder.R
+import com.saulhdev.feeder.preference.FeedPreferences
 import kotlin.system.exitProcess
 
 class Utilities {
@@ -40,3 +45,27 @@ class Utilities {
         exitProcess(0)
     }
 }
+
+fun Context.setCustomTheme() {
+    AppCompatDelegate.setDefaultNightMode(nightMode)
+    if (!(isDynamicTheme && DynamicColors.isDynamicColorAvailable())) {
+        setTheme(R.style.AppTheme)
+    }
+}
+
+val Context.isDynamicTheme
+    get() = FeedPreferences.getInstance(this).overlayTheme.getValue() == "auto_system"
+
+val Context.nightMode
+    get() = when (FeedPreferences.getInstance(this).overlayTheme.getValue()) {
+        "light" -> AppCompatDelegate.MODE_NIGHT_NO
+        "dark"  -> AppCompatDelegate.MODE_NIGHT_YES
+        else    -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+    }
+
+val Context.isDarkTheme: Boolean
+    get() = when (FeedPreferences.getInstance(this).overlayTheme.getValue()) {
+        "dark"  -> true
+        "light" -> false
+        else    -> resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES // "auto_system"
+    }

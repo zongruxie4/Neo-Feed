@@ -21,18 +21,19 @@ package com.saulhdev.feeder
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.content.res.Configuration
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.os.ResultReceiver
 import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.ui.graphics.Color
 import androidx.core.net.toUri
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.asLiveData
@@ -44,13 +45,13 @@ import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.saulhdev.feeder.compose.navigation.NavigationManager
 import com.saulhdev.feeder.models.exportOpml
 import com.saulhdev.feeder.models.importOpml
 import com.saulhdev.feeder.preference.FeedPreferences
 import com.saulhdev.feeder.sync.FeedSyncer
 import com.saulhdev.feeder.theme.AppTheme
+import com.saulhdev.feeder.utils.isDarkTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -61,8 +62,6 @@ import kotlin.coroutines.resume
 
 class MainActivity : ComponentActivity(), SavedStateRegistryOwner {
     lateinit var prefs: FeedPreferences
-    private var isDarkTheme = false
-
     private lateinit var navController: NavHostController
 
     private var sRestart = false
@@ -105,10 +104,14 @@ class MainActivity : ComponentActivity(), SavedStateRegistryOwner {
         }
         setContent {
             navController = rememberNavController()
+            TransparentSystemBars()
+
             AppTheme(
-                darkTheme = isDarkTheme
+                darkTheme = when (FeedPreferences.getInstance(this).overlayTheme.getValue()) {
+                    "auto_system" -> isSystemInDarkTheme()
+                    else          -> isDarkTheme
+                }
             ) {
-                TransparentSystemBars()
                 NavigationManager(navController = navController)
             }
         }
@@ -143,25 +146,18 @@ class MainActivity : ComponentActivity(), SavedStateRegistryOwner {
 
     @Composable
     fun TransparentSystemBars() {
-        val systemUiController = rememberSystemUiController()
-        val useDarkIcons = !isDarkTheme
-
-        DisposableEffect(systemUiController, useDarkIcons) {
-            systemUiController.setSystemBarsColor(
-                color = statusBarColor(),
-                darkIcons = useDarkIcons
+        DisposableEffect(isDarkTheme, prefs.overlayTheme.getValue()) {
+            enableEdgeToEdge(
+                statusBarStyle = SystemBarStyle.auto(
+                    android.graphics.Color.TRANSPARENT,
+                    android.graphics.Color.TRANSPARENT,
+                ) { isDarkTheme },
+                navigationBarStyle = SystemBarStyle.auto(
+                    android.graphics.Color.TRANSPARENT,
+                    android.graphics.Color.TRANSPARENT,
+                ) { isDarkTheme },
             )
-
             onDispose {}
-        }
-    }
-
-    private fun statusBarColor(): Color {
-
-        return if (isDarkTheme) {
-            Color(0x80000000)
-        } else {
-            Color(0x80FFFFFF)
         }
     }
 
