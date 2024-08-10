@@ -36,6 +36,7 @@ import com.saulhdev.feeder.compose.pages.AddFeedPage
 import com.saulhdev.feeder.compose.pages.BookmarksPage
 import com.saulhdev.feeder.compose.pages.ChangelogScreen
 import com.saulhdev.feeder.compose.pages.LicenseScreen
+import com.saulhdev.feeder.compose.pages.MainPage
 import com.saulhdev.feeder.compose.pages.OverlayPage
 import com.saulhdev.feeder.compose.pages.PreferencesPage
 import com.saulhdev.feeder.compose.pages.SourcesPage
@@ -62,7 +63,7 @@ fun NavigationManager(navController: NavHostController) {
             popEnterTransition = { fadeIn() + slideInHorizontally { -it } },
             popExitTransition = { fadeOut() + slideOutHorizontally { it / 2 } },
         ) {
-            preferenceGraph(route = "/", { OverlayPage() }) { subRoute ->
+            preferenceGraph(route = "/", { MainPage() }) { subRoute ->
                 preferenceGraph(route = Routes.SETTINGS, { PreferencesPage() })
                 preferenceGraph(route = subRoute(Routes.SOURCES), { SourcesPage() })
                 preferenceGraph(route = subRoute(Routes.BOOKMARKS), { BookmarksPage() })
