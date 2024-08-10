@@ -94,13 +94,11 @@ fun StringSelectionPrefDialogUI(
                 Modifier.fillMaxWidth()
             ) {
                 DialogNegativeButton(
-                    cornerRadius = 16.dp,
                     onClick = { openDialogCustom.value = false }
                 )
                 Spacer(Modifier.weight(1f))
                 DialogPositiveButton(
                     modifier = Modifier.padding(start = 16.dp),
-                    cornerRadius = 16.dp,
                     onClick = {
                         scope.launch {
                             openDialogCustom.value = false
