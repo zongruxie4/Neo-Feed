@@ -67,7 +67,7 @@ class ArticleRepository(context: Context) {
         }
     }
 
-    suspend fun getFeed(feedId: Long): List<Feed> = articleDao.findFeedById(feedId)
+    suspend fun getFeed(feedId: Long): Feed = articleDao.loadFeedById(feedId)
 
     fun getAllFeeds(): List<Feed> {
         return articleDao.loadFeeds()

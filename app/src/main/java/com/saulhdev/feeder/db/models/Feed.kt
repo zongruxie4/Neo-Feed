@@ -34,17 +34,17 @@ import java.net.URL
         Index(value = ["id", "url", "title"], unique = true)
     ]
 )
-class Feed(
+data class Feed(
     @PrimaryKey(autoGenerate = true)
-    var id: Long = ID_UNSET,
-    var title: String = "",
-    var description: String = "",
-    var url: URL = sloppyLinkToStrictURL(""),
-    var feedImage: URL = sloppyLinkToStrictURL(""),
+    val id: Long = ID_UNSET,
+    val title: String = "",
+    val description: String = "",
+    val url: URL = sloppyLinkToStrictURL(""),
+    val feedImage: URL = sloppyLinkToStrictURL(""),
     @ColumnInfo(typeAffinity = ColumnInfo.INTEGER) var lastSync: Instant = Instant.EPOCH,
-    var alternateId: Boolean = false,
-    var fullTextByDefault: Boolean = false,
-    var tag: String = "",
-    var currentlySyncing: Boolean = false,
-    var isEnabled: Boolean = true,
+    val alternateId: Boolean = false,
+    val fullTextByDefault: Boolean = false,
+    val tag: String = "",
+    val currentlySyncing: Boolean = false,
+    val isEnabled: Boolean = true,
 )

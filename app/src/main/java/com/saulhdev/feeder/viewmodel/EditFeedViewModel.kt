@@ -18,105 +18,61 @@
 
 package com.saulhdev.feeder.viewmodel
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.saulhdev.feeder.db.ArticleRepository
+import com.saulhdev.feeder.db.models.Feed
 import com.saulhdev.feeder.models.EditFeedViewState
+import com.saulhdev.feeder.utils.sloppyLinkToStrictURL
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import org.koin.java.KoinJavaComponent.inject
 
-class EditFeedViewModel(private val state: SavedStateHandle) : ViewModel() {
+@OptIn(ExperimentalCoroutinesApi::class)
+class EditFeedViewModel : ViewModel() {
     private val repository: ArticleRepository by inject(ArticleRepository::class.java)
 
-    private val _viewState = MutableStateFlow(EditFeedViewState())
-    val viewState: StateFlow<EditFeedViewState>
-        get() = _viewState.asStateFlow()
-
-    private var _feedId: MutableStateFlow<Long> = MutableStateFlow(
-        state["feedId"] ?: -1
-    )
+    private val _feedId: MutableStateFlow<Long> = MutableStateFlow(-1L)
 
     fun setFeedId(value: Long) {
-        state["feedId"] = value
         _feedId.update { value }
     }
 
-    private val _url: MutableStateFlow<String> = MutableStateFlow(
-        state["feedUrl"] ?: ""
+    val feed = _feedId.mapLatest {
+        repository.getFeed(it)
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.Lazily,
+        Feed()
     )
 
-    fun setUrl(value: String) {
-        state["feedUrl"] = value
-        _url.update { value }
+    fun updateFeed(state: EditFeedViewState) {
+        repository.updateFeed(
+            feed.value.copy(
+                title = state.title,
+                url = sloppyLinkToStrictURL(state.url),
+                fullTextByDefault = state.fullTextByDefault,
+                isEnabled = state.isEnabled,
+            )
+        )
     }
 
-    private val _title: MutableStateFlow<String> = MutableStateFlow(
-        state["feedTitle"] ?: ""
+    val viewState = feed.map { feed: Feed ->
+        EditFeedViewState(
+            title = feed.title,
+            url = feed.url.toString(),
+            fullTextByDefault = feed.fullTextByDefault,
+            isEnabled = feed.isEnabled
+        )
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.Lazily,
+        EditFeedViewState()
     )
-
-    fun setTitle(value: String) {
-        state["feedTitle"] = value
-        _title.update { value }
-    }
-
-    private val _fullTextByDefault: MutableStateFlow<Boolean> = MutableStateFlow(
-        state["fullTextByDefault"] ?: false
-    )
-
-    fun setFullTextByDefault(value: Boolean) {
-        state["fullTextByDefault"] = value
-        _fullTextByDefault.update { value }
-    }
-
-    private val _isEnabled: MutableStateFlow<Boolean> = MutableStateFlow(
-        state["isEnabled"] ?: true
-    )
-
-    fun setIsEnabled(value: Boolean) {
-        state["isEnabled"] = value
-        _isEnabled.update { value }
-    }
-
-    init {
-        viewModelScope.launch {
-            val feed = repository.getFeed(_feedId.value).firstOrNull()
-                ?: throw IllegalArgumentException("No feed with id ${_feedId.value}!")
-
-            if (!state.contains("feedUrl")) {
-                setUrl(feed.url.toString())
-            }
-
-            if (!state.contains("feedTitle")) {
-                setTitle(feed.title)
-            }
-            if (!state.contains("fullTextByDefault")) {
-                setFullTextByDefault(feed.fullTextByDefault)
-            }
-            if (!state.contains("isEnabled")) {
-                setIsEnabled(feed.isEnabled)
-            }
-
-            combine(
-                _title,
-                _url,
-                _fullTextByDefault,
-                _isEnabled
-            ) { params: Array<Any> ->
-                EditFeedViewState(
-                    title = params[0] as String,
-                    url = params[1] as String,
-                    fullTextByDefault = params[2] as Boolean,
-                    isEnabled = params[3] as Boolean
-                )
-            }.collect {
-                _viewState.value = it
-            }
-        }
-    }
 }
+
