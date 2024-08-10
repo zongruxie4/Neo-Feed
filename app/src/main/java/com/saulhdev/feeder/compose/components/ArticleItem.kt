@@ -2,8 +2,6 @@ package com.saulhdev.feeder.compose.components
 
 import android.content.Intent
 import android.text.Html
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,12 +24,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.PlatformTextStyle
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.saulhdev.feeder.db.ArticleRepository
@@ -49,13 +45,15 @@ fun ArticleItem(
     val scope = rememberCoroutineScope()
 
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(MaterialTheme.shapes.large)
-            .background(MaterialTheme.colorScheme.surface)
-            .clickable {
-                onClick()
-            }
+        modifier = Modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.large,
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainer,
+            contentColor = MaterialTheme.colorScheme.onSurface,
+        ),
+        onClick = {
+            onClick()
+        }
     ) {
         Column(
             modifier = Modifier
@@ -82,20 +80,17 @@ fun ArticleItem(
             Text(
                 text = content.title,
                 modifier = Modifier.padding(8.dp),
-                fontSize = 18.sp,
+                style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
                 maxLines = 5,
-                color = MaterialTheme.colorScheme.onSurface
             )
 
             if (content.text.isNotEmpty()) {
                 Text(
                     text = Html.fromHtml(content.text, 0).toString(),
                     modifier = Modifier.padding(8.dp),
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Normal,
+                    style = MaterialTheme.typography.bodySmall,
                     maxLines = 5,
-                    color = MaterialTheme.colorScheme.onSurface
                 )
             }
 
@@ -111,15 +106,8 @@ fun ArticleItem(
                 ) {
                     Text(
                         text = content.source.title,
-                        style = TextStyle(
-                            platformStyle = PlatformTextStyle(
-                                includeFontPadding = false
-                            )
-                        ),
-                        fontSize = 13.sp,
-                        fontWeight = FontWeight.Medium,
+                        style = MaterialTheme.typography.bodyMedium,
                         maxLines = 1,
-                        color = MaterialTheme.colorScheme.onSurface,
                         overflow = TextOverflow.Ellipsis
                     )
                     Text(
@@ -127,15 +115,8 @@ fun ArticleItem(
                             LocalContext.current,
                             (article.time / 1000) - 1000
                         ),
-                        style = TextStyle(
-                            platformStyle = PlatformTextStyle(
-                                includeFontPadding = false
-                            )
-                        ),
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Medium,
+                        style = MaterialTheme.typography.bodySmall,
                         maxLines = 1,
-                        color = MaterialTheme.colorScheme.onSurface,
                         overflow = TextOverflow.Ellipsis
                     )
                 }

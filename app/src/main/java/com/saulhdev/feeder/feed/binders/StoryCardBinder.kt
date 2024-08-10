@@ -1,11 +1,12 @@
 package com.saulhdev.feeder.feed.binders
 
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.text.Html
 import android.util.SparseIntArray
 import android.view.View
-import androidx.appcompat.widget.AppCompatImageButton
 import coil.load
+import com.google.android.material.button.MaterialButton
 import com.saulhdev.feeder.MainActivity
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.databinding.FeedCardStoryLargeBinding
@@ -102,21 +103,26 @@ object StoryCardBinder : FeedBinder {
         }
 
         theme ?: return
-        binding.cardStory.setBackgroundColor(theme.get(Theming.Colors.CARD_BG.ordinal))
-        val themeCard = if (theme.get(Theming.Colors.CARD_BG.ordinal)
-                .isDark()
-        ) Theming.defaultDarkThemeColors else Theming.defaultLightThemeColors
+        binding.cardStory.setCardBackgroundColor(ColorStateList.valueOf(theme.get(Theming.Colors.CARD_BG.ordinal)))
+        val themeCard = if (theme.get(Theming.Colors.CARD_BG.ordinal).isDark())
+            Theming.defaultDarkThemeColors
+        else
+            Theming.defaultLightThemeColors
         binding.storyTitle.setTextColor(themeCard.get(Theming.Colors.TEXT_COLOR_PRIMARY.ordinal))
         binding.storySource.setTextColor(themeCard.get(Theming.Colors.TEXT_COLOR_SECONDARY.ordinal))
         binding.storyDate.setTextColor(themeCard.get(Theming.Colors.TEXT_COLOR_SECONDARY.ordinal))
         binding.storySummary.setTextColor(themeCard.get(Theming.Colors.TEXT_COLOR_SECONDARY.ordinal))
+        binding.shareButton.iconTint =
+            ColorStateList.valueOf(themeCard.get(Theming.Colors.TEXT_COLOR_PRIMARY.ordinal))
+        binding.saveButton.iconTint =
+            ColorStateList.valueOf(themeCard.get(Theming.Colors.TEXT_COLOR_PRIMARY.ordinal))
     }
 
-    private fun updateSaveIcon(button: AppCompatImageButton, bookmarked: Boolean) {
+    private fun updateSaveIcon(button: MaterialButton, bookmarked: Boolean) {
         if (bookmarked) {
-            button.setImageResource(R.drawable.ic_heart_fill)
+            button.setIconResource(R.drawable.ic_heart_fill)
         } else {
-            button.setImageResource(R.drawable.ic_heart)
+            button.setIconResource(R.drawable.ic_heart)
         }
     }
 }

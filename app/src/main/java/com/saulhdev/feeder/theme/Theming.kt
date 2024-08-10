@@ -16,19 +16,31 @@ object Theming {
             addBasicThings(this)
             put(
                 Colors.CARD_BG.ordinal,
-                ContextCompat.getColor(NFApplication.instance, R.color.card_bg)
+                ContextCompat.getColor(
+                    NFApplication.instance,
+                    com.google.android.material.R.color.m3_sys_color_dynamic_light_surface_container
+                )
             )
             put(
                 Colors.TEXT_COLOR_PRIMARY.ordinal,
-                ContextCompat.getColor(NFApplication.instance, R.color.text_color_primary)
+                ContextCompat.getColor(
+                    NFApplication.instance,
+                    com.google.android.material.R.color.m3_sys_color_dynamic_light_on_surface
+                )
             )
             put(
                 Colors.TEXT_COLOR_SECONDARY.ordinal,
-                ContextCompat.getColor(NFApplication.instance, R.color.text_color_secondary)
+                ContextCompat.getColor(
+                    NFApplication.instance,
+                    com.google.android.material.R.color.m3_sys_color_dynamic_light_on_surface_variant
+                )
             )
             put(
                 Colors.OVERLAY_BG.ordinal,
-                ContextCompat.getColor(NFApplication.instance, R.color.bg_overlay)
+                ContextCompat.getColor(
+                    NFApplication.instance,
+                    com.google.android.material.R.color.m3_sys_color_dynamic_light_background
+                )
             )
             put(Colors.IS_LIGHT.ordinal, 1)
         }
@@ -39,19 +51,31 @@ object Theming {
             addBasicThings(this)
             put(
                 Colors.CARD_BG.ordinal,
-                ContextCompat.getColor(NFApplication.instance, R.color.card_bg_dark)
+                ContextCompat.getColor(
+                    NFApplication.instance,
+                    com.google.android.material.R.color.m3_sys_color_dynamic_dark_surface_container
+                )
             )
             put(
                 Colors.TEXT_COLOR_PRIMARY.ordinal,
-                ContextCompat.getColor(NFApplication.instance, R.color.text_color_primary_dark)
+                ContextCompat.getColor(
+                    NFApplication.instance,
+                    com.google.android.material.R.color.m3_sys_color_dynamic_dark_on_surface
+                )
             )
             put(
                 Colors.TEXT_COLOR_SECONDARY.ordinal,
-                ContextCompat.getColor(NFApplication.instance, R.color.text_color_secondary_dark)
+                ContextCompat.getColor(
+                    NFApplication.instance,
+                    com.google.android.material.R.color.m3_sys_color_dynamic_dark_on_surface_variant
+                )
             )
             put(
                 Colors.OVERLAY_BG.ordinal,
-                ContextCompat.getColor(NFApplication.instance, R.color.bg_dark)
+                ContextCompat.getColor(
+                    NFApplication.instance,
+                    com.google.android.material.R.color.m3_sys_color_dynamic_dark_background
+                )
             )
             put(Colors.IS_LIGHT.ordinal, 0)
         }
