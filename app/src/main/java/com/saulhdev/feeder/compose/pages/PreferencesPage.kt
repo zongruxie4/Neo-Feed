@@ -38,8 +38,8 @@ import com.saulhdev.feeder.R
 import com.saulhdev.feeder.compose.components.BaseDialog
 import com.saulhdev.feeder.compose.components.CardButton
 import com.saulhdev.feeder.compose.components.PreferenceGroup
-import com.saulhdev.feeder.compose.components.StringSelectionPrefDialogUI
 import com.saulhdev.feeder.compose.components.ViewWithActionBar
+import com.saulhdev.feeder.compose.components.dialog.StringSelectionPrefDialogUI
 import com.saulhdev.feeder.compose.navigation.LocalNavController
 import com.saulhdev.feeder.preference.FeedPreferences
 import com.saulhdev.feeder.preference.StringSelectionPref

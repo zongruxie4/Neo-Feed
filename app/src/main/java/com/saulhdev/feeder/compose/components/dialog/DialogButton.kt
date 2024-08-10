@@ -1,4 +1,4 @@
-package com.saulhdev.feeder.compose.components
+package com.saulhdev.feeder.compose.components.dialog
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ButtonDefaults
