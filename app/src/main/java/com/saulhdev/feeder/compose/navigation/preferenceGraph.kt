@@ -17,9 +17,11 @@
  */
 package com.saulhdev.feeder.compose.navigation
 
+import android.os.Bundle
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.compositionLocalOf
+import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 
@@ -32,6 +34,25 @@ inline fun NavGraphBuilder.preferenceGraph(
     composable(route = route) {
         CompositionLocalProvider(LocalRoute provides route) {
             root()
+        }
+    }
+    block(subRoute)
+}
+
+inline fun NavGraphBuilder.preferenceGraphWithArgs(
+    route: String,
+    suffix: String,
+    args: List<NamedNavArgument> = emptyList(),
+    crossinline root: @Composable (Bundle?) -> Unit,
+    crossinline block: NavGraphBuilder.(subRoute: (String) -> String) -> Unit = { }
+) {
+    val subRoute: (String) -> String = { name -> "$route$name/" }
+    composable(
+        route = route + suffix,
+        arguments = args,
+    ) {
+        CompositionLocalProvider(LocalRoute provides route) {
+            root(it.arguments)
         }
     }
     block(subRoute)
