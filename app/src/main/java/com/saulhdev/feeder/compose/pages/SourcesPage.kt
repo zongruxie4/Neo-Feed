@@ -97,6 +97,7 @@ fun SourcesPage() {
 
     ViewWithActionBar(
         title = stringResource(id = R.string.title_sources),
+        showBackButton = false,
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
@@ -107,7 +108,7 @@ fun SourcesPage() {
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
-                    contentDescription = "",
+                    contentDescription = stringResource(id = R.string.add_feed),
                     tint = MaterialTheme.colorScheme.onPrimary
                 )
             }
@@ -118,7 +119,7 @@ fun SourcesPage() {
                     leadingIcon = {
                         Icon(
                             Phosphor.CloudArrowDown,
-                            contentDescription = null,
+                            contentDescription = stringResource(id = R.string.sources_import_opml),
                         )
                     },
                     onClick = {
@@ -131,7 +132,7 @@ fun SourcesPage() {
                     leadingIcon = {
                         Icon(
                             Phosphor.CloudArrowUp,
-                            contentDescription = null,
+                            contentDescription = stringResource(id = R.string.sources_export_opml),
                         )
                     },
                     onClick = {

@@ -120,4 +120,5 @@
     <string name="title_other">Other</string>
     <string name="no_activity_for_link">Web browser not found</string>
     <string name="title_overlay">Overlay</string>
+    <string name="add_feed">Add feed</string>
 </resources>
