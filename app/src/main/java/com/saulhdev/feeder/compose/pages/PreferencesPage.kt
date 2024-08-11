@@ -55,7 +55,6 @@ fun PreferencesPage() {
         val navController = LocalNavController.current
 
         val actions = listOf(
-            prefs.sources,
             prefs.bookmarks,
         )
         val servicePrefs = listOf(

@@ -34,7 +34,6 @@ import com.saulhdev.feeder.icon.phosphor.Bookmarks
 import com.saulhdev.feeder.icon.phosphor.Browser
 import com.saulhdev.feeder.icon.phosphor.Bug
 import com.saulhdev.feeder.icon.phosphor.Clock
-import com.saulhdev.feeder.icon.phosphor.Graph
 import com.saulhdev.feeder.icon.phosphor.Hash
 import com.saulhdev.feeder.icon.phosphor.Info
 import com.saulhdev.feeder.icon.phosphor.PaintRoller
@@ -85,16 +84,6 @@ class FeedPreferences private constructor(val context: Context) {
         defaultValue = "theme",
         entries = getBackgroundOptions(context)
     )*/
-
-    /* Sources */
-    var sources = StringPref(
-        titleId = R.string.title_sources,
-        summaryId = R.string.summary_sources,
-        icon = Phosphor.Graph,
-        key = SOURCES,
-        dataStore = dataStore,
-        route = "/${Routes.SOURCES}/"
-    )
 
     var bookmarks = StringPref(
         titleId = R.string.title_bookmarks,

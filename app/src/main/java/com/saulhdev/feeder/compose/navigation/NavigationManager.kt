@@ -66,7 +66,6 @@ fun NavigationManager(navController: NavHostController) {
         ) {
             preferenceGraph(route = "/", { MainPage() }) { subRoute ->
                 preferenceGraph(route = Routes.SETTINGS, { PreferencesPage() })
-                preferenceGraph(route = subRoute(Routes.SOURCES), { SourcesPage() })
                 preferenceGraph(route = subRoute(Routes.BOOKMARKS), { BookmarksPage() })
                 preferenceGraph(route = subRoute(Routes.OVERLAY), { OverlayPage() })
                 preferenceGraph(route = subRoute(Routes.ABOUT), { AboutPage() })
