@@ -44,6 +44,7 @@ import com.saulhdev.feeder.compose.pages.articleGraph
 import com.saulhdev.feeder.compose.pages.editFeedGraph
 import com.saulhdev.feeder.icon.Phosphor
 import com.saulhdev.feeder.icon.phosphor.GearSix
+import com.saulhdev.feeder.icon.phosphor.Graph
 import com.saulhdev.feeder.icon.phosphor.Info
 
 val LocalNavController = staticCompositionLocalOf<NavController> {
@@ -108,5 +109,9 @@ sealed class NavItem(
     data object Settings :
         NavItem(R.string.title_settings, Phosphor.GearSix, Routes.SETTINGS, {
             PreferencesPage()
+        })
+    data object Sources :
+        NavItem(R.string.title_sources, Phosphor.Graph, Routes.SOURCES, {
+            SourcesPage()
         })
 }

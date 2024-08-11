@@ -19,6 +19,7 @@ fun MainPage() {
     val pages = persistentListOf(
         NavItem.Overlay,
         NavItem.Settings,
+        NavItem.Sources,
     )
     val pagerState = rememberPagerState(pageCount = { pages.size })
 
