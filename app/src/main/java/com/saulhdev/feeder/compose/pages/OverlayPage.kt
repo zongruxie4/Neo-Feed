@@ -266,7 +266,9 @@ fun OverlayPage(navController: NavController = LocalNavController.current) {
             content = { item ->
                 ArticleItem(
                     article = item,
-                    repository = repository
+                    onBookmark = {
+                        repository.bookmarkArticle(item.id, it)
+                    },
                 ) {
                     if (prefs.openInBrowser.getValue()) {
                         context.launchView(item.content.link)

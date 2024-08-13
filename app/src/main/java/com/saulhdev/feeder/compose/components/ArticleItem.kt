@@ -29,7 +29,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.saulhdev.feeder.db.ArticleRepository
 import com.saulhdev.feeder.sdk.FeedItem
 import com.saulhdev.feeder.utils.RelativeTimeHelper
 import kotlinx.coroutines.launch
@@ -37,7 +36,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun ArticleItem(
     article: FeedItem,
-    repository: ArticleRepository,
+    onBookmark: suspend (Boolean) -> Int?,
     onClick: () -> Unit
 ) {
     val content = article.content
@@ -125,7 +124,7 @@ fun ArticleItem(
 
                     FavoriteButton(bookmarked = bookmarked) {
                         scope.launch {
-                            repository.bookmarkArticle(article.id, !bookmarked)
+                            onBookmark(!bookmarked)
                             bookmarked = !bookmarked
                         }
                     }
