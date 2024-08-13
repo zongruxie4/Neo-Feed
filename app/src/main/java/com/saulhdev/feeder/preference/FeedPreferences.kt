@@ -34,6 +34,7 @@ import com.saulhdev.feeder.icon.phosphor.Bookmarks
 import com.saulhdev.feeder.icon.phosphor.Browser
 import com.saulhdev.feeder.icon.phosphor.Bug
 import com.saulhdev.feeder.icon.phosphor.Clock
+import com.saulhdev.feeder.icon.phosphor.FunnelSimple
 import com.saulhdev.feeder.icon.phosphor.Hash
 import com.saulhdev.feeder.icon.phosphor.Info
 import com.saulhdev.feeder.icon.phosphor.PaintRoller
@@ -100,6 +101,14 @@ class FeedPreferences private constructor(val context: Context) {
         key = OPEN_IN_BROWSER,
         dataStore = dataStore,
         defaultValue = false
+    )
+
+    var removeDuplicates = BooleanPref(
+        titleId = R.string.pref_remove_duplicates,
+        icon = Phosphor.FunnelSimple,
+        key = REMOVE_DUPLICATES,
+        dataStore = dataStore,
+        defaultValue = true
     )
 
     var offlineReader = BooleanPref(
@@ -188,6 +197,7 @@ class FeedPreferences private constructor(val context: Context) {
         val SOURCES = stringPreferencesKey("pref_sources")
         val BOOKMARKS = stringPreferencesKey("pref_bookmarks")
         val OPEN_IN_BROWSER = booleanPreferencesKey("pref_open_browser")
+        val REMOVE_DUPLICATES = booleanPreferencesKey("pref_remove_duplicates")
         val OFFLINE_READER = booleanPreferencesKey("pref_offline_reader")
         val SYNC_ON_WIFI = booleanPreferencesKey("pref_sync_only_wifi")
         val SYNC_FREQUENCY = stringPreferencesKey("pref_sync_frequency")
