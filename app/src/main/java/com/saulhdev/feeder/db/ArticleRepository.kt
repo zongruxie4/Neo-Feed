@@ -23,11 +23,13 @@ import com.saulhdev.feeder.db.dao.insertOrUpdate
 import com.saulhdev.feeder.db.models.Feed
 import com.saulhdev.feeder.db.models.FeedArticle
 import com.saulhdev.feeder.db.models.FeedItemIdWithLink
+import com.saulhdev.feeder.sdk.FeedItem
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
@@ -110,6 +112,17 @@ class ArticleRepository(context: Context) {
 
     fun getArticleById(feedId: Long): Flow<FeedArticle?> {
         return feedArticleDao.loadArticleById(id = feedId)
+    }
+
+    fun getFeedArticles(): Flow<List<FeedItem>> = combine(
+        feedArticleDao.allEnabledFeedArticles,
+        feedSourceDao.getEnabledFeeds()
+    ) { articles, feeds ->
+        articles.mapNotNull { article ->
+            feeds.find { it.id == article.feedId }?.let { feed ->
+                FeedItem(article, feed)
+            }
+        }
     }
 
     suspend fun updateOrInsertArticle(

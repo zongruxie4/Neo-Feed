@@ -56,6 +56,9 @@ interface FeedSourceDao {
     @Query("SELECT * FROM Feeds WHERE isEnabled IS 1")
     fun loadFeeds(): List<Feed>
 
+    @Query("SELECT * FROM Feeds WHERE isEnabled IS 1")
+    fun getEnabledFeeds(): Flow<List<Feed>>
+
     @Query("SELECT * FROM Feeds")
     fun getAllFeeds(): Flow<List<Feed>>
 

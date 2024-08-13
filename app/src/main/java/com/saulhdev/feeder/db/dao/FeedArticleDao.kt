@@ -82,6 +82,16 @@ interface FeedArticleDao {
     @Query("SELECT * FROM feedArticle WHERE feedId IS :feedId")
     suspend fun loadArticles(feedId: Long?): List<FeedArticle>
 
+
+    @get:Query(
+        """
+        SELECT FeedArticle.* FROM FeedArticle
+        JOIN Feeds ON FeedArticle.feedId = Feeds.id
+        WHERE Feeds.isEnabled = 1
+    """
+    )
+    val allEnabledFeedArticles: Flow<List<FeedArticle>>
+
     @Query(
         """
         SELECT id FROM FeedArticle
