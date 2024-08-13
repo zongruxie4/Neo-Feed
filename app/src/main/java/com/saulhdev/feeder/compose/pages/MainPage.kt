@@ -8,8 +8,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.saulhdev.feeder.compose.components.NonSlidePager
 import com.saulhdev.feeder.compose.components.PagerNavBar
+import com.saulhdev.feeder.compose.components.SlidePager
 import com.saulhdev.feeder.compose.navigation.NavItem
 import kotlinx.collections.immutable.persistentListOf
 
@@ -28,7 +28,7 @@ fun MainPage() {
         contentColor = MaterialTheme.colorScheme.onBackground,
         bottomBar = { PagerNavBar(pageItems = pages, pagerState = pagerState) },
     ) { paddingValues ->
-        NonSlidePager(
+        SlidePager(
             modifier = Modifier
                 .padding(bottom = paddingValues.calculateBottomPadding())
                 .fillMaxSize(),

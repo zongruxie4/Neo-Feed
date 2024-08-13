@@ -51,6 +51,18 @@ fun NonSlidePager(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
+fun SlidePager(
+    modifier: Modifier = Modifier,
+    pageItems: ImmutableList<NavItem>,
+    pagerState: PagerState,
+) {
+    HorizontalPager(modifier = modifier, state = pagerState, beyondBoundsPageCount = 2) { page ->
+        pageItems[page].content()
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
 fun PagerNavBar(pageItems: List<NavItem>, pagerState: PagerState) {
     val scope = rememberCoroutineScope()
 
