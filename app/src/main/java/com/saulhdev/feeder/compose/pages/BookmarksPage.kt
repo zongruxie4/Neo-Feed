@@ -32,6 +32,7 @@ import com.saulhdev.feeder.MainActivity
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.compose.components.BookmarkItem
 import com.saulhdev.feeder.compose.components.ViewWithActionBar
+import com.saulhdev.feeder.compose.navigation.Routes
 import com.saulhdev.feeder.db.ArticleRepository
 import com.saulhdev.feeder.preference.FeedPreferences
 import com.saulhdev.feeder.utils.launchView
@@ -71,7 +72,7 @@ fun BookmarksPage() {
                                     context.startActivity(
                                         MainActivity.createIntent(
                                             context,
-                                            "article_page/${article.id}/"
+                                            "${Routes.ARTICLE_VIEW}/${article.id}/"
                                         )
                                     )
                                 } else {

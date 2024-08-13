@@ -37,6 +37,7 @@ import com.saulhdev.feeder.R
 import com.saulhdev.feeder.compose.components.RoundButton
 import com.saulhdev.feeder.compose.components.ViewWithActionBar
 import com.saulhdev.feeder.compose.components.WithBidiDeterminedLayoutDirection
+import com.saulhdev.feeder.compose.navigation.Routes
 import com.saulhdev.feeder.compose.navigation.preferenceGraph
 import com.saulhdev.feeder.db.ArticleRepository
 import com.saulhdev.feeder.icon.phosphor.ArrowSquareOut
@@ -106,7 +107,7 @@ fun ArticleScreen(articleId: Long) {
                 (article?.pubDate ?: ZonedDateTime.now()).format(dateTimeFormat)
             )
 
-        else -> null
+        else                                                -> null
     }
 
     ViewWithActionBar(
@@ -164,7 +165,7 @@ fun ArticleScreen(articleId: Long) {
                                 .clickable {
                                     MainActivity.createIntent(
                                         context,
-                                        "web_view/${article?.link?.urlEncode()}/"
+                                        "${Routes.WEB_VIEW}/${article?.link?.urlEncode()}/"
                                     )
                                 }
                         )

@@ -278,7 +278,7 @@ fun OverlayPage(navController: NavController = LocalNavController.current) {
                             context.startActivity(
                                 MainActivity.createIntent(
                                     context,
-                                    "article_page/${item.id}/"
+                                    "${Routes.ARTICLE_VIEW}/${item.id}/"
                                 )
                             )
                         } else {

@@ -9,6 +9,7 @@ import coil.load
 import com.google.android.material.button.MaterialButton
 import com.saulhdev.feeder.MainActivity
 import com.saulhdev.feeder.R
+import com.saulhdev.feeder.compose.navigation.Routes
 import com.saulhdev.feeder.databinding.FeedCardStoryLargeBinding
 import com.saulhdev.feeder.db.ArticleRepository
 import com.saulhdev.feeder.preference.FeedPreferences
@@ -87,14 +88,14 @@ object StoryCardBinder : FeedBinder {
                         view.context.startActivity(
                             MainActivity.createIntent(
                                 view.context,
-                                "article_page/${item.id}/"
+                                "${Routes.ARTICLE_VIEW}/${item.id}/"
                             )
                         )
                     } else {
                         view.context.startActivity(
                             MainActivity.createIntent(
                                 view.context,
-                                "web_view/${content.link.urlEncode()}/"
+                                "${Routes.WEB_VIEW}/${content.link.urlEncode()}/"
                             )
                         )
                     }
