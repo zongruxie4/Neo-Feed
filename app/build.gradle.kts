@@ -134,6 +134,7 @@ dependencies {
 
     implementation(libs.symbol.processing.api)
     implementation(libs.stdlib)
+    implementation(libs.serialization.json)
 
     //Core
     implementation(libs.appcompat)

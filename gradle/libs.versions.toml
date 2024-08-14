@@ -19,6 +19,7 @@ okhttp = "5.0.0-alpha.14"
 retrofit = "2.11.0"
 rome = "2.1.0"
 room = "2.6.1"
+serialization = "1.7.1"
 swiperefreshlayout = "1.1.0"
 work-runtime-ktx = "2.9.1"
 datastore-preferences = "1.1.1"
@@ -78,6 +79,7 @@ threetenabp = { group = "com.jakewharton.threetenabp", name = "threetenabp", ver
 work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "work-runtime-ktx" }
 stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlin" }
 collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "immutables" }
+serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "serialization" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
