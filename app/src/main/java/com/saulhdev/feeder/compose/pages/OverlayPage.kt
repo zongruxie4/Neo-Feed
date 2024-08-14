@@ -18,8 +18,12 @@
 
 package com.saulhdev.feeder.compose.pages
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
@@ -27,6 +31,7 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -37,6 +42,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -45,6 +51,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.AndroidUiDispatcher
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -58,6 +65,7 @@ import com.saulhdev.feeder.compose.navigation.LocalNavController
 import com.saulhdev.feeder.compose.navigation.Routes
 import com.saulhdev.feeder.db.ArticleRepository
 import com.saulhdev.feeder.icon.Phosphor
+import com.saulhdev.feeder.icon.phosphor.CaretUp
 import com.saulhdev.feeder.icon.phosphor.GearSix
 import com.saulhdev.feeder.icon.phosphor.Nut
 import com.saulhdev.feeder.icon.phosphor.Power
@@ -123,6 +131,8 @@ fun OverlayPage(navController: NavController = LocalNavController.current) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
     var isRefreshing by remember { mutableStateOf(false) }
     var showMenu by remember { mutableStateOf(false) }
+    val listState = rememberLazyListState()
+    val showFAB by remember { derivedStateOf { listState.firstVisibleItemIndex > 4 } }
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -246,6 +256,30 @@ fun OverlayPage(navController: NavController = LocalNavController.current) {
                     }
                 }
             )
+        },
+        floatingActionButton = {
+            AnimatedVisibility(
+                visible = showFAB,
+                enter = fadeIn(),
+                exit = fadeOut(),
+            ) {
+                FloatingActionButton(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    onClick = {
+                        scope.launch {
+                            withContext(AndroidUiDispatcher.Main) {
+                                listState.animateScrollToItem(0)
+                            }
+                        }
+                    },
+                ) {
+                    Icon(
+                        imageVector = Phosphor.CaretUp,
+                        contentDescription = null,
+                    )
+                }
+            }
         }
     ) { paddingValues ->
         PullToRefreshLazyColumn(
@@ -263,6 +297,7 @@ fun OverlayPage(navController: NavController = LocalNavController.current) {
                     })
                 }
             },
+            listState = listState,
             content = { item ->
                 ArticleItem(
                     article = item,
