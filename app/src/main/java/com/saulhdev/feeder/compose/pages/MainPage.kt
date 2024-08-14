@@ -15,13 +15,13 @@ import kotlinx.collections.immutable.persistentListOf
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun MainPage() {
+fun MainPage(pageIndex: Int = 0) {
     val pages = persistentListOf(
         NavItem.Overlay,
         NavItem.Settings,
         NavItem.Sources,
     )
-    val pagerState = rememberPagerState(pageCount = { pages.size })
+    val pagerState = rememberPagerState(initialPage = pageIndex, pageCount = { pages.size })
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
