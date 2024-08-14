@@ -27,6 +27,7 @@ import androidx.activity.result.ActivityResultRegistry
 import androidx.activity.result.ActivityResultRegistryOwner
 import androidx.activity.setViewTreeOnBackPressedDispatcherOwner
 import androidx.appcompat.view.ContextThemeWrapper
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.ComposeView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleRegistry
@@ -43,6 +44,7 @@ import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import com.google.android.libraries.gsa.d.a.OverlayController
 import com.saulhdev.feeder.MainActivity
 import com.saulhdev.feeder.R
+import com.saulhdev.feeder.compose.navigation.LocalNavController
 import com.saulhdev.feeder.compose.pages.OverlayPage
 import com.saulhdev.feeder.theme.AppTheme
 import com.saulhdev.feeder.utils.isDarkTheme
@@ -90,7 +92,11 @@ class ComposeOverlayView(val context: Context) :
             AppTheme(
                 darkTheme = context.isDarkTheme
             ) {
-                OverlayPage(navController = navController)
+                CompositionLocalProvider(
+                    LocalNavController provides navController
+                ) {
+                    OverlayPage(true)
+                }
             }
         }
     }

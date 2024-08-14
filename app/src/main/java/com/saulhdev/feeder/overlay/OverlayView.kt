@@ -45,7 +45,6 @@ import com.saulhdev.feeder.launcherapi.LauncherAPI
 import com.saulhdev.feeder.launcherapi.OverlayThemeHolder
 import com.saulhdev.feeder.plugin.PluginConnector
 import com.saulhdev.feeder.preference.FeedPreferences
-import com.saulhdev.feeder.sdk.FeedItem
 import com.saulhdev.feeder.sync.SyncRestClient
 import com.saulhdev.feeder.theme.Theming
 import com.saulhdev.feeder.utils.LinearLayoutManagerWrapper
@@ -58,6 +57,7 @@ import com.saulhdev.feeder.views.DialogMenu
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 import org.koin.java.KoinJavaComponent.inject
@@ -68,13 +68,14 @@ class OverlayView(val context: Context) :
     OverlayBridge.OverlayBridgeCallback {
     private var apiInstance = LauncherAPI()
     private lateinit var themeHolder: OverlayThemeHolder
+    private val syncScope = CoroutineScope(Dispatchers.IO) + CoroutineName("NeoFeedSync")
+    private val mainScope = CoroutineScope(Dispatchers.Main)
 
     private lateinit var rootView: View
     private lateinit var adapter: FeedAdapter
     private val repository: ArticleRepository by inject(ArticleRepository::class.java)
     private val articles: SyncRestClient by inject(SyncRestClient::class.java)
 
-    private val list = mutableListOf<FeedItem>()
     val prefs = FeedPreferences.getInstance(context)
 
 
@@ -168,10 +169,9 @@ class OverlayView(val context: Context) :
         val popup = DialogMenu(view)
         popup.show(createMenuList()) {
             popup.dismiss()
-            val scope = CoroutineScope(Dispatchers.Main)
             when (it.id) {
                 "config"  -> {
-                    scope.launch {
+                    mainScope.launch {
                         view.context.startActivity(
                             MainActivity.navigateIntent(
                                 view.context,
@@ -246,30 +246,29 @@ class OverlayView(val context: Context) :
         initRecyclerView()
         initHeader()
         refreshNotifications()
+        syncScope.launch {
+            repository.getFeedArticles()
+                .mapLatest { articles ->
+                    (if (prefs.removeDuplicates.getValue()) articles.distinctBy { it.content.link }
+                    else articles)
+                        .sortedByDescending { it.time }
+                }.collect {
+                    mainScope.launch {
+                        adapter.replace(it)
+                    }
+                }
+        }
         NFApplication.bridge.setCallback(this)
     }
 
-    private fun loadArticles() {
-        val scope = CoroutineScope(Dispatchers.IO) + CoroutineName("NeoFeedSync")
-        scope.launch {
+    private fun refreshNotifications() {
+        syncScope.launch {
             val feeds = repository.getAllFeeds()
             for (feed in feeds) {
                 articles.getArticleList(feed)
             }
         }
-    }
-
-    private fun refreshNotifications() {
-        list.clear()
-        rootView.findViewById<RecyclerView>(R.id.recycler).recycledViewPool.clear()
-        adapter.notifyDataSetChanged()
-        loadArticles()
-
-        PluginConnector.getFeedAsItLoads(0, { feed ->
-            list.addAll(feed)
-        }) {
-            list.sortByDescending { it.time }
-            adapter.replace(list)
+        PluginConnector.getFeedAsItLoads(0, { }) {
             rootView.findViewById<SwipeRefreshLayout>(R.id.swipe_to_refresh).isRefreshing = false
         }
     }

@@ -42,9 +42,9 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -55,7 +55,6 @@ import androidx.compose.ui.platform.AndroidUiDispatcher
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import com.saulhdev.feeder.MainActivity
 import com.saulhdev.feeder.NFApplication
 import com.saulhdev.feeder.R
@@ -72,68 +71,46 @@ import com.saulhdev.feeder.icon.phosphor.Nut
 import com.saulhdev.feeder.icon.phosphor.Power
 import com.saulhdev.feeder.plugin.PluginConnector
 import com.saulhdev.feeder.preference.FeedPreferences
-import com.saulhdev.feeder.sdk.FeedItem
 import com.saulhdev.feeder.sync.SyncRestClient
 import com.saulhdev.feeder.utils.launchView
 import com.saulhdev.feeder.utils.openLinkInCustomTab
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
+import kotlinx.coroutines.withContext
 import org.koin.java.KoinJavaComponent.inject
-import org.threeten.bp.LocalDateTime
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalCoroutinesApi::class)
 @Composable
-fun OverlayPage(navController: NavController = LocalNavController.current) {
+fun OverlayPage(isOverlay: Boolean = false) {
     val context = LocalContext.current
-    val localTime = LocalDateTime.now().toString().replace(":", "_").substring(0, 19)
+    val navController = LocalNavController.current
+    val prefs = FeedPreferences.getInstance(context)
 
     val articles : SyncRestClient by inject(SyncRestClient::class.java)
     val repository: ArticleRepository by inject(ArticleRepository::class.java)
     val scope = CoroutineScope(Dispatchers.IO) + CoroutineName("NeoFeedSync")
-    val feedList: MutableList<FeedItem> = remember { mutableStateListOf() }
-
-    val prefs = FeedPreferences.getInstance(context)
-
-    LaunchedEffect(key1 = null) {
-        refreshFeed(repository, articles, scope) {
-            feedList.clear()
-            PluginConnector.getFeedAsItLoads(0, { feed ->
-                feedList.addAll(feed)
-            }, {
-
-                feedList.sortByDescending { it.time }
-            })
+    val feedList by repository.getFeedArticles()
+        .mapLatest { articles ->
+            (if (prefs.removeDuplicates.getValue()) articles.distinctBy { it.content.link }
+            else articles)
+                .sortedByDescending { it.time }
         }
-    }
-
-    /*val opmlImporter = rememberLauncherForActivityResult(
-        ActivityResultContracts.OpenDocument()
-    ) { uri ->
-        if (uri != null) {
-            scope.launch {
-                importOpml(uri)
-            }
-        }
-    }
-
-    val opmlExporter = rememberLauncherForActivityResult(
-        ActivityResultContracts.CreateDocument("application/xml")
-    ) { uri ->
-        if (uri != null) {
-            scope.launch {
-                exportOpml(uri)
-            }
-        }
-    }*/
+        .collectAsState(initial = emptyList())
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
     var isRefreshing by remember { mutableStateOf(false) }
     var showMenu by remember { mutableStateOf(false) }
     val listState = rememberLazyListState()
     val showFAB by remember { derivedStateOf { listState.firstVisibleItemIndex > 4 } }
+
+    LaunchedEffect(key1 = null) {
+        isRefreshing = true
+    }
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -181,48 +158,8 @@ fun OverlayPage(navController: NavController = LocalNavController.current) {
                                 }
                             )
                             HorizontalDivider()
-                            /*
-                            DropdownMenuItem(
-                                text = {
-                                    Text(text = stringResource(id = R.string.sources_import_opml))
-                                },
-                                onClick = {
-                                    showMenu = false
-                                    opmlImporter.launch(
-                                        arrayOf(
-                                            "text/plain",
-                                            "text/xml",
-                                            "text/opml",
-                                            ""
-                                        )
-                                    )
-                                },
-                                leadingIcon = {
-                                    Icon(
-                                        imageVector = Phosphor.CloudArrowDown,
-                                        contentDescription = null,
-                                    )
-                                }
-                            )
-                            DropdownMenuItem(
-                                text = {
-                                    Text(text = stringResource(id = R.string.sources_export_opml))
-                                },
-                                onClick = {
-                                    showMenu = false
-                                    opmlExporter.launch("NF-${localTime}.opml")
-                                },
-                                leadingIcon = {
-                                    Icon(
-                                        imageVector = Phosphor.CloudArrowUp,
-                                        contentDescription = null,
-                                    )
-                                }
-                            )
-                            HorizontalDivider()
-                            */
 
-                            DropdownMenuItem(
+                            if (isOverlay) DropdownMenuItem(
                                 text = {
                                     Text(text = stringResource(id = R.string.title_settings))
                                 },
@@ -289,11 +226,7 @@ fun OverlayPage(navController: NavController = LocalNavController.current) {
             onRefresh = {
                 isRefreshing = true
                 refreshFeed(repository, articles, scope) {
-                    feedList.clear()
-                    PluginConnector.getFeedAsItLoads(0, { feed ->
-                        feedList.addAll(feed)
-                    }, {
-                        feedList.sortByDescending { it.time }
+                    PluginConnector.getFeedAsItLoads(0, { }, {
                         isRefreshing = false
                     })
                 }
