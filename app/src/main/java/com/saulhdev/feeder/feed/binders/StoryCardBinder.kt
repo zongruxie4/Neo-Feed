@@ -87,16 +87,16 @@ object StoryCardBinder : FeedBinder {
                 scope.launch {
                     if (prefs.offlineReader.getValue()) {
                         view.context.startActivity(
-                            MainActivity.createIntent(
+                            MainActivity.navigateIntent(
                                 view.context,
-                                "${Routes.ARTICLE_VIEW}/${item.id}/"
+                                "${Routes.ARTICLE_VIEW}/${item.id}"
                             )
                         )
                     } else {
                         view.context.startActivity(
-                            MainActivity.createIntent(
+                            MainActivity.navigateIntent(
                                 view.context,
-                                "${Routes.WEB_VIEW}/${content.link.urlEncode()}/"
+                                "${Routes.WEB_VIEW}/${content.link.urlEncode()}"
                             )
                         )
                     }

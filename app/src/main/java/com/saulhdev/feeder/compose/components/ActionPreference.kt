@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import com.saulhdev.feeder.compose.navigation.LocalNavController
+import com.saulhdev.feeder.compose.navigation.NavRoute
 import com.saulhdev.feeder.preference.StringPref
 
 @Composable
@@ -52,7 +53,7 @@ fun ActionPreference(
             )
         },
         onClick = {
-            if (pref.route != "") {
+            if (pref.route != null) {
                 navController.navigate(pref.route)
             } else {
                 pref.onClick?.invoke()
@@ -69,7 +70,7 @@ fun PagePreference(
     index: Int = 1,
     groupSize: Int = 1,
     isEnabled: Boolean = true,
-    route: String,
+    route: NavRoute,
 ) {
     val navController = LocalNavController.current
     BasePreference(

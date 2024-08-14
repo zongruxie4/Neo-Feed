@@ -22,6 +22,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
+import com.saulhdev.feeder.compose.navigation.NavRoute
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
@@ -36,7 +37,7 @@ class StringPref(
     val dataStore: DataStore<Preferences>,
     defaultValue: String = "",
     val onClick: (() -> Unit)? = null,
-    val route: String = "",
+    val route: NavRoute? = null,
 ) : PrefDelegate<String>(titleId, summaryId, dataStore, key, defaultValue)
 
 class StringSelectionPref(

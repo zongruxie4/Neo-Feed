@@ -10,18 +10,18 @@ import com.saulhdev.feeder.icon.phosphor.ListDashes
 open class PageItem(
     @StringRes val titleId: Int,
     val icon: ImageVector,
-    val route: String,
+    val route: NavRoute,
 ) {
     companion object {
         val AboutLicense = PageItem(
             titleId = R.string.about_licenses,
             icon = Phosphor.Copyleft,
-            route = Routes.LICENSE,
+            route = NavRoute.License,
         )
         val AboutChangelog = PageItem(
             titleId = R.string.about_changelog,
             icon = Phosphor.ListDashes,
-            route = Routes.CHANGELOG,
+            route = NavRoute.Changelog,
         )
     }
 }

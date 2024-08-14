@@ -62,6 +62,7 @@ import com.saulhdev.feeder.R
 import com.saulhdev.feeder.compose.components.ArticleItem
 import com.saulhdev.feeder.compose.components.PullToRefreshLazyColumn
 import com.saulhdev.feeder.compose.navigation.LocalNavController
+import com.saulhdev.feeder.compose.navigation.NavRoute
 import com.saulhdev.feeder.compose.navigation.Routes
 import com.saulhdev.feeder.db.ArticleRepository
 import com.saulhdev.feeder.icon.Phosphor
@@ -227,7 +228,7 @@ fun OverlayPage(navController: NavController = LocalNavController.current) {
                                 },
                                 onClick = {
                                     showMenu = false
-                                    navController.navigate(Routes.SETTINGS)
+                                    navController.navigate(NavRoute.Main(1))
                                 },
                                 leadingIcon = {
                                     Icon(
@@ -311,9 +312,9 @@ fun OverlayPage(navController: NavController = LocalNavController.current) {
                         if (prefs.offlineReader.getValue()) {
                             //navController.navigate("/${Routes.ARTICLE_VIEW}/${item.id}/")
                             context.startActivity(
-                                MainActivity.createIntent(
+                                MainActivity.navigateIntent(
                                     context,
-                                    "${Routes.ARTICLE_VIEW}/${item.id}/"
+                                    "${Routes.ARTICLE_VIEW}/${item.id}"
                                 )
                             )
                         } else {

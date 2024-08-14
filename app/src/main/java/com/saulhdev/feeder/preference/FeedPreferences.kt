@@ -27,7 +27,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.saulhdev.feeder.R
-import com.saulhdev.feeder.compose.navigation.Routes
+import com.saulhdev.feeder.compose.navigation.NavRoute
 import com.saulhdev.feeder.icon.Phosphor
 import com.saulhdev.feeder.icon.phosphor.BookBookmark
 import com.saulhdev.feeder.icon.phosphor.Bookmarks
@@ -92,7 +92,7 @@ class FeedPreferences private constructor(val context: Context) {
         key = BOOKMARKS,
         dataStore = dataStore,
         icon = Phosphor.Bookmarks,
-        route = "/${Routes.BOOKMARKS}/"
+        route = NavRoute.Bookmarks
     )
 
     var openInBrowser = BooleanPref(
@@ -168,7 +168,7 @@ class FeedPreferences private constructor(val context: Context) {
         icon = Phosphor.Info,
         key = ABOUT,
         dataStore = dataStore,
-        route = "/${Routes.ABOUT}/"
+        route = NavRoute.About
     )
 
     var debugging = BooleanPref(

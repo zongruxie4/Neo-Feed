@@ -98,7 +98,7 @@ fun PreferencesPage() {
                             modifier = Modifier.weight(1f),
                             icon = item.icon,
                             description = stringResource(id = item.titleId),
-                            onClick = { navController.navigate(item.route) },
+                            onClick = { navController.navigate(item.route!!) },
                         )
                     }
                 }

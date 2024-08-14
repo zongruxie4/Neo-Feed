@@ -45,6 +45,7 @@ import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
+import com.saulhdev.feeder.compose.navigation.NAV_BASE
 import com.saulhdev.feeder.compose.navigation.NavigationManager
 import com.saulhdev.feeder.models.exportOpml
 import com.saulhdev.feeder.models.importOpml
@@ -233,8 +234,8 @@ class MainActivity : ComponentActivity(), SavedStateRegistryOwner {
     }
 
     companion object {
-        fun createIntent(context: Context, destination: String): Intent {
-            val uri = "android-app://androidx.navigation//$destination".toUri()
+        fun navigateIntent(context: Context, destination: String): Intent {
+            val uri = "$NAV_BASE$destination".toUri()
             return Intent(Intent.ACTION_VIEW, uri, context, MainActivity::class.java)
         }
 

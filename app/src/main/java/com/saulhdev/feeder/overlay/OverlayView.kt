@@ -37,6 +37,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.saulhdev.feeder.MainActivity
 import com.saulhdev.feeder.NFApplication
 import com.saulhdev.feeder.R
+import com.saulhdev.feeder.compose.navigation.Routes
 import com.saulhdev.feeder.data.MenuItem
 import com.saulhdev.feeder.db.ArticleRepository
 import com.saulhdev.feeder.feed.FeedAdapter
@@ -172,9 +173,9 @@ class OverlayView(val context: Context) :
                 "config"  -> {
                     scope.launch {
                         view.context.startActivity(
-                            MainActivity.createIntent(
+                            MainActivity.navigateIntent(
                                 view.context,
-                                "/"
+                                "${Routes.MAIN}/1",
                             )
                         )
                     }

@@ -71,9 +71,9 @@ fun BookmarksPage() {
                             scope.launch {
                                 if (prefs.offlineReader.getValue()) {
                                     context.startActivity(
-                                        MainActivity.createIntent(
+                                        MainActivity.navigateIntent(
                                             context,
-                                            "${Routes.ARTICLE_VIEW}/${article.id}/"
+                                            "${Routes.ARTICLE_VIEW}/${article.id}"
                                         )
                                     )
                                 } else {

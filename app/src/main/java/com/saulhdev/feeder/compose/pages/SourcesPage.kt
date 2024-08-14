@@ -52,7 +52,7 @@ import com.saulhdev.feeder.compose.components.OverflowMenu
 import com.saulhdev.feeder.compose.components.ViewWithActionBar
 import com.saulhdev.feeder.compose.components.dialog.ActionsDialogUI
 import com.saulhdev.feeder.compose.navigation.LocalNavController
-import com.saulhdev.feeder.compose.navigation.Routes
+import com.saulhdev.feeder.compose.navigation.NavRoute
 import com.saulhdev.feeder.db.SourceRepository
 import com.saulhdev.feeder.db.models.Feed
 import com.saulhdev.feeder.icon.Phosphor
@@ -98,7 +98,7 @@ fun SourcesPage() {
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    navController.navigate("/${Routes.ADD_FEED}/")
+                    navController.navigate(NavRoute.AddFeed)
                 },
                 modifier = Modifier.padding(16.dp),
                 containerColor = MaterialTheme.colorScheme.primary
@@ -161,9 +161,7 @@ fun SourcesPage() {
                 FeedItem(
                     feed = item,
                     onClickAction = {
-                        navController.navigate(
-                            "/${Routes.EDIT_FEED}/${item.id}/"
-                        )
+                        navController.navigate(NavRoute.EditFeed(item.id))
                     },
                     onRemoveAction = {
                         removeItem.value = item

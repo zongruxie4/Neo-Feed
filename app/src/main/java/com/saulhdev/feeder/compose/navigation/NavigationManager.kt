@@ -29,19 +29,22 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.navDeepLink
+import androidx.navigation.toRoute
 import com.saulhdev.feeder.R
-import com.saulhdev.feeder.compose.components.webViewerGraph
+import com.saulhdev.feeder.compose.components.ComposeWebView
 import com.saulhdev.feeder.compose.pages.AboutPage
 import com.saulhdev.feeder.compose.pages.AddFeedPage
+import com.saulhdev.feeder.compose.pages.ArticleScreen
 import com.saulhdev.feeder.compose.pages.BookmarksPage
 import com.saulhdev.feeder.compose.pages.ChangelogScreen
+import com.saulhdev.feeder.compose.pages.EditFeedPage
 import com.saulhdev.feeder.compose.pages.LicenseScreen
 import com.saulhdev.feeder.compose.pages.MainPage
 import com.saulhdev.feeder.compose.pages.OverlayPage
 import com.saulhdev.feeder.compose.pages.PreferencesPage
 import com.saulhdev.feeder.compose.pages.SourcesPage
-import com.saulhdev.feeder.compose.pages.articleGraph
-import com.saulhdev.feeder.compose.pages.editFeedGraph
 import com.saulhdev.feeder.icon.Phosphor
 import com.saulhdev.feeder.icon.phosphor.GearSix
 import com.saulhdev.feeder.icon.phosphor.Graph
@@ -52,6 +55,8 @@ val LocalNavController = staticCompositionLocalOf<NavController> {
     error("CompositionLocal LocalNavController not present")
 }
 
+const val NAV_BASE = "nf-navigation://androidx.navigation/"
+
 @Composable
 fun NavigationManager(navController: NavHostController) {
     CompositionLocalProvider(
@@ -59,29 +64,47 @@ fun NavigationManager(navController: NavHostController) {
     ) {
         NavHost(
             navController = navController,
-            startDestination = "/",
+            startDestination = NavRoute.Main(),
             enterTransition = { fadeIn() + slideInHorizontally { it } },
             exitTransition = { fadeOut() + slideOutHorizontally { -it / 2 } },
             popEnterTransition = { fadeIn() + slideInHorizontally { -it } },
             popExitTransition = { fadeOut() + slideOutHorizontally { it / 2 } },
         ) {
-            preferenceGraph(route = "/", { MainPage() }) { subRoute ->
-                preferenceGraph(route = Routes.SETTINGS, { PreferencesPage() })
-                preferenceGraph(route = subRoute(Routes.BOOKMARKS), { BookmarksPage() })
-                preferenceGraph(route = subRoute(Routes.OVERLAY), { OverlayPage() })
-                preferenceGraph(route = subRoute(Routes.ABOUT), { AboutPage() })
-                preferenceGraph(route = Routes.LICENSE, { LicenseScreen() })
-                preferenceGraph(route = Routes.CHANGELOG, { ChangelogScreen() })
-                preferenceGraph(route = subRoute(Routes.ADD_FEED), { AddFeedPage() })
-                editFeedGraph(route = subRoute(Routes.EDIT_FEED))
-                webViewerGraph(route = subRoute(Routes.WEB_VIEW))
-                articleGraph(route = subRoute(Routes.ARTICLE_VIEW))
+            composable<NavRoute.Main>(
+                deepLinks = listOf(navDeepLink { uriPattern = "$NAV_BASE${Routes.MAIN}/{page}" })
+            ) {
+                val args = it.toRoute<NavRoute.Main>()
+                MainPage(args.page)
+            }
+            composable<NavRoute.Bookmarks> { BookmarksPage() }
+            composable<NavRoute.About> { AboutPage() }
+            composable<NavRoute.License> { LicenseScreen() }
+            composable<NavRoute.Changelog> { ChangelogScreen() }
+            composable<NavRoute.AddFeed> { AddFeedPage() }
+            composable<NavRoute.EditFeed>(
+                deepLinks = listOf(navDeepLink { uriPattern = "$NAV_BASE${Routes.EDIT_FEED}/{feedId}" })
+            ) {
+                val args = it.toRoute<NavRoute.EditFeed>()
+                EditFeedPage(args.feedId)
+            }
+            composable<NavRoute.WebView>(
+                deepLinks = listOf(navDeepLink { uriPattern = "$NAV_BASE${Routes.WEB_VIEW}/{url}" })
+            ) {
+                val args = it.toRoute<NavRoute.WebView>()
+                ComposeWebView(args.url)
+            }
+            composable<NavRoute.ArticleView>(
+                deepLinks = listOf(navDeepLink { uriPattern = "$NAV_BASE${Routes.ARTICLE_VIEW}/{id}" })
+            ) {
+                val args = it.toRoute<NavRoute.ArticleView>()
+                ArticleScreen(args.id)
             }
         }
     }
 }
 
 object Routes {
+    const val MAIN = "main"
     const val SETTINGS = "settings"
     const val SOURCES = "sources"
     const val BOOKMARKS = "bookmarks"

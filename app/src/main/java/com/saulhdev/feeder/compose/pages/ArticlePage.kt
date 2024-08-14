@@ -164,9 +164,9 @@ fun ArticleScreen(articleId: Long) {
                                     contentDescription = feedTitle.value
                                 }
                                 .clickable {
-                                    MainActivity.createIntent(
+                                    MainActivity.navigateIntent(
                                         context,
-                                        "${Routes.WEB_VIEW}/${article?.link?.urlEncode()}/"
+                                        "${Routes.WEB_VIEW}/${article?.link?.urlEncode()}"
                                     )
                                 }
                         )
