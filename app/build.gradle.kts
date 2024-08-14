@@ -21,7 +21,7 @@ android {
     val code = 58
 
     namespace = "com.saulhdev.feeder"
-    compileSdk = 34
+    compileSdk = 35
     defaultConfig {
         applicationId = "com.saulhdev.neofeed"
         minSdk = 26
