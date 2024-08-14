@@ -46,6 +46,7 @@ import com.saulhdev.feeder.icon.Phosphor
 import com.saulhdev.feeder.icon.phosphor.GearSix
 import com.saulhdev.feeder.icon.phosphor.Graph
 import com.saulhdev.feeder.icon.phosphor.Info
+import kotlinx.serialization.Serializable
 
 val LocalNavController = staticCompositionLocalOf<NavController> {
     error("CompositionLocal LocalNavController not present")
@@ -113,4 +114,34 @@ sealed class NavItem(
         NavItem(R.string.title_sources, Phosphor.Graph, Routes.SOURCES, {
             SourcesPage()
         })
+}
+
+@Serializable
+open class NavRoute {
+    @Serializable
+    data object About : NavRoute()
+
+    @Serializable
+    data object AddFeed : NavRoute()
+
+    @Serializable
+    data class ArticleView(val id: Long = 0L) : NavRoute()
+
+    @Serializable
+    data object Bookmarks : NavRoute()
+
+    @Serializable
+    data object Changelog : NavRoute()
+
+    @Serializable
+    data class EditFeed(val feedId: Long = 0L) : NavRoute()
+
+    @Serializable
+    data class Main(val page: Int = 0) : NavRoute()
+
+    @Serializable
+    data object License : NavRoute()
+
+    @Serializable
+    data class WebView(val url: String = "") : NavRoute()
 }
