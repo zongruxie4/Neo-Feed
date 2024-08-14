@@ -38,7 +38,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester.Companion.createRefs
 import androidx.compose.ui.focus.focusRequester
@@ -49,15 +48,10 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavType
-import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.compose.components.ComposeSwitchView
 import com.saulhdev.feeder.compose.components.ViewWithActionBar
 import com.saulhdev.feeder.compose.navigation.LocalNavController
-import com.saulhdev.feeder.compose.navigation.preferenceGraph
 import com.saulhdev.feeder.compose.util.interceptKey
 import com.saulhdev.feeder.models.EditFeedViewState
 import com.saulhdev.feeder.viewmodel.EditFeedViewModel
@@ -92,7 +86,6 @@ fun EditFeedPage(feedId: Long = -1) {
     }
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun EditFeedView(
     viewState: EditFeedViewState,
@@ -214,23 +207,6 @@ fun EditFeedView(
                     text = stringResource(id = android.R.string.ok)
                 )
             }
-        }
-    }
-}
-
-fun NavGraphBuilder.editFeedGraph(route: String) {
-    preferenceGraph(route, { }) { subRoute ->
-        composable(
-            route = subRoute("{feedId}"),
-            arguments = listOf(
-                navArgument("feedId") { type = NavType.LongType }
-            )
-        ) { backStackEntry ->
-            val args = backStackEntry.arguments!!
-            val feedId = args.getLong("feedId")
-            EditFeedPage(
-                feedId = feedId
-            )
         }
     }
 }

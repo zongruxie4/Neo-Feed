@@ -35,23 +35,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavType
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import com.google.accompanist.web.AccompanistWebViewClient
 import com.google.accompanist.web.LoadingState
 import com.google.accompanist.web.WebView
 import com.google.accompanist.web.rememberWebViewNavigator
 import com.google.accompanist.web.rememberWebViewState
-import com.saulhdev.feeder.compose.navigation.preferenceGraph
-import com.saulhdev.feeder.utils.urlDecode
 
 @Composable
 fun ComposeWebView(
     pageUrl: String
 ) {
+    // TODO migrate to ??!
     val url by remember { mutableStateOf(pageUrl) }
     val state = rememberWebViewState(url = url)
     val navigator = rememberWebViewNavigator()
@@ -124,20 +119,6 @@ fun ComposeWebView(
                 client = webClient
             )
 
-        }
-    }
-}
-
-fun NavGraphBuilder.webViewerGraph(route: String) {
-    preferenceGraph(route, { }) { subRoute ->
-        composable(
-            route = subRoute("{url}"),
-            arguments = listOf(navArgument("url") { type = NavType.StringType })
-        ) { backStackEntry ->
-            val url = backStackEntry.arguments?.getString("url")?.urlDecode()
-            if (url != null) {
-                ComposeWebView(pageUrl = url)
-            }
         }
     }
 }

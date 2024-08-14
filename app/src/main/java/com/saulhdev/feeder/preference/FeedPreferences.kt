@@ -155,14 +155,6 @@ class FeedPreferences private constructor(val context: Context) {
         defaultValue = setOf()
     )
 
-    var overlay = StringPref(
-        titleId = R.string.app_name,
-        icon = Phosphor.Info,
-        key = OVERLAY,
-        dataStore = dataStore,
-        route = "/${Routes.OVERLAY}/"
-    )
-
     var about = StringPref(
         titleId = R.string.title_about,
         icon = Phosphor.Info,

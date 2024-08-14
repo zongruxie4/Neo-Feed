@@ -33,8 +33,10 @@ class FeedAdapter : RecyclerView.Adapter<FeedAdapter.FeedViewHolder>() {
     private var theme: SparseIntArray? = null
 
     fun replace(new: List<FeedItem>) {
-        list = new
-        notifyDataSetChanged()
+        if (new != list) {
+            list = new
+            notifyDataSetChanged()
+        }
     }
 
     fun setTheme(theme: SparseIntArray) {

@@ -133,6 +133,7 @@ sealed class NavItem(
         NavItem(R.string.title_settings, Phosphor.GearSix, Routes.SETTINGS, {
             PreferencesPage()
         })
+
     data object Sources :
         NavItem(R.string.title_sources, Phosphor.Graph, Routes.SOURCES, {
             SourcesPage()

@@ -1,6 +1,5 @@
 package com.saulhdev.feeder.compose.pages
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.rememberPagerState
@@ -13,7 +12,6 @@ import com.saulhdev.feeder.compose.components.SlidePager
 import com.saulhdev.feeder.compose.navigation.NavItem
 import kotlinx.collections.immutable.persistentListOf
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MainPage(pageIndex: Int = 0) {
     val pages = persistentListOf(

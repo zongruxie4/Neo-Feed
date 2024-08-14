@@ -24,13 +24,16 @@ import androidx.compose.runtime.compositionLocalOf
 import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import androidx.navigation.navDeepLink
+
+// TODO consider removing
 
 inline fun NavGraphBuilder.preferenceGraph(
     route: String,
     crossinline root: @Composable () -> Unit,
     crossinline block: NavGraphBuilder.(subRoute: (String) -> String) -> Unit = { }
 ) {
-    val subRoute: (String) -> String = { name -> "$route$name/" }
+    val subRoute: (String) -> String = { name -> "$route/$name/" }
     composable(route = route) {
         CompositionLocalProvider(LocalRoute provides route) {
             root()
@@ -46,10 +49,15 @@ inline fun NavGraphBuilder.preferenceGraphWithArgs(
     crossinline root: @Composable (Bundle?) -> Unit,
     crossinline block: NavGraphBuilder.(subRoute: (String) -> String) -> Unit = { }
 ) {
-    val subRoute: (String) -> String = { name -> "$route$name/" }
+    val subRoute: (String) -> String = { name -> "$route/$name/" }
     composable(
-        route = route + suffix,
+        route = "$route$suffix",
         arguments = args,
+        deepLinks = listOf(
+            navDeepLink {
+                uriPattern = "$NAV_BASE$route$suffix"
+            }
+        )
     ) {
         CompositionLocalProvider(LocalRoute provides route) {
             root(it.arguments)

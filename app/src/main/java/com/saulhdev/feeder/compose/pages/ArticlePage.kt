@@ -27,18 +27,13 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavType
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import com.saulhdev.feeder.MainActivity
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.compose.components.RoundButton
 import com.saulhdev.feeder.compose.components.ViewWithActionBar
 import com.saulhdev.feeder.compose.components.WithBidiDeterminedLayoutDirection
 import com.saulhdev.feeder.compose.navigation.Routes
-import com.saulhdev.feeder.compose.navigation.preferenceGraph
 import com.saulhdev.feeder.db.ArticleRepository
 import com.saulhdev.feeder.icon.phosphor.ArrowSquareOut
 import com.saulhdev.feeder.icon.phosphor.ShareNetwork
@@ -226,19 +221,5 @@ fun ArticleScreen(articleId: Long) {
 fun NotFoundView() {
     Column(modifier = Modifier.padding(16.dp)) {
         Text(text = stringResource(id = R.string.article_not_found))
-    }
-}
-
-fun NavGraphBuilder.articleGraph(route: String) {
-    preferenceGraph(route, { }) { subRoute ->
-        composable(
-            route = subRoute("{id}"),
-            arguments = listOf(navArgument("id") { type = NavType.LongType })
-        ) { backStackEntry ->
-            val id = backStackEntry.arguments?.getLong("id") ?: 0
-            if (id != 0L) {
-                ArticleScreen(articleId = id)
-            }
-        }
     }
 }

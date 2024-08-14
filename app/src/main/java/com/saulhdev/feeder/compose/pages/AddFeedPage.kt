@@ -166,7 +166,6 @@ fun saveFeed(results: List<SearchResult>, repository: ArticleRepository) {
     }
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun AddFeedView(
     feedUrl: String = "",
@@ -210,7 +209,6 @@ fun AddFeedView(
     }
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun SearchFeedUI(
     feedUrl: String,
@@ -330,7 +328,6 @@ fun SearchingIndicator() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchResultView(
     title: String,
