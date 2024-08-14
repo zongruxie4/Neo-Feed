@@ -70,6 +70,8 @@ class OverlayView(val context: Context) :
 
     private lateinit var rootView: View
     private lateinit var adapter: FeedAdapter
+    private val repository: ArticleRepository by inject(ArticleRepository::class.java)
+    private val articles: SyncRestClient by inject(SyncRestClient::class.java)
 
     private val list = mutableListOf<FeedItem>()
     val prefs = FeedPreferences.getInstance(context)
@@ -247,8 +249,6 @@ class OverlayView(val context: Context) :
     }
 
     private fun loadArticles() {
-        val repository = ArticleRepository(context)
-        val articles = SyncRestClient(context)
         val scope = CoroutineScope(Dispatchers.IO) + CoroutineName("NeoFeedSync")
         scope.launch {
             val feeds = repository.getAllFeeds()

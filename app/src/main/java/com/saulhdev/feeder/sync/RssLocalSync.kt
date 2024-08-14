@@ -26,6 +26,7 @@ import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Response
+import org.koin.java.KoinJavaComponent.inject
 import org.threeten.bp.Instant
 import org.threeten.bp.temporal.ChronoUnit
 import java.io.File
@@ -69,12 +70,13 @@ internal suspend fun syncFeeds(
     minFeedAgeMinutes: Int = 5
 ): Boolean {
     var result = false
-    val repository = ArticleRepository(context)
+    val aRepository: ArticleRepository by inject(ArticleRepository::class.java)
     val downloadTime = Instant.now()
     var needFullTextSync = false
     val time = measureTimeMillis {
         try {
             supervisorScope {
+                val sRepository: SourceRepository by inject(SourceRepository::class.java)
                 val staleTime: Long = if (forceNetwork) {
                     Instant.now().toEpochMilli()
                 } else {
@@ -88,7 +90,7 @@ internal suspend fun syncFeeds(
                     }
 
                 val feedsToFetch = feedsToSync(
-                    repository = SourceRepository(context),
+                    repository = sRepository,
                     feedId = feedId,
                     tag = feedTag,
                     staleTime = staleTime
@@ -97,13 +99,13 @@ internal suspend fun syncFeeds(
                     needFullTextSync = needFullTextSync || it.fullTextByDefault
                     launch(coroutineContext) {
                         try {
-                            repository.setCurrentlySyncingOn(
+                            aRepository.setCurrentlySyncingOn(
                                 feedId = it.id,
                                 syncing = true,
                                 lastSync = Instant.now(),
                             )
                             syncFeed(
-                                repository = repository,
+                                repository = aRepository,
                                 feedSql = it,
                                 filesDir = context.filesDir,
                                 maxFeedItemCount = maxFeedItemCount,
@@ -114,7 +116,7 @@ internal suspend fun syncFeeds(
                             Log.e(TAG, "Failed to sync ${it.title}: ${it.url}", e)
                         } finally {
                             Log.d(TAG, "Sync finished ${it.title}")
-                            repository.setCurrentlySyncingOn(feedId = it.id, syncing = false)
+                            aRepository.setCurrentlySyncingOn(feedId = it.id, syncing = false)
                         }
                     }
                 }

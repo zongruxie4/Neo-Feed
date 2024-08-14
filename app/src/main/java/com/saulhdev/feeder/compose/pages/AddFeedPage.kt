@@ -31,7 +31,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
@@ -46,11 +45,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.input.key.Key
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
@@ -75,6 +72,7 @@ import com.saulhdev.feeder.viewmodel.SearchFeedViewModel
 import com.saulhdev.feeder.viewmodel.SearchResult
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.launch
+import org.koin.java.KoinJavaComponent.inject
 import java.net.MalformedURLException
 import java.net.URL
 
@@ -88,7 +86,7 @@ fun AddFeedPage() {
         mutableStateOf(listOf<SearchResult>())
     }
 
-    val repository = ArticleRepository(LocalContext.current)
+    val repository: ArticleRepository by inject(ArticleRepository::class.java)
 
     BackHandler {
         saveFeed(results, repository)

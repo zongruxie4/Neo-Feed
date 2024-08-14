@@ -14,6 +14,7 @@ import com.saulhdev.feeder.db.ArticleRepository
 import com.saulhdev.feeder.db.NeoFeedDb
 import com.saulhdev.feeder.db.SourceRepository
 import com.saulhdev.feeder.plugin.PluginFetcher
+import com.saulhdev.feeder.sync.SyncRestClient
 import com.saulhdev.feeder.utils.ApplicationCoroutineScope
 import com.saulhdev.feeder.utils.OverlayBridge
 import com.saulhdev.feeder.utils.ToastMaker
@@ -51,6 +52,7 @@ class NFApplication : MultiDexApplication() {
         single<NeoFeedDb> { NeoFeedDb.getInstance(this@NFApplication) }
         single { ArticleRepository(this@NFApplication) }
         single { SourceRepository(this@NFApplication) }
+        single { SyncRestClient(this@NFApplication) }
     }
 
     private val coreModule = module {

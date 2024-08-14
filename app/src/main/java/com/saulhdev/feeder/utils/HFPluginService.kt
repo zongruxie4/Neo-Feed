@@ -21,8 +21,10 @@ import kotlinx.coroutines.withContext
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Date
+import org.koin.java.KoinJavaComponent.inject
 
 class HFPluginService : Service(), CoroutineScope by MainScope() {
+    private val repository: ArticleRepository by inject(ArticleRepository::class.java)
 
     private val mBinder: IBinder = object : IFeedInterface.Stub() {
         override fun getFeed(
@@ -37,7 +39,6 @@ class HFPluginService : Service(), CoroutineScope by MainScope() {
 
                 //Load feed articles from database
                 withContext(Dispatchers.IO) {
-                    val repository = ArticleRepository(this@HFPluginService)
                     val feedList: List<Feed> = repository.getAllFeeds()
 
                     feedList.forEach { feed ->
@@ -78,7 +79,6 @@ class HFPluginService : Service(), CoroutineScope by MainScope() {
         }
 
         override fun getCategories(callback: IFeedInterfaceCallback) {
-            val repository = ArticleRepository(this@HFPluginService)
             val feedList: List<Feed> = repository.getAllFeeds()
 
             callback.onCategoriesReceive(feedList.map {

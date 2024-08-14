@@ -89,7 +89,7 @@ fun OverlayPage(navController: NavController = LocalNavController.current) {
     val context = LocalContext.current
     val localTime = LocalDateTime.now().toString().replace(":", "_").substring(0, 19)
 
-    val articles = SyncRestClient(context)
+    val articles : SyncRestClient by inject(SyncRestClient::class.java)
     val repository: ArticleRepository by inject(ArticleRepository::class.java)
     val scope = CoroutineScope(Dispatchers.IO) + CoroutineName("NeoFeedSync")
     val feedList: MutableList<FeedItem> = remember { mutableStateListOf() }

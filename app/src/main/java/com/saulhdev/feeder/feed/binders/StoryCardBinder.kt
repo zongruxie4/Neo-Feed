@@ -22,6 +22,7 @@ import com.saulhdev.feeder.utils.urlEncode
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.koin.java.KoinJavaComponent.inject
 
 object StoryCardBinder : FeedBinder {
     override fun bind(theme: SparseIntArray?, item: FeedItem, view: View) {
@@ -29,7 +30,7 @@ object StoryCardBinder : FeedBinder {
         val content = item.content
         val binding = FeedCardStoryLargeBinding.bind(view)
         val prefs = FeedPreferences.getInstance(context)
-        val repository = ArticleRepository(context)
+        val repository: ArticleRepository by inject(ArticleRepository::class.java)
         var bookmarked = item.bookmarked
         binding.storyTitle.text = content.title
         binding.storySource.text = content.source.title

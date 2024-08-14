@@ -38,13 +38,14 @@ import com.saulhdev.feeder.preference.FeedPreferences
 import com.saulhdev.feeder.utils.launchView
 import com.saulhdev.feeder.utils.openLinkInCustomTab
 import kotlinx.coroutines.launch
+import org.koin.java.KoinJavaComponent.inject
 
 @Composable
 fun BookmarksPage() {
     val context = LocalContext.current
     val prefs = FeedPreferences.getInstance(context)
     val scope = rememberCoroutineScope()
-    val repository = ArticleRepository(context)
+    val repository: ArticleRepository by inject(ArticleRepository::class.java)
     val bookmarked = repository.getBookmarkedArticlesMap().collectAsState(initial = emptyMap())
 
     ViewWithActionBar(

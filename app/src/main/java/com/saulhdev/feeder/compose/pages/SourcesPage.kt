@@ -42,7 +42,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -68,10 +67,8 @@ import java.time.LocalDateTime
 
 @Composable
 fun SourcesPage() {
-    val context = LocalContext.current
-
     val navController = LocalNavController.current
-    val repository = SourceRepository(context)
+    val repository: SourceRepository by inject(SourceRepository::class.java)
     val localTime = LocalDateTime.now().toString().replace(":", "_").substring(0, 19)
     val coroutineScope: ApplicationCoroutineScope by inject(ApplicationCoroutineScope::class.java)
 

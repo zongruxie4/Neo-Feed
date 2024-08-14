@@ -52,6 +52,7 @@ import com.saulhdev.feeder.utils.launchView
 import com.saulhdev.feeder.utils.shareIntent
 import com.saulhdev.feeder.utils.unicodeWrap
 import com.saulhdev.feeder.utils.urlEncode
+import org.koin.java.KoinJavaComponent.inject
 import org.threeten.bp.ZonedDateTime
 import org.threeten.bp.format.DateTimeFormatter
 import org.threeten.bp.format.FormatStyle
@@ -60,7 +61,7 @@ import java.util.Locale
 @Composable
 fun ArticleScreen(articleId: Long) {
     val context = LocalContext.current
-    val repository = ArticleRepository(context)
+    val repository: ArticleRepository by inject(ArticleRepository::class.java)
     val article by repository.getArticleById(articleId).collectAsState(initial = null)
     val feed by repository.getFeedById(article?.feedId ?: 0).collectAsState(initial = null)
 

@@ -35,7 +35,7 @@ class FullTextWorker(
 ) : CoroutineWorker(context, workerParams) {
 
     private val okHttpClient: OkHttpClient = OkHttpClient.Builder().build()
-    private val repository = ArticleRepository(context)
+    val repository: ArticleRepository by inject(ArticleRepository::class.java)
 
     override suspend fun doWork(): Result {
         Log.i("FeederFullText", "Parsing full texts for articles if missing")
