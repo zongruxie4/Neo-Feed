@@ -19,9 +19,7 @@
 package com.saulhdev.feeder.compose.pages
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -36,11 +34,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.compose.components.BaseDialog
-import com.saulhdev.feeder.compose.components.CardButton
 import com.saulhdev.feeder.compose.components.PreferenceGroup
 import com.saulhdev.feeder.compose.components.ViewWithActionBar
 import com.saulhdev.feeder.compose.components.dialog.StringSelectionPrefDialogUI
-import com.saulhdev.feeder.compose.navigation.LocalNavController
 import com.saulhdev.feeder.preference.FeedPreferences
 import com.saulhdev.feeder.preference.StringSelectionPref
 
@@ -52,11 +48,7 @@ fun PreferencesPage() {
         showBackButton = false,
     ) { paddingValues ->
         val prefs = FeedPreferences.getInstance(LocalContext.current)
-        val navController = LocalNavController.current
 
-        val actions = listOf(
-            prefs.bookmarks,
-        )
         val servicePrefs = listOf(
             prefs.itemsPerFeed,
             prefs.syncFrequency,
@@ -89,21 +81,6 @@ fun PreferencesPage() {
                 ),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            item {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    actions.forEach { item ->
-                        CardButton(
-                            modifier = Modifier.weight(1f),
-                            icon = item.icon,
-                            description = stringResource(id = item.titleId),
-                            onClick = { navController.navigate(item.route!!) },
-                        )
-                    }
-                }
-            }
             item {
                 PreferenceGroup(
                     stringResource(id = R.string.title_service),

@@ -30,7 +30,6 @@ import com.saulhdev.feeder.R
 import com.saulhdev.feeder.compose.navigation.NavRoute
 import com.saulhdev.feeder.icon.Phosphor
 import com.saulhdev.feeder.icon.phosphor.BookBookmark
-import com.saulhdev.feeder.icon.phosphor.Bookmarks
 import com.saulhdev.feeder.icon.phosphor.Browser
 import com.saulhdev.feeder.icon.phosphor.Bug
 import com.saulhdev.feeder.icon.phosphor.Clock
@@ -85,15 +84,6 @@ class FeedPreferences private constructor(val context: Context) {
         defaultValue = "theme",
         entries = getBackgroundOptions(context)
     )*/
-
-    var bookmarks = StringPref(
-        titleId = R.string.title_bookmarks,
-        summaryId = R.string.summary_bookmarks,
-        key = BOOKMARKS,
-        dataStore = dataStore,
-        icon = Phosphor.Bookmarks,
-        route = NavRoute.Bookmarks
-    )
 
     var openInBrowser = BooleanPref(
         titleId = R.string.pref_browser_theme,

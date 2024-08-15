@@ -37,7 +37,6 @@ import com.saulhdev.feeder.compose.components.ComposeWebView
 import com.saulhdev.feeder.compose.pages.AboutPage
 import com.saulhdev.feeder.compose.pages.AddFeedPage
 import com.saulhdev.feeder.compose.pages.ArticleScreen
-import com.saulhdev.feeder.compose.pages.BookmarksPage
 import com.saulhdev.feeder.compose.pages.ChangelogScreen
 import com.saulhdev.feeder.compose.pages.EditFeedPage
 import com.saulhdev.feeder.compose.pages.LicenseScreen
@@ -76,7 +75,6 @@ fun NavigationManager(navController: NavHostController) {
                 val args = it.toRoute<NavRoute.Main>()
                 MainPage(args.page)
             }
-            composable<NavRoute.Bookmarks> { BookmarksPage() }
             composable<NavRoute.About> { AboutPage() }
             composable<NavRoute.License> { LicenseScreen() }
             composable<NavRoute.Changelog> { ChangelogScreen() }
