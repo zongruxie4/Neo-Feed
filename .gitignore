@@ -21,8 +21,8 @@ local.properties
 *.apk
 *.ap_
 *.aab
-app/release/
-app/neo/
+release/
+neo/
 
 # IntelliJ
 .kotlin/
