@@ -77,7 +77,7 @@ fun StringSelectionPrefDialogUI(
                     .padding(vertical = 8.dp)
                     .weight(1f, false)
             ) {
-                items(items = entryPairs) {
+                items(items = entryPairs, key = { it.first }) {
                     val isSelected = rememberSaveable(selected) {
                         mutableStateOf(selected == it.first)
                     }

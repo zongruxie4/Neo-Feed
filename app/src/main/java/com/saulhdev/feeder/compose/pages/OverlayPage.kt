@@ -251,7 +251,7 @@ fun OverlayPage(isOverlay: Boolean = false) {
             contentPadding = PaddingValues(8.dp),
             modifier = Modifier.padding(paddingValues),
         ) {
-            items(bookmarked.value.entries.toList()) { item ->
+            items(bookmarked.value.entries.toList(), key = { it.key.id }) { item ->
                 BookmarkItem(
                     article = item.key,
                     feed = item.value,
@@ -288,7 +288,6 @@ fun OverlayPage(isOverlay: Boolean = false) {
             }
         }
         else PullToRefreshLazyColumn(
-            items = feedList,
             isRefreshing = isRefreshing,
             onRefresh = {
                 isRefreshing = true
@@ -299,29 +298,30 @@ fun OverlayPage(isOverlay: Boolean = false) {
                 }
             },
             listState = listState,
-            content = { item ->
-                ArticleItem(
-                    article = item,
-                    onBookmark = {
-                        repository.bookmarkArticle(item.id, it)
-                    },
-                ) {
-                    if (prefs.openInBrowser.getValue()) {
-                        context.launchView(item.content.link)
-                    } else {
-                        if (prefs.offlineReader.getValue()) {
-                            //navController.navigate("/${Routes.ARTICLE_VIEW}/${item.id}/")
-                            context.startActivity(
-                                MainActivity.navigateIntent(
-                                    context,
-                                    "${Routes.ARTICLE_VIEW}/${item.id}"
-                                )
-                            )
+            content = {
+                items(feedList, key = { it.id }) { item ->
+                    ArticleItem(
+                        article = item,
+                        onBookmark = {
+                            repository.bookmarkArticle(item.id, it)
+                        },
+                    ) {
+                        if (prefs.openInBrowser.getValue()) {
+                            context.launchView(item.content.link)
                         } else {
-                            openLinkInCustomTab(
-                                context,
-                                item.content.link
-                            )
+                            if (prefs.offlineReader.getValue()) {
+                                context.startActivity(
+                                    MainActivity.navigateIntent(
+                                        context,
+                                        "${Routes.ARTICLE_VIEW}/${item.id}"
+                                    )
+                                )
+                            } else {
+                                openLinkInCustomTab(
+                                    context,
+                                    item.content.link
+                                )
+                            }
                         }
                     }
                 }

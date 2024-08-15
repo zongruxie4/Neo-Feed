@@ -5,8 +5,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
@@ -20,11 +20,10 @@ import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun <T> PullToRefreshLazyColumn(
-    items: List<T>,
+fun PullToRefreshLazyColumn(
     isRefreshing: Boolean,
     onRefresh: () -> Unit,
-    content: @Composable (T) -> Unit,
+    content: LazyListScope.() -> Unit,
     modifier: Modifier = Modifier,
     listState: LazyListState = rememberLazyListState()
 ) {
@@ -39,12 +38,9 @@ fun <T> PullToRefreshLazyColumn(
             contentPadding = PaddingValues(8.dp),
             modifier = Modifier
                 .fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            items(items) {
-                content(it)
-            }
-        }
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            content = content
+        )
 
         if (pullToRefreshState.isRefreshing) {
             LaunchedEffect(true) {

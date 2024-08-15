@@ -81,21 +81,21 @@ fun PreferencesPage() {
                 ),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            item {
+            item(key = R.string.title_service) {
                 PreferenceGroup(
                     stringResource(id = R.string.title_service),
                     prefs = servicePrefs,
                     onPrefDialog = onPrefDialog
                 )
             }
-            item {
+            item(key = R.string.pref_cat_overlay) {
                 PreferenceGroup(
                     stringResource(id = R.string.pref_cat_overlay),
                     prefs = themePrefs,
                     onPrefDialog = onPrefDialog
                 )
             }
-            item {
+            item(key = R.string.title_other) {
                 PreferenceGroup(
                     stringResource(id = R.string.title_other),
                     prefs = debugPrefs,
