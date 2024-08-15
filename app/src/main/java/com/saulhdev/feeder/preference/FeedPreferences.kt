@@ -18,14 +18,10 @@
 package com.saulhdev.feeder.preference
 
 import android.content.Context
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.SharedPreferencesMigration
-import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
-import androidx.datastore.preferences.preferencesDataStore
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.compose.navigation.NavRoute
 import com.saulhdev.feeder.icon.Phosphor
@@ -42,24 +38,18 @@ import com.saulhdev.feeder.icon.phosphor.WifiHigh
 import com.saulhdev.feeder.utils.getItemsPerFeed
 import com.saulhdev.feeder.utils.getSyncFrequency
 import com.saulhdev.feeder.utils.getThemes
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 import java.lang.ref.WeakReference
 import kotlin.math.roundToInt
 
-class FeedPreferences private constructor(val context: Context) {
-    private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(
-        name = "neo_feed",
-        produceMigrations = { context ->
-            listOf(SharedPreferencesMigration(context, "com.saulhdev.neofeed.prefs"))
-        }
-    )
-    private val dataStore: DataStore<Preferences> = context.dataStore
-
+class FeedPreferences private constructor(val context: Context) : KoinComponent {
     /* Theme */
     var overlayTheme = StringSelectionPref(
         titleId = R.string.pref_ovr_theme,
         icon = Phosphor.PaintRoller,
         key = OVERLAY_THEME,
-        dataStore = dataStore,
+        dataStore = get(),
         defaultValue = "auto_system",
         entries = getThemes(context)
     )
@@ -68,7 +58,7 @@ class FeedPreferences private constructor(val context: Context) {
         titleId = R.string.pref_transparency,
         icon = Phosphor.SubtractSquare,
         key = OVERLAY_OPACITY,
-        dataStore = dataStore,
+        dataStore = get(),
         defaultValue = 1f,
         maxValue = 1f,
         minValue = 0f,
@@ -89,7 +79,7 @@ class FeedPreferences private constructor(val context: Context) {
         titleId = R.string.pref_browser_theme,
         icon = Phosphor.Browser,
         key = OPEN_IN_BROWSER,
-        dataStore = dataStore,
+        dataStore = get(),
         defaultValue = false
     )
 
@@ -97,7 +87,7 @@ class FeedPreferences private constructor(val context: Context) {
         titleId = R.string.pref_remove_duplicates,
         icon = Phosphor.FunnelSimple,
         key = REMOVE_DUPLICATES,
-        dataStore = dataStore,
+        dataStore = get(),
         defaultValue = true
     )
 
@@ -105,7 +95,7 @@ class FeedPreferences private constructor(val context: Context) {
         titleId = R.string.pref_offline_reader,
         icon = Phosphor.BookBookmark,
         key = OFFLINE_READER,
-        dataStore = dataStore,
+        dataStore = get(),
         defaultValue = true
     )
 
@@ -114,7 +104,7 @@ class FeedPreferences private constructor(val context: Context) {
         titleId = R.string.pref_sync_wifi,
         icon = Phosphor.WifiHigh,
         key = SYNC_ON_WIFI,
-        dataStore = dataStore,
+        dataStore = get(),
         defaultValue = true
     )
 
@@ -122,7 +112,7 @@ class FeedPreferences private constructor(val context: Context) {
         titleId = R.string.pref_sync_frequency,
         icon = Phosphor.Clock,
         key = SYNC_FREQUENCY,
-        dataStore = dataStore,
+        dataStore = get(),
         defaultValue = "1",
         entries = getSyncFrequency(context)
     )
@@ -131,7 +121,7 @@ class FeedPreferences private constructor(val context: Context) {
         titleId = R.string.pref_items_per_feed,
         icon = Phosphor.Hash,
         key = ITEMS_PER_FEED,
-        dataStore = dataStore,
+        dataStore = get(),
         defaultValue = "25",
         entries = getItemsPerFeed()
     )
@@ -141,7 +131,7 @@ class FeedPreferences private constructor(val context: Context) {
         titleId = R.string.title_plugin_list,
         icon = Phosphor.Hash,
         key = PLUGINS,
-        dataStore = dataStore,
+        dataStore = get(),
         defaultValue = setOf()
     )
 
@@ -149,7 +139,7 @@ class FeedPreferences private constructor(val context: Context) {
         titleId = R.string.title_about,
         icon = Phosphor.Info,
         key = ABOUT,
-        dataStore = dataStore,
+        dataStore = get(),
         route = NavRoute.About
     )
 
@@ -158,7 +148,7 @@ class FeedPreferences private constructor(val context: Context) {
         defaultValue = false,
         icon = Phosphor.Bug,
         key = DEBUG,
-        dataStore = dataStore,
+        dataStore = get(),
     )
 
     companion object {

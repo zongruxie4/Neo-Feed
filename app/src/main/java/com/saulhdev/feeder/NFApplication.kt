@@ -4,6 +4,10 @@ import android.app.Activity
 import android.content.Context
 import android.os.Bundle
 import android.widget.Toast
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.SharedPreferencesMigration
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.SavedStateHandle
 import androidx.multidex.MultiDexApplication
 import androidx.work.WorkManager
@@ -36,6 +40,12 @@ class NFApplication : MultiDexApplication() {
 
     private val activityHandler = ActivityHandler()
     private val applicationCoroutineScope = ApplicationCoroutineScope()
+    private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(
+        name = "neo_feed",
+        produceMigrations = { context ->
+            listOf(SharedPreferencesMigration(context, "com.saulhdev.neofeed.prefs"))
+        }
+    )
 
     private fun savedStateHandle() = SavedStateHandle()
 
@@ -50,6 +60,7 @@ class NFApplication : MultiDexApplication() {
 
     private val dataModule = module {
         single<NeoFeedDb> { NeoFeedDb.getInstance(this@NFApplication) }
+        single { androidContext().dataStore }
         single { ArticleRepository(this@NFApplication) }
         single { SourceRepository(this@NFApplication) }
         single { SyncRestClient(this@NFApplication) }
