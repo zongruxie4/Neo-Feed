@@ -42,7 +42,6 @@ fun AppTheme(
             darkTheme -> DarkColors
             else -> LightColors
         },
-        shapes = shapes,
         content = content
     )
 }
