@@ -21,8 +21,12 @@ package com.saulhdev.feeder.compose.pages
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -37,6 +41,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
@@ -50,6 +55,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.AndroidUiDispatcher
 import androidx.compose.ui.platform.LocalContext
@@ -59,12 +65,14 @@ import com.saulhdev.feeder.MainActivity
 import com.saulhdev.feeder.NFApplication
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.compose.components.ArticleItem
+import com.saulhdev.feeder.compose.components.BookmarkItem
 import com.saulhdev.feeder.compose.components.PullToRefreshLazyColumn
 import com.saulhdev.feeder.compose.navigation.LocalNavController
 import com.saulhdev.feeder.compose.navigation.NavRoute
 import com.saulhdev.feeder.compose.navigation.Routes
 import com.saulhdev.feeder.db.ArticleRepository
 import com.saulhdev.feeder.icon.Phosphor
+import com.saulhdev.feeder.icon.phosphor.Bookmarks
 import com.saulhdev.feeder.icon.phosphor.CaretUp
 import com.saulhdev.feeder.icon.phosphor.GearSix
 import com.saulhdev.feeder.icon.phosphor.Nut
@@ -91,7 +99,7 @@ fun OverlayPage(isOverlay: Boolean = false) {
     val navController = LocalNavController.current
     val prefs = FeedPreferences.getInstance(context)
 
-    val articles : SyncRestClient by inject(SyncRestClient::class.java)
+    val articles: SyncRestClient by inject(SyncRestClient::class.java)
     val repository: ArticleRepository by inject(ArticleRepository::class.java)
     val scope = CoroutineScope(Dispatchers.IO) + CoroutineName("NeoFeedSync")
     val feedList by repository.getFeedArticles()
@@ -101,10 +109,12 @@ fun OverlayPage(isOverlay: Boolean = false) {
                 .sortedByDescending { it.time }
         }
         .collectAsState(initial = emptyList())
+    val bookmarked = repository.getBookmarkedArticlesMap().collectAsState(initial = emptyMap())
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
     var isRefreshing by remember { mutableStateOf(false) }
     var showMenu by remember { mutableStateOf(false) }
+    var showBookmarks by remember { mutableStateOf(false) }
     val listState = rememberLazyListState()
     val showFAB by remember { derivedStateOf { listState.firstVisibleItemIndex > 4 } }
 
@@ -124,6 +134,21 @@ fun OverlayPage(isOverlay: Boolean = false) {
                 title = { Text(text = stringResource(id = R.string.app_name)) },
                 scrollBehavior = scrollBehavior,
                 actions = {
+                    Surface(
+                        color = if (showBookmarks) MaterialTheme.colorScheme.primaryContainer
+                        else Color.Transparent,
+                        shape = MaterialTheme.shapes.large,
+                        onClick = {
+                            showBookmarks = !showBookmarks
+                        }
+                    ) {
+                        Icon(
+                            modifier = Modifier.padding(8.dp),
+                            imageVector = Phosphor.Bookmarks,
+                            contentDescription = stringResource(id = R.string.title_bookmarks),
+                        )
+                    }
+
                     IconButton(
                         modifier = Modifier
                             .size(size = 40.dp)
@@ -220,7 +245,49 @@ fun OverlayPage(isOverlay: Boolean = false) {
             }
         }
     ) { paddingValues ->
-        PullToRefreshLazyColumn(
+        if (showBookmarks) LazyColumn(
+            state = listState,
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            contentPadding = PaddingValues(8.dp),
+            modifier = Modifier.padding(paddingValues),
+        ) {
+            items(bookmarked.value.entries.toList()) { item ->
+                BookmarkItem(
+                    article = item.key,
+                    feed = item.value,
+                    onClickAction = { article ->
+                        if (prefs.openInBrowser.getValue()) {
+                            context.launchView(article.link ?: "")
+                        } else {
+                            scope.launch {
+                                if (prefs.offlineReader.getValue()) {
+                                    context.startActivity(
+                                        MainActivity.navigateIntent(
+                                            context,
+                                            "${Routes.ARTICLE_VIEW}/${article.id}"
+                                        )
+                                    )
+                                } else {
+                                    openLinkInCustomTab(
+                                        context,
+                                        article.link!!
+                                    )
+                                }
+                            }
+                        }
+                        scope.launch {
+                            repository.unpinArticle(article.id)
+                        }
+                    },
+                    onRemoveAction = {
+                        scope.launch {
+                            repository.bookmarkArticle(it.id, false)
+                        }
+                    }
+                )
+            }
+        }
+        else PullToRefreshLazyColumn(
             items = feedList,
             isRefreshing = isRefreshing,
             onRefresh = {
