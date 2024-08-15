@@ -209,7 +209,7 @@ class OverlayView(val context: Context) :
 
                 "restart" -> {
                     val application: NFApplication by inject(NFApplication::class.java)
-                    application.restart(true)
+                    application.restart(false)
                 }
             }
         }
@@ -257,6 +257,13 @@ class OverlayView(val context: Context) :
                         adapter.replace(it)
                     }
                 }
+        }
+        syncScope.launch {
+            prefs.overlayTheme.get().collect {
+                mainScope.launch {
+                    applyNewTheme(it)
+                }
+            }
         }
         NFApplication.bridge.setCallback(this)
     }
