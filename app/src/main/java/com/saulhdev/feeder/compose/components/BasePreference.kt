@@ -19,23 +19,22 @@ package com.saulhdev.feeder.compose.components
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.requiredWidth
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.saulhdev.feeder.compose.util.addIf
-import com.saulhdev.feeder.theme.GroupItemShape
 
 @Composable
 fun BasePreference(
@@ -51,18 +50,32 @@ fun BasePreference(
     bottomWidget: (@Composable () -> Unit)? = null,
     onClick: (() -> Unit)? = null,
 ) {
+    val base = index.toFloat() / groupSize
     val rank = (index + 1f) / groupSize
 
     ListItem(
         modifier = modifier
             .fillMaxWidth()
-            .clip(GroupItemShape(index, groupSize - 1))
+            .clip(
+                RoundedCornerShape(
+                    topStart = if (base == 0f) MaterialTheme.shapes.large.topStart
+                    else MaterialTheme.shapes.extraSmall.topStart,
+                    topEnd = if (base == 0f) MaterialTheme.shapes.large.topEnd
+                    else MaterialTheme.shapes.extraSmall.topEnd,
+                    bottomStart = if (rank == 1f) MaterialTheme.shapes.large.bottomStart
+                    else MaterialTheme.shapes.extraSmall.bottomStart,
+                    bottomEnd = if (rank == 1f) MaterialTheme.shapes.large.bottomEnd
+                    else MaterialTheme.shapes.extraSmall.bottomEnd
+                )
+            )
             .addIf(onClick != null) {
                 clickable(enabled = isEnabled, onClick = onClick!!)
+            }
+            .addIf(!isEnabled) {
+                alpha(0.3f)
             },
         colors = ListItemDefaults.colors(
-            containerColor = MaterialTheme.colorScheme
-                .surfaceColorAtElevation((rank * 24).dp),
+            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
         ),
         leadingContent = startWidget,
         headlineContent = {
@@ -70,28 +83,23 @@ fun BasePreference(
                 text = stringResource(id = titleId),
                 color = MaterialTheme.colorScheme.onSurface,
                 style = MaterialTheme.typography.titleMedium,
+                fontSize = 16.sp
             )
         },
         supportingContent = {
             Column(
-                modifier = Modifier
-                    .addIf(!isEnabled) {
-                        alpha(0.3f)
-                    }
+                verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 if (summaryId != -1 || summary != null) {
                     Text(
                         text = summary ?: stringResource(id = summaryId),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        color = MaterialTheme.colorScheme.onSurface,
                         style = MaterialTheme.typography.bodyMedium,
                     )
                 }
-                bottomWidget?.let {
-                    Spacer(modifier = Modifier.requiredWidth(8.dp))
-                    bottomWidget()
-                }
+                bottomWidget?.let { it() }
             }
         },
-        trailingContent = endWidget,
+        trailingContent = endWidget
     )
 }
