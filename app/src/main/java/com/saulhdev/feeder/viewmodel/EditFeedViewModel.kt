@@ -44,7 +44,7 @@ class EditFeedViewModel : ViewModel() {
     }
 
     val feed = _feedId.mapLatest {
-        repository.getFeed(it)
+        repository.getFeed(it) ?: Feed()
     }.stateIn(
         viewModelScope,
         SharingStarted.Lazily,

@@ -83,14 +83,14 @@ interface FeedArticleDao {
     suspend fun loadArticles(feedId: Long?): List<FeedArticle>
 
 
-    @get:Query(
+    @Query(
         """
         SELECT FeedArticle.* FROM FeedArticle
         JOIN Feeds ON FeedArticle.feedId = Feeds.id
         WHERE Feeds.isEnabled = 1
     """
     )
-    val allEnabledFeedArticles: Flow<List<FeedArticle>>
+    fun getAllEnabledFeedArticles(): Flow<List<FeedArticle>>
 
     @Query(
         """
@@ -112,7 +112,7 @@ interface FeedArticleDao {
     )
     fun getFeedsItemsWithDefaultFullTextParse(): Flow<List<FeedItemIdWithLink>>
 
-    @get:Query(
+    @Query(
         """
             SELECT *
             FROM feedArticle fi
@@ -120,7 +120,7 @@ interface FeedArticleDao {
             ORDER BY pinned DESC, pubDate DESC
         """
     )
-    val allBookmarked: Flow<List<FeedArticle>>
+    fun getAllBookmarked(): Flow<List<FeedArticle>>
 }
 
 suspend fun FeedArticleDao.insertOrUpdate(

@@ -42,13 +42,13 @@ interface FeedSourceDao {
     suspend fun delete(feed: Feed): Int
 
     @Query("SELECT * FROM Feeds WHERE url = :url")
-    suspend fun getFeedByURL(url: URL): Feed
+    suspend fun getFeedByURL(url: URL): Feed?
 
     @Query("SELECT * FROM Feeds WHERE id = :id")
-    fun getFeedById(id: Long): Flow<Feed>
+    fun getFeedById(id: Long): Flow<Feed?>
 
     @Query("SELECT * FROM Feeds WHERE id = :id")
-    suspend fun loadFeedById(id: Long): Feed
+    suspend fun loadFeedById(id: Long): Feed?
 
     @Query("SELECT * FROM Feeds WHERE id = :id")
     suspend fun findFeedById(id: Long): List<Feed>

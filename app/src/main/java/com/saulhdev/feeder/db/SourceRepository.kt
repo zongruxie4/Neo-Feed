@@ -29,7 +29,7 @@ class SourceRepository(context: Context) {
         return sourceDao.loadFeedIfStale(feedId, staleTime)
     }
 
-    suspend fun loadFeed(feedId: Long): Feed {
+    suspend fun loadFeed(feedId: Long): Feed? {
         return sourceDao.loadFeedById(feedId)
     }
 

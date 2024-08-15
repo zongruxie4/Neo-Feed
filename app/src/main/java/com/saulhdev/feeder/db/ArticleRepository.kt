@@ -50,14 +50,15 @@ class ArticleRepository(context: Context) {
 
     fun updateFeed(title: String, url: URL, fullTextByDefault: Boolean, isEnabled: Boolean) {
         scope.launch {
-            val feed = feedSourceDao.getFeedByURL(url)
-                .copy(
+            feedSourceDao.getFeedByURL(url)
+                ?.copy(
                     title = title,
                     url = url,
                     fullTextByDefault = fullTextByDefault,
                     isEnabled = isEnabled
-                )
-            feedSourceDao.update(feed)
+                )?.let {
+                    feedSourceDao.update(it)
+                }
         }
     }
 
@@ -71,13 +72,13 @@ class ArticleRepository(context: Context) {
         }
     }
 
-    suspend fun getFeed(feedId: Long): Feed = feedSourceDao.loadFeedById(feedId)
+    suspend fun getFeed(feedId: Long): Feed? = feedSourceDao.loadFeedById(feedId)
 
     fun getAllFeeds(): List<Feed> {
         return feedSourceDao.loadFeeds()
     }
 
-    fun getFeedById(id: Long): Flow<Feed> {
+    fun getFeedById(id: Long): Flow<Feed?> {
         return feedSourceDao.getFeedById(id)
     }
 
@@ -115,7 +116,7 @@ class ArticleRepository(context: Context) {
     }
 
     fun getFeedArticles(): Flow<List<FeedItem>> = combine(
-        feedArticleDao.allEnabledFeedArticles,
+        feedArticleDao.getAllEnabledFeedArticles(),
         feedSourceDao.getEnabledFeeds()
     ) { articles, feeds ->
         articles.mapNotNull { article ->
@@ -154,7 +155,7 @@ class ArticleRepository(context: Context) {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     fun getBookmarkedArticlesMap(): Flow<Map<FeedArticle, Feed>> =
-        feedArticleDao.allBookmarked.mapLatest {
+        feedArticleDao.getAllBookmarked().mapLatest {
             it.associateWith { fa ->
                 feedSourceDao.findFeedById(fa.feedId).first()
             }
