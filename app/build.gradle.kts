@@ -19,17 +19,15 @@ allprojects {
 }
 
 android {
-    val name = "1.6.3"
-    val code = 58
-
     namespace = "com.saulhdev.feeder"
     compileSdk = 35
+
     defaultConfig {
         applicationId = "com.saulhdev.neofeed"
         minSdk = 26
         targetSdk = 33
-        versionCode = code
-        versionName = name
+        versionCode = 1700
+        versionName = "1.7.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled = true
