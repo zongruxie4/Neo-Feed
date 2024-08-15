@@ -18,41 +18,56 @@
 
 package com.saulhdev.feeder.compose.components
 
+import android.content.Intent
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.ListItemDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.saulhdev.feeder.R
+import coil.request.ImageRequest
 import com.saulhdev.feeder.db.models.Feed
 import com.saulhdev.feeder.db.models.FeedArticle
+import com.saulhdev.feeder.utils.RelativeTimeHelper
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
+import java.util.Date
 
 @Composable
 fun BookmarkItem(
-    modifier: Modifier = Modifier,
     article: FeedArticle,
     feed: Feed,
+    modifier: Modifier = Modifier,
     onClickAction: (FeedArticle) -> Unit = {},
     onRemoveAction: (FeedArticle) -> Unit = {},
 ) {
+    val context = LocalContext.current
+    val time = Date.from(
+        ZonedDateTime.parse(
+            article.pubDate.toString(),
+            DateTimeFormatter.ISO_ZONED_DATE_TIME
+        ).toInstant()
+    ).time
+
     val isPinned by remember(article.pinned) {
         mutableStateOf(article.pinned)
     }
@@ -62,55 +77,94 @@ fun BookmarkItem(
         label = ""
     )
 
-    ListItem(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(MaterialTheme.shapes.large)
-            .clickable(enabled = true, onClick = {
-                onClickAction(article)
-            }),
-        colors = ListItemDefaults.colors(
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.large,
+        colors = CardDefaults.cardColors(
             containerColor = backgroundColor,
+            contentColor = MaterialTheme.colorScheme.onSurface,
         ),
-        leadingContent = {
-            AsyncImage(
-                modifier = Modifier.size(24.dp),
-                model = feed.feedImage.toString(),
-                contentDescription = feed.title,
-                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface),
-            )
-        },
-        overlineContent = {
-            Text(
-                text = feed.title,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-        },
-        headlineContent = {
-            Text(
-                text = article.plainTitle,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-            )
-        },
-        supportingContent = {
-            Text(
-                text = article.plainSnippet,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-            )
-        },
-        trailingContent = {
-            IconButton(
-                modifier = Modifier.size(36.dp),
-                onClick = { onRemoveAction(article) }
+        onClick = {
+            onClickAction(article)
+        }
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(8.dp),
+        ) {
+            if (article.imageUrl != null
+                && article.imageUrl!!.isNotEmpty()
+                && !article.imageUrl!!.contains(".rss")
             ) {
-                Icon(
-                    imageVector = Icons.Filled.Close,
-                    contentDescription = stringResource(id = R.string.delete_feed),
+                AsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(article.imageUrl)
+                        .crossfade(true)
+                        .crossfade(500)
+                        .build(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(240.dp)
+                        .clip(MaterialTheme.shapes.medium),
+                    contentScale = ContentScale.Crop,
+                    contentDescription = ""
                 )
             }
+
+            Text(
+                text = article.plainTitle,
+                modifier = Modifier.padding(8.dp),
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+                maxLines = 5,
+            )
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(
+                    modifier = Modifier
+                        .weight(2f)
+                ) {
+                    Text(
+                        text = feed.title,
+                        style = MaterialTheme.typography.bodyMedium,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    Text(
+                        text = RelativeTimeHelper.getDateFormattedRelative(
+                            LocalContext.current,
+                            (time / 1000) - 1000
+                        ),
+                        style = MaterialTheme.typography.bodySmall,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+                Row {
+                    FavoriteButton(bookmarked = true) {
+                        onRemoveAction(article)
+                    }
+
+                    Spacer(modifier = Modifier.size(8.dp))
+
+                    ShareButton {
+                        val intent = Intent.createChooser(
+                            Intent(Intent.ACTION_SEND).apply {
+                                putExtra(Intent.EXTRA_TEXT, article.link)
+                                putExtra(Intent.EXTRA_TITLE, article.title)
+                                type = "text/plain"
+                            },
+                            null,
+                        )
+                        context.startActivity(intent)
+                    }
+                }
+            }
         }
-    )
+    }
 }
