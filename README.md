@@ -1,6 +1,6 @@
-# Neo Feed
+# Neo Feed <img title="" src="./fastlane/metadata/android/en-US/images/icon.png" align="left" width="64">
 
-**Custom Google Now Feed replacement for launchers.**
+**Custom Google Discover Feed replacement for launchers.**
 
 [![GitHub repo stars](https://img.shields.io/github/stars/NeoApplications/Neo-Feed?style=flat)](https://github.com/NeoApplications/Neo-Feed/stargazers)
 [![Build Status](https://img.shields.io/github/actions/workflow/status/NeoApplications/Neo-Feed/android.yml)](https://github.com/NeoApplications/Neo-Feed/actions?query=workflow%3A%22Omega+Feeder+CI%22+event%3Apush)
@@ -10,35 +10,40 @@
 
 [![Neo Applications Banner](neo_banner.png)](https://github.com/NeoApplications)
 
-## *Installation & Download*
+## Installation
 
-Our builds are available on:
+[<img src="badge_github.png" alt="Get it on GitHub" height="80"/>](https://github.com/NeoApplications/Neo-Feed/releases)
 
-[<img width="200" src="badge_github.png" alt="Izzy"/>](https://github.com/NeoApplications/Neo-Feed/releases)
+[<img src="badge_izzy.png" alt="Get it on IzzyOnDroid" height="80"/>](https://apt.izzysoft.de/fdroid/index/apk/com.saulhdev.neofeed)
 
-[<img width="200" src="badge_izzy.png" alt="Izzy"/>](https://apt.izzysoft.de/fdroid/repo?fingerprint=3BF0D6ABFEAE2F401707B6D966BE743BF0EEE49C2561B9BA39073711F628937A)
+## Community
 
-- **Telegram**: [Neo Applications channel](https://t.me/neo_applications).
+- Our main channel on Telegram: [Neo Applications channel](https://t.me/neo_applications).
+- Otherwise can join either our [Telegram](https://t.me/neo_launcher) or [Matrix](https://matrix.to/#/#neo-launcher:matrix.org) groups to test builds, make suggestions, ask questions or just chat.
 
 ## Supported launchers
 
+Any launcher with custom feed provider support. For example:
 - Neo Launcher
 - LibreChair
 - Shade Launcher
-- And any launcher with custom feed provider support.
 
-## Translation
+## Translation [<img align="right" src="https://hosted.weblate.org/widgets/neo-feed/-/287x66-white.png" alt="Translation stats" />](https://hosted.weblate.org/engage/neo-feed/?utm_source=widget)
 
-Translations are handled via Weblate. If want to help,
-visit <a href="https://hosted.weblate.org/projects/neo-feed/">Hosted Weblate</a>.
+Translations are hoasted at Weblate. If want to help,
+visit <a href="https://hosted.weblate.org/projects/neo-feed/">our project on Weblate</a>.
 
-#### **Translation stats:** 
-[<img align="right" src="https://hosted.weblate.org/widgets/neo-feed/-/287x66-white.png" alt="Übersetzungsstatus" />](https://hosted.weblate.org/engage/neo-feed/?utm_source=widget)
-
-<img src="https://hosted.weblate.org/widgets/neo-feed/-/multi-red.svg" />
+<img src="https://hosted.weblate.org/widgets/neo-feed/-/multi-auto.svg" />
 
 ## Credits
 
-[iTaysonLab](https://github.com/iTaysonLab) as the project is a fork of his HomeFeeder.<br/>
+[iTaysonLab](https://github.com/iTaysonLab) as the project is a fork of his HomeFeeder.
+
 [DrawerOverlayService](https://github.com/FabianTerhorst/DrawerOverlayService) as base for overlay
 service.
+
+[Helena Zheng](https://helenazhang.com/) & [Tobias Fried](https://tobiasfried.com/) for the great [Phosphor Icons](https://phosphoricons.com/), we gladly use.
+
+## Authors
+
+Saul Henriquez & Antonios Hazim
