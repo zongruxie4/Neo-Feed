@@ -7,14 +7,23 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
+import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
 import com.google.android.material.color.DynamicColors
+import com.saulhdev.feeder.MainActivity
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.preference.FeedPreferences
 import kotlin.system.exitProcess
 
 class Utilities {
-    fun restartFeed(context: Context) {
+    fun restartApp(context: Context) {
+        val intent = Intent(context, MainActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        context.startActivity(intent)
+        exitProcess(0)
+    }
+
+    private fun restartFeed(context: Context) {
         val pm: PackageManager = context.packageManager
         var intent = Intent(Intent.ACTION_MAIN)
         intent.addCategory(Intent.CATEGORY_HOME)
@@ -24,11 +33,9 @@ class Utilities {
             intent = pm.getLaunchIntentForPackage(context.packageName)!!
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         }
-        restartFeed(context, intent)
-    }
 
-    private fun restartFeed(context: Context, intent: Intent?) {
         context.startActivity(intent)
+        Log.d(this.javaClass.name, "restartFeed: $intent")
 
         // Create a pending intent so the application is restarted after System.exit(0) was called.
         // We use an AlarmManager to call this intent in 100ms
