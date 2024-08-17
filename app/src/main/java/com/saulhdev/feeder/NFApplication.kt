@@ -34,6 +34,7 @@ import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.core.context.GlobalContext
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
+import org.koin.java.KoinJavaComponent.inject
 import java.lang.ref.WeakReference
 
 class NFApplication : MultiDexApplication() {
@@ -46,6 +47,7 @@ class NFApplication : MultiDexApplication() {
             listOf(SharedPreferencesMigration(context, "com.saulhdev.neofeed.prefs"))
         }
     )
+    private val wm: WorkManager by inject(WorkManager::class.java)
 
     private fun savedStateHandle() = SavedStateHandle()
 
@@ -94,6 +96,7 @@ class NFApplication : MultiDexApplication() {
                 .setPrecondition { _, _ -> DynamicColors.isDynamicColorAvailable() }
                 .build()
         )
+        wm.pruneWork()
         PluginFetcher.init(this)
     }
 

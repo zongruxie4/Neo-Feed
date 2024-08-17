@@ -53,7 +53,7 @@ class FeedSyncer(val context: Context, workerParams: WorkerParameters) :
         }
 
         return when (success) {
-            true -> Result.success()
+            true  -> Result.success()
             false -> Result.failure()
         }
     }
