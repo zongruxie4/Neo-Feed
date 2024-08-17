@@ -22,11 +22,12 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
-
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import com.google.android.material.color.DynamicColors
+import com.saulhdev.feeder.utils.isBlackTheme
 
 @Composable
 fun AppTheme(
@@ -35,12 +36,18 @@ fun AppTheme(
 ) {
     val context = LocalContext.current
     val dynamicColors = DynamicColors.isDynamicColorAvailable()
+    val blackTheme = context.isBlackTheme
     MaterialTheme(
         colorScheme = when {
-            darkTheme && dynamicColors -> dynamicDarkColorScheme(context)
-            dynamicColors -> dynamicLightColorScheme(context)
-            darkTheme -> DarkColors
-            else -> LightColors
+            darkTheme && dynamicColors && blackTheme -> dynamicDarkColorScheme(context).copy(
+                background = Color.Black,
+            )
+
+            darkTheme && dynamicColors               -> dynamicDarkColorScheme(context)
+            dynamicColors                            -> dynamicLightColorScheme(context)
+            darkTheme && blackTheme                  -> BlackColors
+            darkTheme                                -> DarkColors
+            else                                     -> LightColors // Light Theme
         },
         content = content
     )
@@ -72,4 +79,7 @@ private val DarkColors = lightColorScheme(
     surfaceVariant = DarkSurfaceVariant,
     onSurfaceVariant = DarkOnSurfaceVariant,
     outline = DarkOutline
+)
+private val BlackColors = DarkColors.copy(
+    background = Color.Black,
 )

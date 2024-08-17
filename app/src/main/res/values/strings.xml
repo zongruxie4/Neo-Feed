@@ -122,4 +122,6 @@
     <string name="title_overlay">Overlay</string>
     <string name="add_feed">Add feed</string>
     <string name="pref_remove_duplicates">Remove duplicate article from different sources</string>
+    <string name="theme_auto_system_black">Automatically (from system; black)</string>
+    <string name="theme_black">Black</string>
 </resources>

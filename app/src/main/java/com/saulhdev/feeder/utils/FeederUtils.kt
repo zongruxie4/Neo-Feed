@@ -30,8 +30,10 @@ import java.util.Locale
 fun getThemes(context: Context): Map<String, String> {
     return mapOf(
         "auto_system" to context.resources.getString(R.string.theme_auto_system),
+        "auto_system_black" to context.resources.getString(R.string.theme_auto_system_black),
         "light" to context.resources.getString(R.string.theme_light),
-        "dark" to context.resources.getString(R.string.theme_dark)
+        "dark" to context.resources.getString(R.string.theme_dark),
+        "black" to context.resources.getString(R.string.theme_black),
     )
 }
 

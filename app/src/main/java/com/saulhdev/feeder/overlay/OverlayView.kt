@@ -82,9 +82,11 @@ class OverlayView(val context: Context) :
     private fun setTheme(force: String?) {
         themeHolder.setTheme(
             when (force ?: prefs.overlayTheme.getValue()) {
-                "auto_system" -> Theming.getThemeBySystem(context)
-                "dark"        -> Theming.defaultDarkThemeColors
-                else          -> Theming.defaultLightThemeColors
+                "auto_system_black" -> Theming.getThemeBySystem(context, true)
+                "auto_system"       -> Theming.getThemeBySystem(context, false)
+                "dark"              -> Theming.defaultDarkThemeColors
+                "black"             -> Theming.defaultBlackThemeColors
+                else                -> Theming.defaultLightThemeColors
             }
         )
         setCustomTheme()
@@ -215,7 +217,7 @@ class OverlayView(val context: Context) :
         }
     }
 
-    fun getActivity(context: Context): Activity? {
+    private fun getActivity(context: Context): Activity? {
         if (context is Activity) return context
         if (context is ContextWrapper) return getActivity(context.baseContext)
         return null

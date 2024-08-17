@@ -61,18 +61,31 @@ fun Context.setCustomTheme() {
 }
 
 val Context.isDynamicTheme
-    get() = FeedPreferences.getInstance(this).overlayTheme.getValue() == "auto_system"
+    get() = listOf("auto_system", "auto_system_black")
+        .contains(FeedPreferences.getInstance(this).overlayTheme.getValue())
 
 val Context.nightMode
     get() = when (FeedPreferences.getInstance(this).overlayTheme.getValue()) {
-        "light" -> AppCompatDelegate.MODE_NIGHT_NO
-        "dark"  -> AppCompatDelegate.MODE_NIGHT_YES
-        else    -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+        "light"         -> AppCompatDelegate.MODE_NIGHT_NO
+        "dark", "black" -> AppCompatDelegate.MODE_NIGHT_YES
+        else            -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
     }
 
 val Context.isDarkTheme: Boolean
     get() = when (FeedPreferences.getInstance(this).overlayTheme.getValue()) {
-        "dark"  -> true
-        "light" -> false
-        else    -> resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES // "auto_system"
+        "dark", "black"
+             -> true
+
+        "light"
+             -> false
+
+        else -> resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES // "auto_system"
+    }
+
+val Context.isBlackTheme: Boolean
+    get() = when (FeedPreferences.getInstance(this).overlayTheme.getValue()) {
+        "black", "auto_system_black"
+             -> true
+
+        else -> false
     }
