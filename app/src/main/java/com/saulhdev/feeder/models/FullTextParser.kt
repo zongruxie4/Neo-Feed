@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit
 fun scheduleFullTextParse() {
     Log.i("FeederFullText", "Scheduling a full text parse work")
     val workRequest = OneTimeWorkRequestBuilder<FullTextWorker>()
-        .addTag("feeder")
+        .addTag("FullTextWorker")
         .keepResultsForAtLeast(1, TimeUnit.MINUTES)
     val workManager: WorkManager by inject(WorkManager::class.java)
     workManager.enqueue(workRequest.build())

@@ -43,7 +43,6 @@ import com.saulhdev.feeder.db.ArticleRepository
 import com.saulhdev.feeder.feed.FeedAdapter
 import com.saulhdev.feeder.launcherapi.LauncherAPI
 import com.saulhdev.feeder.launcherapi.OverlayThemeHolder
-import com.saulhdev.feeder.plugin.PluginConnector
 import com.saulhdev.feeder.preference.FeedPreferences
 import com.saulhdev.feeder.sync.SyncRestClient
 import com.saulhdev.feeder.theme.Theming
@@ -261,6 +260,13 @@ class OverlayView(val context: Context) :
                 }
         }
         syncScope.launch {
+            repository.isSyncing
+                .collect {
+                    if (!it)
+                        rootView.findViewById<SwipeRefreshLayout>(R.id.swipe_to_refresh).isRefreshing = false
+                }
+        }
+        syncScope.launch {
             prefs.overlayTheme.get().collect {
                 mainScope.launch {
                     applyNewTheme(it)
@@ -272,13 +278,7 @@ class OverlayView(val context: Context) :
 
     private fun refreshNotifications() {
         syncScope.launch {
-            val feeds = repository.getAllFeeds()
-            for (feed in feeds) {
-                articles.getArticleList(feed)
-            }
-        }
-        PluginConnector.getFeedAsItLoads(0, { }) {
-            rootView.findViewById<SwipeRefreshLayout>(R.id.swipe_to_refresh).isRefreshing = false
+            articles.syncAllFeeds()
         }
     }
 

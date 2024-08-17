@@ -94,15 +94,13 @@ fun createForegroundInfo(
             .setOngoing(true)
             .build()
 
-    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-        ForegroundInfo(
-            syncNotificationId,
-            notification,
-            ServiceInfo.FOREGROUND_SERVICE_TYPE_NONE
-        )
-    } else {
-        ForegroundInfo(syncNotificationId, notification)
-    }
+    return ForegroundInfo(
+        syncNotificationId,
+        notification,
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
+            ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
+        else 0
+    )
 }
 
 fun requestFeedSync(
@@ -111,7 +109,7 @@ fun requestFeedSync(
     forceNetwork: Boolean = false,
 ) {
     val workRequest = OneTimeWorkRequestBuilder<FeedSyncer>()
-        .addTag("feeder")
+        .addTag("FeedSyncer")
         .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
         .keepResultsForAtLeast(5, TimeUnit.MINUTES)
 
@@ -126,7 +124,7 @@ fun requestFeedSync(
     val workManager: WorkManager by inject(WorkManager::class.java)
 
     workManager.enqueueUniqueWork(
-        "feeder_sync_onetime",
+        "feeder_sync_onetime_$feedId",
         ExistingWorkPolicy.KEEP,
         workRequest.build()
     )

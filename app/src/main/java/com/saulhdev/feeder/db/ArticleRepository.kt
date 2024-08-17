@@ -19,6 +19,7 @@
 package com.saulhdev.feeder.db
 
 import android.content.Context
+import androidx.work.WorkManager
 import com.saulhdev.feeder.db.dao.insertOrUpdate
 import com.saulhdev.feeder.db.models.Feed
 import com.saulhdev.feeder.db.models.FeedArticle
@@ -30,17 +31,22 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 import kotlinx.coroutines.withContext
+import org.koin.java.KoinJavaComponent.inject
 import org.threeten.bp.Instant
 import org.threeten.bp.ZonedDateTime
 import java.net.URL
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class ArticleRepository(context: Context) {
     private val scope = CoroutineScope(Dispatchers.IO) + CoroutineName("FeedArticleRepository")
     private val feedSourceDao = NeoFeedDb.getInstance(context).feedSourceDao()
+    private val workManager: WorkManager by inject(WorkManager::class.java)
 
     fun insertFeed(feed: Feed) {
         scope.launch {
@@ -81,6 +87,15 @@ class ArticleRepository(context: Context) {
     fun getFeedById(id: Long): Flow<Feed?> {
         return feedSourceDao.getFeedById(id)
     }
+
+    val isSyncing: Flow<Boolean>
+        get() = workManager.getWorkInfosByTagFlow("FeedSyncer")
+            .mapLatest {
+                workManager.pruneWork()
+                it.any { work -> !work.state.isFinished }
+            }
+            .distinctUntilChanged()
+            .debounce(1000L)
 
     fun setCurrentlySyncingOn(feedId: Long, syncing: Boolean) {
         scope.launch {
@@ -153,7 +168,6 @@ class ArticleRepository(context: Context) {
     fun getFeedsItemsWithDefaultFullTextParse(): Flow<List<FeedItemIdWithLink>> =
         feedArticleDao.getFeedsItemsWithDefaultFullTextParse()
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     fun getBookmarkedArticlesMap(): Flow<Map<FeedArticle, Feed>> =
         feedArticleDao.getAllBookmarked().mapLatest {
             it.associateWith { fa ->

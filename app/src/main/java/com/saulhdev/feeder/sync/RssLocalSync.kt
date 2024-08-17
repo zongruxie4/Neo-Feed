@@ -3,6 +3,7 @@ package com.saulhdev.feeder.sync
 import android.content.Context
 import android.util.Log
 import com.saulhdev.feeder.db.ArticleRepository
+import com.saulhdev.feeder.db.ID_ALL
 import com.saulhdev.feeder.db.ID_UNSET
 import com.saulhdev.feeder.db.SourceRepository
 import com.saulhdev.feeder.db.models.Feed
@@ -246,6 +247,14 @@ internal suspend fun feedsToSync(
                 emptyList()
             }
         }
+
+        feedId == ID_ALL -> repository.loadFeedIds().mapNotNull {
+            if (staleTime > 0) repository.loadFeedIfStale(
+                feedId = feedId,
+                staleTime = staleTime
+            ) else repository.loadFeed(feedId)
+        }
+
         /*tag.isNotEmpty() -> if (staleTime > 0) feedDao.loadFeedsIfStale(
             tag = tag,
             staleTime = staleTime
@@ -256,6 +265,6 @@ internal suspend fun feedsToSync(
             feedDao.loadFeed(feedId)?.let { listOf(it) } ?: emptyList()
         }*/
 
-        else       -> repository.loadFeeds()
+        else -> repository.loadFeeds()
     }
 }

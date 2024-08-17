@@ -37,6 +37,10 @@ class SourceRepository(context: Context) {
         return sourceDao.loadFeeds()
     }
 
+    fun loadFeedIds(): List<Long> {
+        return sourceDao.loadFeedIds()
+    }
+
     fun deleteFeed(value: Feed) {
         scope.launch {
             sourceDao.delete(value)

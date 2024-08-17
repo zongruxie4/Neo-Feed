@@ -31,6 +31,7 @@ import com.saulhdev.feeder.db.models.Feed
 import com.saulhdev.feeder.db.models.FeedArticle
 
 const val ID_UNSET: Long = 0
+const val ID_ALL: Long = -1L
 
 @Database(
     entities = [

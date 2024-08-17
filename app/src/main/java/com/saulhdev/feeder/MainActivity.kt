@@ -217,7 +217,7 @@ class MainActivity : ComponentActivity(), SavedStateRegistryOwner {
 
             val syncWork = workRequestBuilder
                 .setConstraints(constraints.build())
-                .addTag("feeder")
+                .addTag("PeriodicFeedSyncer")
                 .build()
 
             workManager.enqueueUniquePeriodicWork(

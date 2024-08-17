@@ -77,7 +77,6 @@ import com.saulhdev.feeder.icon.phosphor.CaretUp
 import com.saulhdev.feeder.icon.phosphor.GearSix
 import com.saulhdev.feeder.icon.phosphor.Nut
 import com.saulhdev.feeder.icon.phosphor.Power
-import com.saulhdev.feeder.plugin.PluginConnector
 import com.saulhdev.feeder.preference.FeedPreferences
 import com.saulhdev.feeder.sync.SyncRestClient
 import com.saulhdev.feeder.utils.launchView
@@ -86,6 +85,7 @@ import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
@@ -120,6 +120,15 @@ fun OverlayPage(isOverlay: Boolean = false) {
 
     LaunchedEffect(key1 = null) {
         isRefreshing = true
+    }
+
+    LaunchedEffect(key1 = null) {
+        scope.launch {
+            repository.isSyncing
+                .collectLatest {
+                    if (isRefreshing && !it) isRefreshing = false
+                }
+        }
     }
 
     Scaffold(
@@ -291,11 +300,7 @@ fun OverlayPage(isOverlay: Boolean = false) {
             isRefreshing = isRefreshing,
             onRefresh = {
                 isRefreshing = true
-                refreshFeed(repository, articles, scope) {
-                    PluginConnector.getFeedAsItLoads(0, { }, {
-                        isRefreshing = false
-                    })
-                }
+                refreshFeed(articles, scope)
             },
             listState = listState,
             content = {
@@ -332,16 +337,10 @@ fun OverlayPage(isOverlay: Boolean = false) {
 }
 
 fun refreshFeed(
-    repository: ArticleRepository,
     articles: SyncRestClient,
-    scope: CoroutineScope,
-    callback: () -> Unit
+    scope: CoroutineScope
 ) {
     scope.launch {
-        val feeds = repository.getAllFeeds()
-        for (feed in feeds) {
-            articles.getArticleList(feed)
-        }
+        articles.syncAllFeeds()
     }
-    callback.invoke()
 }
