@@ -1,6 +1,19 @@
 CHANGELOG
 =========
 
+1.7.1 (17.08.2023) -10 Commits & 1 Translations
+------------
+
+#### Function
+
+- Fix: Crashing offline reader on certain systems
+- TargetSDK 34
+
+#### UI/UX
+
+- Add: Black themes
+- Update: Selection dialog layout
+
 1.7.0 (15.08.2023) +120 Commits & +10 Translations
 ------------
 

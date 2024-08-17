@@ -25,9 +25,9 @@ android {
     defaultConfig {
         applicationId = "com.saulhdev.neofeed"
         minSdk = 26
-        versionCode = 1700
-        versionName = "1.7.0"
         targetSdk = 34
+        versionCode = 1701
+        versionName = "1.7.1"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled = true
