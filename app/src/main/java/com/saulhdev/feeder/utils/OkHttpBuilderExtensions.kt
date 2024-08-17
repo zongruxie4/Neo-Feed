@@ -9,6 +9,7 @@ import javax.net.ssl.TrustManager
 import javax.net.ssl.X509TrustManager
 
 fun OkHttpClient.Builder.trustAllCerts() {
+    // TODO re-evaluate
     try {
         val trustManager = object : X509TrustManager {
             override fun checkClientTrusted(chain: Array<out X509Certificate>?, authType: String?) {

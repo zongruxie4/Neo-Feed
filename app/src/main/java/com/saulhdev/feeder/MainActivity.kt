@@ -37,6 +37,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.core.net.toUri
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.asLiveData
+import androidx.multidex.BuildConfig
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import androidx.savedstate.SavedStateRegistryOwner
@@ -77,7 +78,7 @@ class MainActivity : ComponentActivity(), SavedStateRegistryOwner {
             }
         }
 
-    val opmlExporter = registerForActivityResult(
+    private val opmlExporter = registerForActivityResult(
         ActivityResultContracts.CreateDocument("application/xml")
     ) { uri ->
         if (uri != null) {
@@ -237,19 +238,6 @@ class MainActivity : ComponentActivity(), SavedStateRegistryOwner {
         fun navigateIntent(context: Context, destination: String): Intent {
             val uri = "$NAV_BASE$destination".toUri()
             return Intent(Intent.ACTION_VIEW, uri, context, MainActivity::class.java)
-        }
-
-        fun createIntent(context: Context, destination: String, action: String): Intent {
-            val intent = Intent(context, MainActivity::class.java)
-            intent.putExtra("action", action)
-            return intent
-        }
-
-        suspend fun startActivityForResult(
-            activity: Activity,
-            targetIntent: Intent
-        ): ActivityResult {
-            return start(activity, targetIntent, Bundle.EMPTY)
         }
 
         private suspend fun start(

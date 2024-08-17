@@ -6,7 +6,7 @@ import com.saulhdev.feeder.utils.sloppyLinkToStrictURLNoThrows
 
 class OPMLToRoom(db: NeoFeedDb) : OPMLParserToDatabase {
 
-    val dao = db.feedSourceDao()
+    private val dao = db.feedSourceDao()
 
     override suspend fun getFeed(url: String): Feed? =
         dao.getFeedByURL(sloppyLinkToStrictURLNoThrows(url))

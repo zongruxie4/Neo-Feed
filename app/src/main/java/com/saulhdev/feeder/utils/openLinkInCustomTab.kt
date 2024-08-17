@@ -33,9 +33,9 @@ fun openLinkInCustomTab(
     link: String
 ): Boolean {
     @ColorInt val colorPrimaryLight =
-        ContextCompat.getColor(context, R.color.md_theme_light_primary)
+        ContextCompat.getColor(context, R.color.md_theme_primary)
     @ColorInt val colorPrimaryDark =
-        ContextCompat.getColor(context, R.color.md_theme_light_primary)
+        ContextCompat.getColor(context, R.color.md_theme_primary)
     try {
         val intent = CustomTabsIntent.Builder()
             .setShareState(CustomTabsIntent.SHARE_STATE_ON)

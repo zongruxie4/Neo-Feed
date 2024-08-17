@@ -9,7 +9,7 @@ import com.saulhdev.feeder.preference.FeedPreferences
 
 object PluginFetcher {
     // List of available packages.
-    val availablePlugins = hashMapOf<String, SlimPluginInfo>()
+    private val availablePlugins = hashMapOf<String, SlimPluginInfo>()
 
     // Required part for AIDL connection.
     const val INTENT_ACTION_SERVICE = "ua.itaysonlab.hfsdk.HOMEFEEDER_PLUGIN_SERVICE"

@@ -71,11 +71,7 @@ abstract class OverlayControllerCallback extends BaseCallback {
                     layoutParams.flags |= 8650752;
                     layoutParams.dimAmount = 0.0f;
                     layoutParams.gravity = 3;
-                    if (VERSION.SDK_INT >= 25) {
-                        i = 4;
-                    } else {
-                        i = 2;
-                    }
+                    i = 4;
                     layoutParams.type = i;
                     layoutParams.softInputMode = 16;
                     overlayControllerVar3.window.setAttributes(layoutParams);

@@ -1,28 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="globalAccent">#4285f4</color>
-    <color name="colorAccent">#FF00668B</color>
-    <color name="backToTop">#D1087AA4</color>
-    <color name="colorPrimary">#FF00668B</color>
-    <color name="colorSecondary">#52B3ED</color>
-
-    <color name="bg_overlay">#ffffff</color>
-    <color name="bg_dark">#121212</color>
-
     <color name="textColorPrimary">#000000</color>
     <color name="textColorSecondary">#707070</color>
-
-    <color name="card_bg">#f0f0f0</color>
-    <color name="card_bg_dark">#252525</color>
-    <color name="text_color_primary">#000000</color>
-    <color name="text_color_primary_dark">#ffffff</color>
-    <color name="text_color_secondary">#a0000000</color>
-    <color name="text_color_secondary_dark">#a0FFFFFF</color>
-    <color name="md_theme_light_primary">#6750A4</color>
-    <color name="md_theme_dark_primary">#D0BCFF</color>
-
-
-    <color name="remove_bg_color">#ff453a</color>
+    <color name="md_theme_primary">#6750A4</color>
     <color name="ic_launcher_background">#F9FCF6</color>
-    <color name="transparent">#00000000</color>
 </resources>

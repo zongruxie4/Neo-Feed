@@ -27,8 +27,9 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.ImageVector.Builder
 import androidx.compose.ui.graphics.vector.path
 import androidx.compose.ui.unit.dp
+import com.saulhdev.feeder.icon.Phosphor
 
-val EyedropperSample: ImageVector
+val Phosphor.EyedropperSample: ImageVector
     get() {
         if (_eyedropper_sample != null) {
             return _eyedropper_sample!!

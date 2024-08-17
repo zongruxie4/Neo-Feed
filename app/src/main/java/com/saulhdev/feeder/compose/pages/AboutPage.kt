@@ -171,7 +171,7 @@ fun AboutPage() {
                 }
             }
             item {
-                PreferenceGroupHeading(stringResource(id = R.string.about_team))
+                PreferenceGroupHeading(heading = stringResource(id = R.string.about_team))
             }
             itemsIndexed(contributors) { i, it ->
                 ContributorRow(
@@ -184,7 +184,7 @@ fun AboutPage() {
                 )
             }
             item {
-                PreferenceGroupHeading(stringResource(id = R.string.about_build_information))
+                PreferenceGroupHeading(heading = stringResource(id = R.string.about_build_information))
             }
             itemsIndexed(listOf(PageItem.AboutLicense, PageItem.AboutChangelog)) { i, it ->
                 PagePreference(

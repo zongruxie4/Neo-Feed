@@ -80,8 +80,8 @@ fun PreferenceGroup(
 
 @Composable
 fun PreferenceGroupHeading(
-    heading: String? = null,
     modifier: Modifier = Modifier,
+    heading: String? = null,
 ) = if (heading != null) {
     Column(
         verticalArrangement = Arrangement.Center,

@@ -166,8 +166,6 @@ class FeedPreferences private constructor(val context: Context) : KoinComponent 
         val OVERLAY_DYNAMIC_THEME = booleanPreferencesKey("pref_dynamic_theme")
         val OVERLAY_OPACITY = floatPreferencesKey("pref_overlay_opacity")
         val OVERLAY_CARD_BACKGROUND = stringPreferencesKey("pref_overlay_card_background")
-        val SOURCES = stringPreferencesKey("pref_sources")
-        val BOOKMARKS = stringPreferencesKey("pref_bookmarks")
         val OPEN_IN_BROWSER = booleanPreferencesKey("pref_open_browser")
         val REMOVE_DUPLICATES = booleanPreferencesKey("pref_remove_duplicates")
         val OFFLINE_READER = booleanPreferencesKey("pref_offline_reader")
@@ -175,7 +173,6 @@ class FeedPreferences private constructor(val context: Context) : KoinComponent 
         val SYNC_FREQUENCY = stringPreferencesKey("pref_sync_frequency")
         val ITEMS_PER_FEED = stringPreferencesKey("pref_items_per_feed")
         val PLUGINS = stringSetPreferencesKey("pref_enabled_plugins")
-        val OVERLAY = stringPreferencesKey("pref_overlay")
         val ABOUT = stringPreferencesKey("pref_about")
         val DEBUG = booleanPreferencesKey("pref_debugging")
     }

@@ -108,7 +108,7 @@ fun EditFeedView(
             },
             keyboardOptions = KeyboardOptions(
                 capitalization = KeyboardCapitalization.None,
-                autoCorrect = false,
+                autoCorrectEnabled = false,
                 keyboardType = KeyboardType.Uri,
                 imeAction = ImeAction.Next
             ),

@@ -20,19 +20,11 @@ final class OverlayControllerStateChanger implements t {
         }
         overlayControllerVar = this.overlayController;
         LayoutParams attributes = overlayControllerVar.window.getAttributes();
-        if (Build.VERSION.SDK_INT >= 26) {
-            float f = attributes.alpha;
-            attributes.alpha = 1.0f;
-            if (f != attributes.alpha) {
-                overlayControllerVar.window.setAttributes(attributes);
-                return;
-            }
-            return;
+        float f = attributes.alpha;
+        attributes.alpha = 1.0f;
+        if (f != attributes.alpha) {
+            overlayControllerVar.window.setAttributes(attributes);
         }
-        attributes.x = 0;
-        attributes.flags &= -513;
-        overlayControllerVar.unZ = true;
-        overlayControllerVar.window.setAttributes(attributes);
     }
 
     public final void cnF() {
@@ -45,19 +37,11 @@ final class OverlayControllerStateChanger implements t {
         this.overlayController.setVisible(true);
         overlayControllerVar = this.overlayController;
         LayoutParams attributes = overlayControllerVar.window.getAttributes();
-        if (Build.VERSION.SDK_INT >= 26) {
-            float f = attributes.alpha;
-            attributes.alpha = 1.0f;
-            if (f != attributes.alpha) {
-                overlayControllerVar.window.setAttributes(attributes);
-                return;
-            }
-            return;
+        float f = attributes.alpha;
+        attributes.alpha = 1.0f;
+        if (f != attributes.alpha) {
+            overlayControllerVar.window.setAttributes(attributes);
         }
-        attributes.x = 0;
-        attributes.flags &= -513;
-        overlayControllerVar.unZ = true;
-        overlayControllerVar.window.setAttributes(attributes);
     }
 
     public final void oc(boolean z) {
@@ -96,16 +80,9 @@ final class OverlayControllerStateChanger implements t {
     public final void close() {
         OverlayController overlayControllerVar = this.overlayController;
         LayoutParams attributes = overlayControllerVar.window.getAttributes();
-        if (Build.VERSION.SDK_INT >= 26) {
-            float f = attributes.alpha;
-            attributes.alpha = 0.0f;
-            if (f != attributes.alpha) {
-                overlayControllerVar.window.setAttributes(attributes);
-            }
-        } else {
-            attributes.x = overlayControllerVar.mWindowShift;
-            attributes.flags |= 512;
-            overlayControllerVar.unZ = false;
+        float f = attributes.alpha;
+        attributes.alpha = 0.0f;
+        if (f != attributes.alpha) {
             overlayControllerVar.window.setAttributes(attributes);
         }
         overlayControllerVar = this.overlayController;

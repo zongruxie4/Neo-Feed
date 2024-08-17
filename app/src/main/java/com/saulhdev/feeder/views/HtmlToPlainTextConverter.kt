@@ -142,7 +142,7 @@ class HtmlToPlainTextConverter : ContentHandler {
         if (isOrderedList) {
             val listing = listings.peek()
             builder.append("").append(listing.number).append(". ")
-            listing.number = listing.number + 1
+            listing.number += 1
         } else {
             builder.append("* ")
         }

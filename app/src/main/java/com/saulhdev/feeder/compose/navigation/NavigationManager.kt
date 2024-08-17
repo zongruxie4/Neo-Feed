@@ -80,7 +80,9 @@ fun NavigationManager(navController: NavHostController) {
             composable<NavRoute.Changelog> { ChangelogScreen() }
             composable<NavRoute.AddFeed> { AddFeedPage() }
             composable<NavRoute.EditFeed>(
-                deepLinks = listOf(navDeepLink { uriPattern = "$NAV_BASE${Routes.EDIT_FEED}/{feedId}" })
+                deepLinks = listOf(navDeepLink {
+                    uriPattern = "$NAV_BASE${Routes.EDIT_FEED}/{feedId}"
+                })
             ) {
                 val args = it.toRoute<NavRoute.EditFeed>()
                 EditFeedPage(args.feedId)
@@ -92,7 +94,9 @@ fun NavigationManager(navController: NavHostController) {
                 ComposeWebView(args.url)
             }
             composable<NavRoute.ArticleView>(
-                deepLinks = listOf(navDeepLink { uriPattern = "$NAV_BASE${Routes.ARTICLE_VIEW}/{id}" })
+                deepLinks = listOf(navDeepLink {
+                    uriPattern = "$NAV_BASE${Routes.ARTICLE_VIEW}/{id}"
+                })
             ) {
                 val args = it.toRoute<NavRoute.ArticleView>()
                 ArticleScreen(args.id)
@@ -103,37 +107,28 @@ fun NavigationManager(navController: NavHostController) {
 
 object Routes {
     const val MAIN = "main"
-    const val SETTINGS = "settings"
-    const val SOURCES = "sources"
-    const val BOOKMARKS = "bookmarks"
-    const val OVERLAY = "overlay"
-    const val ABOUT = "about"
-    const val ADD_FEED = "add_feed"
     const val EDIT_FEED = "edit_feed"
     const val WEB_VIEW = "web_view"
     const val ARTICLE_VIEW = "article_page"
-    const val LICENSE = "license"
-    const val CHANGELOG = "changelog"
 }
 
 sealed class NavItem(
     val title: Int,
     val icon: ImageVector,
-    val route: String,
     val content: @Composable () -> Unit = {}
 ) {
     data object Overlay :
-        NavItem(R.string.app_name, Phosphor.Info, Routes.OVERLAY, {
+        NavItem(R.string.app_name, Phosphor.Info, {
             OverlayPage()
         })
 
     data object Settings :
-        NavItem(R.string.title_settings, Phosphor.GearSix, Routes.SETTINGS, {
+        NavItem(R.string.title_settings, Phosphor.GearSix, {
             PreferencesPage()
         })
 
     data object Sources :
-        NavItem(R.string.title_sources, Phosphor.Graph, Routes.SOURCES, {
+        NavItem(R.string.title_sources, Phosphor.Graph, {
             SourcesPage()
         })
 }
@@ -148,9 +143,6 @@ open class NavRoute {
 
     @Serializable
     data class ArticleView(val id: Long = 0L) : NavRoute()
-
-    @Serializable
-    data object Bookmarks : NavRoute()
 
     @Serializable
     data object Changelog : NavRoute()

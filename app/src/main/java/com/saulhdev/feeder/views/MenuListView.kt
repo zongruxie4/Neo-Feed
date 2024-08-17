@@ -20,14 +20,9 @@ package com.saulhdev.feeder.views
 
 import android.content.Context
 import android.content.res.Resources
-import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.util.DisplayMetrics
-import androidx.annotation.ColorInt
-import androidx.annotation.DrawableRes
-import androidx.annotation.Px
 import androidx.annotation.UiThread
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.saulhdev.feeder.R
@@ -80,64 +75,6 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
         this.layoutManager = LinearLayoutManager(context, VERTICAL, false)
         this.addItemDecoration(this.menuDividerItem)
         this.adapter = this.actionAdapter
-    }
-
-    fun setDividerHeight(@Px i: Int) {
-        this.dividerStyle.dividerHeight = i
-        a()
-    }
-
-    fun setDividerSize(@Px i: Int) {
-        this.dividerStyle.dividerSize = i
-        a()
-    }
-
-    fun setDividerColor(@ColorInt i: Int) {
-        this.dividerStyle.dividerColor = i
-        a()
-    }
-
-    fun setActionBackground(@DrawableRes i: Int) {
-        if (i != 0) {
-            setActionBackground(ContextCompat.getDrawable(context, i))
-        } else {
-            setActionBackground(null)
-        }
-    }
-
-    fun setActionBackground(drawable: Drawable?) {
-        this.actionStyle.optionBackground = drawable
-        b()
-    }
-
-    fun setActionPaddingStart(@Px i: Int) {
-        this.actionStyle.paddingStart = i
-        b()
-    }
-
-    fun setActionIconTint(@ColorInt i: Int) {
-        this.actionStyle.iconTint = i
-        b()
-    }
-
-    fun setActionPaddingEnd(@Px i: Int) {
-        this.actionStyle.paddingEnd = i
-        b()
-    }
-
-    fun setActionIconLabelSpace(@Px i: Int) {
-        this.actionStyle.iconSpace = i
-        b()
-    }
-
-    fun setActionLabelTextSize(@Px i: Int) {
-        this.actionStyle.textSize = i
-        b()
-    }
-
-    fun setActionLabelTextColor(@ColorInt i: Int) {
-        this.actionStyle.textColor = i
-        b()
     }
 
     fun setActionClickListener(cVar: (MenuItem) -> Unit) {

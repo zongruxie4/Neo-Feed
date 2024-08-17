@@ -114,7 +114,7 @@ class NFApplication : MultiDexApplication() {
 
     fun restart(recreate: Boolean = false) {
         if (recreate) {
-            activityHandler.finishAll(recreate)
+            activityHandler.finishAll(true)
         } else {
             Utilities().restartApp(this)
         }

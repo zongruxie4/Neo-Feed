@@ -92,7 +92,7 @@ private var _arrow_square_out: ImageVector? = null
 @Composable
 fun ArrowSquareOutPreview() {
     Image(
-        com.saulhdev.feeder.icon.Phosphor.ArrowSquareOut,
+        Phosphor.ArrowSquareOut,
         null
     )
 }

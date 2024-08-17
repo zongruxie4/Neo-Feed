@@ -29,8 +29,8 @@ public final class MinusOneOverlayCallback extends OverlayControllerCallback {
         }
         OverlayController overlayControllerVar;
         long when;
-        switch (message.what) {
-            case 3:
+        return switch (message.what) {
+            case 3 -> {
                 if (this.overlayController != null) {
                     overlayControllerVar = this.overlayController;
                     when = message.getWhen();
@@ -47,8 +47,9 @@ public final class MinusOneOverlayCallback extends OverlayControllerCallback {
                         }
                     }
                 }
-                return true;
-            case 4:
+                yield true;
+            }
+            case 4 -> {
                 if (this.overlayController != null) {
                     overlayControllerVar = this.overlayController;
                     float floatValue = (float) message.obj;
@@ -58,8 +59,9 @@ public final class MinusOneOverlayCallback extends OverlayControllerCallback {
                         overlayControllerVar.b(2, overlayControllerVar.unX, when);
                     }
                 }
-                return true;
-            case 5:
+                yield true;
+            }
+            case 5 -> {
                 if (this.overlayController != null) {
                     overlayControllerVar = this.overlayController;
                     when = message.getWhen();
@@ -68,9 +70,9 @@ public final class MinusOneOverlayCallback extends OverlayControllerCallback {
                     }
                     overlayControllerVar.mAcceptExternalMove = false;
                 }
-                return true;
-            default:
-                return false;
-        }
+                yield true;
+            }
+            default -> false;
+        };
     }
 }

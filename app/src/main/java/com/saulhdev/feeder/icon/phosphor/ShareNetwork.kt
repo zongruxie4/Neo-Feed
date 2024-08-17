@@ -88,7 +88,7 @@ private var _share_network: ImageVector? = null
 @Composable
 fun ShareNetworkPreview() {
     Image(
-        com.saulhdev.feeder.icon.Phosphor.ShareNetwork,
+        Phosphor.ShareNetwork,
         null
     )
 }

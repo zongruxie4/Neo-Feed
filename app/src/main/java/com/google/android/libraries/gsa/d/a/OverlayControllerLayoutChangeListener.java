@@ -18,19 +18,11 @@ final class OverlayControllerLayoutChangeListener implements OnLayoutChangeListe
         if (this.overlayController.panelState == PanelState.CLOSED) {//Todo: PanelState.uoe was default
             OverlayController overlayControllerVar = this.overlayController;
             LayoutParams attributes = overlayControllerVar.window.getAttributes();
-            if (Build.VERSION.SDK_INT >= 26) {
-                float f = attributes.alpha;
-                attributes.alpha = 0.0f;
-                if (f != attributes.alpha) {
-                    overlayControllerVar.window.setAttributes(attributes);
-                    return;
-                }
-                return;
+            float f = attributes.alpha;
+            attributes.alpha = 0.0f;
+            if (f != attributes.alpha) {
+                overlayControllerVar.window.setAttributes(attributes);
             }
-            attributes.x = overlayControllerVar.mWindowShift;
-            attributes.flags |= 512;
-            overlayControllerVar.unZ = false;
-            overlayControllerVar.window.setAttributes(attributes);
         }
     }
 }

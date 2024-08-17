@@ -8,8 +8,6 @@
 -keep class com.google.android.libraries.launcherclient.** {*;}
 -keep class ua.itaysonlab.hfsdk.** { *; }
 
--keep class org.kodein.type.TypeReference { *; }
-
 # For Okio
 # Animal Sniffer compileOnly dependency to ensure APIs are compatible with older versions of Java.
 -dontwarn org.codehaus.mojo.animal_sniffer.*

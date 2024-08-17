@@ -1,11 +1,13 @@
 package com.saulhdev.feeder.compose.util
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.semantics.SemanticsPropertyReceiver
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
@@ -54,3 +56,10 @@ fun Modifier.blockBorder() = composed {
             MaterialTheme.shapes.extraLarge,
         )
 }
+
+fun Modifier.blockShadow() =
+    composed {
+        this
+            .shadow(elevation = 1.dp, shape = MaterialTheme.shapes.extraLarge)
+            .background(MaterialTheme.colorScheme.surfaceContainer)
+    }

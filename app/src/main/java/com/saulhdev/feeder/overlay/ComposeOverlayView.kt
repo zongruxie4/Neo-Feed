@@ -66,7 +66,7 @@ class ComposeOverlayView(val context: Context) :
     override val savedStateRegistry: SavedStateRegistry
         get() = savedStateRegistryController.savedStateRegistry
 
-    val mainActivity: MainActivity by inject(MainActivity::class.java)
+    private val mainActivity: MainActivity by inject(MainActivity::class.java)
 
     init {
         savedStateRegistryController.performAttach()
