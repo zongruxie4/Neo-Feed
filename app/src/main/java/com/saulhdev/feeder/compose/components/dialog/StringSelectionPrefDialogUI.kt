@@ -27,10 +27,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
@@ -45,8 +45,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.saulhdev.feeder.compose.util.blockShadow
 import com.saulhdev.feeder.preference.StringSelectionPref
 import kotlinx.coroutines.launch
 
@@ -61,13 +63,12 @@ fun StringSelectionPrefDialogUI(
     val scope = rememberCoroutineScope()
 
     Card(
-        shape = RoundedCornerShape(16.dp),
+        shape = MaterialTheme.shapes.extraLarge,
         modifier = Modifier.padding(8.dp),
-        elevation = CardDefaults.elevatedCardElevation(8.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background)
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh)
     ) {
         Column(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.padding(vertical = 16.dp, horizontal = 8.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
@@ -76,6 +77,7 @@ fun StringSelectionPrefDialogUI(
                 modifier = Modifier
                     .padding(vertical = 8.dp)
                     .weight(1f, false)
+                    .blockShadow(),
             ) {
                 items(items = entryPairs, key = { it.first }) {
                     val isSelected = rememberSaveable(selected) {
@@ -91,7 +93,9 @@ fun StringSelectionPrefDialogUI(
             }
 
             Row(
-                Modifier.fillMaxWidth()
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp),
             ) {
                 DialogNegativeButton(
                     onClick = { openDialogCustom.value = false }
@@ -123,6 +127,9 @@ fun SingleSelectionListItem(
         modifier = modifier
             .fillMaxWidth()
             .clickable(onClick = onClick, enabled = isEnabled),
+        colors = ListItemDefaults.colors(
+            containerColor = Color.Transparent
+        ),
         leadingContent = {
             RadioButton(
                 selected = isSelected,
