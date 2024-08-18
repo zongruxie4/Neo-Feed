@@ -78,7 +78,7 @@ fun ArticleItem(
 
             Text(
                 text = content.title,
-                modifier = Modifier.padding(8.dp),
+                modifier = Modifier.padding(top = 8.dp),
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
                 maxLines = 5,
@@ -87,7 +87,7 @@ fun ArticleItem(
             if (content.text.isNotEmpty()) {
                 Text(
                     text = Html.fromHtml(content.text, 0).toString(),
-                    modifier = Modifier.padding(8.dp),
+                    modifier = Modifier.padding(top = 8.dp),
                     style = MaterialTheme.typography.bodySmall,
                     maxLines = 5,
                 )
@@ -96,7 +96,7 @@ fun ArticleItem(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(8.dp),
+                    .padding(top = 8.dp, bottom = 4.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Column(
