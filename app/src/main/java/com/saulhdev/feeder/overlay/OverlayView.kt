@@ -181,28 +181,6 @@ class OverlayView(val context: Context) :
                         )
                     }
                 }
-                /*
-                "import" -> {
-                    scope.launch {
-                        val intent = MainActivity.createIntent(context,"","import")
-                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                        val activity = getActivity(context.applicationContext)
-                        if(activity!=null)
-                            MainActivity.startActivityForResult(activity, intent)
-
-                    }
-                }
-
-                "export" ->  {
-                    scope.launch {
-                        val intent = MainActivity.createIntent(context,"","export")
-                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                        val activity = getActivity(context.applicationContext)
-                        if(activity!=null)
-                            MainActivity.startActivityForResult(activity, intent)
-                    }
-                }
-                */
 
                 "reload"  -> {
                     refreshNotifications()
@@ -225,8 +203,6 @@ class OverlayView(val context: Context) :
     private fun createMenuList(): List<MenuItem> {
         return listOf(
             MenuItem(R.drawable.ic_arrow_clockwise, R.string.action_reload, 0, "reload"),
-            //MenuItem(R.drawable.ic_cloud_arrow_down, R.string.sources_import_opml, 1, "import"),
-            //MenuItem(R.drawable.ic_cloud_arrow_up, R.string.sources_export_opml, 1, "export"),
             MenuItem(R.drawable.ic_gear, R.string.title_settings, 2, "config"),
             MenuItem(R.drawable.ic_power, R.string.action_restart, 2, "restart")
         )
@@ -247,6 +223,9 @@ class OverlayView(val context: Context) :
         initRecyclerView()
         initHeader()
         refreshNotifications()
+
+        window.decorView.setLightFlags()
+
         syncScope.launch {
             repository.getFeedArticles()
                 .mapLatest { articles ->
@@ -320,11 +299,6 @@ class OverlayView(val context: Context) :
     override fun applyNewTransparency(value: Float) {
         themeHolder.prefs.overlayTransparency.setValue(value)
     }
-
-    /*override fun applyNewCardBg(value: String) {
-        themeHolder.cardBgPref = value
-        updateTheme()
-    }*/
 
     override fun applyCompactCard(value: Boolean) {
         adapter = FeedAdapter()
