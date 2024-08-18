@@ -59,6 +59,7 @@ import com.saulhdev.feeder.db.models.Feed
 import com.saulhdev.feeder.icon.Phosphor
 import com.saulhdev.feeder.icon.phosphor.CloudArrowDown
 import com.saulhdev.feeder.icon.phosphor.CloudArrowUp
+import com.saulhdev.feeder.icon.phosphor.GlobeHemisphereWest
 import com.saulhdev.feeder.models.exportOpml
 import com.saulhdev.feeder.models.importOpml
 import com.saulhdev.feeder.utils.ApplicationCoroutineScope
@@ -115,6 +116,12 @@ fun SourcesPage() {
             OverflowMenu {
 
                 DropdownMenuItem(
+                    leadingIcon = {
+                        Icon(
+                            Phosphor.GlobeHemisphereWest,
+                            contentDescription = stringResource(id = R.string.explore),
+                        )
+                    },
                     onClick = {
                         hideMenu()
                         navController.navigate(NavRoute.Explore)
