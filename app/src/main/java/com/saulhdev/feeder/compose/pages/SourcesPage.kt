@@ -119,14 +119,14 @@ fun SourcesPage() {
                     leadingIcon = {
                         Icon(
                             Phosphor.GlobeHemisphereWest,
-                            contentDescription = stringResource(id = R.string.explore),
+                            contentDescription = stringResource(id = R.string.discover_title),
                         )
                     },
                     onClick = {
                         hideMenu()
                         navController.navigate(NavRoute.Explore)
                     },
-                    text = { Text(text = stringResource(id = R.string.explore)) }
+                    text = { Text(text = stringResource(id = R.string.discover_title)) }
                 )
 
                 HorizontalDivider()

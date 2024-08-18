@@ -121,7 +121,7 @@ fun DiscoverPage() {
     val scrollState = rememberScrollState()
 
     ViewWithActionBar(
-        title = stringResource(id = R.string.explore)
+        title = stringResource(id = R.string.discover_title)
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -134,7 +134,7 @@ fun DiscoverPage() {
                 .verticalScroll(scrollState)
         ) {
             Text(
-                stringResource(R.string.explore_langs),
+                stringResource(R.string.discover_langs),
                 style = MaterialTheme.typography.titleMedium
             )
             FlowRow(
@@ -167,7 +167,7 @@ fun DiscoverPage() {
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                stringResource(R.string.explore_categories),
+                stringResource(R.string.discover_categories),
                 style = MaterialTheme.typography.titleMedium
             )
 
