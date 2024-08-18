@@ -32,6 +32,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -112,6 +113,17 @@ fun SourcesPage() {
         },
         actions = {
             OverflowMenu {
+
+                DropdownMenuItem(
+                    onClick = {
+                        hideMenu()
+                        navController.navigate(NavRoute.Explore)
+                    },
+                    text = { Text(text = stringResource(id = R.string.explore)) }
+                )
+
+                HorizontalDivider()
+
                 DropdownMenuItem(
                     leadingIcon = {
                         Icon(
