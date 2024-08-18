@@ -149,11 +149,7 @@ fun SourcesPage() {
 
         LazyColumn(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(
-                    top = paddingValues.calculateTopPadding(),
-                    bottom = paddingValues.calculateBottomPadding(),
-                ),
+                .fillMaxSize(),
             contentPadding = PaddingValues(horizontal = 8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {

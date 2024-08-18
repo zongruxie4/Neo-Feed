@@ -46,7 +46,7 @@ fun PreferencesPage() {
     ViewWithActionBar(
         title = title,
         showBackButton = false,
-    ) { paddingValues ->
+    ) {
         val prefs = FeedPreferences.getInstance(LocalContext.current)
 
         val servicePrefs = listOf(
@@ -59,7 +59,6 @@ fun PreferencesPage() {
         )
         val themePrefs = listOf(
             prefs.overlayTheme,
-            //prefs.cardBackground,
             prefs.overlayTransparency,
         )
         val debugPrefs = listOf(
@@ -76,8 +75,7 @@ fun PreferencesPage() {
         LazyColumn(
             modifier = Modifier
                 .padding(
-                    top = paddingValues.calculateTopPadding(),
-                    bottom = paddingValues.calculateBottomPadding(), start = 8.dp, end = 8.dp
+                    start = 8.dp, end = 8.dp
                 ),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {

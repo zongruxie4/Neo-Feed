@@ -257,8 +257,7 @@ fun OverlayPage(isOverlay: Boolean = false) {
         if (showBookmarks) LazyColumn(
             state = listState,
             verticalArrangement = Arrangement.spacedBy(8.dp),
-            contentPadding = PaddingValues(8.dp),
-            modifier = Modifier.padding(paddingValues),
+            contentPadding = PaddingValues(8.dp)
         ) {
             items(bookmarked.value.entries.toList(), key = { it.key.id }) { item ->
                 BookmarkItem(
@@ -331,7 +330,11 @@ fun OverlayPage(isOverlay: Boolean = false) {
                     }
                 }
             },
-            modifier = Modifier.padding(paddingValues),
+            modifier = Modifier.padding(
+                top = paddingValues.calculateTopPadding(),
+                start = 8.dp,
+                end = 8.dp
+            )
         )
     }
 }
