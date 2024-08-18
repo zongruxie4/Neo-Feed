@@ -39,6 +39,7 @@ import com.saulhdev.feeder.compose.pages.AddFeedPage
 import com.saulhdev.feeder.compose.pages.ArticleScreen
 import com.saulhdev.feeder.compose.pages.ChangelogScreen
 import com.saulhdev.feeder.compose.pages.EditFeedPage
+import com.saulhdev.feeder.compose.pages.ExplorePage
 import com.saulhdev.feeder.compose.pages.LicenseScreen
 import com.saulhdev.feeder.compose.pages.MainPage
 import com.saulhdev.feeder.compose.pages.OverlayPage
@@ -79,6 +80,7 @@ fun NavigationManager(navController: NavHostController) {
             composable<NavRoute.License> { LicenseScreen() }
             composable<NavRoute.Changelog> { ChangelogScreen() }
             composable<NavRoute.AddFeed> { AddFeedPage() }
+            composable<NavRoute.Explore> { ExplorePage() }
             composable<NavRoute.EditFeed>(
                 deepLinks = listOf(navDeepLink {
                     uriPattern = "$NAV_BASE${Routes.EDIT_FEED}/{feedId}"
@@ -110,6 +112,7 @@ object Routes {
     const val EDIT_FEED = "edit_feed"
     const val WEB_VIEW = "web_view"
     const val ARTICLE_VIEW = "article_page"
+    const val EXPLORE = "explore"
 }
 
 sealed class NavItem(
@@ -155,6 +158,9 @@ open class NavRoute {
 
     @Serializable
     data object License : NavRoute()
+
+    @Serializable
+    data object Explore : NavRoute()
 
     @Serializable
     data class WebView(val url: String = "") : NavRoute()

@@ -110,6 +110,9 @@
     <string name="sources_export_opml">Export feeds to OPML</string>
     <string name="failed_to_import_OPML">"Failed to import OPML"</string>
     <string name="failed_to_export_OPML">"Failed to export OPML"</string>
+    <string name="explore_langs">Languages</string>
+    <string name="explore_categories">Categories</string>
+    <string name="explore">Explore</string>
     <string name="share">Share</string>
     <string name="delete_feed">Delete feed</string>
     <string name="bookmark">Bookmark</string>
