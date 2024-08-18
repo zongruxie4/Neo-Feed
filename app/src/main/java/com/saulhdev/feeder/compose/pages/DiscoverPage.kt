@@ -56,7 +56,7 @@ import java.util.concurrent.TimeUnit
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun ExplorePage() {
+fun DiscoverPage() {
     val langs = arrayOf("ar-SA", "en-US", "es-SV", "fr-FR")
     val baseUrl = "https://raw.githubusercontent.com/saulhdev/NF-sources/main/feed_sources."
     var categories: ArrayList<String> by remember { mutableStateOf(arrayListOf()) }

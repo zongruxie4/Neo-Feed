@@ -38,8 +38,8 @@ import com.saulhdev.feeder.compose.pages.AboutPage
 import com.saulhdev.feeder.compose.pages.AddFeedPage
 import com.saulhdev.feeder.compose.pages.ArticleScreen
 import com.saulhdev.feeder.compose.pages.ChangelogScreen
+import com.saulhdev.feeder.compose.pages.DiscoverPage
 import com.saulhdev.feeder.compose.pages.EditFeedPage
-import com.saulhdev.feeder.compose.pages.ExplorePage
 import com.saulhdev.feeder.compose.pages.LicenseScreen
 import com.saulhdev.feeder.compose.pages.MainPage
 import com.saulhdev.feeder.compose.pages.OverlayPage
@@ -80,7 +80,7 @@ fun NavigationManager(navController: NavHostController) {
             composable<NavRoute.License> { LicenseScreen() }
             composable<NavRoute.Changelog> { ChangelogScreen() }
             composable<NavRoute.AddFeed> { AddFeedPage() }
-            composable<NavRoute.Explore> { ExplorePage() }
+            composable<NavRoute.Explore> { DiscoverPage() }
             composable<NavRoute.EditFeed>(
                 deepLinks = listOf(navDeepLink {
                     uriPattern = "$NAV_BASE${Routes.EDIT_FEED}/{feedId}"
