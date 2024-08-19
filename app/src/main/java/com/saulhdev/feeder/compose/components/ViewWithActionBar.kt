@@ -55,6 +55,7 @@ fun ViewWithActionBar(
     title: String,
     titleSize: TextUnit = 18.sp,
     subTitle: String = "",
+    modifier: Modifier = Modifier,
     bottomBar: @Composable () -> Unit = {},
     floatingActionButton: @Composable () -> Unit = {},
     showBackButton: Boolean = true,
@@ -63,7 +64,6 @@ fun ViewWithActionBar(
     content: @Composable (PaddingValues) -> Unit
 ) {
     val scrollBehavior = enterAlwaysScrollBehavior(rememberTopAppBarState())
-
 
     Scaffold(
         topBar = {
@@ -118,7 +118,8 @@ fun ViewWithActionBar(
         },
         bottomBar = bottomBar,
         floatingActionButton = floatingActionButton,
-        content = content
+        content = content,
+        modifier = modifier
     )
 }
 
