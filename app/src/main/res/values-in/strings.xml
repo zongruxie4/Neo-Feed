@@ -39,7 +39,6 @@
     <string name="pref_bg_color">Latar belakang overlay</string>
     <string name="pref_cat_contact">Kontak</string>
     <string name="pref_tg">Kanal Telegram</string>
-    <string name="pref_git">Kode sumber</string>
     <string name="pref_browser_theme">Buka di Browser</string>
     <string name="about_licenses">Lisensi</string>
     <string name="sync_one_hour">1 jam</string>
