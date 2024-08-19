@@ -27,12 +27,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -59,7 +57,6 @@ import com.saulhdev.feeder.db.models.Feed
 import com.saulhdev.feeder.icon.Phosphor
 import com.saulhdev.feeder.icon.phosphor.CloudArrowDown
 import com.saulhdev.feeder.icon.phosphor.CloudArrowUp
-import com.saulhdev.feeder.icon.phosphor.GlobeHemisphereWest
 import com.saulhdev.feeder.models.exportOpml
 import com.saulhdev.feeder.models.importOpml
 import com.saulhdev.feeder.utils.ApplicationCoroutineScope
@@ -114,23 +111,6 @@ fun SourcesPage() {
         },
         actions = {
             OverflowMenu {
-
-                DropdownMenuItem(
-                    leadingIcon = {
-                        Icon(
-                            Phosphor.GlobeHemisphereWest,
-                            contentDescription = stringResource(id = R.string.discover_title),
-                        )
-                    },
-                    onClick = {
-                        hideMenu()
-                        navController.navigate(NavRoute.Explore)
-                    },
-                    text = { Text(text = stringResource(id = R.string.discover_title)) }
-                )
-
-                HorizontalDivider()
-
                 DropdownMenuItem(
                     leadingIcon = {
                         Icon(
