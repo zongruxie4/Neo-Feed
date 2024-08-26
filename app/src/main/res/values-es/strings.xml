@@ -110,4 +110,6 @@
     <string name="sources_import_opml">Importar feeds desde OPML</string>
     <string name="bookmark_remove">Eliminar marcador</string>
     <string name="title_service">Servicio</string>
+    <string name="theme_auto_system_black">Automáticamente (del sistema; negro)</string>
+    <string name="theme_black">Negro</string>
 </resources>
