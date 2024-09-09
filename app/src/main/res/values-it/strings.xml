@@ -110,4 +110,6 @@
     <string name="title_service">Servizio</string>
     <string name="title_other">Altro</string>
     <string name="no_activity_for_link">Browser web non trovato</string>
+    <string name="theme_auto_system_black">Automaticamente (dal sistema; nero)</string>
+    <string name="theme_black">Nero</string>
 </resources>
