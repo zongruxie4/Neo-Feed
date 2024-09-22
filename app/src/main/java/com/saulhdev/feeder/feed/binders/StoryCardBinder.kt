@@ -18,7 +18,7 @@ import com.saulhdev.feeder.theme.Theming
 import com.saulhdev.feeder.utils.RelativeTimeHelper
 import com.saulhdev.feeder.utils.isDark
 import com.saulhdev.feeder.utils.launchView
-import com.saulhdev.feeder.utils.urlEncode
+import com.saulhdev.feeder.utils.openLinkInCustomTab
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -93,12 +93,21 @@ object StoryCardBinder : FeedBinder {
                             )
                         )
                     } else {
-                        view.context.startActivity(
-                            MainActivity.navigateIntent(
-                                view.context,
-                                "${Routes.WEB_VIEW}/${content.link.urlEncode()}"
-                            )
-                        )
+                        scope.launch {
+                            if (prefs.offlineReader.getValue()) {
+                                view.context.startActivity(
+                                    MainActivity.navigateIntent(
+                                        context,
+                                        "${Routes.ARTICLE_VIEW}/${item.id}"
+                                    )
+                                )
+                            } else {
+                                openLinkInCustomTab(
+                                    context,
+                                    content.link
+                                )
+                            }
+                        }
                     }
                 }
             }

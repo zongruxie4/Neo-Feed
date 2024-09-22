@@ -56,11 +56,11 @@ import com.saulhdev.feeder.views.DialogMenu
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 import org.koin.java.KoinJavaComponent.inject
-
 
 class OverlayView(val context: Context) :
     OverlayController(context, R.style.AppTheme, R.style.WindowTheme),
@@ -76,7 +76,6 @@ class OverlayView(val context: Context) :
     private val articles: SyncRestClient by inject(SyncRestClient::class.java)
 
     val prefs = FeedPreferences.getInstance(context)
-
 
     private fun setTheme(force: String?) {
         themeHolder.setTheme(
@@ -208,6 +207,7 @@ class OverlayView(val context: Context) :
         )
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     override fun onCreate(bundle: Bundle?) {
         super.onCreate(bundle)
         getWindow().decorView.systemUiVisibility =
