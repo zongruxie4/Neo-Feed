@@ -30,14 +30,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
-import org.koin.androidx.viewmodel.dsl.viewModelOf
+import org.koin.androix.startup.KoinStartup
 import org.koin.core.context.GlobalContext
-import org.koin.core.context.startKoin
+import org.koin.core.module.dsl.viewModelOf
+import org.koin.dsl.KoinAppDeclaration
 import org.koin.dsl.module
 import org.koin.java.KoinJavaComponent.inject
 import java.lang.ref.WeakReference
 
-class NFApplication : MultiDexApplication() {
+class NFApplication : MultiDexApplication(), KoinStartup {
 
     private val activityHandler = ActivityHandler()
     private val applicationCoroutineScope = ApplicationCoroutineScope()
@@ -86,6 +87,13 @@ class NFApplication : MultiDexApplication() {
         single<NFApplication> { this@NFApplication }
     }
 
+
+    override fun onKoinStartup(): KoinAppDeclaration = {
+            androidLogger()
+            androidContext(this@NFApplication)
+            modules(coreModule, dataModule, modelModule)
+    }
+
     override fun onCreate() {
         super.onCreate()
         instance = this
@@ -98,16 +106,6 @@ class NFApplication : MultiDexApplication() {
         )
         wm.pruneWork()
         PluginFetcher.init(this)
-    }
-
-    override fun attachBaseContext(base: Context?) {
-        super.attachBaseContext(base)
-
-        startKoin {
-            androidLogger()
-            androidContext(this@NFApplication)
-            modules(coreModule, dataModule, modelModule)
-        }
     }
 
     override fun onTerminate() {
