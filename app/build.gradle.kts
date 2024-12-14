@@ -181,12 +181,13 @@ dependencies {
     implementation(libs.coil.compose)
 
     //Koin
+    api(platform(libs.koin.bom))
+    implementation(libs.koin.core)
     implementation(libs.koin.android)
-    implementation(libs.koin.android.compat)
     implementation(libs.koin.compose)
-    implementation(libs.koin.navigation)
-    implementation(libs.koin.workmanager)
-    ksp(libs.koin.ksp.compiler)
+    implementation(libs.koin.startup)
+    implementation(libs.koin.annotations)
+    ksp(libs.koin.compiler)
 
     //Libs
     implementation(libs.threetenabp)
