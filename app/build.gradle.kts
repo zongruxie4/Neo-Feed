@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -17,6 +15,8 @@ allprojects {
         }
     }
 }
+
+val jvmVersion = JavaVersion.VERSION_21
 
 android {
     namespace = "com.saulhdev.feeder"
@@ -98,14 +98,12 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = jvmVersion
+        targetCompatibility = jvmVersion
     }
 
-    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-        compilerOptions {
-            jvmTarget = JvmTarget.JVM_17
-        }
+    kotlin {
+        jvmToolchain(jvmVersion.toString().toInt())
     }
 
     buildFeatures {
