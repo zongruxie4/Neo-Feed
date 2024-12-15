@@ -163,7 +163,7 @@ fun EditFeedView(
         Spacer(modifier = Modifier.height(16.dp))
 
         ComposeSwitchView(
-            title = stringResource(id = R.string.fetch_full_articles_by_default),
+            titleId = R.string.fetch_full_articles_by_default,
             isChecked = feedState.value.fullTextByDefault,
             onCheckedChange = {
                 feedState.value = feedState.value.copy(fullTextByDefault = it)
@@ -173,7 +173,7 @@ fun EditFeedView(
         )
         Spacer(modifier = Modifier.height(4.dp))
         ComposeSwitchView(
-            title = stringResource(id = R.string.source_enabled),
+            titleId = R.string.source_enabled,
             isChecked = feedState.value.isEnabled,
             onCheckedChange = {
                 feedState.value = feedState.value.copy(isEnabled = it)
