@@ -9,7 +9,7 @@ class TextComposer(
     val spanStack: MutableList<Span> = mutableListOf()
 
     // The identity of this will change - do not reference it in blocks
-    private var builder: AnnotatedParagraphStringBuilder = AnnotatedParagraphStringBuilder()
+    var builder: AnnotatedParagraphStringBuilder = AnnotatedParagraphStringBuilder()
 
     fun terminateCurrentText() {
         if (builder.isEmpty()) {
@@ -48,7 +48,6 @@ class TextComposer(
         builder.append(char)
 
     fun <R> appendTable(block: () -> R): R {
-        builder.ensureDoubleNewline()
         terminateCurrentText()
         return block()
     }

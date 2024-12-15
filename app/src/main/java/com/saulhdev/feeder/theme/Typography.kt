@@ -7,6 +7,7 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import com.saulhdev.feeder.R
@@ -68,7 +69,8 @@ fun CodeBlockBackground(): Color =
 fun BlockQuoteStyle(): SpanStyle =
     MaterialTheme.typography.bodyLarge.toSpanStyle().merge(
         SpanStyle(
-            fontWeight = FontWeight.Light
+            fontWeight = FontWeight.Bold,
+            fontStyle = FontStyle.Italic,
         )
     )
 
