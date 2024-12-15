@@ -19,8 +19,10 @@ package com.saulhdev.feeder.compose.components
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -61,7 +63,8 @@ fun ContributorRow(
                 contentDescription = stringResource(id = nameId),
                 modifier = Modifier
                     .clip(CircleShape)
-                    .size(24.dp),
+                    .size(30.dp)
+                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.12F))
             )
         }
     )

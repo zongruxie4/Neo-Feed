@@ -97,10 +97,10 @@ fun AboutPage() {
                         .fillMaxWidth()
                         .padding(4.dp)
                         .background(
-                            MaterialTheme.colorScheme.surfaceContainer,
+                            MaterialTheme.colorScheme.surfaceContainerHighest,
                             MaterialTheme.shapes.extraLarge
                         )
-                        .padding(12.dp),
+                        .clip(MaterialTheme.shapes.extraLarge),
                     verticalArrangement = Arrangement.spacedBy(12.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
@@ -146,12 +146,12 @@ fun AboutPage() {
                                     text = stringResource(id = R.string.app_version) + ": "
                                             + BuildConfig.VERSION_NAME + " ( Build " + BuildConfig.VERSION_CODE + " )",
                                     style = MaterialTheme.typography.titleSmall,
-                                    color = MaterialTheme.colorScheme.onSurface
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                                 Text(
                                     text = BuildConfig.APPLICATION_ID,
                                     style = MaterialTheme.typography.labelSmall,
-                                    color = MaterialTheme.colorScheme.onSurface
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }
                         }
@@ -159,6 +159,7 @@ fun AboutPage() {
 
                     LazyRow(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        contentPadding = PaddingValues(8.dp),
                     ) {
                         items(links) { link ->
                             LinkItem(

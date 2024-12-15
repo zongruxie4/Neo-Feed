@@ -31,20 +31,18 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 
 @Composable
 fun PreferenceGroup(
     modifier: Modifier = Modifier,
-    titleModifier: Modifier = Modifier,
     heading: String? = null,
     content: @Composable () -> Unit
 ) {
-    PreferenceGroupHeading(heading = heading, modifier = titleModifier)
+    PreferenceGroupHeading(heading = heading)
     CompositionLocalProvider(
         LocalContentColor provides MaterialTheme.colorScheme.primary
     ) {
@@ -61,7 +59,6 @@ fun PreferenceGroup(
     heading: String,
     prefs: List<Any>,
     modifier: Modifier = Modifier,
-    titleModifier: Modifier = Modifier,
     onPrefDialog: (Any) -> Unit = {}
 ) {
     val size = prefs.size
@@ -69,7 +66,6 @@ fun PreferenceGroup(
     PreferenceGroup(
         heading = heading,
         modifier = modifier,
-        titleModifier = titleModifier,
     ) {
         prefs.forEachIndexed { i, it ->
             PreferenceBuilder(it, onPrefDialog, i, size)
@@ -80,22 +76,20 @@ fun PreferenceGroup(
 
 @Composable
 fun PreferenceGroupHeading(
-    modifier: Modifier = Modifier,
     heading: String? = null,
+    textAlignment: Alignment.Horizontal = Alignment.Start,
 ) = if (heading != null) {
     Column(
         verticalArrangement = Arrangement.Center,
-        modifier = modifier
+        modifier = Modifier
             .height(48.dp)
             .padding(horizontal = 32.dp)
             .fillMaxWidth(),
+        horizontalAlignment = textAlignment
     ) {
         Text(
             text = heading,
-            style = MaterialTheme.typography.headlineMedium,
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onBackground
+            style = MaterialTheme.typography.titleMedium,
         )
     }
-} else Spacer(modifier = modifier.requiredHeight(8.dp))
+} else Spacer(modifier = Modifier.requiredHeight(8.dp))
