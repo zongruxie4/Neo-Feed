@@ -69,23 +69,17 @@ fun PagePreference(
     icon: ImageVector,
     index: Int = 1,
     groupSize: Int = 1,
-    isEnabled: Boolean = true,
     route: NavRoute,
 ) {
     val navController = LocalNavController.current
     BasePreference(
         modifier = modifier,
         titleId = titleId,
-        startWidget = {
-            Icon(
-                imageVector = icon,
-                contentDescription = stringResource(id = titleId),
-                tint = MaterialTheme.colorScheme.onSurface,
-            )
+        startWidget = icon?.let {
+            { Icon(imageVector = icon, contentDescription = stringResource(id = titleId)) }
         },
         index = index,
         groupSize = groupSize,
-        isEnabled = isEnabled,
         onClick = { navController.navigate(route) }
     )
 }

@@ -17,8 +17,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -60,12 +60,20 @@ fun ArticleScreen(articleId: Long) {
     val article by repository.getArticleById(articleId).collectAsState(initial = null)
     val feed by repository.getFeedById(article?.feedId ?: 0).collectAsState(initial = null)
 
-    val showFullArticle = repository.getFeedById(article?.feedId ?: 0)
-        .collectAsState(initial = null).value?.fullTextByDefault ?: false
+    val showFullArticle by remember {
+        derivedStateOf { feed?.fullTextByDefault ?: false }
+    }
 
-    val title = remember { mutableStateOf("Neo Feed") }
-    val subTitle = remember { mutableStateOf("Neo Feed") }
-    val feedTitle = remember { mutableStateOf("Neo Feed") }
+    val title by remember { derivedStateOf { article?.title ?: "Neo Feed" } }
+    val currentUrl by remember { derivedStateOf { article?.link ?: "Neo Feed" } }
+    val subTitle by remember {
+        derivedStateOf {
+            (if (currentUrl != "Neo Feed") Uri.parse(currentUrl).host else null)
+                ?: feed?.title
+                ?: "Neo Feed"
+        }
+    }
+    val feedTitle by remember { derivedStateOf { feed?.title ?: "Neo Feed" } }
 
     val navController = rememberNavController()
     val activity = (LocalContext.current as? Activity)
@@ -75,12 +83,6 @@ fun ArticleScreen(articleId: Long) {
         } else {
             navController.popBackStack()
         }
-    }
-    title.value = article?.title ?: "Neo Feed"
-    feedTitle.value = feed?.title ?: "Neo Feed"
-    val currentUrl = article?.link ?: "Neo Feed"
-    if (currentUrl != "Neo Feed") {
-        subTitle.value = Uri.parse(currentUrl).host!!
     }
 
     val dateTimeFormat: DateTimeFormatter =
@@ -107,9 +109,9 @@ fun ArticleScreen(articleId: Long) {
     }
 
     ViewWithActionBar(
-        title = title.value,
+        title = title,
         titleSize = 16.sp,
-        subTitle = subTitle.value,
+        subTitle = subTitle,
         showBackButton = true,
         actions = {
             RoundButton(
@@ -122,7 +124,7 @@ fun ArticleScreen(articleId: Long) {
                 icon = com.saulhdev.feeder.icon.Phosphor.ShareNetwork,
                 description = stringResource(id = R.string.share),
             ) {
-                context.shareIntent(currentUrl, title.value)
+                context.shareIntent(currentUrl, title)
             }
         }
 
@@ -139,9 +141,9 @@ fun ArticleScreen(articleId: Long) {
                     ),
             ) {
                 item {
-                    WithBidiDeterminedLayoutDirection(paragraph = title.value) {
+                    WithBidiDeterminedLayoutDirection(paragraph = title) {
                         Text(
-                            text = title.value,
+                            text = title,
                             style = MaterialTheme.typography.headlineMedium,
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -149,14 +151,14 @@ fun ArticleScreen(articleId: Long) {
                     }
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    WithBidiDeterminedLayoutDirection(paragraph = feedTitle.value) {
+                    WithBidiDeterminedLayoutDirection(paragraph = feedTitle) {
                         Text(
-                            text = feedTitle.value,
+                            text = feedTitle,
                             style = MaterialTheme.typography.titleMedium.merge(LinkTextStyle()),
                             modifier = Modifier
                                 .wrapContentWidth()
                                 .clearAndSetSemantics {
-                                    contentDescription = feedTitle.value
+                                    contentDescription = feedTitle
                                 }
                                 .clickable {
                                     MainActivity.navigateIntent(
