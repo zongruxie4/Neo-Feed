@@ -9,57 +9,58 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PullToRefreshLazyColumn(
-    isRefreshing: Boolean,
-    onRefresh: () -> Unit,
+    isRefreshing: Boolean = false,
+    onRefresh: suspend () -> Unit,
     content: LazyListScope.() -> Unit,
     modifier: Modifier = Modifier,
-    listState: LazyListState = rememberLazyListState()
+    listState: LazyListState = rememberLazyListState(),
+    contentPadding: PaddingValues = PaddingValues(8.dp),
 ) {
+    var isRefreshing by remember(isRefreshing) {
+        mutableStateOf(isRefreshing)
+    }
+    val coroutineScope = rememberCoroutineScope()
     val pullToRefreshState = rememberPullToRefreshState()
 
     Box(
-        modifier = modifier
-            .nestedScroll(pullToRefreshState.nestedScrollConnection)
+        modifier = modifier.fillMaxSize(),
     ) {
-        LazyColumn(
-            state = listState,
-            contentPadding = PaddingValues(8.dp),
-            modifier = Modifier
-                .fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            content = content
-        )
-
-        if (pullToRefreshState.isRefreshing) {
-            LaunchedEffect(true) {
-                onRefresh()
-            }
-        }
-
-        LaunchedEffect(isRefreshing) {
-            if (isRefreshing) {
-                pullToRefreshState.startRefresh()
-            } else {
-                pullToRefreshState.endRefresh()
-            }
-        }
-
-        PullToRefreshContainer(
+        PullToRefreshBox(
+            isRefreshing = isRefreshing,
             state = pullToRefreshState,
-            modifier = Modifier
-                .align(Alignment.TopCenter),
-        )
+            onRefresh = {
+                isRefreshing = true
+                coroutineScope.launch {
+                    onRefresh()
+                    delay(2_000L)
+                    isRefreshing = false
+                }
+            },
+            modifier = Modifier.fillMaxSize(),
+        ) {
+            LazyColumn(
+                state = listState,
+                contentPadding = contentPadding,
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                content = content
+            )
+        }
     }
 }
