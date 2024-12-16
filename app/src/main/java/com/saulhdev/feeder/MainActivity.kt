@@ -73,7 +73,10 @@ class MainActivity : ComponentActivity(), SavedStateRegistryOwner {
         registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
             if (uri != null) {
                 CoroutineScope(Dispatchers.Main).launch {
-                    importOpml(uri)
+                    when (pendingOperation) {
+                        DocumentOperation.IMPORT -> importOpml(uri)
+                        else                     -> {} // No relevant operation pending
+                    }
                 }
             }
         }
@@ -83,16 +86,25 @@ class MainActivity : ComponentActivity(), SavedStateRegistryOwner {
     ) { uri ->
         if (uri != null) {
             CoroutineScope(Dispatchers.Main).launch {
-                exportOpml(uri)
+                when (pendingOperation) {
+                    DocumentOperation.EXPORT -> exportOpml(uri)
+                    else                     -> {} // No relevant operation pending
+                }
             }
         }
     }
 
+    private enum class DocumentOperation { IMPORT, EXPORT }
+
+    private var pendingOperation: DocumentOperation? = null
+
     private fun launchOpmlImporter() {
+        pendingOperation = DocumentOperation.IMPORT
         opmlImporterLauncher.launch(arrayOf("application/xml", "text/xml", "text/opml"))
     }
 
     private fun launchOpmlExporter() {
+        pendingOperation = DocumentOperation.EXPORT
         opmlExporter.launch("NF-${localTime}.opml")
     }
 
@@ -101,9 +113,12 @@ class MainActivity : ComponentActivity(), SavedStateRegistryOwner {
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
         prefs = FeedPreferences.getInstance(this)
-        if (intent.hasExtra("import") || intent.hasExtra("export")) {
-            startTargetActivity()
+
+        when {
+            intent.hasExtra("import") -> launchOpmlImporter()
+            intent.hasExtra("export") -> launchOpmlExporter()
         }
+
         setContent {
             navController = rememberNavController()
             TransparentSystemBars()
@@ -126,24 +141,6 @@ class MainActivity : ComponentActivity(), SavedStateRegistryOwner {
         configurePeriodicSync(prefs)
         observePrefs()
         NFApplication.mainActivity = this
-    }
-
-    private fun startTargetActivity() {
-        when {
-            intent.hasExtra("import") -> {
-                registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-                    launchOpmlImporter()
-                    finish()
-                }.launch(intent.getParcelableExtra("import"))
-            }
-
-            else                      -> {
-                registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-                    launchOpmlExporter()
-                    finish()
-                }.launch(intent.getParcelableExtra("export"))
-            }
-        }
     }
 
     @Composable
