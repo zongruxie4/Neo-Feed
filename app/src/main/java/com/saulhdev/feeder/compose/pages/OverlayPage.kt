@@ -22,7 +22,8 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -46,7 +47,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -85,51 +85,40 @@ import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 import kotlinx.coroutines.withContext
-import org.koin.java.KoinJavaComponent.inject
+import org.koin.compose.koinInject
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalCoroutinesApi::class)
 @Composable
-fun OverlayPage(isOverlay: Boolean = false) {
+fun OverlayPage(
+    isOverlay: Boolean = false,
+    syncClient: SyncRestClient = koinInject(),
+    repository: ArticleRepository = koinInject(),
+) {
     val context = LocalContext.current
     val navController = LocalNavController.current
     val prefs = FeedPreferences.getInstance(context)
-
-    val articles: SyncRestClient by inject(SyncRestClient::class.java)
-    val repository: ArticleRepository by inject(ArticleRepository::class.java)
     val scope = CoroutineScope(Dispatchers.IO) + CoroutineName("NeoFeedSync")
-    val feedList by repository.getFeedArticles()
-        .mapLatest { articles ->
-            (if (prefs.removeDuplicates.getValue()) articles.distinctBy { it.content.link }
-            else articles)
-                .sortedByDescending { it.time }
-        }
-        .collectAsState(initial = emptyList())
+
+    val feedList by remember {
+        repository.getFeedArticles()
+            .mapLatest { articles ->
+                (if (prefs.removeDuplicates.getValue()) articles.distinctBy { it.content.link }
+                else articles)
+                    .sortedByDescending { it.time }
+            }
+    }.collectAsState(initial = emptyList())
     val bookmarked = repository.getBookmarkedArticlesMap().collectAsState(initial = emptyMap())
 
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
-    var isRefreshing by remember { mutableStateOf(false) }
+    val isSyncing by repository.isSyncing.collectAsState(false)
     var showMenu by remember { mutableStateOf(false) }
     var showBookmarks by remember { mutableStateOf(false) }
     val listState = rememberLazyListState()
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
     val showFAB by remember { derivedStateOf { listState.firstVisibleItemIndex > 4 } }
-
-    LaunchedEffect(key1 = null) {
-        isRefreshing = true
-    }
-
-    LaunchedEffect(key1 = null) {
-        scope.launch {
-            repository.isSyncing
-                .collectLatest {
-                    if (isRefreshing && !it) isRefreshing = false
-                }
-        }
-    }
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -182,7 +171,9 @@ fun OverlayPage(isOverlay: Boolean = false) {
                                 },
                                 onClick = {
                                     showMenu = false
-                                    isRefreshing = true
+                                    scope.launch {
+                                        syncClient.syncAllFeeds()
+                                    }
                                 },
                                 leadingIcon = {
                                     Icon(
@@ -254,98 +245,85 @@ fun OverlayPage(isOverlay: Boolean = false) {
             }
         }
     ) { paddingValues ->
-        if (showBookmarks) LazyColumn(
-            state = listState,
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            contentPadding = PaddingValues(
-                start = 8.dp,
-                end = 8.dp,
-                top = paddingValues.calculateTopPadding()
-            )
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
         ) {
-            items(bookmarked.value.entries.toList(), key = { it.key.id }) { item ->
-                BookmarkItem(
-                    article = item.key,
-                    feed = item.value,
-                    onClickAction = { article ->
-                        if (prefs.openInBrowser.getValue()) {
-                            context.launchView(article.link ?: "")
-                        } else {
-                            scope.launch {
-                                if (prefs.offlineReader.getValue()) {
-                                    context.startActivity(
-                                        MainActivity.navigateIntent(
-                                            context,
-                                            "${Routes.ARTICLE_VIEW}/${article.id}"
+            if (showBookmarks) LazyColumn(
+                state = listState,
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                items(bookmarked.value.entries.toList(), key = { it.key.id }) { item ->
+                    BookmarkItem(
+                        article = item.key,
+                        feed = item.value,
+                        onClickAction = { article ->
+                            if (prefs.openInBrowser.getValue()) {
+                                context.launchView(article.link ?: "")
+                            } else {
+                                scope.launch {
+                                    if (prefs.offlineReader.getValue()) {
+                                        context.startActivity(
+                                            MainActivity.navigateIntent(
+                                                context,
+                                                "${Routes.ARTICLE_VIEW}/${article.id}"
+                                            )
                                         )
-                                    )
+                                    } else {
+                                        openLinkInCustomTab(
+                                            context,
+                                            article.link!!
+                                        )
+                                    }
+                                }
+                            }
+                            scope.launch {
+                                repository.unpinArticle(article.id)
+                            }
+                        },
+                        onRemoveAction = {
+                            scope.launch {
+                                repository.bookmarkArticle(it.id, false)
+                            }
+                        }
+                    )
+                }
+            }
+            else
+                PullToRefreshLazyColumn(
+                    isRefreshing = isSyncing,
+                    onRefresh = syncClient::syncAllFeeds,
+                    listState = listState,
+                    content = {
+                        items(feedList, key = { it.id }) { item ->
+                            ArticleItem(
+                                article = item,
+                                onBookmark = {
+                                    repository.bookmarkArticle(item.id, it)
+                                },
+                            ) {
+                                if (prefs.openInBrowser.getValue()) {
+                                    context.launchView(item.content.link)
                                 } else {
-                                    openLinkInCustomTab(
-                                        context,
-                                        article.link!!
-                                    )
+                                    if (prefs.offlineReader.getValue()) {
+                                        context.startActivity(
+                                            MainActivity.navigateIntent(
+                                                context,
+                                                "${Routes.ARTICLE_VIEW}/${item.id}"
+                                            )
+                                        )
+                                    } else {
+                                        openLinkInCustomTab(
+                                            context,
+                                            item.content.link
+                                        )
+                                    }
                                 }
                             }
                         }
-                        scope.launch {
-                            repository.unpinArticle(article.id)
-                        }
                     },
-                    onRemoveAction = {
-                        scope.launch {
-                            repository.bookmarkArticle(it.id, false)
-                        }
-                    }
-                )
-            }
+                    )
         }
-        else PullToRefreshLazyColumn(
-            isRefreshing = isRefreshing,
-            onRefresh = {
-                isRefreshing = true
-                refreshFeed(articles, scope)
-            },
-            listState = listState,
-            content = {
-                items(feedList, key = { it.id }) { item ->
-                    ArticleItem(
-                        article = item,
-                        onBookmark = {
-                            repository.bookmarkArticle(item.id, it)
-                        },
-                    ) {
-                        if (prefs.openInBrowser.getValue()) {
-                            context.launchView(item.content.link)
-                        } else {
-                            if (prefs.offlineReader.getValue()) {
-                                context.startActivity(
-                                    MainActivity.navigateIntent(
-                                        context,
-                                        "${Routes.ARTICLE_VIEW}/${item.id}"
-                                    )
-                                )
-                            } else {
-                                openLinkInCustomTab(
-                                    context,
-                                    item.content.link
-                                )
-                            }
-                        }
-                    }
-                }
-            },
-            modifier = Modifier.padding(
-                top = paddingValues.calculateTopPadding()
-            )
-        )
-    }
-}
-
-fun refreshFeed(
-    articles: SyncRestClient,
-    scope: CoroutineScope
-) {
-    scope.launch {
-        articles.syncAllFeeds()
     }
 }
