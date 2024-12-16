@@ -19,21 +19,26 @@
 package com.saulhdev.feeder.db
 
 import android.content.Context
+import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.saulhdev.feeder.db.dao.insertOrUpdate
 import com.saulhdev.feeder.db.models.Feed
 import com.saulhdev.feeder.db.models.FeedArticle
 import com.saulhdev.feeder.db.models.FeedItemIdWithLink
 import com.saulhdev.feeder.sdk.FeedItem
+import com.saulhdev.feeder.sync.FeedSyncer
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 import kotlinx.coroutines.withContext
@@ -88,14 +93,20 @@ class ArticleRepository(context: Context) {
         return feedSourceDao.getFeedById(id)
     }
 
-    val isSyncing: Flow<Boolean>
-        get() = workManager.getWorkInfosByTagFlow("FeedSyncer")
-            .mapLatest {
+    val isSyncing: StateFlow<Boolean> =
+        workManager.getWorkInfosByTagFlow(FeedSyncer::class.qualifiedName!!)
+            .map {
                 workManager.pruneWork()
-                it.any { work -> !work.state.isFinished }
+                it.any { work ->
+                    work.state == WorkInfo.State.RUNNING || work.state == WorkInfo.State.BLOCKED
+                }
             }
-            .distinctUntilChanged()
             .debounce(1000L)
+            .stateIn(
+                scope,
+                SharingStarted.Lazily,
+                false
+            )
 
     fun setCurrentlySyncingOn(feedId: Long, syncing: Boolean) {
         scope.launch {
