@@ -72,12 +72,15 @@ import com.saulhdev.feeder.viewmodel.SearchFeedViewModel
 import com.saulhdev.feeder.viewmodel.SearchResult
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.launch
+import org.koin.androidx.compose.koinViewModel
 import org.koin.java.KoinJavaComponent.inject
 import java.net.MalformedURLException
 import java.net.URL
 
 @Composable
-fun AddFeedPage() {
+fun AddFeedPage(
+    searchFeedViewModel: SearchFeedViewModel = koinViewModel()
+) {
     val coroutineScope = rememberCoroutineScope()
     val navController = LocalNavController.current
     val title = stringResource(id = R.string.add_rss)
@@ -106,7 +109,6 @@ fun AddFeedPage() {
             mutableStateOf(listOf<SearchResult>())
         }
         var feedUrl by remember { mutableStateOf("") }
-        val searchFeedViewModel = remember { SearchFeedViewModel() }
 
         Column(
             modifier = Modifier.padding(

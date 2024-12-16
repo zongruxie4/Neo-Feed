@@ -27,6 +27,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.OutlinedButton
@@ -55,12 +56,14 @@ import com.saulhdev.feeder.compose.navigation.LocalNavController
 import com.saulhdev.feeder.compose.util.interceptKey
 import com.saulhdev.feeder.models.EditFeedViewState
 import com.saulhdev.feeder.viewmodel.EditFeedViewModel
-import org.koin.java.KoinJavaComponent.inject
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun EditFeedPage(feedId: Long = -1) {
+fun EditFeedPage(
+    feedId: Long = -1,
+    editFeedViewModel: EditFeedViewModel = koinViewModel(),
+) {
     val title = stringResource(id = R.string.edit_rss)
-    val editFeedViewModel: EditFeedViewModel by inject(EditFeedViewModel::class.java)
 
     editFeedViewModel.setFeedId(feedId)
     val viewState by editFeedViewModel.viewState.collectAsState()
@@ -97,115 +100,119 @@ fun EditFeedView(
     }
     val focusManager = LocalFocusManager.current
 
-    Column {
-        OutlinedTextField(
-            value = feedState.value.url,
-            onValueChange = {
-                feedState.value = feedState.value.copy(url = it)
-            },
-            label = {
-                Text(stringResource(id = R.string.add_input_hint))
-            },
-            keyboardOptions = KeyboardOptions(
-                capitalization = KeyboardCapitalization.None,
-                autoCorrectEnabled = false,
-                keyboardType = KeyboardType.Uri,
-                imeAction = ImeAction.Next
-            ),
-            keyboardActions = KeyboardActions(
-                onNext = {
-                    focusTitle.requestFocus()
-                }
-            ),
-            singleLine = true,
-            modifier = Modifier
-                .fillMaxWidth()
-                .heightIn(min = 64.dp)
-                .interceptKey(Key.Enter) {
-                    focusTitle.requestFocus()
-                }
-                .interceptKey(Key.Escape) {
-                    focusManager.clearFocus()
-                }
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        OutlinedTextField(
-            value = feedState.value.title,
-            onValueChange = {
-                feedState.value = feedState.value.copy(title = it)
-            },
-            label = {
-                Text(stringResource(id = R.string.title))
-            },
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(
-                capitalization = KeyboardCapitalization.Words,
-                autoCorrect = true,
-                keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Next
-            ),
-            keyboardActions = KeyboardActions(
-                onNext = {
-                    focusTag.requestFocus()
-                }
-            ),
-            modifier = Modifier
-                .focusRequester(focusTitle)
-                .fillMaxWidth()
-                .heightIn(min = 64.dp)
-                .interceptKey(Key.Enter) {
-                    focusTag.requestFocus()
-                }
-                .interceptKey(Key.Escape) {
-                    focusManager.clearFocus()
-                }
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-
-        ComposeSwitchView(
-            titleId = R.string.fetch_full_articles_by_default,
-            isChecked = feedState.value.fullTextByDefault,
-            onCheckedChange = {
-                feedState.value = feedState.value.copy(fullTextByDefault = it)
-            },
-            index = 0,
-            groupSize = 2
-        )
-        Spacer(modifier = Modifier.height(4.dp))
-        ComposeSwitchView(
-            titleId = R.string.source_enabled,
-            isChecked = feedState.value.isEnabled,
-            onCheckedChange = {
-                feedState.value = feedState.value.copy(isEnabled = it)
-            },
-            index = 1,
-            groupSize = 2
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Row(
-            horizontalArrangement = Arrangement.End,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-
-            val navController = LocalNavController.current
-            OutlinedButton(
-                onClick = { navController.popBackStack() }
+    LazyColumn(
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+        item {
+            OutlinedTextField(
+                value = feedState.value.url,
+                onValueChange = {
+                    feedState.value = feedState.value.copy(url = it)
+                },
+                label = {
+                    Text(stringResource(id = R.string.add_input_hint))
+                },
+                keyboardOptions = KeyboardOptions(
+                    capitalization = KeyboardCapitalization.None,
+                    autoCorrectEnabled = false,
+                    keyboardType = KeyboardType.Uri,
+                    imeAction = ImeAction.Next
+                ),
+                keyboardActions = KeyboardActions(
+                    onNext = {
+                        focusTitle.requestFocus()
+                    }
+                ),
+                singleLine = true,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = 64.dp)
+                    .interceptKey(Key.Enter) {
+                        focusTitle.requestFocus()
+                    }
+                    .interceptKey(Key.Escape) {
+                        focusManager.clearFocus()
+                    }
+            )
+        }
+        item {
+            OutlinedTextField(
+                value = feedState.value.title,
+                onValueChange = {
+                    feedState.value = feedState.value.copy(title = it)
+                },
+                label = {
+                    Text(stringResource(id = R.string.title))
+                },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(
+                    capitalization = KeyboardCapitalization.Words,
+                    autoCorrectEnabled = true,
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Next
+                ),
+                keyboardActions = KeyboardActions(
+                    onNext = {
+                        focusTag.requestFocus()
+                    }
+                ),
+                modifier = Modifier
+                    .focusRequester(focusTitle)
+                    .fillMaxWidth()
+                    .heightIn(min = 64.dp)
+                    .interceptKey(Key.Enter) {
+                        focusTag.requestFocus()
+                    }
+                    .interceptKey(Key.Escape) {
+                        focusManager.clearFocus()
+                    }
+            )
+        }
+        item {
+            ComposeSwitchView(
+                titleId = R.string.fetch_full_articles_by_default,
+                isChecked = feedState.value.fullTextByDefault,
+                onCheckedChange = {
+                    feedState.value = feedState.value.copy(fullTextByDefault = it)
+                },
+                index = 0,
+                groupSize = 2
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            ComposeSwitchView(
+                titleId = R.string.source_enabled,
+                isChecked = feedState.value.isEnabled,
+                onCheckedChange = {
+                    feedState.value = feedState.value.copy(isEnabled = it)
+                },
+                index = 1,
+                groupSize = 2
+            )
+        }
+        item {
+            Row(
+                horizontalArrangement = Arrangement.End,
+                modifier = Modifier.fillMaxWidth()
             ) {
-                Text(
-                    text = stringResource(id = android.R.string.cancel)
-                )
-            }
-            Spacer(modifier = Modifier.width(8.dp))
-            OutlinedButton(
-                onClick = {
-                    updateFeed(feedState.value)
-                    navController.popBackStack()
+                val navController = LocalNavController.current
+                OutlinedButton(
+                    onClick = { navController.popBackStack() }
+                ) {
+                    Text(
+                        text = stringResource(id = android.R.string.cancel)
+                    )
                 }
-            ) {
-                Text(
-                    text = stringResource(id = android.R.string.ok)
-                )
+                Spacer(modifier = Modifier.width(8.dp))
+                OutlinedButton(
+                    onClick = {
+                        updateFeed(feedState.value)
+                        navController.popBackStack()
+                    }
+                ) {
+                    Text(
+                        text = stringResource(id = android.R.string.ok)
+                    )
+                }
             }
         }
     }
