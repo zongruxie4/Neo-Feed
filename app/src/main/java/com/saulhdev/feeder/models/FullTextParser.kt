@@ -3,6 +3,7 @@ package com.saulhdev.feeder.models
 import android.content.Context
 import android.util.Log
 import androidx.work.CoroutineWorker
+import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
@@ -26,7 +27,11 @@ fun scheduleFullTextParse() {
         .addTag("FullTextWorker")
         .keepResultsForAtLeast(1, TimeUnit.MINUTES)
     val workManager: WorkManager by inject(WorkManager::class.java)
-    workManager.enqueue(workRequest.build())
+    workManager.enqueueUniqueWork(
+        "FullTextWorker",
+        ExistingWorkPolicy.KEEP,
+        workRequest.build()
+    )
 }
 
 class FullTextWorker(
