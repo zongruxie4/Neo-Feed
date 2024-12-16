@@ -25,8 +25,10 @@ import com.saulhdev.feeder.db.dao.insertOrUpdate
 import com.saulhdev.feeder.db.models.Feed
 import com.saulhdev.feeder.db.models.FeedArticle
 import com.saulhdev.feeder.db.models.FeedItemIdWithLink
+import com.saulhdev.feeder.models.scheduleFullTextParse
 import com.saulhdev.feeder.sdk.FeedItem
 import com.saulhdev.feeder.sync.FeedSyncer
+import com.saulhdev.feeder.sync.requestFeedSync
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -73,12 +75,14 @@ class ArticleRepository(context: Context) {
         }
     }
 
-    fun updateFeed(feed: Feed) {
+    fun updateFeed(feed: Feed, resync: Boolean = false) {
         scope.launch {
             val list: List<Feed> = feedSourceDao.findFeedById(feed.id)
             if (list.isNotEmpty()) {
                 feed.lastSync = ZonedDateTime.now().toInstant()
                 feedSourceDao.update(feed)
+                if (resync) requestFeedSync(feed.id)
+                if (feed.fullTextByDefault) scheduleFullTextParse()
             }
         }
     }

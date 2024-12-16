@@ -29,7 +29,7 @@ fun scheduleFullTextParse() {
     val workManager: WorkManager by inject(WorkManager::class.java)
     workManager.enqueueUniqueWork(
         "FullTextWorker",
-        ExistingWorkPolicy.KEEP,
+        ExistingWorkPolicy.REPLACE,
         workRequest.build()
     )
 }

@@ -53,12 +53,14 @@ class EditFeedViewModel : ViewModel() {
 
     fun updateFeed(state: EditFeedViewState) {
         repository.updateFeed(
-            feed.value.copy(
+            feed = feed.value.copy(
                 title = state.title,
                 url = sloppyLinkToStrictURL(state.url),
                 fullTextByDefault = state.fullTextByDefault,
                 isEnabled = state.isEnabled,
-            )
+            ),
+            resync = feed.value.fullTextByDefault != state.fullTextByDefault
+                    || feed.value.isEnabled != state.isEnabled
         )
     }
 
