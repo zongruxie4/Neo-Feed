@@ -48,10 +48,8 @@ import com.saulhdev.feeder.sync.SyncRestClient
 import com.saulhdev.feeder.theme.Theming
 import com.saulhdev.feeder.utils.LinearLayoutManagerWrapper
 import com.saulhdev.feeder.utils.OverlayBridge
-import com.saulhdev.feeder.utils.clearLightFlags
 import com.saulhdev.feeder.utils.isDark
 import com.saulhdev.feeder.utils.setCustomTheme
-import com.saulhdev.feeder.utils.setLightFlags
 import com.saulhdev.feeder.views.DialogMenu
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
@@ -224,8 +222,6 @@ class OverlayView(val context: Context) :
         initHeader()
         refreshNotifications()
 
-        window.decorView.setLightFlags()
-
         syncScope.launch {
             repository.getFeedArticles()
                 .mapLatest { articles ->
@@ -241,8 +237,7 @@ class OverlayView(val context: Context) :
         syncScope.launch {
             repository.isSyncing
                 .collect {
-                    if (!it)
-                        rootView.findViewById<SwipeRefreshLayout>(R.id.swipe_to_refresh).isRefreshing = false
+                    rootView.findViewById<SwipeRefreshLayout>(R.id.swipe_to_refresh).isRefreshing = it
                 }
         }
         syncScope.launch {
@@ -268,17 +263,6 @@ class OverlayView(val context: Context) :
 
     override fun onScroll(f: Float) {
         super.onScroll(f)
-        if (prefs.overlayTransparency.getValue() > 0.7f) {
-            if (themeHolder.shouldUseSN && !themeHolder.isSNApplied) {
-                themeHolder.isSNApplied = true
-                window.decorView.setLightFlags()
-            }
-        } else {
-            if (themeHolder.shouldUseSN && themeHolder.isSNApplied) {
-                themeHolder.isSNApplied = false
-                window.decorView.clearLightFlags()
-            }
-        }
 
         val bgColor = themeHolder.currentTheme.get(Theming.Colors.OVERLAY_BG.ordinal)
         val color =

@@ -6,6 +6,7 @@ import com.saulhdev.feeder.overlay.OverlayView
 import com.saulhdev.feeder.preference.FeedPreferences
 import com.saulhdev.feeder.theme.Theming
 import com.saulhdev.feeder.utils.clearLightFlags
+import com.saulhdev.feeder.utils.setLightFlags
 
 /**
  * A class which manages overlay styling.
@@ -22,7 +23,7 @@ class OverlayThemeHolder(private val context: Context, private val overlay: Over
     /**
      * If we should apply light statusbar/navbar
      */
-    var shouldUseSN = false
+    var shouldUseSN = true
 
     /**
      * If we are applied light statusbar/navbar
@@ -40,9 +41,12 @@ class OverlayThemeHolder(private val context: Context, private val overlay: Over
     fun setTheme(theme: SparseIntArray) {
         currentTheme = theme
 
-        if (!shouldUseSN && isSNApplied) {
+        if (shouldUseSN && !isSNApplied) {
+            isSNApplied = true
+            overlay.window.setLightFlags()
+        } else if (shouldUseSN && isSNApplied) {
             isSNApplied = false
-            overlay.window.decorView.clearLightFlags()
+            overlay.window.clearLightFlags()
         }
     }
 }
