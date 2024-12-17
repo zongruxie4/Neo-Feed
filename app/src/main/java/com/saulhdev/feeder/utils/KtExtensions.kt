@@ -4,9 +4,10 @@ import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import android.view.View
+import android.view.Window
 import androidx.annotation.ColorInt
 import androidx.core.graphics.ColorUtils
+import androidx.core.view.WindowCompat
 
 const val LIGHT_BORDER = 0.5f
 
@@ -21,21 +22,16 @@ fun Bundle.dump(tag: String) {
     }
 }
 
-fun View.setLightFlags() {
-    var flags = systemUiVisibility
-    flags = flags or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-    systemUiVisibility = flags
-    flags = flags or View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
-    systemUiVisibility = flags
+fun Window.setLightFlags() {
+    val controller = WindowCompat.getInsetsController(this, this.decorView)
+    controller.isAppearanceLightStatusBars = true
+    controller.isAppearanceLightNavigationBars = true
 }
 
-fun View.clearLightFlags() {
-    var flags = systemUiVisibility
-    flags = flags xor View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-    systemUiVisibility = flags
-    flags = systemUiVisibility
-    flags = flags xor View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
-    systemUiVisibility = flags
+fun Window.clearLightFlags() {
+    val controller = WindowCompat.getInsetsController(this, this.decorView)
+    controller.isAppearanceLightStatusBars = false
+    controller.isAppearanceLightNavigationBars = false
 }
 
 @ColorInt
