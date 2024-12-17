@@ -1,7 +1,27 @@
 CHANGELOG
 =========
 
-1.7.1 (17.08.2023) -10 Commits & 1 Translations
+1.7.2 (17.12.2024) +30 Commits & 5 Translations
+------------
+
+#### Function
+
+- Add: Option to open feed in WebView
+- Update: Re-sync source after relevant update
+- Update: Make FullTextWorker unique
+- Update: PullToRefreshLazyColumn based on PullToRefreshBox
+- Update: Replace deprecated usage of systemUiVisibility
+
+#### UI/UX
+
+- Add: Parsing much more and improve existing HTML-tags
+- Fix: Placeholder icons visibility on black backgrounds
+- Fix: Applying dark/light system bars
+- Update: Revamp pref layouts
+- Update: Revamp About page
+- Update: Improve UI paddings
+
+1.7.1 (17.08.2024) -10 Commits & 1 Translations
 ------------
 
 #### Function
@@ -14,7 +34,7 @@ CHANGELOG
 - Add: Black themes
 - Update: Selection dialog layout
 
-1.7.0 (15.08.2023) +120 Commits & +10 Translations
+1.7.0 (15.08.2024) +120 Commits & +10 Translations
 ------------
 
 #### Function

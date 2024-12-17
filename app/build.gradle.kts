@@ -26,8 +26,8 @@ android {
         applicationId = "com.saulhdev.neofeed"
         minSdk = 26
         targetSdk = 34
-        versionCode = 1701
-        versionName = "1.7.1"
+        versionCode = 1702
+        versionName = "1.7.2"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled = true
@@ -47,7 +47,7 @@ android {
         val variant = this
         outputs.all {
             (this as com.android.build.gradle.internal.api.BaseVariantOutputImpl).outputFileName =
-                "NeoFeed_v${variant.versionName}_build_${variant.versionCode}.apk"
+                "Neo_Feed_${variant.versionCode}_${variant.name}.apk"
         }
     }
     buildTypes {
