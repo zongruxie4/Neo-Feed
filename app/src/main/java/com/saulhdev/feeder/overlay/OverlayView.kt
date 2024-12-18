@@ -237,7 +237,9 @@ class OverlayView(val context: Context) :
         syncScope.launch {
             repository.isSyncing
                 .collect {
-                    rootView.findViewById<SwipeRefreshLayout>(R.id.swipe_to_refresh).isRefreshing = it
+                    mainScope.launch {
+                        rootView.findViewById<SwipeRefreshLayout>(R.id.swipe_to_refresh).isRefreshing = it
+                    }
                 }
         }
         syncScope.launch {
