@@ -54,7 +54,10 @@ import org.threeten.bp.format.FormatStyle
 import java.util.Locale
 
 @Composable
-fun ArticleScreen(articleId: Long) {
+fun ArticleScreen(
+    articleId: Long,
+    onDismiss: (() -> Unit)? = null,
+) {
     val context = LocalContext.current
     val repository: ArticleRepository by inject(ArticleRepository::class.java)
     val article by repository.getArticleById(articleId).collectAsState(initial = null)
@@ -78,11 +81,12 @@ fun ArticleScreen(articleId: Long) {
     val navController = rememberNavController()
     val activity = (LocalContext.current as? Activity)
     BackHandler {
-        if (navController.currentBackStackEntry?.destination?.route == null) {
-            activity?.finish()
-        } else {
-            navController.popBackStack()
-        }
+        onDismiss?.invoke()
+            ?: if (navController.currentBackStackEntry?.destination?.route == null) {
+                activity?.finish()
+            } else {
+                navController.popBackStack()
+            }
     }
 
     val dateTimeFormat: DateTimeFormatter =
