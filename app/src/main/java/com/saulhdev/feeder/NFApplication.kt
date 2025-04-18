@@ -31,9 +31,10 @@ import kotlinx.coroutines.withContext
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.androix.startup.KoinStartup
+import org.koin.core.annotation.KoinExperimentalAPI
 import org.koin.core.context.GlobalContext
 import org.koin.core.module.dsl.viewModelOf
-import org.koin.dsl.KoinAppDeclaration
+import org.koin.dsl.koinConfiguration
 import org.koin.dsl.module
 import org.koin.java.KoinJavaComponent.inject
 import java.lang.ref.WeakReference
@@ -87,8 +88,8 @@ class NFApplication : MultiDexApplication(), KoinStartup {
         single<NFApplication> { this@NFApplication }
     }
 
-
-    override fun onKoinStartup(): KoinAppDeclaration = {
+    @KoinExperimentalAPI
+    override fun onKoinStartup() = koinConfiguration {
             androidLogger()
             androidContext(this@NFApplication)
             modules(coreModule, dataModule, modelModule)
