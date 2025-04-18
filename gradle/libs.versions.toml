@@ -40,6 +40,11 @@ compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = 
 compose-animation = { group = "androidx.compose.animation", name = "animation" }
 compose-foundation = { group = "androidx.compose.foundation", name = "foundation" }
 compose-material3 = { group = "androidx.compose.material3", name = "material3" }
+compose-material3-navigationsuite = { module = "androidx.compose.material3:material3-adaptive-navigation-suite" }
+compose-adaptive = { module = "androidx.compose.material3.adaptive:adaptive" }
+compose-adaptive-layout = { module = "androidx.compose.material3.adaptive:adaptive-layout" }
+compose-adaptive-navigation = { module = "androidx.compose.material3.adaptive:adaptive-navigation" }
+navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigation" }
 compose-ui = { group = "androidx.compose.ui", name = "ui" }
 compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
@@ -68,7 +73,6 @@ material = { group = "com.google.android.material", name = "material", version.r
 moshi = { group = "com.squareup.moshi", name = "moshi", version.ref = "moshi" }
 moshi-kotlin = { group = "com.squareup.moshi", name = "moshi-kotlin", version.ref = "moshi" }
 multidex = { group = "androidx.multidex", name = "multidex", version.ref = "multidex" }
-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
 okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
 readability4j = { group = "com.github.dankito", name = "readability4j", version.ref = "readability4j" }
 retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
