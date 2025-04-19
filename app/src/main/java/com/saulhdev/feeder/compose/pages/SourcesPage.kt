@@ -35,12 +35,19 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
+import androidx.compose.material3.adaptive.layout.AnimatedPane
+import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
+import androidx.compose.material3.adaptive.navigation.NavigableListDetailPaneScaffold
+import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaffoldNavigator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -62,15 +69,25 @@ import com.saulhdev.feeder.models.exportOpml
 import com.saulhdev.feeder.models.importOpml
 import com.saulhdev.feeder.utils.ApplicationCoroutineScope
 import kotlinx.coroutines.launch
+import okhttp3.internal.toLongOrDefault
 import org.koin.java.KoinJavaComponent.inject
 import java.time.LocalDateTime
 
+@OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
 fun SourcesPage() {
     val navController = LocalNavController.current
+    val scope = rememberCoroutineScope()
     val repository: SourceRepository by inject(SourceRepository::class.java)
     val localTime = LocalDateTime.now().toString().replace(":", "_").substring(0, 19)
     val coroutineScope: ApplicationCoroutineScope by inject(ApplicationCoroutineScope::class.java)
+    val showDialog = remember { mutableStateOf(false) }
+    val list: State<List<Feed>> =
+        repository.getAllFeeds().collectAsState(initial = listOf())
+    val removeItem: MutableState<Feed?> =
+        remember { mutableStateOf(list.value.firstOrNull()) }
+    val paneNavigator = rememberListDetailPaneScaffoldNavigator<Any>()
+    val sourceId = remember { mutableLongStateOf(-1L) }
 
     val opmlExporter = rememberLauncherForActivityResult(
         ActivityResultContracts.CreateDocument("application/xml")
@@ -92,109 +109,135 @@ fun SourcesPage() {
         }
     }
 
-    ViewWithActionBar(
-        title = stringResource(id = R.string.title_sources),
-        showBackButton = false,
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = {
-                    navController.navigate(NavRoute.AddFeed)
+    NavigableListDetailPaneScaffold(
+        navigator = paneNavigator,
+        listPane = {
+            ViewWithActionBar(
+                title = stringResource(id = R.string.title_sources),
+                showBackButton = false,
+                floatingActionButton = {
+                    FloatingActionButton(
+                        onClick = {
+                            navController.navigate(NavRoute.AddFeed)
+                        },
+                        modifier = Modifier.padding(16.dp),
+                        containerColor = MaterialTheme.colorScheme.primary
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = stringResource(id = R.string.add_feed),
+                            tint = MaterialTheme.colorScheme.onPrimary
+                        )
+                    }
                 },
-                modifier = Modifier.padding(16.dp),
-                containerColor = MaterialTheme.colorScheme.primary
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = stringResource(id = R.string.add_feed),
-                    tint = MaterialTheme.colorScheme.onPrimary
-                )
+                actions = {
+                    OverflowMenu {
+                        DropdownMenuItem(
+                            leadingIcon = {
+                                Icon(
+                                    Phosphor.CloudArrowDown,
+                                    contentDescription = stringResource(id = R.string.sources_import_opml),
+                                )
+                            },
+                            onClick = {
+                                hideMenu()
+                                opmlImporter.launch(
+                                    arrayOf(
+                                        "text/plain",
+                                        "text/xml",
+                                        "text/opml",
+                                        "*/*"
+                                    )
+                                )
+                            },
+                            text = { Text(text = stringResource(id = R.string.sources_import_opml)) }
+                        )
+                        DropdownMenuItem(
+                            leadingIcon = {
+                                Icon(
+                                    Phosphor.CloudArrowUp,
+                                    contentDescription = stringResource(id = R.string.sources_export_opml),
+                                )
+                            },
+                            onClick = {
+                                hideMenu()
+                                opmlExporter.launch("NF-${localTime}.opml")
+                            },
+                            text = { Text(text = stringResource(id = R.string.sources_export_opml)) }
+                        )
+                    }
+                }
+            ) { paddingValues ->
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    contentPadding = PaddingValues(
+                        start = 8.dp,
+                        end = 8.dp,
+                        top = paddingValues.calculateTopPadding()
+                    ),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    items(list.value, key = { it.id }) { item ->
+                        FeedItem(
+                            feed = item,
+                            onClickAction = {
+                                scope.launch {
+                                    paneNavigator.navigateTo(
+                                        ListDetailPaneScaffoldRole.Detail,
+                                        item.id
+                                    )
+                                }
+                            },
+                            onRemoveAction = {
+                                removeItem.value = item
+                                showDialog.value = true
+                            }
+                        )
+                    }
+                    item {
+                        Spacer(modifier = Modifier.height(64.dp))
+                    }
+                }
+
+                if (showDialog.value) {
+                    Dialog(
+                        onDismissRequest = { showDialog.value = false },
+                        DialogProperties(
+                            dismissOnBackPress = true,
+                            dismissOnClickOutside = true
+                        )
+                    ) {
+                        ActionsDialogUI(
+                            titleText = stringResource(id = R.string.remove_title),
+                            messageText = stringResource(
+                                id = R.string.remove_desc,
+                                removeItem.value!!.title
+                            ),
+                            openDialogCustom = showDialog,
+                            primaryText = stringResource(id = android.R.string.ok),
+                            primaryAction = {
+                                repository.deleteFeed(removeItem.value!!)
+                            }
+                        )
+                    }
+                }
             }
         },
-        actions = {
-            OverflowMenu {
-                DropdownMenuItem(
-                    leadingIcon = {
-                        Icon(
-                            Phosphor.CloudArrowDown,
-                            contentDescription = stringResource(id = R.string.sources_import_opml),
-                        )
-                    },
-                    onClick = {
-                        hideMenu()
-                        opmlImporter.launch(arrayOf("text/plain", "text/xml", "text/opml", "*/*"))
-                    },
-                    text = { Text(text = stringResource(id = R.string.sources_import_opml)) }
-                )
-                DropdownMenuItem(
-                    leadingIcon = {
-                        Icon(
-                            Phosphor.CloudArrowUp,
-                            contentDescription = stringResource(id = R.string.sources_export_opml),
-                        )
-                    },
-                    onClick = {
-                        hideMenu()
-                        opmlExporter.launch("NF-${localTime}.opml")
-                    },
-                    text = { Text(text = stringResource(id = R.string.sources_export_opml)) }
-                )
-            }
-        }
-    ) { paddingValues ->
-        val showDialog = remember { mutableStateOf(false) }
-        val list: State<List<Feed>> =
-            repository.getAllFeeds().collectAsState(initial = listOf())
-        val removeItem: MutableState<Feed?> =
-            remember { mutableStateOf(list.value.firstOrNull()) }
+        detailPane = {
+            sourceId.longValue = paneNavigator.currentDestination
+                ?.takeIf { it.pane == this.paneRole }?.contentKey
+                .toString().toLongOrDefault(-1L)
 
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize(),
-            contentPadding = PaddingValues(
-                start = 8.dp,
-                end = 8.dp,
-                top = paddingValues.calculateTopPadding()
-            ),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            items(list.value, key = { it.id }) { item ->
-                FeedItem(
-                    feed = item,
-                    onClickAction = {
-                        navController.navigate(NavRoute.EditFeed(item.id))
-                    },
-                    onRemoveAction = {
-                        removeItem.value = item
-                        showDialog.value = true
+            sourceId.longValue.takeIf { it != -1L }?.let { id ->
+                AnimatedPane {
+                    EditFeedPage(id) {
+                        scope.launch {
+                            paneNavigator.navigateBack()
+                        }
                     }
-                )
-            }
-            item {
-                Spacer(modifier = Modifier.height(64.dp))
+                }
             }
         }
-
-        if (showDialog.value) {
-            Dialog(
-                onDismissRequest = { showDialog.value = false },
-                DialogProperties(
-                    dismissOnBackPress = true,
-                    dismissOnClickOutside = true
-                )
-            ) {
-                ActionsDialogUI(
-                    titleText = stringResource(id = R.string.remove_title),
-                    messageText = stringResource(
-                        id = R.string.remove_desc,
-                        removeItem.value!!.title
-                    ),
-                    openDialogCustom = showDialog,
-                    primaryText = stringResource(id = android.R.string.ok),
-                    primaryAction = {
-                        repository.deleteFeed(removeItem.value!!)
-                    }
-                )
-            }
-        }
-    }
+    )
 }
