@@ -60,7 +60,7 @@ fun ViewWithActionBar(
     floatingActionButton: @Composable () -> Unit = {},
     showBackButton: Boolean = true,
     actions: @Composable (RowScope.() -> Unit) = {},
-    onBackAction: () -> Unit = {},
+    onBackAction: (() -> Unit)? = null,
     content: @Composable (PaddingValues) -> Unit
 ) {
     val scrollBehavior = enterAlwaysScrollBehavior(rememberTopAppBarState())
@@ -98,8 +98,8 @@ fun ViewWithActionBar(
                             LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
                         IconButton(
                             onClick = {
-                                onBackAction.invoke()
-                                backDispatcher?.onBackPressed()
+                                onBackAction?.invoke()
+                                    ?: backDispatcher?.onBackPressed()
                             }
                         ) {
                             Icon(

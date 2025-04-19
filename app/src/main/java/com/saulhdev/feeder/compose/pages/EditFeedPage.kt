@@ -18,6 +18,7 @@
 
 package com.saulhdev.feeder.compose.pages
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -40,6 +41,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester.Companion.FocusRequesterFactory.component1
+import androidx.compose.ui.focus.FocusRequester.Companion.FocusRequesterFactory.component2
 import androidx.compose.ui.focus.FocusRequester.Companion.createRefs
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.key.Key
@@ -62,15 +65,21 @@ import org.koin.androidx.compose.koinViewModel
 fun EditFeedPage(
     feedId: Long = -1,
     editFeedViewModel: EditFeedViewModel = koinViewModel(),
+    onDismiss: (() -> Unit)? = null,
 ) {
     val title = stringResource(id = R.string.edit_rss)
 
     editFeedViewModel.setFeedId(feedId)
     val viewState by editFeedViewModel.viewState.collectAsState()
 
+    BackHandler(enabled = onDismiss != null) {
+        onDismiss?.invoke()
+    }
+
     ViewWithActionBar(
         title = title,
         showBackButton = true,
+        onBackAction = onDismiss,
     ) { paddingValues ->
         Column(
             modifier = Modifier.padding(
