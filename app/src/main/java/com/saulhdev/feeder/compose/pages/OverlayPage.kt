@@ -131,6 +131,7 @@ fun OverlayPage(
     NavigableListDetailPaneScaffold(
         navigator = paneNavigator,
         listPane = {
+            // TODO add filters' sheet
             Scaffold(
                 modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
                 containerColor = MaterialTheme.colorScheme.background,
@@ -339,7 +340,7 @@ fun OverlayPage(
             }
         },
         detailPane = {
-            articleId.value = paneNavigator.currentDestination
+            articleId.longValue = paneNavigator.currentDestination
                 ?.takeIf { it.pane == this.paneRole }?.contentKey
                 .toString().toLongOrDefault(-1L)
 

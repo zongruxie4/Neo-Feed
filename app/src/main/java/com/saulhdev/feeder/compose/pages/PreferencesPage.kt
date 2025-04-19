@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -40,38 +41,39 @@ import com.saulhdev.feeder.compose.components.dialog.StringSelectionPrefDialogUI
 import com.saulhdev.feeder.preference.FeedPreferences
 import com.saulhdev.feeder.preference.StringSelectionPref
 
+@OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
 fun PreferencesPage() {
     val title = stringResource(id = R.string.title_settings)
+    val prefs = FeedPreferences.getInstance(LocalContext.current)
+
+    val servicePrefs = listOf(
+        prefs.itemsPerFeed,
+        prefs.syncFrequency,
+        prefs.syncOnlyOnWifi,
+        prefs.openInBrowser,
+        prefs.offlineReader,
+        prefs.removeDuplicates,
+    )
+    val themePrefs = listOf(
+        prefs.overlayTheme,
+        prefs.overlayTransparency,
+    )
+    val debugPrefs = listOf(
+        prefs.about,
+    )
+
+    val openDialog = remember { mutableStateOf(false) }
+    var dialogPref by remember { mutableStateOf<Any?>(null) }
+    val onPrefDialog = { pref: Any ->
+        dialogPref = pref
+        openDialog.value = true
+    }
+
     ViewWithActionBar(
         title = title,
         showBackButton = false,
     ) { paddingValues ->
-        val prefs = FeedPreferences.getInstance(LocalContext.current)
-
-        val servicePrefs = listOf(
-            prefs.itemsPerFeed,
-            prefs.syncFrequency,
-            prefs.syncOnlyOnWifi,
-            prefs.openInBrowser,
-            prefs.offlineReader,
-            prefs.removeDuplicates,
-        )
-        val themePrefs = listOf(
-            prefs.overlayTheme,
-            prefs.overlayTransparency,
-        )
-        val debugPrefs = listOf(
-            prefs.about,
-        )
-
-        val openDialog = remember { mutableStateOf(false) }
-        var dialogPref by remember { mutableStateOf<Any?>(null) }
-        val onPrefDialog = { pref: Any ->
-            dialogPref = pref
-            openDialog.value = true
-        }
-
         LazyColumn(
             modifier = Modifier
                 .padding(

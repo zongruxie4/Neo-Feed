@@ -38,7 +38,6 @@ import com.saulhdev.feeder.compose.pages.AboutPage
 import com.saulhdev.feeder.compose.pages.AddFeedPage
 import com.saulhdev.feeder.compose.pages.ArticleScreen
 import com.saulhdev.feeder.compose.pages.ChangelogScreen
-import com.saulhdev.feeder.compose.pages.EditFeedPage
 import com.saulhdev.feeder.compose.pages.LicenseScreen
 import com.saulhdev.feeder.compose.pages.MainPage
 import com.saulhdev.feeder.compose.pages.OverlayPage
@@ -79,14 +78,6 @@ fun NavigationManager(navController: NavHostController) {
             composable<NavRoute.License> { LicenseScreen() }
             composable<NavRoute.Changelog> { ChangelogScreen() }
             composable<NavRoute.AddFeed> { AddFeedPage() }
-            composable<NavRoute.EditFeed>(
-                deepLinks = listOf(navDeepLink {
-                    uriPattern = "$NAV_BASE${Routes.EDIT_FEED}/{feedId}"
-                })
-            ) {
-                val args = it.toRoute<NavRoute.EditFeed>()
-                EditFeedPage(args.feedId)
-            }
             composable<NavRoute.WebView>(
                 deepLinks = listOf(navDeepLink { uriPattern = "$NAV_BASE${Routes.WEB_VIEW}/{url}" })
             ) {
@@ -107,7 +98,6 @@ fun NavigationManager(navController: NavHostController) {
 
 object Routes {
     const val MAIN = "main"
-    const val EDIT_FEED = "edit_feed"
     const val WEB_VIEW = "web_view"
     const val ARTICLE_VIEW = "article_page"
 }
@@ -146,9 +136,6 @@ open class NavRoute {
 
     @Serializable
     data object Changelog : NavRoute()
-
-    @Serializable
-    data class EditFeed(val feedId: Long = 0L) : NavRoute()
 
     @Serializable
     data class Main(val page: Int = 0) : NavRoute()
