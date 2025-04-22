@@ -36,7 +36,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun ArticleItem(
     article: FeedItem,
-    onBookmark: suspend (Boolean) -> Int?,
+    onBookmark: suspend (Boolean) -> Unit,
     onClick: () -> Unit
 ) {
     val content = article.content
