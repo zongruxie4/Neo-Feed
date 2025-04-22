@@ -1,6 +1,6 @@
 /*
  * This file is part of Neo Feed
- * Copyright (c) 2022   Saul Henriquez <henriquez.saul@gmail.com>
+ * Copyright (c) 2025   Saul Henriquez <henriquez.saul@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -18,11 +18,11 @@
 
 package com.saulhdev.feeder.viewmodel
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.saulhdev.feeder.db.ArticleRepository
+import com.saulhdev.feeder.db.FeedRepository
 import com.saulhdev.feeder.db.models.Feed
 import com.saulhdev.feeder.models.EditFeedViewState
+import com.saulhdev.feeder.utils.extensions.NeoViewModel
 import com.saulhdev.feeder.utils.sloppyLinkToStrictURL
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -34,8 +34,8 @@ import kotlinx.coroutines.flow.update
 import org.koin.java.KoinJavaComponent.inject
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class EditFeedViewModel : ViewModel() {
-    private val repository: ArticleRepository by inject(ArticleRepository::class.java)
+class EditFeedViewModel : NeoViewModel() {
+    private val repository: FeedRepository by inject(FeedRepository::class.java)
 
     private val _feedId: MutableStateFlow<Long> = MutableStateFlow(-1L)
 
@@ -44,7 +44,7 @@ class EditFeedViewModel : ViewModel() {
     }
 
     val feed = _feedId.mapLatest {
-        repository.getFeed(it) ?: Feed()
+        repository.loadFeedById(it) ?: Feed()
     }.stateIn(
         viewModelScope,
         SharingStarted.Lazily,

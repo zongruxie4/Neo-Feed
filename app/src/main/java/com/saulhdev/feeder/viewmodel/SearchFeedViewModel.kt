@@ -1,6 +1,6 @@
 /*
  * This file is part of Neo Feed
- * Copyright (c) 2022   Saul Henriquez <henriquez.saul@gmail.com>
+ * Copyright (c) 2025   Saul Henriquez <henriquez.saul@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -21,8 +21,8 @@ package com.saulhdev.feeder.viewmodel
 import android.os.Parcelable
 import android.util.Log
 import androidx.compose.runtime.Immutable
-import androidx.lifecycle.ViewModel
 import com.saulhdev.feeder.models.FeedParser
+import com.saulhdev.feeder.utils.extensions.NeoViewModel
 import com.saulhdev.feeder.utils.sloppyLinkToStrictURL
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flow
@@ -31,7 +31,7 @@ import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.parcelize.Parcelize
 import java.net.URL
 
-class SearchFeedViewModel : ViewModel() {
+class SearchFeedViewModel : NeoViewModel() {
     private val feedParser: FeedParser = FeedParser()
 
     fun searchForFeeds(url: URL) =

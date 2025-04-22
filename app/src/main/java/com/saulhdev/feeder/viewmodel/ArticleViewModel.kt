@@ -1,6 +1,6 @@
 /*
  * This file is part of Neo Feed
- * Copyright (c) 2023   Saul Henriquez <henriquez.saul@gmail.com>
+ * Copyright (c) 2025 Saul Henriquez <henriquez.saul@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -18,25 +18,31 @@
 
 package com.saulhdev.feeder.viewmodel
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.saulhdev.feeder.db.SourceRepository
+import com.saulhdev.feeder.db.ArticleRepository
+import com.saulhdev.feeder.db.FeedRepository
 import com.saulhdev.feeder.db.models.Feed
+import com.saulhdev.feeder.utils.extensions.NeoViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.plus
 
-class SourcesViewModel(private val sourcesRepository: SourceRepository) : ViewModel() {
+class ArticleViewModel(
+    private val articleRepo: ArticleRepository,
+    private val feedsRepo: FeedRepository,
+) : NeoViewModel() {
+    private val ioScope = viewModelScope.plus(Dispatchers.IO)
 
-    private val _repositories = MutableStateFlow<List<Feed>>(emptyList())
+    fun articleById(id: Long) = articleRepo.getArticleById(id)
+        .stateIn(
+            ioScope,
+            SharingStarted.Eagerly,
+            null
+        )
 
-    init {
-        viewModelScope.launch(Dispatchers.IO) {
-            sourcesRepository.getAllFeeds().collectLatest {
-                _repositories.emit(it)
-            }
-        }
+    fun getFeedById(id: Long): Flow<Feed?> {
+        return feedsRepo.getFeedById(id)
     }
-
 }
