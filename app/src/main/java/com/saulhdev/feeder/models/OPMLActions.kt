@@ -4,14 +4,13 @@ import android.content.ContentResolver
 import android.net.Uri
 import android.util.Log
 import com.saulhdev.feeder.R
+import com.saulhdev.feeder.db.FeedRepository
 import com.saulhdev.feeder.db.NeoFeedDb
-import com.saulhdev.feeder.db.SourceRepository
 import com.saulhdev.feeder.sync.requestFeedSync
 import com.saulhdev.feeder.utils.ToastMaker
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.koin.java.KoinJavaComponent.inject
-
 import kotlin.system.measureTimeMillis
 
 /**
@@ -21,13 +20,13 @@ suspend fun exportOpml(uri: Uri) = withContext(Dispatchers.IO) {
     try {
         val time = measureTimeMillis {
             val contentResolver: ContentResolver by inject(ContentResolver::class.java)
-            val sourceRepository: SourceRepository by inject(SourceRepository::class.java)
+            val sourceRepository: FeedRepository by inject(FeedRepository::class.java)
             contentResolver.openOutputStream(uri)?.let {
                 writeOutputStream(
                     it,
                     sourceRepository.loadTags()
                 ) { tag ->
-                    sourceRepository.loadFeeds(tag = tag)
+                    sourceRepository.loadFeedsByTag(tag = tag)
                 }
             }
         }

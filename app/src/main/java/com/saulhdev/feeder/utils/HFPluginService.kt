@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.os.IBinder
 import com.saulhdev.feeder.db.ArticleRepository
+import com.saulhdev.feeder.db.FeedRepository
 import com.saulhdev.feeder.db.models.Feed
 import com.saulhdev.feeder.sdk.FeedCategory
 import com.saulhdev.feeder.sdk.FeedItem
@@ -19,7 +20,8 @@ import kotlinx.coroutines.withContext
 import org.koin.java.KoinJavaComponent.inject
 
 class HFPluginService : Service(), CoroutineScope by MainScope() {
-    private val repository: ArticleRepository by inject(ArticleRepository::class.java)
+    private val feedsRepo: FeedRepository by inject(FeedRepository::class.java)
+    private val articlesRepo: ArticleRepository by inject(ArticleRepository::class.java)
 
     private val mBinder: IBinder = object : IFeedInterface.Stub() {
         override fun getFeed(
@@ -34,10 +36,10 @@ class HFPluginService : Service(), CoroutineScope by MainScope() {
 
                 //Load feed articles from database
                 withContext(Dispatchers.IO) {
-                    val feedList: List<Feed> = repository.getAllFeeds()
+                    val feedList: List<Feed> = feedsRepo.loadFeeds()
 
                     feedList.forEach { feed ->
-                        repository.getFeedArticles(feed).forEach { article ->
+                        articlesRepo.getFeedArticles(feed).forEach { article ->
                             list.add(FeedItem(article, feed))
                         }
                     }
@@ -48,10 +50,10 @@ class HFPluginService : Service(), CoroutineScope by MainScope() {
         }
 
         override fun getCategories(callback: IFeedInterfaceCallback) {
-            val feedList: List<Feed> = repository.getAllFeeds()
+            val feedList: List<Feed> = feedsRepo.loadFeeds()
 
             callback.onCategoriesReceive(feedList.map {
-                FeedCategory(it.url.toString(), it.title, Color.GREEN, it.feedImage.toString())
+                FeedCategory(it.id.toString(), it.title, Color.GREEN, it.feedImage.toString())
             })
         }
     }

@@ -10,17 +10,20 @@ import com.google.android.material.color.DynamicColors
 import com.google.android.material.color.DynamicColorsOptions
 import com.jakewharton.threetenabp.AndroidThreeTen
 import com.saulhdev.feeder.db.ArticleRepository
+import com.saulhdev.feeder.db.FeedRepository
 import com.saulhdev.feeder.db.NeoFeedDb
-import com.saulhdev.feeder.db.SourceRepository
 import com.saulhdev.feeder.plugin.PluginFetcher
+import com.saulhdev.feeder.preference.FeedPreferences.Companion.prefsModule
 import com.saulhdev.feeder.sync.SyncRestClient
 import com.saulhdev.feeder.utils.ApplicationCoroutineScope
 import com.saulhdev.feeder.utils.OverlayBridge
 import com.saulhdev.feeder.utils.ToastMaker
 import com.saulhdev.feeder.utils.Utilities
+import com.saulhdev.feeder.viewmodel.ArticleViewModel
+import com.saulhdev.feeder.viewmodel.ArticlesViewModel
 import com.saulhdev.feeder.viewmodel.EditFeedViewModel
+import com.saulhdev.feeder.viewmodel.FeedsViewModel
 import com.saulhdev.feeder.viewmodel.SearchFeedViewModel
-import com.saulhdev.feeder.viewmodel.SourcesViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.koin.android.ext.koin.androidContext
@@ -28,6 +31,7 @@ import org.koin.android.ext.koin.androidLogger
 import org.koin.androix.startup.KoinStartup
 import org.koin.core.annotation.KoinExperimentalAPI
 import org.koin.core.context.GlobalContext
+import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.koinConfiguration
 import org.koin.dsl.module
@@ -48,15 +52,17 @@ class NFApplication : MultiDexApplication(), KoinStartup {
         }
         viewModelOf(::EditFeedViewModel)
         viewModelOf(::SearchFeedViewModel)
-        viewModelOf(::SourcesViewModel)
+        viewModelOf(::FeedsViewModel)
+        viewModelOf(::ArticlesViewModel)
+        viewModelOf(::ArticleViewModel)
     }
 
+    // TODO Move to its class
     private val dataModule = module {
         single<NeoFeedDb> { NeoFeedDb.getInstance(this@NFApplication) }
-        single { androidContext().dataStore }
-        single { ArticleRepository(this@NFApplication) }
-        single { SourceRepository(this@NFApplication) }
-        single { SyncRestClient(this@NFApplication) }
+        singleOf(::ArticleRepository)
+        singleOf(::FeedRepository)
+        singleOf(::SyncRestClient)
     }
 
     private val coreModule = module {

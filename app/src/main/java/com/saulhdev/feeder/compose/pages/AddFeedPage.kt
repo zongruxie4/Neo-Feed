@@ -64,22 +64,22 @@ import com.saulhdev.feeder.compose.navigation.LocalNavController
 import com.saulhdev.feeder.compose.util.StableHolder
 import com.saulhdev.feeder.compose.util.interceptKey
 import com.saulhdev.feeder.compose.util.safeSemantics
-import com.saulhdev.feeder.db.ArticleRepository
 import com.saulhdev.feeder.db.models.Feed
+import com.saulhdev.feeder.utils.extensions.koinNeoViewModel
 import com.saulhdev.feeder.utils.sloppyLinkToStrictURL
 import com.saulhdev.feeder.utils.sloppyLinkToStrictURLNoThrows
+import com.saulhdev.feeder.viewmodel.FeedsViewModel
 import com.saulhdev.feeder.viewmodel.SearchFeedViewModel
 import com.saulhdev.feeder.viewmodel.SearchResult
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.launch
-import org.koin.androidx.compose.koinViewModel
-import org.koin.java.KoinJavaComponent.inject
 import java.net.MalformedURLException
 import java.net.URL
 
 @Composable
 fun AddFeedPage(
-    searchFeedViewModel: SearchFeedViewModel = koinViewModel()
+    searchFeedViewModel: SearchFeedViewModel = koinNeoViewModel(),
+    feedsViewModel: FeedsViewModel = koinNeoViewModel(),
 ) {
     val coroutineScope = rememberCoroutineScope()
     val navController = LocalNavController.current
@@ -89,17 +89,15 @@ fun AddFeedPage(
         mutableStateOf(listOf<SearchResult>())
     }
 
-    val repository: ArticleRepository by inject(ArticleRepository::class.java)
-
     BackHandler {
-        saveFeed(results, repository)
+        feedsViewModel.saveFeed(results)
         navController.popBackStack()
     }
 
     ViewWithActionBar(
         title = title,
         onBackAction = {
-            saveFeed(results, repository)
+            feedsViewModel.saveFeed(results)
         }
     ) { paddingValues ->
         var currentlySearching by rememberSaveable {
@@ -152,7 +150,7 @@ fun AddFeedPage(
     }
 }
 
-fun saveFeed(results: List<SearchResult>, repository: ArticleRepository) {
+fun FeedsViewModel.saveFeed(results: List<SearchResult>) {
     results.forEach { result ->
         if (result.isError) {
             return@forEach
@@ -163,7 +161,7 @@ fun saveFeed(results: List<SearchResult>, repository: ArticleRepository) {
                 url = sloppyLinkToStrictURL(result.url),
                 feedImage = sloppyLinkToStrictURL(result.url)
             )
-            repository.insertFeed(feed)
+            insertFeed(feed)
         }
     }
 }

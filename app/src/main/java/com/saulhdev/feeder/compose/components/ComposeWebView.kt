@@ -18,9 +18,9 @@
 
 package com.saulhdev.feeder.compose.components
 
-import android.app.Activity
 import android.net.Uri
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -32,7 +32,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.rememberNavController
@@ -56,7 +55,7 @@ fun ComposeWebView(
     val subTitle = remember { mutableStateOf("Neo Feed") }
 
     val navController = rememberNavController()
-    val activity = (LocalContext.current as? Activity)
+    val activity = LocalActivity.current
 
     BackHandler {
         if (navController.currentBackStackEntry?.destination?.route == null) {

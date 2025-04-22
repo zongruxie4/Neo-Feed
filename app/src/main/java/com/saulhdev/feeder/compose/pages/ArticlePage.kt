@@ -1,8 +1,8 @@
 package com.saulhdev.feeder.compose.pages
 
-import android.app.Activity
 import android.net.Uri
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -34,7 +34,6 @@ import com.saulhdev.feeder.compose.components.RoundButton
 import com.saulhdev.feeder.compose.components.ViewWithActionBar
 import com.saulhdev.feeder.compose.components.WithBidiDeterminedLayoutDirection
 import com.saulhdev.feeder.compose.navigation.Routes
-import com.saulhdev.feeder.db.ArticleRepository
 import com.saulhdev.feeder.icon.phosphor.ArrowSquareOut
 import com.saulhdev.feeder.icon.phosphor.ShareNetwork
 import com.saulhdev.feeder.theme.LinkTextStyle
@@ -42,12 +41,13 @@ import com.saulhdev.feeder.utils.blobFile
 import com.saulhdev.feeder.utils.blobFullFile
 import com.saulhdev.feeder.utils.blobFullInputStream
 import com.saulhdev.feeder.utils.blobInputStream
+import com.saulhdev.feeder.utils.extensions.koinNeoViewModel
 import com.saulhdev.feeder.utils.htmlFormattedText
 import com.saulhdev.feeder.utils.launchView
 import com.saulhdev.feeder.utils.shareIntent
 import com.saulhdev.feeder.utils.unicodeWrap
 import com.saulhdev.feeder.utils.urlEncode
-import org.koin.java.KoinJavaComponent.inject
+import com.saulhdev.feeder.viewmodel.ArticleViewModel
 import org.threeten.bp.ZonedDateTime
 import org.threeten.bp.format.DateTimeFormatter
 import org.threeten.bp.format.FormatStyle
@@ -56,12 +56,13 @@ import java.util.Locale
 @Composable
 fun ArticleScreen(
     articleId: Long,
+    viewModel: ArticleViewModel = koinNeoViewModel(),
     onDismiss: (() -> Unit)? = null,
 ) {
     val context = LocalContext.current
-    val repository: ArticleRepository by inject(ArticleRepository::class.java)
-    val article by repository.getArticleById(articleId).collectAsState(initial = null)
-    val feed by repository.getFeedById(article?.feedId ?: 0).collectAsState(initial = null)
+    val activity = LocalActivity.current
+    val article by viewModel.articleById(articleId).collectAsState(initial = null)
+    val feed by viewModel.getFeedById(article?.feedId ?: 0).collectAsState(initial = null)
 
     val showFullArticle by remember {
         derivedStateOf { feed?.fullTextByDefault ?: false }
@@ -79,7 +80,6 @@ fun ArticleScreen(
     val feedTitle by remember { derivedStateOf { feed?.title ?: "Neo Feed" } }
 
     val navController = rememberNavController()
-    val activity = (LocalContext.current as? Activity)
     BackHandler {
         onDismiss?.invoke()
             ?: if (navController.currentBackStackEntry?.destination?.route == null) {

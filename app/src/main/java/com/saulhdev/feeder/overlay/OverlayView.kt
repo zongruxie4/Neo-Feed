@@ -39,7 +39,6 @@ import com.saulhdev.feeder.NFApplication
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.compose.navigation.Routes
 import com.saulhdev.feeder.data.MenuItem
-import com.saulhdev.feeder.db.ArticleRepository
 import com.saulhdev.feeder.feed.FeedAdapter
 import com.saulhdev.feeder.launcherapi.LauncherAPI
 import com.saulhdev.feeder.launcherapi.OverlayThemeHolder
@@ -50,12 +49,12 @@ import com.saulhdev.feeder.utils.LinearLayoutManagerWrapper
 import com.saulhdev.feeder.utils.OverlayBridge
 import com.saulhdev.feeder.utils.isDark
 import com.saulhdev.feeder.utils.setCustomTheme
+import com.saulhdev.feeder.viewmodel.ArticlesViewModel
 import com.saulhdev.feeder.views.DialogMenu
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 import org.koin.java.KoinJavaComponent.inject
@@ -70,7 +69,7 @@ class OverlayView(val context: Context) :
 
     private lateinit var rootView: View
     private lateinit var adapter: FeedAdapter
-    private val repository: ArticleRepository by inject(ArticleRepository::class.java)
+    private val viewModel: ArticlesViewModel by inject(ArticlesViewModel::class.java)
     private val articles: SyncRestClient by inject(SyncRestClient::class.java)
 
     val prefs = FeedPreferences.getInstance(context)
@@ -223,22 +222,18 @@ class OverlayView(val context: Context) :
         refreshNotifications()
 
         syncScope.launch {
-            repository.getFeedArticles()
-                .mapLatest { articles ->
-                    (if (prefs.removeDuplicates.getValue()) articles.distinctBy { it.content.link }
-                    else articles)
-                        .sortedByDescending { it.time }
-                }.collect {
-                    mainScope.launch {
-                        adapter.replace(it)
-                    }
+            viewModel.articlesList.collect {
+                mainScope.launch {
+                    adapter.replace(it)
                 }
+            }
         }
         syncScope.launch {
-            repository.isSyncing
+            viewModel.isSyncing
                 .collect {
                     mainScope.launch {
-                        rootView.findViewById<SwipeRefreshLayout>(R.id.swipe_to_refresh).isRefreshing = it
+                        rootView.findViewById<SwipeRefreshLayout>(R.id.swipe_to_refresh).isRefreshing =
+                            it
                     }
                 }
         }

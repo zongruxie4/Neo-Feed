@@ -18,19 +18,11 @@
 
 package com.saulhdev.feeder.sync
 
-import android.content.Context
 import com.saulhdev.feeder.db.ID_ALL
-import com.saulhdev.feeder.db.models.Feed
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class SyncRestClient(val context: Context) {
-    suspend fun getArticleList(feed: Feed) {
-        withContext(Dispatchers.IO) {
-            requestFeedSync(feed.id)
-        }
-    }
-
+class SyncRestClient() {
     suspend fun syncAllFeeds() = withContext(Dispatchers.IO) {
         requestFeedSync(ID_ALL)
     }

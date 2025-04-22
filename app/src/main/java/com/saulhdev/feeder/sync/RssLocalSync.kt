@@ -3,9 +3,9 @@ package com.saulhdev.feeder.sync
 import android.content.Context
 import android.util.Log
 import com.saulhdev.feeder.db.ArticleRepository
+import com.saulhdev.feeder.db.FeedRepository
 import com.saulhdev.feeder.db.ID_ALL
 import com.saulhdev.feeder.db.ID_UNSET
-import com.saulhdev.feeder.db.SourceRepository
 import com.saulhdev.feeder.db.models.Feed
 import com.saulhdev.feeder.db.models.FeedArticle
 import com.saulhdev.feeder.models.FeedParser
@@ -71,13 +71,14 @@ internal suspend fun syncFeeds(
     minFeedAgeMinutes: Int = 5
 ): Boolean {
     var result = false
-    val aRepository: ArticleRepository by inject(ArticleRepository::class.java)
+    val feedsRepo: FeedRepository by inject(FeedRepository::class.java)
+    val articlesRepo: ArticleRepository by inject(ArticleRepository::class.java)
     val downloadTime = Instant.now()
     var needFullTextSync = false
     val time = measureTimeMillis {
         try {
             supervisorScope {
-                val sRepository: SourceRepository by inject(SourceRepository::class.java)
+                val sRepository: FeedRepository by inject(FeedRepository::class.java)
                 val staleTime: Long = if (forceNetwork) {
                     Instant.now().toEpochMilli()
                 } else {
@@ -100,13 +101,14 @@ internal suspend fun syncFeeds(
                     needFullTextSync = needFullTextSync || it.fullTextByDefault
                     launch(coroutineContext) {
                         try {
-                            aRepository.setCurrentlySyncingOn(
+                            feedsRepo.setCurrentlySyncingOn(
                                 feedId = it.id,
                                 syncing = true,
                                 lastSync = Instant.now(),
                             )
                             syncFeed(
-                                repository = aRepository,
+                                feedsRepo = feedsRepo,
+                                articleRepo = articlesRepo,
                                 feedSql = it,
                                 filesDir = context.filesDir,
                                 maxFeedItemCount = maxFeedItemCount,
@@ -117,7 +119,7 @@ internal suspend fun syncFeeds(
                             Log.e(TAG, "Failed to sync ${it.title}: ${it.url}", e)
                         } finally {
                             Log.d(TAG, "Sync finished ${it.title}")
-                            aRepository.setCurrentlySyncingOn(feedId = it.id, syncing = false)
+                            feedsRepo.setCurrentlySyncingOn(feedId = it.id, syncing = false)
                         }
                     }
                 }
@@ -139,7 +141,8 @@ internal suspend fun syncFeeds(
 }
 
 private suspend fun syncFeed(
-    repository: ArticleRepository,
+    feedsRepo: FeedRepository,
+    articleRepo: ArticleRepository,
     feedSql: Feed,
     filesDir: File,
     maxFeedItemCount: Int,
@@ -182,7 +185,7 @@ private suspend fun syncFeed(
     val articles =
         items?.reversed()
             ?.map { item ->
-                val article = repository.getArticleByGuid(
+                val article = articleRepo.getArticleByGuid(
                     guid = item.id.toString(),
                     feedId = feedSql.id
                 ) ?: FeedArticle(firstSyncedTime = downloadTime)
@@ -193,7 +196,7 @@ private suspend fun syncFeed(
             } ?: emptyList()
     Log.d(TAG, "Articles  ${articles.size}")
 
-    repository.updateOrInsertArticle(articles) { feedItem, text ->
+    articleRepo.updateOrInsertArticle(articles) { feedItem, text ->
         withContext(Dispatchers.IO) {
             blobOutputStream(feedItem.id, filesDir).bufferedWriter().use {
                 it.write(text)
@@ -201,13 +204,14 @@ private suspend fun syncFeed(
         }
     }
 
-    repository.updateFeed(feedSql.copy(
-        title = feedSql.title,
-        feedImage = feed.icon?.let { sloppyLinkToStrictURLNoThrows(it) }
-            ?: feedSql.feedImage
-    ))
+    feedsRepo.updateFeed(
+        feedSql.copy(
+            title = feedSql.title,
+            feedImage = feed.icon?.let { sloppyLinkToStrictURLNoThrows(it) }
+                ?: feedSql.feedImage
+        ))
 
-    val ids = repository.getItemsToBeCleanedFromFeed(
+    val ids = articleRepo.getItemsToBeCleanedFromFeed(
         feedId = feedSql.id,
         keepCount = max(maxFeedItemCount, items?.size ?: 0)
     )
@@ -223,13 +227,13 @@ private suspend fun syncFeed(
         }
     }
 
-    repository.deleteArticles(ids)
+    articleRepo.deleteArticles(ids)
 }
 
 class ResponseFailure(message: String?) : Exception(message)
 
 internal suspend fun feedsToSync(
-    repository: SourceRepository,
+    repository: FeedRepository,
     feedId: Long,
     tag: String,
     staleTime: Long = -1L
@@ -240,7 +244,7 @@ internal suspend fun feedsToSync(
             val feed = if (staleTime > 0) repository.loadFeedIfStale(
                 feedId = feedId,
                 staleTime = staleTime
-            ) else repository.loadFeed(feedId)
+            ) else repository.loadFeedById(feedId)
             if (feed != null) {
                 listOf(feed)
             } else {
@@ -252,7 +256,7 @@ internal suspend fun feedsToSync(
             if (staleTime > 0) repository.loadFeedIfStale(
                 feedId = feedId,
                 staleTime = staleTime
-            ) else repository.loadFeed(feedId)
+            ) else repository.loadFeedById(feedId)
         }
 
         /*tag.isNotEmpty() -> if (staleTime > 0) feedDao.loadFeedsIfStale(

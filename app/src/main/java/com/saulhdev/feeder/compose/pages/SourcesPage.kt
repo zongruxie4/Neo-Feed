@@ -60,7 +60,6 @@ import com.saulhdev.feeder.compose.components.ViewWithActionBar
 import com.saulhdev.feeder.compose.components.dialog.ActionsDialogUI
 import com.saulhdev.feeder.compose.navigation.LocalNavController
 import com.saulhdev.feeder.compose.navigation.NavRoute
-import com.saulhdev.feeder.db.SourceRepository
 import com.saulhdev.feeder.db.models.Feed
 import com.saulhdev.feeder.icon.Phosphor
 import com.saulhdev.feeder.icon.phosphor.CloudArrowDown
@@ -68,6 +67,8 @@ import com.saulhdev.feeder.icon.phosphor.CloudArrowUp
 import com.saulhdev.feeder.models.exportOpml
 import com.saulhdev.feeder.models.importOpml
 import com.saulhdev.feeder.utils.ApplicationCoroutineScope
+import com.saulhdev.feeder.utils.extensions.koinNeoViewModel
+import com.saulhdev.feeder.viewmodel.FeedsViewModel
 import kotlinx.coroutines.launch
 import okhttp3.internal.toLongOrDefault
 import org.koin.java.KoinJavaComponent.inject
@@ -75,15 +76,16 @@ import java.time.LocalDateTime
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
-fun SourcesPage() {
+fun SourcesPage(
+    viewModel: FeedsViewModel = koinNeoViewModel(),
+) {
     val navController = LocalNavController.current
     val scope = rememberCoroutineScope()
-    val repository: SourceRepository by inject(SourceRepository::class.java)
     val localTime = LocalDateTime.now().toString().replace(":", "_").substring(0, 19)
+    // TODO reconsider
     val coroutineScope: ApplicationCoroutineScope by inject(ApplicationCoroutineScope::class.java)
     val showDialog = remember { mutableStateOf(false) }
-    val list: State<List<Feed>> =
-        repository.getAllFeeds().collectAsState(initial = listOf())
+    val list: State<List<Feed>> = viewModel.allFeeds.collectAsState()
     val removeItem: MutableState<Feed?> =
         remember { mutableStateOf(list.value.firstOrNull()) }
     val paneNavigator = rememberListDetailPaneScaffoldNavigator<Any>()
@@ -217,7 +219,7 @@ fun SourcesPage() {
                             openDialogCustom = showDialog,
                             primaryText = stringResource(id = android.R.string.ok),
                             primaryAction = {
-                                repository.deleteFeed(removeItem.value!!)
+                                viewModel.deleteFeed(removeItem.value!!)
                             }
                         )
                     }

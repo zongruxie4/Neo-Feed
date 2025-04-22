@@ -58,13 +58,13 @@ import com.saulhdev.feeder.compose.components.ViewWithActionBar
 import com.saulhdev.feeder.compose.navigation.LocalNavController
 import com.saulhdev.feeder.compose.util.interceptKey
 import com.saulhdev.feeder.models.EditFeedViewState
+import com.saulhdev.feeder.utils.extensions.koinNeoViewModel
 import com.saulhdev.feeder.viewmodel.EditFeedViewModel
-import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun EditFeedPage(
     feedId: Long = -1,
-    editFeedViewModel: EditFeedViewModel = koinViewModel(),
+    editFeedViewModel: EditFeedViewModel = koinNeoViewModel(),
     onDismiss: (() -> Unit)? = null,
 ) {
     val title = stringResource(id = R.string.edit_rss)

@@ -32,7 +32,7 @@ data class FeedItem(
             background_url = article.imageUrl ?: "",
             link = article.link ?: "",
             source = FeedCategory(
-                feed.url.toString(),
+                feed.id.toString(),
                 feed.title,
                 Color.GREEN,
                 feed.feedImage.toString()
