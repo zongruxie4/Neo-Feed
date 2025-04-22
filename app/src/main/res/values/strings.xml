@@ -124,4 +124,16 @@
     <string name="pref_remove_duplicates">Remove duplicate article from different sources</string>
     <string name="theme_auto_system_black">Automatically (from system; black)</string>
     <string name="theme_black">Black</string>
+    <string name="sort_filter">Sort and filter</string>
+    <string name="state_modified">Modified</string>
+    <string name="action_apply">Apply</string>
+    <string name="action_reset">Reset</string>
+    <string name="sorting_order">Sorting order</string>
+    <string name="sorting_chronological">Chronological</string>
+    <string name="sorting_title">Title</string>
+    <string name="sorting_source">Source</string>
+    <string name="sort_ascending">Ascending</string>
+    <string name="sort_descending">Descending</string>
+    <string name="select_all">Select all</string>
+    <string name="deselect_all">Deselect all</string>
 </resources>
