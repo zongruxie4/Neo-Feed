@@ -69,7 +69,7 @@ interface FeedSourceDao {
     suspend fun loadTags(): List<String>
 
     @Query("SELECT * FROM feeds WHERE tag IS :tag")
-    suspend fun loadFeeds(tag: String): List<Feed>
+    suspend fun loadFeedsByTag(tag: String): List<Feed>
 
     @Query(
         """
