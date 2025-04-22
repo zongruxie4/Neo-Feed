@@ -28,6 +28,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.runBlocking
+import kotlin.properties.ReadWriteProperty
+import kotlin.reflect.KProperty
 
 class StringPref(
     @StringRes titleId: Int,
@@ -81,16 +83,28 @@ class FloatPref(
     val specialOutputs: ((Float) -> String) = Float::toString,
 ) : PrefDelegate<Float>(titleId, summaryId, dataStore, key, defaultValue)
 
-abstract class PrefDelegate<T : Any>(
+abstract class PrefDelegate<T>(
     @StringRes var titleId: Int,
     @StringRes var summaryId: Int = -1,
     private val dataStore: DataStore<Preferences>,
     private val key: Preferences.Key<T>,
     private val defaultValue: T
-) {
+) : ReadWriteProperty<Any?, T> {
+    override fun getValue(thisRef: Any?, property: KProperty<*>): T {
+        return runBlocking(Dispatchers.IO) {
+            get().firstOrNull() ?: defaultValue
+        }
+    }
+
     fun getValue(): T {
         return runBlocking(Dispatchers.IO) {
             get().firstOrNull() ?: defaultValue
+        }
+    }
+
+    override operator fun setValue(thisRef: Any?, property: KProperty<*>, value: T) {
+        return runBlocking(Dispatchers.IO) {
+            set(value)
         }
     }
 
@@ -104,7 +118,7 @@ abstract class PrefDelegate<T : Any>(
         return dataStore.data.map { it[key] ?: defaultValue }
     }
 
-    suspend fun set(value: T) {
+    private suspend fun set(value: T) {
         dataStore.edit { it[key] = value }
     }
 }
