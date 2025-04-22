@@ -134,6 +134,7 @@ dependencies {
 
     //Core
     implementation(libs.appcompat)
+    implementation(libs.activity.compose)
     implementation(libs.core.ktx)
     implementation(libs.multidex)
     implementation(libs.swiperefreshlayout)
