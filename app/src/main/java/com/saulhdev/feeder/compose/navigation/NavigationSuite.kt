@@ -20,7 +20,6 @@ import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.window.core.layout.WindowWidthSizeClass
@@ -64,7 +63,7 @@ fun NeoNavigationSuiteScaffold(
     )
 
     NavigationSuiteScaffold(
-        containerColor = Color.Transparent,
+        containerColor = MaterialTheme.colorScheme.background,
         contentColor = MaterialTheme.colorScheme.onBackground,
         layoutType = customNavSuiteType,
         navigationSuiteItems = {
@@ -78,9 +77,9 @@ fun NeoNavigationSuiteScaffold(
             }
         },
         navigationSuiteColors = NavigationSuiteDefaults.colors(
-            navigationBarContainerColor = Color.Transparent,
-            navigationRailContainerColor = Color.Transparent,
-            navigationDrawerContainerColor = Color.Transparent,
+            navigationBarContainerColor = MaterialTheme.colorScheme.background,
+            navigationRailContainerColor = MaterialTheme.colorScheme.background,
+            navigationDrawerContainerColor = MaterialTheme.colorScheme.background,
             navigationBarContentColor = MaterialTheme.colorScheme.onBackground,
             navigationRailContentColor = MaterialTheme.colorScheme.onBackground,
             navigationDrawerContentColor = MaterialTheme.colorScheme.onBackground,
