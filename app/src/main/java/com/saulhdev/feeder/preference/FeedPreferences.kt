@@ -29,10 +29,12 @@ import androidx.datastore.preferences.core.stringSetPreferencesKey
 import androidx.datastore.preferences.preferencesDataStoreFile
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.compose.navigation.NavRoute
+import com.saulhdev.feeder.data.SORT_CHRONOLOGICAL
 import com.saulhdev.feeder.icon.Phosphor
 import com.saulhdev.feeder.icon.phosphor.BookBookmark
 import com.saulhdev.feeder.icon.phosphor.Browser
 import com.saulhdev.feeder.icon.phosphor.Bug
+import com.saulhdev.feeder.icon.phosphor.CaretUp
 import com.saulhdev.feeder.icon.phosphor.Clock
 import com.saulhdev.feeder.icon.phosphor.FunnelSimple
 import com.saulhdev.feeder.icon.phosphor.Hash
@@ -41,6 +43,7 @@ import com.saulhdev.feeder.icon.phosphor.PaintRoller
 import com.saulhdev.feeder.icon.phosphor.SubtractSquare
 import com.saulhdev.feeder.icon.phosphor.WifiHigh
 import com.saulhdev.feeder.utils.getItemsPerFeed
+import com.saulhdev.feeder.utils.getSortingOptions
 import com.saulhdev.feeder.utils.getSyncFrequency
 import com.saulhdev.feeder.utils.getThemes
 import org.koin.core.component.KoinComponent
@@ -161,6 +164,32 @@ class FeedPreferences private constructor(val context: Context) : KoinComponent 
         dataStore = dataStore,
     )
 
+    /* Sort & Filter */
+    var sourcesFilter = StringSetPref(
+        titleId = R.string.title_sources,
+        icon = Phosphor.Info,
+        key = FILTER_SOURCES,
+        dataStore = dataStore,
+        defaultValue = emptySet(),
+    )
+
+    var sortingFilter = StringSelectionPref(
+        titleId = R.string.sorting_order,
+        icon = Phosphor.Info,
+        key = FILTER_SORT,
+        dataStore = dataStore,
+        defaultValue = SORT_CHRONOLOGICAL,
+        entries = getSortingOptions(context),
+    )
+
+    var sortingAsc = BooleanPref(
+        titleId = R.string.sorting_order,
+        defaultValue = false,
+        icon = Phosphor.CaretUp,
+        key = FILTER_SORT_ASC,
+        dataStore = dataStore,
+    )
+
     companion object {
         private var instance: WeakReference<FeedPreferences>? = null
 
@@ -205,5 +234,10 @@ class FeedPreferences private constructor(val context: Context) : KoinComponent 
         val PLUGINS = stringSetPreferencesKey("pref_enabled_plugins")
         val ABOUT = stringPreferencesKey("pref_about")
         val DEBUG = booleanPreferencesKey("pref_debugging")
+
+        // Filter & Sort
+        val FILTER_SOURCES = stringSetPreferencesKey("filter_sources")
+        val FILTER_SORT = stringPreferencesKey("filter_sorting")
+        val FILTER_SORT_ASC = booleanPreferencesKey("filter_sorting_ascending")
     }
 }

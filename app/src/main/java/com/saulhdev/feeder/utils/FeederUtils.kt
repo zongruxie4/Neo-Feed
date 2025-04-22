@@ -21,6 +21,9 @@ package com.saulhdev.feeder.utils
 import android.content.Context
 import android.text.BidiFormatter
 import com.saulhdev.feeder.R
+import com.saulhdev.feeder.data.SORT_CHRONOLOGICAL
+import com.saulhdev.feeder.data.SORT_SOURCE
+import com.saulhdev.feeder.data.SORT_TITLE
 import java.net.MalformedURLException
 import java.net.URL
 import java.net.URLDecoder
@@ -34,6 +37,14 @@ fun getThemes(context: Context): Map<String, String> {
         "light" to context.resources.getString(R.string.theme_light),
         "dark" to context.resources.getString(R.string.theme_dark),
         "black" to context.resources.getString(R.string.theme_black),
+    )
+}
+
+fun getSortingOptions(context: Context): Map<String, String> {
+    return mapOf(
+        SORT_CHRONOLOGICAL to context.resources.getString(R.string.sorting_chronological),
+        SORT_TITLE to context.resources.getString(R.string.sorting_title),
+        SORT_SOURCE to context.resources.getString(R.string.sorting_source),
     )
 }
 
