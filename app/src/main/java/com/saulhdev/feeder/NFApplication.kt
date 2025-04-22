@@ -1,13 +1,8 @@
 package com.saulhdev.feeder
 
 import android.app.Activity
-import android.content.Context
 import android.os.Bundle
 import android.widget.Toast
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.SharedPreferencesMigration
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.SavedStateHandle
 import androidx.multidex.MultiDexApplication
 import androidx.work.WorkManager
@@ -43,12 +38,6 @@ class NFApplication : MultiDexApplication(), KoinStartup {
 
     private val activityHandler = ActivityHandler()
     private val applicationCoroutineScope = ApplicationCoroutineScope()
-    private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(
-        name = "neo_feed",
-        produceMigrations = { context ->
-            listOf(SharedPreferencesMigration(context, "com.saulhdev.neofeed.prefs"))
-        }
-    )
     private val wm: WorkManager by inject(WorkManager::class.java)
 
     private fun savedStateHandle() = SavedStateHandle()
@@ -90,9 +79,9 @@ class NFApplication : MultiDexApplication(), KoinStartup {
 
     @KoinExperimentalAPI
     override fun onKoinStartup() = koinConfiguration {
-            androidLogger()
-            androidContext(this@NFApplication)
-            modules(coreModule, dataModule, modelModule)
+        androidLogger()
+        androidContext(this@NFApplication)
+        modules(coreModule, prefsModule, dataModule, modelModule)
     }
 
     override fun onCreate() {

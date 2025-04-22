@@ -18,10 +18,15 @@
 package com.saulhdev.feeder.preference
 
 import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.SharedPreferencesMigration
+import androidx.datastore.preferences.core.PreferenceDataStoreFactory
+import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
+import androidx.datastore.preferences.preferencesDataStoreFile
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.compose.navigation.NavRoute
 import com.saulhdev.feeder.icon.Phosphor
@@ -40,16 +45,21 @@ import com.saulhdev.feeder.utils.getSyncFrequency
 import com.saulhdev.feeder.utils.getThemes
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
+import org.koin.core.component.inject
+import org.koin.core.module.dsl.singleOf
+import org.koin.dsl.module
 import java.lang.ref.WeakReference
 import kotlin.math.roundToInt
 
 class FeedPreferences private constructor(val context: Context) : KoinComponent {
+    private val dataStore: DataStore<Preferences> by inject()
+
     /* Theme */
     var overlayTheme = StringSelectionPref(
         titleId = R.string.pref_ovr_theme,
         icon = Phosphor.PaintRoller,
         key = OVERLAY_THEME,
-        dataStore = get(),
+        dataStore = dataStore,
         defaultValue = "auto_system",
         entries = getThemes(context)
     )
@@ -58,7 +68,7 @@ class FeedPreferences private constructor(val context: Context) : KoinComponent 
         titleId = R.string.pref_transparency,
         icon = Phosphor.SubtractSquare,
         key = OVERLAY_OPACITY,
-        dataStore = get(),
+        dataStore = dataStore,
         defaultValue = 1f,
         maxValue = 1f,
         minValue = 0f,
@@ -79,7 +89,7 @@ class FeedPreferences private constructor(val context: Context) : KoinComponent 
         titleId = R.string.pref_browser_theme,
         icon = Phosphor.Browser,
         key = OPEN_IN_BROWSER,
-        dataStore = get(),
+        dataStore = dataStore,
         defaultValue = false
     )
 
@@ -87,7 +97,7 @@ class FeedPreferences private constructor(val context: Context) : KoinComponent 
         titleId = R.string.pref_remove_duplicates,
         icon = Phosphor.FunnelSimple,
         key = REMOVE_DUPLICATES,
-        dataStore = get(),
+        dataStore = dataStore,
         defaultValue = true
     )
 
@@ -95,7 +105,7 @@ class FeedPreferences private constructor(val context: Context) : KoinComponent 
         titleId = R.string.pref_offline_reader,
         icon = Phosphor.BookBookmark,
         key = OFFLINE_READER,
-        dataStore = get(),
+        dataStore = dataStore,
         defaultValue = true
     )
 
@@ -104,7 +114,7 @@ class FeedPreferences private constructor(val context: Context) : KoinComponent 
         titleId = R.string.pref_sync_wifi,
         icon = Phosphor.WifiHigh,
         key = SYNC_ON_WIFI,
-        dataStore = get(),
+        dataStore = dataStore,
         defaultValue = true
     )
 
@@ -112,7 +122,7 @@ class FeedPreferences private constructor(val context: Context) : KoinComponent 
         titleId = R.string.pref_sync_frequency,
         icon = Phosphor.Clock,
         key = SYNC_FREQUENCY,
-        dataStore = get(),
+        dataStore = dataStore,
         defaultValue = "1",
         entries = getSyncFrequency(context)
     )
@@ -121,7 +131,7 @@ class FeedPreferences private constructor(val context: Context) : KoinComponent 
         titleId = R.string.pref_items_per_feed,
         icon = Phosphor.Hash,
         key = ITEMS_PER_FEED,
-        dataStore = get(),
+        dataStore = dataStore,
         defaultValue = "25",
         entries = getItemsPerFeed()
     )
@@ -131,7 +141,7 @@ class FeedPreferences private constructor(val context: Context) : KoinComponent 
         titleId = R.string.title_plugin_list,
         icon = Phosphor.Hash,
         key = PLUGINS,
-        dataStore = get(),
+        dataStore = dataStore,
         defaultValue = setOf()
     )
 
@@ -148,18 +158,38 @@ class FeedPreferences private constructor(val context: Context) : KoinComponent 
         defaultValue = false,
         icon = Phosphor.Bug,
         key = DEBUG,
-        dataStore = get(),
+        dataStore = dataStore,
     )
 
     companion object {
         private var instance: WeakReference<FeedPreferences>? = null
 
+        // TODO replace usage with koin's
         @JvmStatic
         fun getInstance(context: Context): FeedPreferences {
             if (instance == null || instance?.get() == null) {
                 instance = WeakReference(FeedPreferences(context))
             }
             return instance!!.get()!!
+        }
+
+        val prefsModule = module {
+            singleOf(::getInstance)
+            singleOf(::provideDataStore)
+        }
+
+        private fun provideDataStore(context: Context): DataStore<Preferences> {
+            return PreferenceDataStoreFactory.create(
+                produceFile = {
+                    context.preferencesDataStoreFile("neo_feed")
+                },
+                migrations = listOf(
+                    SharedPreferencesMigration(
+                        context,
+                        "com.saulhdev.neofeed.prefs"
+                    )
+                )
+            )
         }
 
         val OVERLAY_THEME = stringPreferencesKey("pref_overlay_theme")
