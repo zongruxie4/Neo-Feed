@@ -21,9 +21,9 @@ package com.saulhdev.feeder.utils
 import android.content.Context
 import android.text.BidiFormatter
 import com.saulhdev.feeder.R
-import com.saulhdev.feeder.data.SORT_CHRONOLOGICAL
-import com.saulhdev.feeder.data.SORT_SOURCE
-import com.saulhdev.feeder.data.SORT_TITLE
+import com.saulhdev.feeder.data.entity.SORT_CHRONOLOGICAL
+import com.saulhdev.feeder.data.entity.SORT_SOURCE
+import com.saulhdev.feeder.data.entity.SORT_TITLE
 import java.net.MalformedURLException
 import java.net.URL
 import java.net.URLDecoder

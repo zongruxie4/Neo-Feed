@@ -11,7 +11,7 @@ import com.rometools.rome.feed.synd.SyndEnclosure
 import com.rometools.rome.feed.synd.SyndEntry
 import com.rometools.rome.feed.synd.SyndFeed
 import com.rometools.rome.feed.synd.SyndPerson
-import com.saulhdev.feeder.views.HtmlToPlainTextConverter
+import com.saulhdev.feeder.ui.views.HtmlToPlainTextConverter
 import org.jsoup.parser.Parser.unescapeEntities
 import org.threeten.bp.Instant
 import org.threeten.bp.ZoneOffset

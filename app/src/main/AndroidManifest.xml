@@ -19,7 +19,7 @@
         android:maxSdkVersion="28" />
 
     <application
-        android:name="com.saulhdev.feeder.NFApplication"
+        android:name=".NFApplication"
         android:allowBackup="true"
         android:enableOnBackInvokedCallback="true"
         android:icon="@mipmap/ic_launcher"
@@ -55,7 +55,7 @@
         </activity>
 
         <service
-            android:name=".overlay.DrawerOverlayService"
+            android:name=".manager.service.DrawerOverlayService"
             android:enabled="true"
             android:exported="true"
             android:foregroundServiceType="shortService">
@@ -71,7 +71,7 @@
         </service>
 
         <service
-            android:name="com.saulhdev.feeder.utils.HFPluginService"
+            android:name=".manager.service.HFPluginService"
             android:exported="true"
             android:foregroundServiceType="dataSync">
             <intent-filter>

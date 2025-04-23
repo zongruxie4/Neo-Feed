@@ -5,7 +5,7 @@ import android.content.res.Configuration
 import com.google.android.libraries.gsa.d.a.OverlayController
 import com.google.android.libraries.gsa.d.a.OverlaysController
 import com.google.android.libraries.gsa.d.a.v
-import com.saulhdev.feeder.overlay.OverlayView
+import com.saulhdev.feeder.ui.overlay.OverlayView
 
 class ConfigurationOverlayController(private val service: Service) : OverlaysController(service) {
     override fun Hx() = 24
