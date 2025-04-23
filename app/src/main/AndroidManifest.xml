@@ -19,7 +19,7 @@
         android:maxSdkVersion="28" />
 
     <application
-        android:name=".NFApplication"
+        android:name=".NeoApp"
         android:allowBackup="true"
         android:enableOnBackInvokedCallback="true"
         android:icon="@mipmap/ic_launcher"

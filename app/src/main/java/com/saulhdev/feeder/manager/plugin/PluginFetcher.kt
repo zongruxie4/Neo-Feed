@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.util.Log
-import com.saulhdev.feeder.NFApplication
+import com.saulhdev.feeder.NeoApp
 import com.saulhdev.feeder.data.content.FeedPreferences
 
 object PluginFetcher {
@@ -37,7 +37,7 @@ object PluginFetcher {
             Pair(it.serviceInfo.packageName, it.serviceInfo.metaData)
         }
 
-        val prefs = FeedPreferences.getInstance(NFApplication.instance)
+        val prefs = FeedPreferences.getInstance(NeoApp.instance)
         if (prefs.debugging.getValue()) {
             Log.d("PluginFetcher", "Packages that has service: $hasService")
         }

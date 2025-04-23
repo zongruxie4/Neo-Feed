@@ -35,7 +35,7 @@ import com.google.android.libraries.gsa.d.a.OverlayController
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.saulhdev.feeder.MainActivity
-import com.saulhdev.feeder.NFApplication
+import com.saulhdev.feeder.NeoApp
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.data.content.FeedPreferences
 import com.saulhdev.feeder.data.entity.MenuItem
@@ -183,7 +183,7 @@ class OverlayView(val context: Context) :
                 }
 
                 "restart" -> {
-                    val application: NFApplication by inject(NFApplication::class.java)
+                    val application: NeoApp by inject(NeoApp::class.java)
                     application.restart(false)
                 }
             }
@@ -244,7 +244,7 @@ class OverlayView(val context: Context) :
                 }
             }
         }
-        NFApplication.bridge.setCallback(this)
+        NeoApp.bridge.setCallback(this)
     }
 
     private fun refreshNotifications() {
@@ -255,7 +255,7 @@ class OverlayView(val context: Context) :
 
     override fun onDestroy() {
         super.onDestroy()
-        NFApplication.bridge.setCallback(null)
+        NeoApp.bridge.setCallback(null)
     }
 
     override fun onScroll(f: Float) {

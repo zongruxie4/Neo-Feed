@@ -75,7 +75,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.saulhdev.feeder.NFApplication
+import com.saulhdev.feeder.NeoApp
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.data.content.FeedPreferences
 import com.saulhdev.feeder.manager.sync.SyncRestClient
@@ -239,7 +239,7 @@ fun OverlayPage(
                                             },
                                             onClick = {
                                                 showMenu = false
-                                                NFApplication.instance.restart(false)
+                                                NeoApp.instance.restart(false)
                                             },
                                             leadingIcon = {
                                                 Icon(

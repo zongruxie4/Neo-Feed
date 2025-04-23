@@ -38,7 +38,7 @@ import org.koin.dsl.module
 import org.koin.java.KoinJavaComponent.inject
 import java.lang.ref.WeakReference
 
-class NFApplication : MultiDexApplication(), KoinStartup {
+class NeoApp : MultiDexApplication(), KoinStartup {
 
     private val activityHandler = ActivityHandler()
     private val applicationCoroutineScope = ApplicationCoroutineScope()
@@ -59,7 +59,7 @@ class NFApplication : MultiDexApplication(), KoinStartup {
 
     // TODO Move to its class
     private val dataModule = module {
-        single<NeoFeedDb> { NeoFeedDb.getInstance(this@NFApplication) }
+        single<NeoFeedDb> { NeoFeedDb.getInstance(this@NeoApp) }
         singleOf(::ArticleRepository)
         singleOf(::FeedRepository)
         singleOf(::SyncRestClient)
@@ -67,7 +67,7 @@ class NFApplication : MultiDexApplication(), KoinStartup {
 
     private val coreModule = module {
         single { contentResolver }
-        single { WorkManager.getInstance(this@NFApplication) }
+        single { WorkManager.getInstance(this@NeoApp) }
         single<ToastMaker> {
             object : ToastMaker {
                 override suspend fun makeToast(text: String) = withContext(Dispatchers.Main) {
@@ -80,13 +80,13 @@ class NFApplication : MultiDexApplication(), KoinStartup {
             }
         }
         single { applicationCoroutineScope }
-        single<NFApplication> { this@NFApplication }
+        single<NeoApp> { this@NeoApp }
     }
 
     @KoinExperimentalAPI
     override fun onKoinStartup() = koinConfiguration {
         androidLogger()
-        androidContext(this@NFApplication)
+        androidContext(this@NeoApp)
         modules(coreModule, prefsModule, dataModule, modelModule)
     }
 
@@ -154,7 +154,7 @@ class NFApplication : MultiDexApplication(), KoinStartup {
     }
 
     companion object {
-        lateinit var instance: NFApplication
+        lateinit var instance: NeoApp
         val bridge = OverlayBridge()
 
         private var mainActivityRef: WeakReference<MainActivity> = WeakReference(null)

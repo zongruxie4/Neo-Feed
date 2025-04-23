@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.res.Configuration
 import android.util.SparseIntArray
 import androidx.core.content.ContextCompat
-import com.saulhdev.feeder.NFApplication
+import com.saulhdev.feeder.NeoApp
 import com.saulhdev.feeder.R
 
 object Theming {
@@ -18,28 +18,28 @@ object Theming {
             put(
                 Colors.CARD_BG.ordinal,
                 ContextCompat.getColor(
-                    NFApplication.instance,
+                    NeoApp.instance,
                     com.google.android.material.R.color.m3_sys_color_dynamic_light_surface_container
                 )
             )
             put(
                 Colors.TEXT_COLOR_PRIMARY.ordinal,
                 ContextCompat.getColor(
-                    NFApplication.instance,
+                    NeoApp.instance,
                     com.google.android.material.R.color.m3_sys_color_dynamic_light_on_surface
                 )
             )
             put(
                 Colors.TEXT_COLOR_SECONDARY.ordinal,
                 ContextCompat.getColor(
-                    NFApplication.instance,
+                    NeoApp.instance,
                     com.google.android.material.R.color.m3_sys_color_dynamic_light_on_surface_variant
                 )
             )
             put(
                 Colors.OVERLAY_BG.ordinal,
                 ContextCompat.getColor(
-                    NFApplication.instance,
+                    NeoApp.instance,
                     com.google.android.material.R.color.m3_sys_color_dynamic_light_background
                 )
             )
@@ -53,28 +53,28 @@ object Theming {
             put(
                 Colors.CARD_BG.ordinal,
                 ContextCompat.getColor(
-                    NFApplication.instance,
+                    NeoApp.instance,
                     com.google.android.material.R.color.m3_sys_color_dynamic_dark_surface_container
                 )
             )
             put(
                 Colors.TEXT_COLOR_PRIMARY.ordinal,
                 ContextCompat.getColor(
-                    NFApplication.instance,
+                    NeoApp.instance,
                     com.google.android.material.R.color.m3_sys_color_dynamic_dark_on_surface
                 )
             )
             put(
                 Colors.TEXT_COLOR_SECONDARY.ordinal,
                 ContextCompat.getColor(
-                    NFApplication.instance,
+                    NeoApp.instance,
                     com.google.android.material.R.color.m3_sys_color_dynamic_dark_on_surface_variant
                 )
             )
             put(
                 Colors.OVERLAY_BG.ordinal,
                 ContextCompat.getColor(
-                    NFApplication.instance,
+                    NeoApp.instance,
                     com.google.android.material.R.color.m3_sys_color_dynamic_dark_background
                 )
             )
@@ -88,28 +88,28 @@ object Theming {
             put(
                 Colors.CARD_BG.ordinal,
                 ContextCompat.getColor(
-                    NFApplication.instance,
+                    NeoApp.instance,
                     com.google.android.material.R.color.m3_sys_color_dynamic_dark_surface_container
                 )
             )
             put(
                 Colors.TEXT_COLOR_PRIMARY.ordinal,
                 ContextCompat.getColor(
-                    NFApplication.instance,
+                    NeoApp.instance,
                     com.google.android.material.R.color.m3_sys_color_dynamic_dark_on_surface
                 )
             )
             put(
                 Colors.TEXT_COLOR_SECONDARY.ordinal,
                 ContextCompat.getColor(
-                    NFApplication.instance,
+                    NeoApp.instance,
                     com.google.android.material.R.color.m3_sys_color_dynamic_dark_on_surface_variant
                 )
             )
             put(
                 Colors.OVERLAY_BG.ordinal,
                 ContextCompat.getColor(
-                    NFApplication.instance,
+                    NeoApp.instance,
                     android.R.color.black
                 )
             )
@@ -121,7 +121,7 @@ object Theming {
         return array.apply {
             put(
                 Colors.ACCENT_COLOR.ordinal,
-                ContextCompat.getColor(NFApplication.instance, R.color.globalAccent)
+                ContextCompat.getColor(NeoApp.instance, R.color.globalAccent)
             )
         }
     }

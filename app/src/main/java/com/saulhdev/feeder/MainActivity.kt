@@ -140,7 +140,7 @@ class MainActivity : ComponentActivity(), SavedStateRegistryOwner {
 
         configurePeriodicSync(prefs)
         observePrefs()
-        NFApplication.mainActivity = this
+        NeoApp.mainActivity = this
     }
 
     @Composable
@@ -189,7 +189,7 @@ class MainActivity : ComponentActivity(), SavedStateRegistryOwner {
 
     private fun restartIfPending() {
         if (sRestart) {
-            NFApplication.instance.restart(false)
+            NeoApp.instance.restart(false)
         }
     }
 
