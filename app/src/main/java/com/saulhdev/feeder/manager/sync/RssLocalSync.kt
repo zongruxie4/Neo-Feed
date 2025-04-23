@@ -2,16 +2,16 @@ package com.saulhdev.feeder.manager.sync
 
 import android.content.Context
 import android.util.Log
-import com.saulhdev.feeder.data.repository.ArticleRepository
-import com.saulhdev.feeder.data.repository.FeedRepository
+import com.saulhdev.feeder.data.content.FeedPreferences
 import com.saulhdev.feeder.data.db.ID_ALL
 import com.saulhdev.feeder.data.db.ID_UNSET
 import com.saulhdev.feeder.data.db.models.Feed
 import com.saulhdev.feeder.data.db.models.FeedArticle
+import com.saulhdev.feeder.data.repository.ArticleRepository
+import com.saulhdev.feeder.data.repository.FeedRepository
 import com.saulhdev.feeder.manager.models.FeedParser
 import com.saulhdev.feeder.manager.models.getResponse
 import com.saulhdev.feeder.manager.models.scheduleFullTextParse
-import com.saulhdev.feeder.data.content.FeedPreferences
 import com.saulhdev.feeder.utils.JsonFeed
 import com.saulhdev.feeder.utils.blobFile
 import com.saulhdev.feeder.utils.blobOutputStream
@@ -37,6 +37,7 @@ import kotlin.math.max
 import kotlin.system.measureTimeMillis
 
 val syncMutex = Mutex()
+val prefs: FeedPreferences by inject(FeedPreferences::class.java)
 val singleThreadedSync = Executors.newSingleThreadExecutor().asCoroutineDispatcher()
 const val TAG = "RssLocalSync"
 
@@ -47,7 +48,6 @@ suspend fun syncFeeds(
     forceNetwork: Boolean = false,
     minFeedAgeMinutes: Int = 5
 ): Boolean {
-    val prefs = FeedPreferences.getInstance(context)
     return syncMutex.withLock {
         withContext(singleThreadedSync) {
             syncFeeds(

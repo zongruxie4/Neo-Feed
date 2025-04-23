@@ -4,12 +4,14 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.util.Log
-import com.saulhdev.feeder.NeoApp
 import com.saulhdev.feeder.data.content.FeedPreferences
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
-object PluginFetcher {
+object PluginFetcher : KoinComponent {
     // List of available packages.
     private val availablePlugins = hashMapOf<String, SlimPluginInfo>()
+    val prefs: FeedPreferences by inject()
 
     // Required part for AIDL connection.
     const val INTENT_ACTION_SERVICE = "ua.itaysonlab.hfsdk.HOMEFEEDER_PLUGIN_SERVICE"
@@ -37,7 +39,6 @@ object PluginFetcher {
             Pair(it.serviceInfo.packageName, it.serviceInfo.metaData)
         }
 
-        val prefs = FeedPreferences.getInstance(NeoApp.instance)
         if (prefs.debugging.getValue()) {
             Log.d("PluginFetcher", "Packages that has service: $hasService")
         }

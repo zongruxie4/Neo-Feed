@@ -1,19 +1,19 @@
 package com.saulhdev.feeder.manager.launcherapi
 
-import android.content.Context
 import android.util.SparseIntArray
 import com.saulhdev.feeder.data.content.FeedPreferences
 import com.saulhdev.feeder.ui.compose.theme.Theming
 import com.saulhdev.feeder.ui.overlay.OverlayView
 import com.saulhdev.feeder.utils.extensions.clearLightFlags
 import com.saulhdev.feeder.utils.extensions.setLightFlags
+import org.koin.java.KoinJavaComponent.inject
 
 /**
  * A class which manages overlay styling.
  * */
-class OverlayThemeHolder(private val context: Context, private val overlay: OverlayView) {
+class OverlayThemeHolder(private val overlay: OverlayView) {
 
-    val prefs = FeedPreferences.getInstance(context)
+    val prefs: FeedPreferences by inject(FeedPreferences::class.java)
 
     /**
      * Current theme colors mapping

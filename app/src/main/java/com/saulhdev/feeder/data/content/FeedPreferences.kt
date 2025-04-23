@@ -51,7 +51,6 @@ import org.koin.core.component.get
 import org.koin.core.component.inject
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
-import java.lang.ref.WeakReference
 import kotlin.math.roundToInt
 
 class FeedPreferences private constructor(val context: Context) : KoinComponent {
@@ -191,19 +190,8 @@ class FeedPreferences private constructor(val context: Context) : KoinComponent 
     )
 
     companion object {
-        private var instance: WeakReference<FeedPreferences>? = null
-
-        // TODO replace usage with koin's
-        @JvmStatic
-        fun getInstance(context: Context): FeedPreferences {
-            if (instance == null || instance?.get() == null) {
-                instance = WeakReference(FeedPreferences(context))
-            }
-            return instance!!.get()!!
-        }
-
         val prefsModule = module {
-            singleOf(::getInstance)
+            singleOf(::FeedPreferences)
             singleOf(::provideDataStore)
         }
 

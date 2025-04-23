@@ -58,12 +58,13 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
+import org.koin.android.ext.android.inject
 import org.threeten.bp.LocalDateTime
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.resume
 
 class MainActivity : ComponentActivity(), SavedStateRegistryOwner {
-    lateinit var prefs: FeedPreferences
+    val prefs: FeedPreferences by inject()
     private lateinit var navController: NavHostController
 
     private var sRestart = false
@@ -112,7 +113,6 @@ class MainActivity : ComponentActivity(), SavedStateRegistryOwner {
         super.onCreate(savedInstanceState)
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
-        prefs = FeedPreferences.getInstance(this)
 
         when {
             intent.hasExtra("import") -> launchOpmlImporter()
@@ -124,7 +124,7 @@ class MainActivity : ComponentActivity(), SavedStateRegistryOwner {
             TransparentSystemBars()
 
             AppTheme(
-                darkTheme = when (FeedPreferences.getInstance(this).overlayTheme.getValue()) {
+                darkTheme = when (prefs.overlayTheme.getValue()) {
                     "auto_system" -> isSystemInDarkTheme()
                     else          -> isDarkTheme
                 }
@@ -138,7 +138,7 @@ class MainActivity : ComponentActivity(), SavedStateRegistryOwner {
             prefs.enabledPlugins.setValue(list.toSet())
         }
 
-        configurePeriodicSync(prefs)
+        configurePeriodicSync()
         observePrefs()
         NeoApp.mainActivity = this
     }
@@ -193,7 +193,7 @@ class MainActivity : ComponentActivity(), SavedStateRegistryOwner {
         }
     }
 
-    private fun configurePeriodicSync(prefs: FeedPreferences) {
+    private fun configurePeriodicSync() {
         val workManager = WorkManager.getInstance(this)
         val shouldSync = (prefs.syncFrequency.getValue().toDouble()) > 0
         val replace = true

@@ -30,7 +30,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.saulhdev.feeder.R
@@ -40,12 +39,14 @@ import com.saulhdev.feeder.ui.components.BaseDialog
 import com.saulhdev.feeder.ui.components.PreferenceGroup
 import com.saulhdev.feeder.ui.components.ViewWithActionBar
 import com.saulhdev.feeder.ui.components.dialog.StringSelectionPrefDialogUI
+import org.koin.compose.koinInject
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
-fun PreferencesPage() {
+fun PreferencesPage(
+    prefs: FeedPreferences = koinInject(),
+) {
     val title = stringResource(id = R.string.title_settings)
-    val prefs = FeedPreferences.getInstance(LocalContext.current)
 
     val servicePrefs = listOf(
         prefs.itemsPerFeed,

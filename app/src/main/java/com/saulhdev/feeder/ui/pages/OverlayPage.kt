@@ -108,12 +108,12 @@ import org.koin.compose.koinInject
 @Composable
 fun OverlayPage(
     isOverlay: Boolean = false,
+    prefs: FeedPreferences = koinInject(),
     syncClient: SyncRestClient = koinInject(),
     viewModel: ArticlesViewModel = koinNeoViewModel(),
 ) {
     val context = LocalContext.current
     val navController = LocalNavController.current
-    val prefs = FeedPreferences.getInstance(context)
     val scope = rememberCoroutineScope()
     val scaffoldState = rememberBottomSheetScaffoldState()
     val paneNavigator = rememberListDetailPaneScaffoldNavigator<Any>()

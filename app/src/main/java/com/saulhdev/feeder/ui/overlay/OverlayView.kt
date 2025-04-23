@@ -57,11 +57,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import org.koin.java.KoinJavaComponent.inject
 
 class OverlayView(val context: Context) :
     OverlayController(context, R.style.AppTheme, R.style.WindowTheme),
-    OverlayBridge.OverlayBridgeCallback {
+    OverlayBridge.OverlayBridgeCallback, KoinComponent {
     private var apiInstance = LauncherAPI()
     private lateinit var themeHolder: OverlayThemeHolder
     private val syncScope = CoroutineScope(Dispatchers.IO) + CoroutineName("NeoFeedSync")
@@ -72,7 +74,7 @@ class OverlayView(val context: Context) :
     private val viewModel: ArticlesViewModel by inject(ArticlesViewModel::class.java)
     private val articles: SyncRestClient by inject(SyncRestClient::class.java)
 
-    val prefs = FeedPreferences.getInstance(context)
+    val prefs: FeedPreferences by inject()
 
     private fun setTheme(force: String?) {
         themeHolder.setTheme(
@@ -215,7 +217,7 @@ class OverlayView(val context: Context) :
             this.container
         )
 
-        themeHolder = OverlayThemeHolder(context, this)
+        themeHolder = OverlayThemeHolder(this)
 
         initRecyclerView()
         initHeader()

@@ -22,6 +22,7 @@ import com.saulhdev.feeder.utils.openLinkInCustomTab
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.koin.java.KoinJavaComponent.get
 import org.koin.java.KoinJavaComponent.inject
 
 object StoryCardBinder : FeedBinder {
@@ -29,7 +30,7 @@ object StoryCardBinder : FeedBinder {
         val context = view.context
         val content = item.content
         val binding = FeedCardStoryLargeBinding.bind(view)
-        val prefs = FeedPreferences.getInstance(context)
+        val prefs = get<FeedPreferences>(FeedPreferences::class.java)
         val repository: ArticleRepository by inject(ArticleRepository::class.java)
         var bookmarked = item.bookmarked
         binding.storyTitle.text = content.title

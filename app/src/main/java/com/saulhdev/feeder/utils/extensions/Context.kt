@@ -10,6 +10,7 @@ import androidx.core.net.toUri
 import com.google.android.material.color.DynamicColors
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.data.content.FeedPreferences
+import org.koin.java.KoinJavaComponent.get
 
 interface ToastMaker {
     suspend fun makeToast(text: String)
@@ -49,17 +50,17 @@ fun Context.setCustomTheme() {
 
 val Context.isDynamicTheme
     get() = listOf("auto_system", "auto_system_black")
-        .contains(FeedPreferences.getInstance(this).overlayTheme.getValue())
+        .contains(get<FeedPreferences>(FeedPreferences::class.java).overlayTheme.getValue())
 
 val Context.nightMode
-    get() = when (FeedPreferences.getInstance(this).overlayTheme.getValue()) {
+    get() = when (get<FeedPreferences>(FeedPreferences::class.java).overlayTheme.getValue()) {
         "light"         -> AppCompatDelegate.MODE_NIGHT_NO
         "dark", "black" -> AppCompatDelegate.MODE_NIGHT_YES
         else            -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
     }
 
 val Context.isDarkTheme: Boolean
-    get() = when (FeedPreferences.getInstance(this).overlayTheme.getValue()) {
+    get() = when (get<FeedPreferences>(FeedPreferences::class.java).overlayTheme.getValue()) {
         "dark", "black"
              -> true
 
@@ -70,7 +71,7 @@ val Context.isDarkTheme: Boolean
     }
 
 val Context.isBlackTheme: Boolean
-    get() = when (FeedPreferences.getInstance(this).overlayTheme.getValue()) {
+    get() = when (get<FeedPreferences>(FeedPreferences::class.java).overlayTheme.getValue()) {
         "black", "auto_system_black"
              -> true
 
