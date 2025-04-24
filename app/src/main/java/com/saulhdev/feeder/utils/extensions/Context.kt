@@ -1,16 +1,23 @@
 package com.saulhdev.feeder.utils.extensions
 
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.content.res.Configuration
+import android.util.Log
 import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.net.toUri
 import com.google.android.material.color.DynamicColors
+import com.saulhdev.feeder.MainActivity
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.data.content.FeedPreferences
 import org.koin.java.KoinJavaComponent.get
+import kotlin.system.exitProcess
 
 interface ToastMaker {
     suspend fun makeToast(text: String)
@@ -19,6 +26,42 @@ interface ToastMaker {
 
 fun Context.makeToast(text: String) {
     Toast.makeText(this, text, Toast.LENGTH_SHORT).show()
+}
+
+fun Context.restartApp() {
+    val intent = Intent(this, MainActivity::class.java)
+    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+    startActivity(intent)
+    exitProcess(0)
+}
+
+private fun Context.restartFeed() {
+    val pm: PackageManager = packageManager
+    var intent = Intent(Intent.ACTION_MAIN)
+    intent.addCategory(Intent.CATEGORY_HOME)
+    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+    val componentName: ComponentName = intent.resolveActivity(pm)
+    if (this.packageName != componentName.packageName) {
+        intent = pm.getLaunchIntentForPackage(this.packageName)!!
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+    }
+
+    startActivity(intent)
+    Log.d(this.javaClass.name, "restartFeed: $intent")
+
+    // Create a pending intent so the application is restarted after System.exit(0) was called.
+    // We use an AlarmManager to call this intent in 100ms
+    val mPendingIntent: PendingIntent = PendingIntent.getActivity(
+        this,
+        0,
+        intent,
+        PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE
+    )
+    val mgr: AlarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+    mgr[AlarmManager.RTC, System.currentTimeMillis() + 100] = mPendingIntent
+
+    // Kill the application
+    exitProcess(0)
 }
 
 fun Context.launchView(url: String) {

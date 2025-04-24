@@ -17,8 +17,8 @@ import com.saulhdev.feeder.manager.plugin.PluginFetcher
 import com.saulhdev.feeder.manager.sync.SyncRestClient
 import com.saulhdev.feeder.utils.ApplicationCoroutineScope
 import com.saulhdev.feeder.utils.OverlayBridge
-import com.saulhdev.feeder.utils.Utilities
 import com.saulhdev.feeder.utils.extensions.ToastMaker
+import com.saulhdev.feeder.utils.extensions.restartApp
 import com.saulhdev.feeder.viewmodels.ArticleViewModel
 import com.saulhdev.feeder.viewmodels.ArticlesViewModel
 import com.saulhdev.feeder.viewmodels.EditFeedViewModel
@@ -113,7 +113,7 @@ class NeoApp : MultiDexApplication(), KoinStartup {
         if (recreate) {
             activityHandler.finishAll(true)
         } else {
-            Utilities().restartApp(this)
+            restartApp()
         }
     }
 
