@@ -1,6 +1,24 @@
 CHANGELOG
 =========
 
+1.8.0 (23.04.2024) +40 Commits & 10 Translations
+------------
+
+#### Function
+
+- Update: Revamp viewmodels and repositories applying separation of concerns
+- Update: Make prefs real delegates
+- Update: Restructure the project into 5 main packages
+- TargetSDK 35
+
+#### UI/UX
+
+- Add: SortFilter sheet to the articles page
+- Fix: Back handling on edit and add feed pages
+- Update: Replace removed MD icons with Phosphor icons
+- Update: Fix background color of the navigation suite
+- Update: Make UI wide screens friendly & navigation adaptive
+
 1.7.2 (17.12.2024) +30 Commits & 5 Translations
 ------------
 
