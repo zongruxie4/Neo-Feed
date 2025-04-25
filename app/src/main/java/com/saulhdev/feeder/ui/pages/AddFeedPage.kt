@@ -98,6 +98,7 @@ fun AddFeedPage(
         title = title,
         onBackAction = {
             feedsViewModel.saveFeed(results)
+            navController.popBackStack()
         }
     ) { paddingValues ->
         var currentlySearching by rememberSaveable {

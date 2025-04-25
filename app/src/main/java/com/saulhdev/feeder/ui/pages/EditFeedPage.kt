@@ -57,7 +57,6 @@ import com.saulhdev.feeder.manager.models.EditFeedViewState
 import com.saulhdev.feeder.ui.components.ComposeSwitchView
 import com.saulhdev.feeder.ui.components.ViewWithActionBar
 import com.saulhdev.feeder.ui.compose.util.interceptKey
-import com.saulhdev.feeder.ui.navigation.LocalNavController
 import com.saulhdev.feeder.utils.extensions.koinNeoViewModel
 import com.saulhdev.feeder.viewmodels.EditFeedViewModel
 
@@ -65,15 +64,15 @@ import com.saulhdev.feeder.viewmodels.EditFeedViewModel
 fun EditFeedPage(
     feedId: Long = -1,
     editFeedViewModel: EditFeedViewModel = koinNeoViewModel(),
-    onDismiss: (() -> Unit)? = null,
+    onDismiss: (() -> Unit),
 ) {
     val title = stringResource(id = R.string.edit_rss)
 
     editFeedViewModel.setFeedId(feedId)
     val viewState by editFeedViewModel.viewState.collectAsState()
 
-    BackHandler(enabled = onDismiss != null) {
-        onDismiss?.invoke()
+    BackHandler {
+        onDismiss()
     }
 
     ViewWithActionBar(
@@ -93,6 +92,7 @@ fun EditFeedPage(
             EditFeedView(
                 viewState = viewState,
                 updateFeed = editFeedViewModel::updateFeed,
+                onDismiss = onDismiss
             )
         }
     }
@@ -102,6 +102,7 @@ fun EditFeedPage(
 fun EditFeedView(
     viewState: EditFeedViewState,
     updateFeed: (EditFeedViewState) -> Unit,
+    onDismiss: (() -> Unit),
 ) {
     val (focusTitle, focusTag) = createRefs()
     val feedState = remember(viewState) {
@@ -203,9 +204,8 @@ fun EditFeedView(
                 horizontalArrangement = Arrangement.End,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                val navController = LocalNavController.current
                 OutlinedButton(
-                    onClick = { navController.popBackStack() }
+                    onClick = onDismiss
                 ) {
                     Text(
                         text = stringResource(id = android.R.string.cancel)
@@ -215,7 +215,7 @@ fun EditFeedView(
                 OutlinedButton(
                     onClick = {
                         updateFeed(feedState.value)
-                        navController.popBackStack()
+                        onDismiss()
                     }
                 ) {
                     Text(
