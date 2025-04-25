@@ -35,8 +35,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DropdownMenu
@@ -84,6 +82,7 @@ import com.saulhdev.feeder.ui.components.BookmarkItem
 import com.saulhdev.feeder.ui.components.PullToRefreshLazyColumn
 import com.saulhdev.feeder.ui.components.SortFilterChip
 import com.saulhdev.feeder.ui.compose.icon.Phosphor
+import com.saulhdev.feeder.ui.compose.icon.phosphor.ArrowCounterClockwise
 import com.saulhdev.feeder.ui.compose.icon.phosphor.Bookmarks
 import com.saulhdev.feeder.ui.compose.icon.phosphor.CaretUp
 import com.saulhdev.feeder.ui.compose.icon.phosphor.GearSix
@@ -210,7 +209,7 @@ fun OverlayPage(
                                             },
                                             leadingIcon = {
                                                 Icon(
-                                                    imageVector = Icons.Filled.Refresh,
+                                                    imageVector = Phosphor.ArrowCounterClockwise,
                                                     contentDescription = null,
                                                 )
                                             }

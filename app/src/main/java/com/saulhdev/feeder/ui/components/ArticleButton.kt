@@ -25,10 +25,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Favorite
-import androidx.compose.material.icons.outlined.FavoriteBorder
-import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -43,6 +39,10 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.saulhdev.feeder.ui.compose.icon.Phosphor
+import com.saulhdev.feeder.ui.compose.icon.phosphor.HeartStraight
+import com.saulhdev.feeder.ui.compose.icon.phosphor.HeartStraightFill
+import com.saulhdev.feeder.ui.compose.icon.phosphor.ShareNetwork
 import kotlinx.coroutines.launch
 
 @Composable
@@ -52,7 +52,8 @@ fun FavoriteButton(bookmarked: Boolean, onClick: () -> Unit) {
     val scale = remember { Animatable(1f) }
     val favoriteIcon by remember(bookmarked) {
         mutableStateOf(
-            if (bookmarked) Icons.Outlined.Favorite else Icons.Outlined.FavoriteBorder
+            if (bookmarked) Phosphor.HeartStraightFill
+            else Phosphor.HeartStraight
         )
     }
     val favoriteColor by animateColorAsState(
@@ -130,7 +131,7 @@ fun ShareButton(onClick: () -> Unit) {
         }
     ) {
         Icon(
-            imageVector = Icons.Outlined.Share,
+            imageVector = Phosphor.ShareNetwork,
             contentDescription = "Share feed",
             modifier = Modifier.size(size = 28.dp)
         )

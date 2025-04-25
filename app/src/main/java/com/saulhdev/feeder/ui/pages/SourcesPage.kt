@@ -28,8 +28,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -64,6 +62,7 @@ import com.saulhdev.feeder.ui.components.dialog.ActionsDialogUI
 import com.saulhdev.feeder.ui.compose.icon.Phosphor
 import com.saulhdev.feeder.ui.compose.icon.phosphor.CloudArrowDown
 import com.saulhdev.feeder.ui.compose.icon.phosphor.CloudArrowUp
+import com.saulhdev.feeder.ui.compose.icon.phosphor.Plus
 import com.saulhdev.feeder.ui.navigation.LocalNavController
 import com.saulhdev.feeder.ui.navigation.NavRoute
 import com.saulhdev.feeder.utils.ApplicationCoroutineScope
@@ -126,7 +125,7 @@ fun SourcesPage(
                         containerColor = MaterialTheme.colorScheme.primary
                     ) {
                         Icon(
-                            imageVector = Icons.Default.Add,
+                            imageVector = Phosphor.Plus,
                             contentDescription = stringResource(id = R.string.add_feed),
                             tint = MaterialTheme.colorScheme.onPrimary
                         )

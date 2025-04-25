@@ -22,8 +22,6 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
@@ -41,6 +39,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.data.db.models.Feed
+import com.saulhdev.feeder.ui.compose.icon.Phosphor
+import com.saulhdev.feeder.ui.compose.icon.phosphor.TrashSimple
 
 @Composable
 fun FeedItem(
@@ -89,7 +89,7 @@ fun FeedItem(
                 onClick = { onRemoveAction(feed) }
             ) {
                 Icon(
-                    imageVector = Icons.Filled.Close,
+                    imageVector = Phosphor.TrashSimple,
                     contentDescription = stringResource(id = R.string.delete_feed),
                 )
             }

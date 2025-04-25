@@ -20,8 +20,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.selection.DisableSelection
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -59,6 +57,8 @@ import com.saulhdev.feeder.ui.components.withAnnotation
 import com.saulhdev.feeder.ui.components.withComposableStyle
 import com.saulhdev.feeder.ui.components.withParagraph
 import com.saulhdev.feeder.ui.components.withStyle
+import com.saulhdev.feeder.ui.compose.icon.Phosphor
+import com.saulhdev.feeder.ui.compose.icon.phosphor.Play
 import com.saulhdev.feeder.ui.compose.theme.BlockQuoteStyle
 import com.saulhdev.feeder.ui.compose.theme.CodeBlockBackground
 import com.saulhdev.feeder.ui.compose.theme.CodeBlockStyle
@@ -907,7 +907,7 @@ private fun TextComposer.handleVideo(
                             contentAlignment = Alignment.Center
                         ) {
                             Icon(
-                                imageVector = Icons.Default.PlayArrow,
+                                imageVector = Phosphor.Play,
                                 contentDescription = null,
                                 tint = Color.White,
                                 modifier = Modifier
