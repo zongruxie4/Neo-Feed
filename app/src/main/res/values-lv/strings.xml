@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="title_settings">Iestatījumi</string>
+    <string name="title_about">Par lietotni</string>
+    <string name="title_sources">Datu avoti</string>
+    <string name="summary_sources">Pievienot vai noņemt avotus</string>
+    <string name="date_ago_now">tikko</string>
+    <string name="date_at">pulksten</string>
+    <string name="today">šodien</string>
+    <string name="tomorrow">rīt</string>
+    <string name="yesterday">vakar</string>
+    <string name="pref_cat_contact">Kontakti</string>
+    <string name="about_team">Dalībnieki</string>
+    <string name="about_channel">Kanāls</string>
+    <string name="about_community">Kopiena</string>
+    <string name="about_community_telegram">Telegram kopiena</string>
+    <string name="about_community_matrix">Matrix kopiena</string>
+    <string name="about_build_information">Būvējuma informācija</string>
+    <string name="author_role">Izstrādātājs</string>
+    <string name="about_licenses">Licence</string>
+    <string name="about_changelog">Izmaiņu žurnāls</string>
+    <string name="about_open_source">Atvērtā pirmkoda bibliotēkas</string>
+</resources>
