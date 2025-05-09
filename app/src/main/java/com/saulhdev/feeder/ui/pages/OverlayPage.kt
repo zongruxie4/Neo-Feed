@@ -85,11 +85,9 @@ import com.saulhdev.feeder.ui.compose.icon.Phosphor
 import com.saulhdev.feeder.ui.compose.icon.phosphor.ArrowCounterClockwise
 import com.saulhdev.feeder.ui.compose.icon.phosphor.Bookmarks
 import com.saulhdev.feeder.ui.compose.icon.phosphor.CaretUp
-import com.saulhdev.feeder.ui.compose.icon.phosphor.GearSix
 import com.saulhdev.feeder.ui.compose.icon.phosphor.Nut
 import com.saulhdev.feeder.ui.compose.icon.phosphor.Power
 import com.saulhdev.feeder.ui.navigation.LocalNavController
-import com.saulhdev.feeder.ui.navigation.NavRoute
 import com.saulhdev.feeder.utils.extensions.koinNeoViewModel
 import com.saulhdev.feeder.utils.extensions.launchView
 import com.saulhdev.feeder.utils.openLinkInCustomTab
@@ -215,22 +213,6 @@ fun OverlayPage(
                                             }
                                         )
                                         HorizontalDivider()
-
-                                        if (isOverlay) DropdownMenuItem(
-                                            text = {
-                                                Text(text = stringResource(id = R.string.title_settings))
-                                            },
-                                            onClick = {
-                                                showMenu = false
-                                                navController.navigate(NavRoute.Main(1))
-                                            },
-                                            leadingIcon = {
-                                                Icon(
-                                                    imageVector = Phosphor.GearSix,
-                                                    contentDescription = null,
-                                                )
-                                            }
-                                        )
 
                                         DropdownMenuItem(
                                             text = {
