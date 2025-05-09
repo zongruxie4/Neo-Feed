@@ -175,11 +175,6 @@ class MainActivity : ComponentActivity(), SavedStateRegistryOwner {
                 recreate()
             }
         }
-        /*prefs.cardBackground.get().asLiveData().observe(this) {
-            if (it != oldCardBackground) {
-                recreate()
-            }
-        }*/
     }
 
     override fun onRestart() {
