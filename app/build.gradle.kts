@@ -20,14 +20,14 @@ val jvmVersion = JavaVersion.VERSION_21
 
 android {
     namespace = "com.saulhdev.feeder"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.saulhdev.neofeed"
         minSdk = 26
-        targetSdk = 35
-        versionCode = 1800
-        versionName = "1.8.0"
+        targetSdk = 36
+        versionCode = 1801
+        versionName = "1.8.1"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled = true
