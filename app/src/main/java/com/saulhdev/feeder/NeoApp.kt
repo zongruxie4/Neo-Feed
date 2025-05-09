@@ -38,6 +38,7 @@ import org.koin.dsl.module
 import org.koin.java.KoinJavaComponent.inject
 import java.lang.ref.WeakReference
 
+@OptIn(KoinExperimentalAPI::class)
 class NeoApp : MultiDexApplication(), KoinStartup {
 
     private val activityHandler = ActivityHandler()
