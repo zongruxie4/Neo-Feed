@@ -1,0 +1,16 @@
+-- Merging decision tree log ---
+manifest
+ADDED from /media/saul/Windows/dev/Neo-Feed/google-gsa/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest15618855442145347833.xml:2:13-83
+INJECTED from /media/saul/Windows/dev/Neo-Feed/google-gsa/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest15618855442145347833.xml:2:13-83
+	package
+		INJECTED from /media/saul/Windows/dev/Neo-Feed/google-gsa/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest15618855442145347833.xml
+	xmlns:android
+		ADDED from /media/saul/Windows/dev/Neo-Feed/google-gsa/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest15618855442145347833.xml:2:23-81
+uses-sdk
+INJECTED from /media/saul/Windows/dev/Neo-Feed/google-gsa/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest15618855442145347833.xml reason: use-sdk injection requested
+INJECTED from /media/saul/Windows/dev/Neo-Feed/google-gsa/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest15618855442145347833.xml
+INJECTED from /media/saul/Windows/dev/Neo-Feed/google-gsa/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest15618855442145347833.xml
+	android:targetSdkVersion
+		INJECTED from /media/saul/Windows/dev/Neo-Feed/google-gsa/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest15618855442145347833.xml
+	android:minSdkVersion
+		INJECTED from /media/saul/Windows/dev/Neo-Feed/google-gsa/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest15618855442145347833.xml

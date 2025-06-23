@@ -28,6 +28,7 @@ android {
         targetSdk = 36
         versionCode = 1801
         versionName = "1.8.1"
+
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled = true
@@ -50,20 +51,20 @@ android {
                 "Neo_Feed_${variant.versionCode}_${variant.name}.apk"
         }
     }
+
     buildTypes {
-        named("debug") {
+        debug {
             isMinifyEnabled = false
             applicationIdSuffix = ".dev"
             signingConfig = signingConfigs.getByName("debug")
         }
-        named("release") {
+
+        release {
             isMinifyEnabled = false
-            /*isShrinkResources = true*/
-        }
-        create("neo") {
-            isMinifyEnabled = false
-            isShrinkResources = false
-            applicationIdSuffix = ".neo"
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
         all {
             proguardFiles(
@@ -79,21 +80,6 @@ android {
             aidl.srcDirs("src/main/aidl")
             assets.srcDirs("src/main/assets")
             res.srcDirs("src/main/res")
-        }
-    }
-
-    signingConfigs {
-        getByName("debug") {
-            storeFile = file("debug.keystore")
-            storePassword = "android"
-            keyAlias = "androiddebugkey"
-            keyPassword = "android"
-        }
-        create("primary") {
-            storeFile = file("debug.keystore")
-            storePassword = "android"
-            keyAlias = "androiddebugkey"
-            keyPassword = "android"
         }
     }
 
@@ -127,6 +113,7 @@ android {
 
 dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
+    implementation(project(":google-gsa"))
 
     implementation(libs.symbol.processing.api)
     implementation(libs.stdlib)
@@ -134,7 +121,6 @@ dependencies {
 
     //Core
     implementation(libs.appcompat)
-    implementation(libs.activity.compose)
     implementation(libs.core.ktx)
     implementation(libs.multidex)
     implementation(libs.swiperefreshlayout)

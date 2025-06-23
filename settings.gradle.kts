@@ -9,7 +9,6 @@ pluginManagement {
         }
         mavenCentral()
         gradlePluginPortal()
-        maven(url = "https://jitpack.io")
     }
 }
 dependencyResolutionManagement {
@@ -21,5 +20,9 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Neo Feed"
+include(":google-gsa")
+project(":google-gsa").projectDir = File(rootDir, "google-gsa")
+
+rootProject.name = "Neo-Feed"
 include(":app")
+ 
