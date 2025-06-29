@@ -1,14 +1,8 @@
-package com.google.android.libraries.gsa.d.a;
+package com.google.android.libraries.gsa.d.a
 
-import android.os.Bundle;
+import android.os.Bundle
 
-final class ByteBundleHolder {
-
-    private final Bundle extras;
-    private final byte[] bytes;
-
-    public ByteBundleHolder(byte[] bArr, Bundle bundle) {
-        this.bytes = bArr;
-        this.extras = bundle;
-    }
-}
+class ByteBundleHolder(
+    private val bytes: ByteArray?,
+    private val extras: Bundle?
+)
