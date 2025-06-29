@@ -5,7 +5,7 @@ public interface PanelController {
 
     void onPanelDragged();
 
-    void cnF();
+    void startPanelDrag();
 
     void openPanel();
 

@@ -322,7 +322,7 @@ public class SlidingPanelLayout extends FrameLayout {
 
     public void notifyPanelStart() {
         isPageMoving = true;
-        if (panelController != null) panelController.cnF();
+        if (panelController != null) panelController.startPanelDrag();
     }
 
     final void setLayerType(int layerType) {

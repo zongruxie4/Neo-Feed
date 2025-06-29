@@ -10,17 +10,21 @@ final class TransparentOverlayController implements PanelController {
         this.overlayController = overlayControllerVar;
     }
 
-    public final void onPanelDragged() {
+    @Override
+    public void onPanelDragged() {
 
     }
 
-    public final void cnF() {
+    @Override
+    public void startPanelDrag() {
     }
 
-    public final void setPanelEnabled(boolean enabled) {
+    @Override
+    public void setPanelEnabled(boolean enabled) {
     }
 
-    public final void openPanel() {
+    @Override
+    public void openPanel() {
         this.overlayController.setVisible(true);
         OverlayController overlayControllerVar = this.overlayController;
         LayoutParams attributes = overlayControllerVar.window.getAttributes();
@@ -37,7 +41,8 @@ final class TransparentOverlayController implements PanelController {
         }
     }
 
-    public final void closePanel() {
+    @Override
+    public void closePanel() {
         OverlayController overlayControllerVar = this.overlayController;
         LayoutParams attributes = overlayControllerVar.window.getAttributes();
         float f = attributes.alpha;
@@ -55,10 +60,12 @@ final class TransparentOverlayController implements PanelController {
         this.overlayController.slidingPanelLayout.panelController = this.overlayController.overlayControllerStateChanger;
     }
 
-    public final void setPanelPosition(float position) {
+    @Override
+    public void setPanelPosition(float position) {
     }
 
-    public final boolean canInterceptTouchEvents() {
+    @Override
+    public boolean canInterceptTouchEvents() {
         return true;
     }
 }
