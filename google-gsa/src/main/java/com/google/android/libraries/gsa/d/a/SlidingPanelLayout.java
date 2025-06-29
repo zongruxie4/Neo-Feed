@@ -11,355 +11,323 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 
 public class SlidingPanelLayout extends FrameLayout {
-    private static final boolean uoK = false;
-    private static final boolean uoL = false;
-    public static final Property PANEL_X = new SlidingPanelLayoutProperty(Integer.class, "panelX");
-    public float mDownX;
-    public float mDownY;
-    public int mActivePointerId = -1;
-    private final float mDensity;
-    private final int mFlingThresholdVelocity;
-    public boolean mIsPageMoving = false;
-    public final boolean mIsRtl;
-    private float mLastMotionX;
-    private final int mMaximumVelocity;
-    private final int mMinFlingVelocity;
-    private final int mMinSnapVelocity;
-    private float mTotalMotionX;
-    public final int mTouchSlop;
-    public int mTouchState = 0;
-    private VelocityTracker mVelocityTracker;
-    public View uoA;
-    private View uoB;
-    public int uoC;
-    public float mPanelPositionRatio;
-    private float uoE;
-    private float uoF;
-    private final SlidingPanelLayoutInterpolator slidingPanelLayoutInterpolator;
-    public PanelController uoH;
-    public boolean mIsPanelOpen = false;
-    public boolean mForceDrag;
-    public boolean mSettling;
-    private final DecelerateInterpolator decelerateInterpolator = new DecelerateInterpolator(3.0f);
+
+    private static final boolean ENABLE_ALPHA = false;
+    private static final boolean USE_HARDWARE_LAYER = false;
+
+    public static final Property<SlidingPanelLayout, Integer> PANEL_X = new SlidingPanelLayoutProperty(Integer.class, "panelX");
+
+    // Touch tracking
+    public float downX, downY;
+    public float lastMotionX, totalMotionX;
+    private float initialPanelOffset, panelOffset;
+    public int activePointerId = -1;
+    private VelocityTracker velocityTracker;
+
+    // Panel configuration
+    public boolean isPanelOpen = false;
+    public boolean isPageMoving = false;
+    public boolean forceDrag = false;
+    public boolean settling = false;
+    public float panelPositionRatio;
+    private final float density;
+    private final int flingThresholdVelocity;
+    private final int minFlingVelocity;
+    private final int minSnapVelocity;
+    public final int touchSlop;
+    private final int maxVelocity;
+    public final boolean isRtl;
+
+    // Panel views
+    public View foregroundPanel;   // uoA
+    private View backgroundPanel;  // uoB
+    public int panelOffsetPx;      // uoC
+
+    // Interpolator
+    private final SlidingPanelLayoutInterpolator panelInterpolator;
+    private final DecelerateInterpolator alphaInterpolator = new DecelerateInterpolator(3.0f);
+
+    public PanelController panelController;
+
+    public int touchState = 0;
 
     public SlidingPanelLayout(Context context) {
         super(context);
-        ViewConfiguration viewConfiguration = ViewConfiguration.get(getContext());
-        this.mTouchSlop = viewConfiguration.getScaledPagingTouchSlop();
-        this.mMaximumVelocity = viewConfiguration.getScaledMaximumFlingVelocity();
-        this.mDensity = getResources().getDisplayMetrics().density;
-        this.mFlingThresholdVelocity = (int) (500.0f * this.mDensity);
-        this.mMinFlingVelocity = (int) (250.0f * this.mDensity);
-        this.mMinSnapVelocity = (int) (1500.0f * this.mDensity);
-        this.slidingPanelLayoutInterpolator = new SlidingPanelLayoutInterpolator(this);
-        this.mIsRtl = isRtl(getResources());
+        final ViewConfiguration config = ViewConfiguration.get(context);
+        touchSlop = config.getScaledPagingTouchSlop();
+        maxVelocity = config.getScaledMaximumFlingVelocity();
+        density = getResources().getDisplayMetrics().density;
+        flingThresholdVelocity = (int) (500 * density);
+        minFlingVelocity = (int) (250 * density);
+        minSnapVelocity = (int) (1500 * density);
+        panelInterpolator = new SlidingPanelLayoutInterpolator(this);
+        isRtl = isRtl(getResources());
     }
 
-    public final void el(View view) {
-        this.uoA = view;
-        super.addView(this.uoA);
+    public void setForegroundPanel(View view) {
+        this.foregroundPanel = view;
+        super.addView(view);
     }
 
-    final void BM(int i) {
-        if (i <= 1) {
-            i = 0;
+    public void setBackgroundPanel(View view) {
+        if (this.backgroundPanel != null) {
+            super.removeView(this.backgroundPanel);
         }
-        int measuredWidth = getMeasuredWidth();
-        this.mPanelPositionRatio = ((float) i) / ((float) measuredWidth);
-        this.uoC = Math.max(Math.min(i, measuredWidth), 0);
-        this.uoA.setTranslationX(this.mIsRtl ? (float) (-this.uoC) : (float) this.uoC);
-        if (uoK) {
-            this.uoA.setAlpha(Math.max(0.1f, this.decelerateInterpolator.getInterpolation(this.mPanelPositionRatio)));
-        }
-        if (this.uoH != null) {
-            this.uoH.setPanelPosition(this.mPanelPositionRatio);
-        }
-    }
-
-    final void fv(int i) {
-        cnF();
-        this.mSettling = true;
-        this.slidingPanelLayoutInterpolator.animateTo(getMeasuredWidth(), i);
-    }
-
-    final void closePanel(int i) {
-        this.mIsPageMoving = true;
-        if (this.uoH != null) {
-            boolean z;
-            PanelController panelControllerVar = this.uoH;
-            z = this.mTouchState == 1;
-            panelControllerVar.setPanelEnabled(z);
-        }
-        this.mSettling = true;
-        this.slidingPanelLayoutInterpolator.animateTo(0, i);
-    }
-
-    public final void em(View view) {
-        if (this.uoB != null) {
-            super.removeView(this.uoB);
-        }
-        this.uoB = view;
-        super.addView(this.uoB, 0);
-    }
-
-    public boolean onInterceptTouchEvent(MotionEvent motionEvent) {
-        acquireVelocityTrackerAndAddMovement(motionEvent);
-        if (getChildCount() <= 0) {
-            return super.onInterceptTouchEvent(motionEvent);
-        }
-        int action = motionEvent.getAction();
-        if (action == 2 && this.mTouchState == 1) {
-            return true;
-        }
-        switch (action & MotionEvent.ACTION_MASK) {
-            case MotionEvent.ACTION_DOWN:
-                boolean z;
-                float x = motionEvent.getX();
-                float y = motionEvent.getY();
-                this.mDownX = x;
-                this.mDownY = y;
-                this.uoF = (float) this.uoC;
-                this.mLastMotionX = x;
-                this.mTotalMotionX = 0.0f;
-                this.mActivePointerId = motionEvent.getPointerId(0);
-                action = Math.abs(this.slidingPanelLayoutInterpolator.finalX - this.uoC);
-                z = this.slidingPanelLayoutInterpolator.isFinished() || action < this.mTouchSlop / 3;
-                if (!z || this.mForceDrag) {
-                    this.mForceDrag = false;
-                    cnN();
-                    this.uoE = x;
-                    break;
-                }
-                break;
-            case MotionEvent.ACTION_UP:
-            case MotionEvent.ACTION_CANCEL:
-                resetTouchState();
-                break;
-            case MotionEvent.ACTION_MOVE:
-                if (this.mActivePointerId != -1) {
-                    determineScrollingStart(motionEvent, 1.0f);
-                    break;
-                }
-                break;
-            case MotionEvent.ACTION_POINTER_UP:
-                onSecondaryPointerUp(motionEvent);
-                releaseVelocityTracker();
-                break;
-        }
-        return this.mTouchState != 0;
-    }
-
-    public boolean onTouchEvent(MotionEvent motionEvent) {
-        super.onTouchEvent(motionEvent);
-        if (this.uoA == null) {
-            return super.onTouchEvent(motionEvent);
-        }
-        acquireVelocityTrackerAndAddMovement(motionEvent);
-        float x;
-        float y;
-        int abs;
-        switch (motionEvent.getAction() & MotionEvent.ACTION_MASK) {
-            case MotionEvent.ACTION_DOWN:
-                boolean z;
-                x = motionEvent.getX();
-                y = motionEvent.getY();
-                this.mDownX = x;
-                this.mDownY = y;
-                this.uoF = (float) this.uoC;
-                this.mLastMotionX = x;
-                this.mTotalMotionX = 0.0f;
-                this.mActivePointerId = motionEvent.getPointerId(0);
-                abs = Math.abs(this.slidingPanelLayoutInterpolator.finalX - this.uoC);
-                z = this.slidingPanelLayoutInterpolator.isFinished() || abs < this.mTouchSlop / 3;
-                if (z && !this.mForceDrag) {
-                    return true;
-                }
-                this.mForceDrag = false;
-                cnN();
-                this.uoE = x;
-                return true;
-            case MotionEvent.ACTION_UP:
-            case MotionEvent.ACTION_CANCEL:
-                if (this.mTouchState != 1) {
-                    return true;
-                }
-                this.mVelocityTracker.computeCurrentVelocity(1000, (float) this.mMaximumVelocity);
-                abs = (int) this.mVelocityTracker.getXVelocity(this.mActivePointerId);
-                boolean z2 = this.mTotalMotionX > 25.0f && Math.abs(abs) > this.mFlingThresholdVelocity;
-                if (z2) {
-                    if (this.mIsRtl) {
-                        abs = -abs;
-                    }
-                    if (Math.abs(abs) < this.mMinFlingVelocity) {
-                        if (abs >= 0) {
-                            fv(750);
-                        } else {//Todo: this else was not there initially
-                            closePanel(750);
-                        }
-                    } else {
-                        float measuredWidth = ((float) (getMeasuredWidth() / 2)) + (((float) Math.sin((double) ((float) (((double) (Math.min(1.0f, (((float) (abs < 0 ? this.uoC : getMeasuredWidth() - this.uoC)) * 1.0f) / ((float) getMeasuredWidth())) - 0.5f)) * 0.4712389167638204d)))) * ((float) (getMeasuredWidth() / 2)));
-                        z2 = abs > 0;
-                        abs = Math.round(Math.abs(measuredWidth / ((float) Math.max(this.mMinSnapVelocity, Math.abs(abs)))) * 1000.0f) * 4;
-                        if (z2) {
-                            fv(abs);
-                        } else {
-                            closePanel(abs);
-                        }
-                    }
-                } else {
-                    if (this.uoC >= getMeasuredWidth() / 2) {
-                        fv(750);
-                    } else {//Todo: this else was not there initially
-                        closePanel(750);
-                    }
-                }
-                resetTouchState();
-                return true;
-            case MotionEvent.ACTION_MOVE:
-                if (this.mTouchState == 1) {
-                    abs = motionEvent.findPointerIndex(this.mActivePointerId);
-                    if (abs == -1) {
-                        return true;
-                    }
-                    y = motionEvent.getX(abs);
-                    this.mTotalMotionX += Math.abs(y - this.mLastMotionX);
-                    this.mLastMotionX = y;
-                    y -= this.uoE;
-                    x = this.uoF;
-                    if (this.mIsRtl) {
-                        y = -y;
-                    }
-                    BM((int) (y + x));
-                    return true;
-                }
-                determineScrollingStart(motionEvent, 1.0f);
-                return true;
-            case MotionEvent.ACTION_POINTER_UP:
-                onSecondaryPointerUp(motionEvent);
-                releaseVelocityTracker();
-                return true;
-            default:
-                return true;
-        }
-    }
-
-    private void resetTouchState() {
-        releaseVelocityTracker();
-        this.mForceDrag = false;
-        this.mTouchState = 0;
-        this.mActivePointerId = -1;
-    }
-
-    private void onSecondaryPointerUp(MotionEvent motionEvent) {
-        int action = (motionEvent.getAction() >> 8) & 255;
-        if (motionEvent.getPointerId(action) == this.mActivePointerId) {
-            action = action == 0 ? 1 : 0;
-            float x = motionEvent.getX(action);
-            this.uoE += x - this.mLastMotionX;
-            this.mDownX = x;
-            this.mLastMotionX = x;
-            this.mActivePointerId = motionEvent.getPointerId(action);
-            if (this.mVelocityTracker != null) {
-                this.mVelocityTracker.clear();
-            }
-        }
-    }
-
-    void determineScrollingStart(MotionEvent motionEvent, float f) {
-        int findPointerIndex = motionEvent.findPointerIndex(this.mActivePointerId);
-        if (findPointerIndex != -1) {
-            float x = motionEvent.getX(findPointerIndex);
-            if (((int) Math.abs(x - this.mDownX)) > Math.round(((float) this.mTouchSlop) * f)) {
-                this.mTotalMotionX += Math.abs(this.mLastMotionX - x);
-                this.uoE = x;
-                this.mLastMotionX = x;
-                cnN();
-            }
-        }
-    }
-
-    private void acquireVelocityTrackerAndAddMovement(MotionEvent motionEvent) {
-        if (this.mVelocityTracker == null) {
-            this.mVelocityTracker = VelocityTracker.obtain();
-            this.mVelocityTracker.clear();
-        }
-        this.mVelocityTracker.addMovement(motionEvent);
-    }
-
-    private void releaseVelocityTracker() {
-        if (this.mVelocityTracker != null) {
-            this.mVelocityTracker.clear();
-            this.mVelocityTracker.recycle();
-            this.mVelocityTracker = null;
-        }
-    }
-
-    protected void onMeasure(int i, int i2) {
-        int size = MeasureSpec.getSize(i);
-        int size2 = MeasureSpec.getSize(i2);
-        if (this.uoB != null) {
-            this.uoB.measure(MeasureSpec.makeMeasureSpec(size, MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(size2, MeasureSpec.EXACTLY));//Todo: i modified them, there was ints before instead of constants
-        }
-        if (this.uoA != null) {
-            this.uoA.measure(MeasureSpec.makeMeasureSpec(size, MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(size2, MeasureSpec.EXACTLY));
-        }
-        setMeasuredDimension(size, size2);
-        BM((int) (((float) size) * this.mPanelPositionRatio));
-    }
-
-    protected void onLayout(boolean z, int i, int i2, int i3, int i4) {
-        if (this.uoB != null) {
-            this.uoB.layout(0, 0, this.uoB.getMeasuredWidth(), this.uoB.getMeasuredHeight());
-        }
-        if (this.uoA != null) {
-            int measuredWidth = this.uoA.getMeasuredWidth();
-            int measuredHeight = this.uoA.getMeasuredHeight();
-            int i5 = this.mIsRtl ? measuredWidth : -measuredWidth;
-            if (this.mIsRtl) {
-                measuredWidth *= 2;
-            } else {
-                measuredWidth = 0;
-            }
-            this.uoA.layout(i5, 0, measuredWidth, measuredHeight);
-        }
+        this.backgroundPanel = view;
+        super.addView(view, 0);
     }
 
     public static boolean isRtl(Resources resources) {
         return resources.getConfiguration().getLayoutDirection() == 1;
     }
 
-    private void cnN() {
-        this.mTouchState = 1;
-        this.mIsPageMoving = true;
-        this.mSettling = false;
-        this.slidingPanelLayoutInterpolator.cancelAnimation();
-        if (uoL) {
-            setLayerType(2, null);
+    public void updatePanelOffset(int offsetPx) {
+        if (offsetPx <= 1) offsetPx = 0;
+        int width = getMeasuredWidth();
+        panelOffsetPx = Math.max(0, Math.min(offsetPx, width));
+        panelPositionRatio = (float) panelOffsetPx / width;
+
+        if (foregroundPanel != null) {
+            foregroundPanel.setTranslationX(isRtl ? -panelOffsetPx : panelOffsetPx);
+            if (ENABLE_ALPHA) {
+                foregroundPanel.setAlpha(Math.max(0.1f, alphaInterpolator.getInterpolation(panelPositionRatio)));
+            }
         }
-        if (this.uoH != null) {
-            this.uoH.onPanelDragged();
+
+        if (panelController != null) {
+            panelController.setPanelPosition(panelPositionRatio);
         }
     }
 
-    final void cnF() {
-        this.mIsPageMoving = true;
-        if (this.uoH != null) {
-            this.uoH.cnF();
+    public void startSettlingTo(int target, int duration) {
+        notifyPanelDragging();
+        settling = true;
+        panelInterpolator.animateTo(getMeasuredWidth(), target);
+    }
+
+    public void closePanel(int duration) {
+        isPageMoving = true;
+        if (panelController != null) {
+            panelController.setPanelEnabled(touchState == 1);
+        }
+        settling = true;
+        panelInterpolator.animateTo(0, duration);
+    }
+
+    private void notifyPanelDragging() {
+        touchState = 1;
+        isPageMoving = true;
+        settling = false;
+        panelInterpolator.cancelAnimation();
+        if (USE_HARDWARE_LAYER) setLayerType(LAYER_TYPE_HARDWARE, null);
+        if (panelController != null) panelController.onPanelDragged();
+    }
+
+    private void releaseTouch() {
+        releaseVelocityTracker();
+        forceDrag = false;
+        touchState = 0;
+        activePointerId = -1;
+    }
+
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
+        acquireVelocityTrackerAndAddMovement(ev);
+
+        if (getChildCount() <= 0) return super.onInterceptTouchEvent(ev);
+
+        switch (ev.getActionMasked()) {
+            case MotionEvent.ACTION_DOWN:
+                downX = ev.getX();
+                downY = ev.getY();
+                initialPanelOffset = panelOffsetPx;
+                lastMotionX = downX;
+                totalMotionX = 0;
+                activePointerId = ev.getPointerId(0);
+                boolean isNearCurrentPos = panelInterpolator.isFinished() || Math.abs(panelInterpolator.finalX - panelOffsetPx) < touchSlop / 3;
+                if (!isNearCurrentPos || forceDrag) {
+                    forceDrag = false;
+                    notifyPanelDragging();
+                    panelOffset = downX;
+                }
+                break;
+
+            case MotionEvent.ACTION_MOVE:
+                if (activePointerId != -1) {
+                    determineScrollStart(ev, 1.0f);
+                }
+                break;
+
+            case MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_CANCEL:
+                releaseTouch();
+                break;
+
+            case MotionEvent.ACTION_POINTER_UP:
+                onSecondaryPointerUp(ev);
+                releaseVelocityTracker();
+                break;
+        }
+        return touchState != 0;
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent ev) {
+        if (foregroundPanel == null) return super.onTouchEvent(ev);
+
+        acquireVelocityTrackerAndAddMovement(ev);
+
+        final int action = ev.getActionMasked();
+        switch (action) {
+            case MotionEvent.ACTION_DOWN:
+                downX = ev.getX();
+                downY = ev.getY();
+                initialPanelOffset = panelOffsetPx;
+                lastMotionX = downX;
+                totalMotionX = 0;
+                activePointerId = ev.getPointerId(0);
+                if (panelInterpolator.isFinished() || Math.abs(panelInterpolator.finalX - panelOffsetPx) < touchSlop / 3) {
+                    if (!forceDrag) return true;
+                }
+                forceDrag = false;
+                notifyPanelDragging();
+                panelOffset = downX;
+                return true;
+
+            case MotionEvent.ACTION_MOVE:
+                if (touchState == 1) {
+                    int pointerIndex = ev.findPointerIndex(activePointerId);
+                    if (pointerIndex == -1) return true;
+                    float x = ev.getX(pointerIndex);
+                    totalMotionX += Math.abs(x - lastMotionX);
+                    float delta = x - panelOffset;
+                    lastMotionX = x;
+                    updatePanelOffset((int) (initialPanelOffset + (isRtl ? -delta : delta)));
+                    return true;
+                }
+                determineScrollStart(ev, 1.0f);
+                return true;
+
+            case MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_CANCEL:
+                if (touchState == 1) {
+                    velocityTracker.computeCurrentVelocity(1000, maxVelocity);
+                    int velocityX = (int) velocityTracker.getXVelocity(activePointerId);
+                    if (isRtl) velocityX = -velocityX;
+
+                    boolean isFling = totalMotionX > 25 && Math.abs(velocityX) > flingThresholdVelocity;
+                    if (isFling) {
+                        if (Math.abs(velocityX) < minFlingVelocity) {
+                            if (velocityX >= 0) startSettlingTo(getMeasuredWidth(), 750);
+                            else closePanel(750);
+                        } else {
+                            float projected = getMeasuredWidth() / 2f + (float) Math.sin((Math.min(1.0f, ((float) (velocityX < 0 ? panelOffsetPx : getMeasuredWidth() - panelOffsetPx)) / getMeasuredWidth()) - 0.5f) * 0.4712389) * getMeasuredWidth() / 2f;
+                            int duration = Math.round(Math.abs(projected / Math.max(minSnapVelocity, Math.abs(velocityX))) * 1000f) * 4;
+                            if (velocityX > 0) startSettlingTo(getMeasuredWidth(), duration);
+                            else closePanel(duration);
+                        }
+                    } else {
+                        if (panelOffsetPx >= getMeasuredWidth() / 2) startSettlingTo(getMeasuredWidth(), 750);
+                        else closePanel(750);
+                    }
+                }
+                releaseTouch();
+                return true;
+
+            case MotionEvent.ACTION_POINTER_UP:
+                onSecondaryPointerUp(ev);
+                releaseVelocityTracker();
+                return true;
+
+            default:
+                return true;
         }
     }
 
-    final void cnG() {
-        cnO();
-        this.mIsPanelOpen = true;
-        this.mIsPageMoving = false;
-        if (this.uoH != null) {
-            this.uoH.openPanel();
+    public void determineScrollStart(MotionEvent ev, float scaleFactor) {
+        int index = ev.findPointerIndex(activePointerId);
+        if (index != -1) {
+            float x = ev.getX(index);
+            if (Math.abs(x - downX) > Math.round(touchSlop * scaleFactor)) {
+                totalMotionX += Math.abs(lastMotionX - x);
+                panelOffset = x;
+                lastMotionX = x;
+                notifyPanelDragging();
+            }
         }
     }
 
-    final void cnO() {
-        if (uoL) {
-            setLayerType(0, null);
+    private void acquireVelocityTrackerAndAddMovement(MotionEvent ev) {
+        if (velocityTracker == null) {
+            velocityTracker = VelocityTracker.obtain();
+        }
+        velocityTracker.addMovement(ev);
+    }
+
+    private void releaseVelocityTracker() {
+        if (velocityTracker != null) {
+            velocityTracker.clear();
+            velocityTracker.recycle();
+            velocityTracker = null;
+        }
+    }
+
+    private void onSecondaryPointerUp(MotionEvent ev) {
+        int index = (ev.getAction() >> 8) & 0xFF;
+        if (ev.getPointerId(index) == activePointerId) {
+            int newIndex = index == 0 ? 1 : 0;
+            float x = ev.getX(newIndex);
+            panelOffset += x - lastMotionX;
+            downX = x;
+            lastMotionX = x;
+            activePointerId = ev.getPointerId(newIndex);
+            if (velocityTracker != null) velocityTracker.clear();
+        }
+    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        int width = MeasureSpec.getSize(widthMeasureSpec);
+        int height = MeasureSpec.getSize(heightMeasureSpec);
+        if (backgroundPanel != null)
+            backgroundPanel.measure(MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
+                    MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY));
+        if (foregroundPanel != null)
+            foregroundPanel.measure(MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
+                    MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY));
+        setMeasuredDimension(width, height);
+        updatePanelOffset((int) (width * panelPositionRatio));
+    }
+
+    @Override
+    protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        if (backgroundPanel != null) {
+            backgroundPanel.layout(0, 0, backgroundPanel.getMeasuredWidth(), backgroundPanel.getMeasuredHeight());
+        }
+        if (foregroundPanel != null) {
+            int width = foregroundPanel.getMeasuredWidth();
+            int height = foregroundPanel.getMeasuredHeight();
+            int left = isRtl ? width : -width;
+            int right = isRtl ? width * 2 : 0;
+            foregroundPanel.layout(left, 0, right, height);
+        }
+    }
+
+    public void onPanelFullyOpened() {
+        if (USE_HARDWARE_LAYER) setLayerType(LAYER_TYPE_NONE, null);
+        isPanelOpen = true;
+        isPageMoving = false;
+        if (panelController != null) panelController.openPanel();
+    }
+
+    public void notifyPanelStart() {
+        isPageMoving = true;
+        if (panelController != null) panelController.cnF();
+    }
+
+    final void setLayerType(int layerType) {
+        if (USE_HARDWARE_LAYER) {
+            setLayerType(LAYER_TYPE_NONE, null);
         }
     }
 }

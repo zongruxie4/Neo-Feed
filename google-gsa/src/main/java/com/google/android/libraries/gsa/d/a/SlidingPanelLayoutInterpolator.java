@@ -46,21 +46,21 @@ final class SlidingPanelLayoutInterpolator extends AnimatorListenerAdapter imple
     @Override
     public void onAnimationEnd(Animator animation) {
         animator = null;
-        layout.BM(finalX); // Possibly renaming BM() would help readability
+        layout.updatePanelOffset(finalX); // Possibly renaming BM() would help readability
 
-        if (!layout.mSettling) return;
+        if (!layout.settling) return;
 
-        layout.mSettling = false;
+        layout.settling = false;
 
-        if (layout.uoC == 0) {
-            layout.cnO();
-            layout.mIsPanelOpen = false;
-            layout.mIsPageMoving = false;
-            if (layout.uoH != null) {
-                layout.uoH.closePanel();
+        if (layout.panelOffsetPx == 0) {
+            layout.setLayerType(0);
+            layout.isPanelOpen = false;
+            layout.isPageMoving = false;
+            if (layout.panelController != null) {
+                layout.panelController.closePanel();
             }
-        } else if (layout.uoC == layout.getMeasuredWidth()) {
-            layout.cnG();
+        } else if (layout.panelOffsetPx == layout.getMeasuredWidth()) {
+            layout.onPanelFullyOpened();
         }
     }
 

@@ -26,7 +26,7 @@ final class SlidingPanelLayoutProperty extends Property<SlidingPanelLayout, Inte
      */
     @Override
     public Integer get(SlidingPanelLayout panel) {
-        return panel.uoC;
+        return panel.panelOffsetPx;
     }
 
     /**
@@ -37,6 +37,6 @@ final class SlidingPanelLayoutProperty extends Property<SlidingPanelLayout, Inte
      */
     @Override
     public void set(SlidingPanelLayout panel, Integer position) {
-        panel.BM(position);
+        panel.updatePanelOffset(position);
     }
 }

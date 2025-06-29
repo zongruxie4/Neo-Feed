@@ -45,11 +45,11 @@ public final class MinusOneOverlayCallback extends OverlayControllerCallback {
             case 3 -> {
                 if (!controller.cnD()) {
                     SlidingPanelLayout panel = controller.slidingPanelLayout;
-                    if (panel.uoC < panel.mTouchSlop) {
-                        panel.BM(0);
+                    if (panel.panelOffsetPx < panel.touchSlop) {
+                        panel.updatePanelOffset(0);
                         controller.mAcceptExternalMove = true;
                         controller.unX = 0;
-                        panel.mForceDrag = true;
+                        panel.forceDrag = true;
                         controller.obZ = timestamp - 30;
                         controller.b(0, controller.unX, controller.obZ);
                         controller.b(2, controller.unX, timestamp);

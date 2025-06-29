@@ -127,14 +127,14 @@ public class OverlayController extends DialogOverlayController {
         if (this.panelState == PanelState.CLOSED) {
             int i3 = (i & 1) != 0 ? 1 : 0;
             if ((i & 2) != 0) {
-                this.slidingPanelLayout.uoH = new TransparentOverlayController(this);
+                this.slidingPanelLayout.panelController = new TransparentOverlayController(this);
                 i3 = 0;
             }
             SlidingPanelLayout slidingPanelLayoutVar = this.slidingPanelLayout;
             if (i3 != 0) {
                 i2 = 750;
             }
-            slidingPanelLayoutVar.fv(i2);
+            slidingPanelLayoutVar.startSettlingTo(i2, 0);
         }
     }
 
@@ -155,15 +155,15 @@ public class OverlayController extends DialogOverlayController {
         printWriter.println(str + "mWrapperView: " + valueOf);
         SlidingPanelLayout slidingPanelLayoutVar = this.slidingPanelLayout;
         String concat = String.valueOf(str).concat("  ");
-        printWriter.println(concat + "mPanelPositionRatio: " + slidingPanelLayoutVar.mPanelPositionRatio);
-        printWriter.println(concat + "mDownX: " + slidingPanelLayoutVar.mDownX);
-        printWriter.println(concat + "mDownY: " + slidingPanelLayoutVar.mDownY);
-        printWriter.println(concat + "mActivePointerId: " + slidingPanelLayoutVar.mActivePointerId);
-        printWriter.println(concat + "mTouchState: " + slidingPanelLayoutVar.mTouchState);
-        printWriter.println(concat + "mIsPanelOpen: " + slidingPanelLayoutVar.mIsPanelOpen);
-        printWriter.println(concat + "mIsPageMoving: " + slidingPanelLayoutVar.mIsPageMoving);
-        printWriter.println(concat + "mSettling: " + slidingPanelLayoutVar.mSettling);
-        printWriter.println(concat + "mForceDrag: " + slidingPanelLayoutVar.mForceDrag);
+        printWriter.println(concat + "mPanelPositionRatio: " + slidingPanelLayoutVar.panelPositionRatio);
+        printWriter.println(concat + "mDownX: " + slidingPanelLayoutVar.downX);
+        printWriter.println(concat + "mDownY: " + slidingPanelLayoutVar.downY);
+        printWriter.println(concat + "mActivePointerId: " + slidingPanelLayoutVar.activePointerId);
+        printWriter.println(concat + "mTouchState: " + slidingPanelLayoutVar.touchState);
+        printWriter.println(concat + "mIsPanelOpen: " + slidingPanelLayoutVar.isPanelOpen);
+        printWriter.println(concat + "mIsPageMoving: " + slidingPanelLayoutVar.isPageMoving);
+        printWriter.println(concat + "mSettling: " + slidingPanelLayoutVar.settling);
+        printWriter.println(concat + "mForceDrag: " + slidingPanelLayoutVar.forceDrag);
     }
 
     public void Hn() {

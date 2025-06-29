@@ -26,35 +26,35 @@ public final class OverlayControllerSlidingPanelLayout extends SlidingPanelLayou
         ViewTreeLifecycleOwner.set(this, this);
     }
 
-    protected void determineScrollingStart(MotionEvent motionEvent, float f) {
+    public void determineScrollingStart(MotionEvent motionEvent, float f) {
         Object obj = 1;
-        if (motionEvent.findPointerIndex(this.mActivePointerId) != -1) {
-            float x = motionEvent.getX() - this.mDownX;
+        if (motionEvent.findPointerIndex(this.activePointerId) != -1) {
+            float x = motionEvent.getX() - this.downX;
             float abs = Math.abs(x);
-            float abs2 = Math.abs(motionEvent.getY() - this.mDownY);
+            float abs2 = Math.abs(motionEvent.getY() - this.downY);
             if (Float.compare(abs, 0.0f) != 0) {
                 abs = (float) Math.atan((double) (abs2 / abs));
                 Object obj2;
-                if (this.mIsRtl) {
+                if (this.isRtl) {
                     obj2 = x < 0.0f ? 1 : null;
                 } else if (x > 0.0f) {
                     obj2 = 1;//TODO: different from source
                 } else {
                     obj2 = null;
                 }
-                if (!this.mIsPanelOpen || this.mIsPageMoving) {
+                if (!this.isPanelOpen || this.isPageMoving) {
                     obj = null;
                 }
                 if (obj != null && obj2 != null) {//TODO: different from source
                     return;
                 }
-                if ((obj != null && this.uoH.canInterceptTouchEvents()) || abs > 1.0471976f) {
+                if ((obj != null && this.panelController.canInterceptTouchEvents()) || abs > 1.0471976f) {
                     return;
                 }
                 if (abs > 0.5235988f) {
-                    super.determineScrollingStart(motionEvent, (((float) Math.sqrt((double) ((abs - 0.5235988f) / 0.5235988f))) * 4.0f) + 1.0f);
+                    super.determineScrollStart(motionEvent, (((float) Math.sqrt((double) ((abs - 0.5235988f) / 0.5235988f))) * 4.0f) + 1.0f);
                 } else {
-                    super.determineScrollingStart(motionEvent, f);
+                    super.determineScrollStart(motionEvent, f);
                 }
             }
         }

@@ -9,6 +9,8 @@ import android.util.Pair;
 import android.view.WindowManager.LayoutParams;
 import android.widget.FrameLayout;
 
+import androidx.annotation.NonNull;
+
 import com.google.android.libraries.launcherclient.LauncherOverlayCallback;
 
 import java.io.PrintWriter;
@@ -65,8 +67,8 @@ abstract class OverlayControllerCallback extends BaseCallback {
                     overlayControllerVar3.mWindowShift = -Math.max(point.x, point.y);
                     overlayControllerVar3.slidingPanelLayout = new OverlayControllerSlidingPanelLayout(overlayControllerVar3);
                     overlayControllerVar3.container = new FrameLayout(overlayControllerVar3);
-                    overlayControllerVar3.slidingPanelLayout.el(overlayControllerVar3.container);
-                    overlayControllerVar3.slidingPanelLayout.uoH = overlayControllerVar3.overlayControllerStateChanger;
+                    overlayControllerVar3.slidingPanelLayout.setForegroundPanel(overlayControllerVar3.container);
+                    overlayControllerVar3.slidingPanelLayout.panelController = overlayControllerVar3.overlayControllerStateChanger;
                     layoutParams.width = -1;
                     layoutParams.height = -1;
                     layoutParams.flags |= 8650752;
@@ -89,11 +91,11 @@ abstract class OverlayControllerCallback extends BaseCallback {
                         overlayControllerVar.window.restoreHierarchyState(bundle.getBundle("view_state"));
                         if (bundle.getBoolean("open")) {
                             SlidingPanelLayout slidingPanelLayoutVar = overlayControllerVar.slidingPanelLayout;
-                            slidingPanelLayoutVar.mPanelPositionRatio = 1.0f;
-                            slidingPanelLayoutVar.uoC = slidingPanelLayoutVar.getMeasuredWidth();
-                            slidingPanelLayoutVar.uoA.setTranslationX(slidingPanelLayoutVar.mIsRtl ? (float) (-slidingPanelLayoutVar.uoC) : (float) slidingPanelLayoutVar.uoC);
-                            slidingPanelLayoutVar.cnF();
-                            slidingPanelLayoutVar.cnG();
+                            slidingPanelLayoutVar.panelPositionRatio = 1.0f;
+                            slidingPanelLayoutVar.panelOffsetPx = slidingPanelLayoutVar.getMeasuredWidth();
+                            slidingPanelLayoutVar.foregroundPanel.setTranslationX(slidingPanelLayoutVar.isRtl ? (float) (-slidingPanelLayoutVar.panelOffsetPx) : (float) slidingPanelLayoutVar.panelOffsetPx);
+                            slidingPanelLayoutVar.notifyPanelStart();
+                            slidingPanelLayoutVar.onPanelFullyOpened();
                         }
                     }
                     overlayControllerVar2 = this.overlayController;
@@ -158,12 +160,12 @@ abstract class OverlayControllerCallback extends BaseCallback {
         }
     }
 
-    public void dump(PrintWriter printWriter, String str) {
+    public void dump(PrintWriter printWriter, @NonNull String str) {
         OverlayController overlayControllerVar = this.overlayController;
         String valueOf = String.valueOf(overlayControllerVar);
         printWriter.println(str + " mView: " + valueOf);
         if (overlayControllerVar != null) {
-            overlayControllerVar.dump(printWriter, String.valueOf(str).concat("  "));
+            overlayControllerVar.dump(printWriter, str.concat("  "));
         }
     }
 }

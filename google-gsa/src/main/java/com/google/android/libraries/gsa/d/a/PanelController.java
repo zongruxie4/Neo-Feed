@@ -1,6 +1,6 @@
 package com.google.android.libraries.gsa.d.a;
 
-interface PanelController {
+public interface PanelController {
     void setPanelPosition(float position);
 
     void onPanelDragged();
