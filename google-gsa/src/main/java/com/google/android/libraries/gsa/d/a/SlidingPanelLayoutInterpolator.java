@@ -7,59 +7,67 @@ import android.view.animation.Interpolator;
 
 final class SlidingPanelLayoutInterpolator extends AnimatorListenerAdapter implements Interpolator {
 
-    private ObjectAnimator mAnimator;
-    int mFinalX;
-    private final SlidingPanelLayout slidingPanelLayout;
+    private ObjectAnimator animator;
+    public int finalX;
+    private final SlidingPanelLayout layout;
 
-    public SlidingPanelLayoutInterpolator(SlidingPanelLayout slidingPanelLayoutVar) {
-        this.slidingPanelLayout = slidingPanelLayoutVar;
+    public SlidingPanelLayoutInterpolator(SlidingPanelLayout layout) {
+        this.layout = layout;
     }
 
-    public final void cnP() {
-        if (this.mAnimator != null) {
-            this.mAnimator.removeAllListeners();
-            this.mAnimator.cancel();
+    public void cancelAnimation() {
+        if (animator != null) {
+            animator.removeAllListeners();
+            animator.cancel();
+            animator = null;
         }
     }
 
-    public final void dt(int i, int i2) {
-        cnP();
-        this.mFinalX = i;
-        if (i2 > 0) {
-            this.mAnimator = ObjectAnimator.ofInt(this.slidingPanelLayout, SlidingPanelLayout.PANEL_X, i).setDuration((long) i2);
-            this.mAnimator.setInterpolator(this);
-            this.mAnimator.addListener(this);
-            this.mAnimator.start();
-            return;
+    public void animateTo(int targetX, int durationMs) {
+        cancelAnimation();
+        this.finalX = targetX;
+
+        if (durationMs > 0) {
+            animator = ObjectAnimator.ofInt(layout, SlidingPanelLayout.PANEL_X, targetX)
+                    .setDuration(durationMs);
+            animator.setInterpolator(this);
+            animator.addListener(this);
+            animator.start();
+        } else {
+            // Animation skipped, invoke end manually
+            onAnimationEnd(null);
         }
-        onAnimationEnd(null);
     }
 
-    public final boolean isFinished() {
-        return this.mAnimator == null;
+    public boolean isFinished() {
+        return animator == null;
     }
 
-    public final void onAnimationEnd(Animator animator) {
-        this.mAnimator = null;
-        this.slidingPanelLayout.BM(this.mFinalX);
-        SlidingPanelLayout slidingPanelLayoutVar = this.slidingPanelLayout;
-        if (slidingPanelLayoutVar.mSettling) {
-            slidingPanelLayoutVar.mSettling = false;
-            if (slidingPanelLayoutVar.uoC == 0) {
-                slidingPanelLayoutVar.cnO();
-                slidingPanelLayoutVar.mIsPanelOpen = false;
-                slidingPanelLayoutVar.mIsPageMoving = false;
-                if (slidingPanelLayoutVar.uoH != null) {
-                    slidingPanelLayoutVar.uoH.closePanel();
-                }
-            } else if (slidingPanelLayoutVar.uoC == slidingPanelLayoutVar.getMeasuredWidth()) {
-                slidingPanelLayoutVar.cnG();
+    @Override
+    public void onAnimationEnd(Animator animation) {
+        animator = null;
+        layout.BM(finalX); // Possibly renaming BM() would help readability
+
+        if (!layout.mSettling) return;
+
+        layout.mSettling = false;
+
+        if (layout.uoC == 0) {
+            layout.cnO();
+            layout.mIsPanelOpen = false;
+            layout.mIsPageMoving = false;
+            if (layout.uoH != null) {
+                layout.uoH.closePanel();
             }
+        } else if (layout.uoC == layout.getMeasuredWidth()) {
+            layout.cnG();
         }
     }
 
-    public final float getInterpolation(float f) {
-        float f2 = f - 1.0f;
-        return (f2 * (((f2 * f2) * f2) * f2)) + 1.0f;
+    @Override
+    public float getInterpolation(float input) {
+        // Ease-out quint interpolation
+        float t = input - 1.0f;
+        return (t * t * t * t * t) + 1.0f;
     }
 }

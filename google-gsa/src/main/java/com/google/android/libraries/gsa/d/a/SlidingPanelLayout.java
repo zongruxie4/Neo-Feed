@@ -79,7 +79,7 @@ public class SlidingPanelLayout extends FrameLayout {
     final void fv(int i) {
         cnF();
         this.mSettling = true;
-        this.slidingPanelLayoutInterpolator.dt(getMeasuredWidth(), i);
+        this.slidingPanelLayoutInterpolator.animateTo(getMeasuredWidth(), i);
     }
 
     final void closePanel(int i) {
@@ -91,7 +91,7 @@ public class SlidingPanelLayout extends FrameLayout {
             panelControllerVar.setPanelEnabled(z);
         }
         this.mSettling = true;
-        this.slidingPanelLayoutInterpolator.dt(0, i);
+        this.slidingPanelLayoutInterpolator.animateTo(0, i);
     }
 
     public final void em(View view) {
@@ -122,7 +122,7 @@ public class SlidingPanelLayout extends FrameLayout {
                 this.mLastMotionX = x;
                 this.mTotalMotionX = 0.0f;
                 this.mActivePointerId = motionEvent.getPointerId(0);
-                action = Math.abs(this.slidingPanelLayoutInterpolator.mFinalX - this.uoC);
+                action = Math.abs(this.slidingPanelLayoutInterpolator.finalX - this.uoC);
                 z = this.slidingPanelLayoutInterpolator.isFinished() || action < this.mTouchSlop / 3;
                 if (!z || this.mForceDrag) {
                     this.mForceDrag = false;
@@ -169,7 +169,7 @@ public class SlidingPanelLayout extends FrameLayout {
                 this.mLastMotionX = x;
                 this.mTotalMotionX = 0.0f;
                 this.mActivePointerId = motionEvent.getPointerId(0);
-                abs = Math.abs(this.slidingPanelLayoutInterpolator.mFinalX - this.uoC);
+                abs = Math.abs(this.slidingPanelLayoutInterpolator.finalX - this.uoC);
                 z = this.slidingPanelLayoutInterpolator.isFinished() || abs < this.mTouchSlop / 3;
                 if (z && !this.mForceDrag) {
                     return true;
@@ -332,7 +332,7 @@ public class SlidingPanelLayout extends FrameLayout {
         this.mTouchState = 1;
         this.mIsPageMoving = true;
         this.mSettling = false;
-        this.slidingPanelLayoutInterpolator.cnP();
+        this.slidingPanelLayoutInterpolator.cancelAnimation();
         if (uoL) {
             setLayerType(2, null);
         }
