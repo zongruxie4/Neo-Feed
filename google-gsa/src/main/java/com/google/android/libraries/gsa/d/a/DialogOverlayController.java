@@ -5,155 +5,158 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.ActionMode;
-import android.view.ContextThemeWrapper;
-import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.MotionEvent;
-import android.view.SearchEvent;
-import android.view.View;
-import android.view.Window;
-import android.view.Window.Callback;
-import android.view.WindowManager;
-import android.view.WindowManager.LayoutParams;
+import android.view.*;
 import android.view.accessibility.AccessibilityEvent;
 
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Set;
 
-class DialogOverlayController extends ContextThemeWrapper implements Callback, DialogListeners {
+class DialogOverlayController extends ContextThemeWrapper implements Window.Callback, DialogListeners {
 
     public WindowManager windowManager;
-    public final Window window;
-    private final HashSet<DialogInterface> dialogs = new HashSet<>();
+    public Window window;
+    private final Set<DialogInterface> dialogs = Collections.synchronizedSet(new HashSet<>());
     public View windowView;
 
     DialogOverlayController(Context context, int theme, int dialogTheme) {
         super(context, theme);
         Dialog dialog = new Dialog(context, dialogTheme);
         this.window = dialog.getWindow();
-        this.window.setCallback(this);
-        Window window = this.window;
-        window.addFlags(Integer.MIN_VALUE);
+        if (this.window != null) {
+            this.window.setCallback(this);
+            this.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS); // Replaced magic number
+        } else {
+            throw new IllegalStateException("Dialog window cannot be null");
+        }
+        this.windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
     }
 
     void onBackPressed() {
+        // Override in subclass or implement logic here
     }
 
-    public boolean dispatchKeyEvent(KeyEvent keyEvent) {
-        if (keyEvent.getKeyCode() != 4 || keyEvent.getAction() != 1 || keyEvent.isCanceled()) {
-            return this.window.superDispatchKeyEvent(keyEvent);
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        if (event.getKeyCode() == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP && !event.isCanceled()) {
+            onBackPressed();
+            return true;
         }
-        onBackPressed();
-        return true;
+        return window.superDispatchKeyEvent(event);
     }
 
-    public boolean dispatchKeyShortcutEvent(KeyEvent keyEvent) {
-        return this.window.superDispatchKeyShortcutEvent(keyEvent);
+    @Override public boolean dispatchKeyShortcutEvent(KeyEvent event) {
+        return window.superDispatchKeyShortcutEvent(event);
     }
 
-    public boolean dispatchTouchEvent(MotionEvent motionEvent) {
-        return this.window.superDispatchTouchEvent(motionEvent);
+    @Override public boolean dispatchTouchEvent(MotionEvent event) {
+        return window.superDispatchTouchEvent(event);
     }
 
-    public boolean dispatchTrackballEvent(MotionEvent motionEvent) {
-        return this.window.superDispatchTrackballEvent(motionEvent);
+    @Override public boolean dispatchTrackballEvent(MotionEvent event) {
+        return window.superDispatchTrackballEvent(event);
     }
 
-    public boolean dispatchGenericMotionEvent(MotionEvent motionEvent) {
-        return this.window.superDispatchGenericMotionEvent(motionEvent);
+    @Override public boolean dispatchGenericMotionEvent(MotionEvent event) {
+        return window.superDispatchGenericMotionEvent(event);
     }
 
-    public boolean dispatchPopulateAccessibilityEvent(AccessibilityEvent accessibilityEvent) {
+    @Override public boolean dispatchPopulateAccessibilityEvent(AccessibilityEvent event) {
         return false;
     }
 
-    public View onCreatePanelView(int i) {
+    @Override public View onCreatePanelView(int featureId) {
         return null;
     }
 
-    public boolean onCreatePanelMenu(int i, Menu menu) {
+    @Override public boolean onCreatePanelMenu(int featureId, Menu menu) {
         return false;
     }
 
-    public boolean onPreparePanel(int i, View view, Menu menu) {
+    @Override public boolean onPreparePanel(int featureId, View view, Menu menu) {
         return true;
     }
 
-    public boolean onMenuOpened(int i, Menu menu) {
+    @Override public boolean onMenuOpened(int featureId, Menu menu) {
         return true;
     }
 
-    public boolean onMenuItemSelected(int i, MenuItem menuItem) {
+    @Override public boolean onMenuItemSelected(int featureId, MenuItem item) {
         return false;
     }
 
-    public void onWindowAttributesChanged(LayoutParams layoutParams) {
-        if (this.windowView != null) {
-            this.windowManager.updateViewLayout(this.windowView, layoutParams);
+    @Override
+    public void onWindowAttributesChanged(WindowManager.LayoutParams params) {
+        if (windowView != null && windowManager != null) {
+            windowManager.updateViewLayout(windowView, params);
         }
     }
 
-    public void onContentChanged() {
-    }
+    @Override public void onContentChanged() {}
+    @Override public void onWindowFocusChanged(boolean hasFocus) {}
+    @Override public void onAttachedToWindow() {}
+    @Override public void onDetachedFromWindow() {}
+    @Override public void onPanelClosed(int featureId, Menu menu) {}
 
-    public void onWindowFocusChanged(boolean z) {
-    }
-
-    public void onAttachedToWindow() {
-    }
-
-    public void onDetachedFromWindow() {
-    }
-
-    public void onPanelClosed(int i, Menu menu) {
-    }
-
-    public boolean onSearchRequested() {
+    @Override public boolean onSearchRequested() {
         return false;
     }
 
-    public boolean onSearchRequested(SearchEvent searchEvent) {
+    @Override public boolean onSearchRequested(SearchEvent event) {
         return false;
     }
 
-    public ActionMode onWindowStartingActionMode(ActionMode.Callback callback) {
+    @Override public ActionMode onWindowStartingActionMode(ActionMode.Callback callback) {
         return null;
     }
 
-    public ActionMode onWindowStartingActionMode(ActionMode.Callback callback, int i) {
+    @Override public ActionMode onWindowStartingActionMode(ActionMode.Callback callback, int type) {
         return null;
     }
 
-    public void onActionModeStarted(ActionMode actionMode) {
-    }
+    @Override public void onActionModeStarted(ActionMode mode) {}
+    @Override public void onActionModeFinished(ActionMode mode) {}
 
-    public void onActionModeFinished(ActionMode actionMode) {
-    }
-
+    @Override
     public void startActivity(Intent intent) {
-        super.startActivity(intent.addFlags(268435456));
+        super.startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
     }
 
-    public void startActivity(Intent intent, Bundle bundle) {
-        super.startActivity(intent.addFlags(268435456), bundle);
+    @Override
+    public void startActivity(Intent intent, Bundle options) {
+        super.startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK), options);
     }
 
-    public void onShow(DialogInterface dialogInterface) {
-        this.dialogs.add(dialogInterface);
+    @Override
+    public void onShow(DialogInterface dialog) {
+        dialogs.add(dialog);
     }
 
-    public void onDismiss(DialogInterface dialogInterface) {
-        this.dialogs.remove(dialogInterface);
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        dialogs.remove(dialog);
     }
 
-    final void cnB() {
-        if (!this.dialogs.isEmpty()) {
-            Dialog[] dialogArr = this.dialogs.toArray(new Dialog[this.dialogs.size()]);
-            this.dialogs.clear();
-            for (Dialog dismiss : dialogArr) {
-                dismiss.dismiss();
+    void dismissAllDialogs() {
+        synchronized (dialogs) {
+            for (DialogInterface dialog : dialogs.toArray(new DialogInterface[0])) {
+                if (dialog instanceof Dialog) {
+                    ((Dialog) dialog).dismiss();
+                }
             }
+            dialogs.clear();
         }
+    }
+
+    public void setWindowView(View view) {
+        this.windowView = view;
+    }
+
+    public View getWindowView() {
+        return windowView;
+    }
+
+    public Window getWindow() {
+        return window;
     }
 }

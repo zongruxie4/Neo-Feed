@@ -50,7 +50,7 @@ public class OverlayController extends DialogOverlayController {
 
         }
         this.windowView = null;
-        cnB();
+        dismissAllDialogs();
         onDestroy();
         return this.uoa;
     }
@@ -119,7 +119,7 @@ public class OverlayController extends DialogOverlayController {
                 i3 = 750;
             }
             slidingPanelLayoutVar.closePanel(i3);
-            cnB();
+            dismissAllDialogs();
         }
     }
 
@@ -185,7 +185,7 @@ public class OverlayController extends DialogOverlayController {
     public void onResume() {
     }
 
-    protected Window getWindow() {
+    public Window getWindow() {
         return this.window;
     }
 
