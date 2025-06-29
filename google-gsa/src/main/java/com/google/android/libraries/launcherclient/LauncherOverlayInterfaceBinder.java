@@ -7,8 +7,8 @@ import android.os.Parcel;
 import android.os.RemoteException;
 import android.view.WindowManager.LayoutParams;
 
-import com.google.android.a.LauncherOverlayBinder;
-import com.google.android.a.ParcelUtils;
+import com.google.android.binder.LauncherOverlayBinder;
+import com.google.android.binder.ParcelUtils;
 
 
 public abstract class LauncherOverlayInterfaceBinder extends LauncherOverlayBinder implements ILauncherOverlay {

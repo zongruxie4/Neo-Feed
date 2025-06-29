@@ -2,7 +2,7 @@ package com.google.android.libraries.launcherclient
 
 import android.os.IBinder
 import android.os.RemoteException
-import com.google.android.a.BinderInterface
+import com.google.android.binder.BinderInterface
 import java.util.logging.Logger
 
 

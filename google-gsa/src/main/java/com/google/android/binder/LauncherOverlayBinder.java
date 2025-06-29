@@ -1,4 +1,4 @@
-package com.google.android.a;
+package com.google.android.binder;
 
 import android.os.Binder;
 import android.os.IBinder;
