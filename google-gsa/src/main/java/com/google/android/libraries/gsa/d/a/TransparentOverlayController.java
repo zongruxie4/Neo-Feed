@@ -1,9 +1,8 @@
 package com.google.android.libraries.gsa.d.a;
 
-import android.os.Build;
 import android.view.WindowManager.LayoutParams;
 
-final class TransparentOverlayController implements t {
+final class TransparentOverlayController implements PanelController {
 
     private final OverlayController overlayController;
 
@@ -11,17 +10,17 @@ final class TransparentOverlayController implements t {
         this.overlayController = overlayControllerVar;
     }
 
-    public final void drag() {
+    public final void onPanelDragged() {
 
     }
 
     public final void cnF() {
     }
 
-    public final void oc(boolean z) {
+    public final void setPanelEnabled(boolean enabled) {
     }
 
-    public final void open() {
+    public final void openPanel() {
         this.overlayController.setVisible(true);
         OverlayController overlayControllerVar = this.overlayController;
         LayoutParams attributes = overlayControllerVar.window.getAttributes();
@@ -38,7 +37,7 @@ final class TransparentOverlayController implements t {
         }
     }
 
-    public final void close() {
+    public final void closePanel() {
         OverlayController overlayControllerVar = this.overlayController;
         LayoutParams attributes = overlayControllerVar.window.getAttributes();
         float f = attributes.alpha;
@@ -56,10 +55,10 @@ final class TransparentOverlayController implements t {
         this.overlayController.slidingPanelLayout.uoH = this.overlayController.overlayControllerStateChanger;
     }
 
-    public final void D(float f) {
+    public final void setPanelPosition(float position) {
     }
 
-    public final boolean cnI() {
+    public final boolean canInterceptTouchEvents() {
         return true;
     }
 }

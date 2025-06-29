@@ -36,7 +36,7 @@ public class SlidingPanelLayout extends FrameLayout {
     private float uoE;
     private float uoF;
     private final SlidingPanelLayoutInterpolator slidingPanelLayoutInterpolator;
-    public t uoH;
+    public PanelController uoH;
     public boolean mIsPanelOpen = false;
     public boolean mForceDrag;
     public boolean mSettling;
@@ -72,7 +72,7 @@ public class SlidingPanelLayout extends FrameLayout {
             this.uoA.setAlpha(Math.max(0.1f, this.decelerateInterpolator.getInterpolation(this.mPanelPositionRatio)));
         }
         if (this.uoH != null) {
-            this.uoH.D(this.mPanelPositionRatio);
+            this.uoH.setPanelPosition(this.mPanelPositionRatio);
         }
     }
 
@@ -86,9 +86,9 @@ public class SlidingPanelLayout extends FrameLayout {
         this.mIsPageMoving = true;
         if (this.uoH != null) {
             boolean z;
-            t tVar = this.uoH;
+            PanelController panelControllerVar = this.uoH;
             z = this.mTouchState == 1;
-            tVar.oc(z);
+            panelControllerVar.setPanelEnabled(z);
         }
         this.mSettling = true;
         this.slidingPanelLayoutInterpolator.dt(0, i);
@@ -337,7 +337,7 @@ public class SlidingPanelLayout extends FrameLayout {
             setLayerType(2, null);
         }
         if (this.uoH != null) {
-            this.uoH.drag();
+            this.uoH.onPanelDragged();
         }
     }
 
@@ -353,7 +353,7 @@ public class SlidingPanelLayout extends FrameLayout {
         this.mIsPanelOpen = true;
         this.mIsPageMoving = false;
         if (this.uoH != null) {
-            this.uoH.open();
+            this.uoH.openPanel();
         }
     }
 

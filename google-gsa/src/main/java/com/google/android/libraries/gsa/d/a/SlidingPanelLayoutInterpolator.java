@@ -50,7 +50,7 @@ final class SlidingPanelLayoutInterpolator extends AnimatorListenerAdapter imple
                 slidingPanelLayoutVar.mIsPanelOpen = false;
                 slidingPanelLayoutVar.mIsPageMoving = false;
                 if (slidingPanelLayoutVar.uoH != null) {
-                    slidingPanelLayoutVar.uoH.close();
+                    slidingPanelLayoutVar.uoH.closePanel();
                 }
             } else if (slidingPanelLayoutVar.uoC == slidingPanelLayoutVar.getMeasuredWidth()) {
                 slidingPanelLayoutVar.cnG();

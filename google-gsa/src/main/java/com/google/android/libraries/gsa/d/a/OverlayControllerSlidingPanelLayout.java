@@ -48,7 +48,7 @@ public final class OverlayControllerSlidingPanelLayout extends SlidingPanelLayou
                 if (obj != null && obj2 != null) {//TODO: different from source
                     return;
                 }
-                if ((obj != null && this.uoH.cnI()) || abs > 1.0471976f) {
+                if ((obj != null && this.uoH.canInterceptTouchEvents()) || abs > 1.0471976f) {
                     return;
                 }
                 if (abs > 0.5235988f) {

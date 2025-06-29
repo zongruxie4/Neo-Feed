@@ -6,7 +6,6 @@ import android.view.MotionEvent;
 import android.view.Window;
 import android.widget.FrameLayout;
 
-import com.google.android.libraries.launcherclient.ILauncherOverlayCallback;
 import com.google.android.libraries.launcherclient.LauncherOverlayCallback;
 
 import java.io.PrintWriter;
@@ -18,7 +17,7 @@ public class OverlayController extends DialogOverlayController {
     public int mWindowShift;
     public String mPackageName;
     public SlidingPanelLayout slidingPanelLayout;
-    public final t overlayControllerStateChanger = new OverlayControllerStateChanger(this);
+    public final PanelController overlayControllerStateChanger = new OverlayControllerStateChanger(this);
     public FrameLayout container;
     public int unX = 0;
     public boolean mAcceptExternalMove = false;

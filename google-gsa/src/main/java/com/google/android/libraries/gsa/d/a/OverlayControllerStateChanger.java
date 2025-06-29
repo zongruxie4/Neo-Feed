@@ -1,9 +1,8 @@
 package com.google.android.libraries.gsa.d.a;
 
-import android.os.Build;
 import android.view.WindowManager.LayoutParams;
 
-final class OverlayControllerStateChanger implements t {
+final class OverlayControllerStateChanger implements PanelController {
 
     private final OverlayController overlayController;
 
@@ -11,7 +10,7 @@ final class OverlayControllerStateChanger implements t {
         this.overlayController = overlayControllerVar;
     }
 
-    public final void drag() {
+    public final void onPanelDragged() {
         OverlayController overlayControllerVar = this.overlayController;
         PanelState panelStateVar = PanelState.DRAGGING;//Todo: PanelState.uof was default
         if (overlayControllerVar.panelState != panelStateVar) {
@@ -44,8 +43,8 @@ final class OverlayControllerStateChanger implements t {
         }
     }
 
-    public final void oc(boolean z) {
-        if (z) {
+    public final void setPanelEnabled(boolean enabled) {
+        if (enabled) {
             this.overlayController.Hn();
         }
         OverlayController overlayControllerVar = this.overlayController;
@@ -57,7 +56,7 @@ final class OverlayControllerStateChanger implements t {
         this.overlayController.setVisible(false);
     }
 
-    public final void open() {
+    public final void openPanel() {
         OverlayController overlayControllerVar = this.overlayController;
         PanelState panelStateVar = PanelState.OPEN_AS_DRAWER;//Todo: PanelState.uog was default
         if (overlayControllerVar.panelState != panelStateVar) {
@@ -66,18 +65,18 @@ final class OverlayControllerStateChanger implements t {
         }
     }
 
-    public final void D(float f) {
-        if (this.overlayController.uoa != null && !Float.isNaN(f)) {
+    public final void setPanelPosition(float position) {
+        if (this.overlayController.uoa != null && !Float.isNaN(position)) {
             try {
-                this.overlayController.uoa.overlayScrollChanged(f);
-                this.overlayController.onScroll(f);
+                this.overlayController.uoa.overlayScrollChanged(position);
+                this.overlayController.onScroll(position);
             } catch (Throwable ignored) {
 
             }
         }
     }
 
-    public final void close() {
+    public final void closePanel() {
         OverlayController overlayControllerVar = this.overlayController;
         LayoutParams attributes = overlayControllerVar.window.getAttributes();
         float f = attributes.alpha;
@@ -93,7 +92,7 @@ final class OverlayControllerStateChanger implements t {
         }
     }
 
-    public final boolean cnI() {
+    public final boolean canInterceptTouchEvents() {
         return this.overlayController.Ho();
     }
 }
