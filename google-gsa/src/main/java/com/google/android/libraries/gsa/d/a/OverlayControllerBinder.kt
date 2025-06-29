@@ -158,7 +158,7 @@ class OverlayControllerBinder(
     fun a(callback: ILauncherOverlayCallback?, i: Int) {
         callback?.let {
             try {
-                it.overlayStatusChanged(overlaysController.Hx() or i)
+                it.overlayStatusChanged(overlaysController.defaultVersion or i)
             } catch (_: Throwable) {
                 // Ignored as per original
             }

@@ -9,83 +9,92 @@ import android.os.IBinder;
 import android.util.SparseArray;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 
 public abstract class OverlaysController {
 
     private final Service service;
-    private final SparseArray<OverlayControllerBinder> clients = new SparseArray<>();
+    private final SparseArray<OverlayControllerBinder> clientBinders = new SparseArray<>();
     public final Handler handler = new Handler();
 
     protected OverlaysController(Service service) {
-        this.service = service;
+        this.service = Objects.requireNonNull(service);
     }
 
-    public abstract OverlayController createController(Configuration configuration, int i, int i2);
+    public abstract OverlayController createController(Configuration configuration, int version, int clientVersion);
 
     public final synchronized IBinder onBind(Intent intent) {
-        OverlayControllerBinder iBinder;
-        int i = Integer.MAX_VALUE;
-        synchronized (this) {
-            Uri data = intent.getData();
-            int port = data.getPort();
-            if (port == -1) {
-                iBinder = null;
-            } else {
-                int parseInt;
-                try {
-                    parseInt = Integer.parseInt(data.getQueryParameter("v"));
-                } catch (Exception e) {
-                    parseInt = i;
-                }
-                try {
-                    i = Integer.parseInt(data.getQueryParameter("cv"));
-                } catch (Exception ignored) {
+        Uri data = intent.getData();
+        if (data == null) return null;
 
-                }
-                String[] packagesForUid = this.service.getPackageManager().getPackagesForUid(port);
-                String host = data.getHost();
-                if (packagesForUid == null || !Arrays.asList(packagesForUid).contains(host)) {
-                    iBinder = null;
-                } else {
-                    iBinder = this.clients.get(port);
-                    if (!(iBinder == null || iBinder.getServerVersion() == parseInt)) {
-                        iBinder.destroy();
-                        iBinder = null;
-                    }
-                    if (iBinder == null) {
-                        iBinder = new OverlayControllerBinder(this, port, host, parseInt, i);
-                        this.clients.put(port, iBinder);
-                    }
-                }
-            }
+        int port = data.getPort();
+        if (port == -1) return null;
+
+        int version = parseQueryParam(data, "v", Integer.MAX_VALUE);
+        int clientVersion = parseQueryParam(data, "cv", Integer.MAX_VALUE);
+
+        String host = data.getHost();
+        List<String> packagesForUid = getPackagesForUid(port);
+
+        if (host == null || packagesForUid == null || !packagesForUid.contains(host)) {
+            return null;
         }
-        return iBinder;
+
+        OverlayControllerBinder binder = clientBinders.get(port);
+
+        if (binder != null && binder.getServerVersion() != version) {
+            binder.destroy();
+            binder = null;
+        }
+
+        if (binder == null) {
+            binder = new OverlayControllerBinder(this, port, host, version, clientVersion);
+            clientBinders.put(port, binder);
+        }
+
+        return binder;
     }
 
     public final synchronized void onUnbind(Intent intent) {
-        int port = intent.getData().getPort();
+        Uri data = intent.getData();
+        if (data == null) return;
+
+        int port = data.getPort();
         if (port != -1) {
-            OverlayControllerBinder overlayControllerBinderVar = this.clients.get(port);
-            if (overlayControllerBinderVar != null) {
-                overlayControllerBinderVar.destroy();
+            OverlayControllerBinder binder = clientBinders.get(port);
+            if (binder != null) {
+                binder.destroy();
             }
-            this.clients.remove(port);
+            clientBinders.remove(port);
         }
     }
 
     public final synchronized void onDestroy() {
-        for (int size = this.clients.size() - 1; size >= 0; size--) {
-            OverlayControllerBinder overlayControllerBinderVar = this.clients.valueAt(size);
-            if (overlayControllerBinderVar != null) {
-                overlayControllerBinderVar.destroy();
+        for (int i = clientBinders.size() - 1; i >= 0; i--) {
+            OverlayControllerBinder binder = clientBinders.valueAt(i);
+            if (binder != null) {
+                binder.destroy();
             }
         }
-        this.clients.clear();
+        clientBinders.clear();
     }
 
-
-    //Todo: maybe remove
-    public int Hx() {
+    // Puede eliminarse si no se usa
+    public int getDefaultVersion() {
         return 24;
+    }
+
+    private int parseQueryParam(Uri uri, String key, int defaultValue) {
+        try {
+            return Integer.parseInt(uri.getQueryParameter(key));
+        } catch (Exception e) {
+            return defaultValue;
+        }
+    }
+
+    private List<String> getPackagesForUid(int uid) {
+        String[] packages = service.getPackageManager().getPackagesForUid(uid);
+        return packages != null ? Arrays.asList(packages) : null;
     }
 }
