@@ -7,64 +7,66 @@ import android.os.Parcel;
 import android.os.RemoteException;
 import android.view.WindowManager.LayoutParams;
 
+import androidx.annotation.NonNull;
+
 import com.google.android.binder.LauncherOverlayBinder;
 import com.google.android.binder.ParcelUtils;
 
 
 public abstract class LauncherOverlayInterfaceBinder extends LauncherOverlayBinder implements ILauncherOverlay {
+    private static final String INTERFACE_DESCRIPTOR = "com.google.android.libraries.launcherclient.ILauncherOverlay";
+    private static final int TRANSACTION_START_SCROLL = 1;
+    private static final int TRANSACTION_ON_SCROLL = 2;
+    private static final int TRANSACTION_END_SCROLL = 3;
+    private static final int TRANSACTION_WINDOW_ATTACHED_LAYOUT = 4;
+    private static final int TRANSACTION_REQUEST_VOICE_DETECTION = 5;
+    private static final int TRANSACTION_ON_PAUSE = 7;
+    private static final int TRANSACTION_ON_RESUME = 8;
+    private static final int TRANSACTION_OPEN_OVERLAY = 9;
+    private static final int TRANSACTION_WINDOW_DETACHED = 10;
+    private static final int TRANSACTION_IS_ENABLED = 13;
+    private static final int TRANSACTION_WINDOW_ATTACHED_BUNDLE = 14;
+    private static final int TRANSACTION_CLOSE_OVERLAY = 16;
 
     protected LauncherOverlayInterfaceBinder() {
-        attachInterface(this, "com.google.android.libraries.launcherclient.ILauncherOverlay");
+        attachInterface(this, INTERFACE_DESCRIPTOR);
     }
 
-    public boolean onTransact(int i, Parcel parcel, Parcel parcel2, int i2) throws RemoteException {//Todo: throws is new
-        ILauncherOverlayCallback dVar = null;
-        if (super.onTransact(i, parcel, parcel2, i2)) {
-            return true;
-        }
-        IBinder readStrongBinder;
-        IInterface queryLocalInterface;
-        boolean HC;
-        switch (i) {
-            case 1:
+    @Override
+    public boolean onTransact(final int code, @NonNull final Parcel data, final Parcel reply, final int flags) throws RemoteException {
+        if (super.onTransact(code, data, reply, flags)) return true;
+        ILauncherOverlayCallback callback;
+        IBinder binder;
+
+        switch (code) {
+            case TRANSACTION_START_SCROLL:
                 startScroll();
                 break;
-            case 2:
-                onScroll(parcel.readFloat());
+            case TRANSACTION_ON_SCROLL:
+                onScroll(data.readFloat());
                 break;
-            case 3:
+            case TRANSACTION_END_SCROLL:
                 endScroll();
                 break;
-            case 4:
-                LayoutParams layoutParams = (LayoutParams) ParcelUtils.readParcelable(parcel, LayoutParams.CREATOR);
-                readStrongBinder = parcel.readStrongBinder();
-                if (readStrongBinder != null) {
-                    queryLocalInterface = readStrongBinder.queryLocalInterface("com.google.android.libraries.launcherclient.ILauncherOverlayCallback");
-                    if (queryLocalInterface instanceof ILauncherOverlayCallback) {
-                        dVar = (ILauncherOverlayCallback) queryLocalInterface;
-                    } else {
-                        dVar = new LauncherOverlayCallback(readStrongBinder);
-                    }
-                }
-                windowAttached(layoutParams, dVar, parcel.readInt());
+            case TRANSACTION_WINDOW_ATTACHED_LAYOUT:
+                LayoutParams params = ParcelUtils.readParcelable(data, LayoutParams.CREATOR);
+                callback = getCallbackFromBinder(data.readStrongBinder());
+                windowAttached(params, callback, data.readInt());
                 break;
-            case 5:
-                requestVoiceDetection(ParcelUtils.readBoolean(parcel));
+            case TRANSACTION_REQUEST_VOICE_DETECTION:
+                requestVoiceDetection(ParcelUtils.readBoolean(data));
                 break;
-            case 6:
-                // Check if the client supports the feature
-                break;
-            case 7:
+            case TRANSACTION_ON_PAUSE:
                 onPause();
                 break;
-            case 8:
+            case TRANSACTION_ON_RESUME:
                 onResume();
                 break;
-            case 9:
-                openOverlay(parcel.readInt());
+            case TRANSACTION_OPEN_OVERLAY:
+                openOverlay(data.readInt());
                 break;
-            case 10:
-                windowDetached(ParcelUtils.readBoolean(parcel));
+            case TRANSACTION_WINDOW_DETACHED:
+                windowDetached(ParcelUtils.readBoolean(data));
                 break;
             case 11:
                 //Voice search is always enabled, so we don't need to check the version
@@ -72,32 +74,30 @@ public abstract class LauncherOverlayInterfaceBinder extends LauncherOverlayBind
             case 12:
                 // This method is not used in the current implementation, but we keep it for compatibility
                 break;
-            case 13:
-                parcel2.writeNoException();
-                ParcelUtils.writeBoolean(parcel2, true);
+            case TRANSACTION_IS_ENABLED:
+                reply.writeNoException();
+                ParcelUtils.writeBoolean(reply, true);
                 break;
-            case 14:
-                Bundle bundle = (Bundle) ParcelUtils.readParcelable(parcel, Bundle.CREATOR);
-                readStrongBinder = parcel.readStrongBinder();
-                if (readStrongBinder != null) {
-                    queryLocalInterface = readStrongBinder.queryLocalInterface("com.google.android.libraries.launcherclient.ILauncherOverlayCallback");
-                    if (queryLocalInterface instanceof ILauncherOverlayCallback) {
-                        dVar = (ILauncherOverlayCallback) queryLocalInterface;
-                    } else {
-                        dVar = new LauncherOverlayCallback(readStrongBinder);
-                    }
-                }
-                windowAttached(bundle, dVar);
+            case TRANSACTION_WINDOW_ATTACHED_BUNDLE:
+                Bundle bundle = ParcelUtils.readParcelable(data, Bundle.CREATOR);
+                callback = getCallbackFromBinder(data.readStrongBinder());
+                windowAttached(bundle, callback);
                 break;
-            case 16:
-                closeOverlay(parcel.readInt());
-                break;
-            case 17:
-                // This method is not used in the current implementation, but we keep it for compatibility
+            case TRANSACTION_CLOSE_OVERLAY:
+                closeOverlay(data.readInt());
                 break;
             default:
                 return false;
         }
         return true;
+    }
+
+    private ILauncherOverlayCallback getCallbackFromBinder(final IBinder binder) {
+        if (binder == null) return null;
+
+        IInterface iface = binder.queryLocalInterface("com.google.android.libraries.launcherclient.ILauncherOverlayCallback");
+        return (iface instanceof ILauncherOverlayCallback)
+                ? (ILauncherOverlayCallback) iface
+                : new LauncherOverlayCallback(binder);
     }
 }
