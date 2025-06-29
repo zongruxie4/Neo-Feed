@@ -2,76 +2,78 @@ package com.google.android.libraries.gsa.d.a;
 
 import android.content.res.Configuration;
 import android.os.Message;
-
 import java.io.PrintWriter;
 
 public final class MinusOneOverlayCallback extends OverlayControllerCallback {
 
     private final OverlaysController overlaysController;
 
-    public MinusOneOverlayCallback(OverlaysController overlaysControllerVar, OverlayControllerBinder overlayControllerBinderVar) {
-        super(overlayControllerBinderVar, 3);
-        this.overlaysController = overlaysControllerVar;
+    public MinusOneOverlayCallback(OverlaysController overlaysController, OverlayControllerBinder overlayControllerBinder) {
+        super(overlayControllerBinder, 3);
+        this.overlaysController = overlaysController;
     }
 
-    final OverlayController createController(Configuration configuration) {
-        return this.overlaysController.createController(configuration, this.overlayControllerBinder.getServerVersion(), this.overlayControllerBinder.getClientVersion());
+    @Override
+    public OverlayController createController(Configuration configuration) {
+        return overlaysController.createController(
+                configuration,
+                overlayControllerBinder.getServerVersion(),
+                overlayControllerBinder.getClientVersion()
+        );
     }
 
-    public final void dump(PrintWriter printWriter, String str) {
-        printWriter.println(String.valueOf(str).concat("MinusOneOverlayCallback"));
-        super.dump(printWriter, str);
+    @Override
+    public void dump(PrintWriter printWriter, String prefix) {
+        printWriter.println(prefix + "MinusOneOverlayCallback");
+        super.dump(printWriter, prefix);
     }
 
-    public final boolean handleMessage(Message message) {
+    @Override
+    public boolean handleMessage(Message message) {
         if (super.handleMessage(message)) {
             return true;
         }
-        OverlayController overlayControllerVar;
-        long when;
+
+        if (overlayController == null) {
+            return false;
+        }
+
+        final OverlayController controller = overlayController;
+        final long timestamp = message.getWhen();
+
         return switch (message.what) {
             case 3 -> {
-                if (this.overlayController != null) {
-                    overlayControllerVar = this.overlayController;
-                    when = message.getWhen();
-                    if (!overlayControllerVar.cnD()) {
-                        SlidingPanelLayout slidingPanelLayoutVar = overlayControllerVar.slidingPanelLayout;
-                        if (slidingPanelLayoutVar.uoC < slidingPanelLayoutVar.mTouchSlop) {
-                            overlayControllerVar.slidingPanelLayout.BM(0);
-                            overlayControllerVar.mAcceptExternalMove = true;
-                            overlayControllerVar.unX = 0;
-                            overlayControllerVar.slidingPanelLayout.mForceDrag = true;
-                            overlayControllerVar.obZ = when - 30;
-                            overlayControllerVar.b(0, overlayControllerVar.unX, overlayControllerVar.obZ);
-                            overlayControllerVar.b(2, overlayControllerVar.unX, when);
-                        }
+                if (!controller.cnD()) {
+                    SlidingPanelLayout panel = controller.slidingPanelLayout;
+                    if (panel.uoC < panel.mTouchSlop) {
+                        panel.BM(0);
+                        controller.mAcceptExternalMove = true;
+                        controller.unX = 0;
+                        panel.mForceDrag = true;
+                        controller.obZ = timestamp - 30;
+                        controller.b(0, controller.unX, controller.obZ);
+                        controller.b(2, controller.unX, timestamp);
                     }
                 }
                 yield true;
             }
+
             case 4 -> {
-                if (this.overlayController != null) {
-                    overlayControllerVar = this.overlayController;
-                    float floatValue = (float) message.obj;
-                    when = message.getWhen();
-                    if (overlayControllerVar.mAcceptExternalMove) {
-                        overlayControllerVar.unX = (int) (floatValue * ((float) overlayControllerVar.slidingPanelLayout.getMeasuredWidth()));
-                        overlayControllerVar.b(2, overlayControllerVar.unX, when);
-                    }
+                if (controller.mAcceptExternalMove && message.obj instanceof Float floatValue) {
+                    controller.unX = (int) (floatValue * controller.slidingPanelLayout.getMeasuredWidth());
+                    controller.b(2, controller.unX, timestamp);
                 }
                 yield true;
             }
+
             case 5 -> {
-                if (this.overlayController != null) {
-                    overlayControllerVar = this.overlayController;
-                    when = message.getWhen();
-                    if (overlayControllerVar.mAcceptExternalMove) {
-                        overlayControllerVar.b(1, overlayControllerVar.unX, when);
-                    }
-                    overlayControllerVar.mAcceptExternalMove = false;
+                if (controller.mAcceptExternalMove) {
+                    controller.b(1, controller.unX, timestamp);
                 }
+                controller.mAcceptExternalMove = false;
                 yield true;
             }
+
             default -> false;
         };
     }

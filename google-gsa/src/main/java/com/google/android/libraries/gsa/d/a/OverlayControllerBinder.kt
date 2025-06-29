@@ -77,17 +77,17 @@ class OverlayControllerBinder(
     }
 
     @Synchronized
-    override fun windowAttached(layoutParams: LayoutParams, cb: ILauncherOverlayCallback, clientOptions: Int) {
-        Log.d("Google gsa", "windowAttached called with options: $clientOptions")
+    override fun windowAttached(attrs: LayoutParams, callbacks: ILauncherOverlayCallback, options: Int) {
+        Log.d("Google gsa", "windowAttached called with options: $options")
         val bundle = Bundle().apply {
-            putParcelable("layout_params", layoutParams)
-            putInt("client_options", clientOptions)
+            putParcelable("layout_params", attrs)
+            putInt("client_options", options)
         }
         checkCallerId()
         overlaysController.handler.removeCallbacks(this)
         val configuration: Configuration? = Configuration()
         lastAttachWasLandscape = configuration?.orientation == 2
-        callback = cb
+        callback = callbacks
         BL(bundle.getInt("client_options", 7))
         Message.obtain(mainThreadHandler, 10, 1, 0, Pair.create(bundle, callback)).sendToTarget()
     }
