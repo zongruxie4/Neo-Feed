@@ -66,7 +66,7 @@ public final class OverlayControllerSlidingPanelLayout extends SlidingPanelLayou
 
     @Override
     protected boolean fitSystemWindows(Rect insets) {
-        return !overlayController.unZ || super.fitSystemWindows(insets);
+        return !overlayController.isVisible || super.fitSystemWindows(insets);
     }
 
     @NonNull

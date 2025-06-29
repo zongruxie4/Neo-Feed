@@ -57,7 +57,7 @@ final class TransparentOverlayController implements PanelController {
             overlayControllerVar.panelState = panelStateVar;
             overlayControllerVar.setState(overlayControllerVar.panelState);
         }
-        this.overlayController.slidingPanelLayout.panelController = this.overlayController.overlayControllerStateChanger;
+        this.overlayController.slidingPanelLayout.panelController = this.overlayController.panelController;
     }
 
     @Override

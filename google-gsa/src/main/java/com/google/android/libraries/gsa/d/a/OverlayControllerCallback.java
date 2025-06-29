@@ -55,7 +55,7 @@ abstract class OverlayControllerCallback extends BaseCallback {
 
         if (overlayController != null) {
             stateBundle = saveOverlayState(overlayController);
-            overlayController.cnC(); // cleanup
+            overlayController.closeOverlay(); // cleanup
             overlayController = null;
         }
 
@@ -69,8 +69,8 @@ abstract class OverlayControllerCallback extends BaseCallback {
             setupOverlayController(overlayController, args, layoutParams);
             restoreOverlayStateIfNeeded(stateBundle);
 
-            overlayController.uoa = (LauncherOverlayCallback) pair.second;
-            overlayController.bP(true);
+            overlayController.overlayCallback = (LauncherOverlayCallback) pair.second;
+            overlayController.configurePanel(true);
             binder.a((LauncherOverlayCallback) pair.second, overlayId);
             overlayController.onOptionsUpdated(args);
         } catch (Throwable e) {
@@ -86,13 +86,13 @@ abstract class OverlayControllerCallback extends BaseCallback {
 
     private boolean handleSetState(Message msg) {
         if (overlayController == null) return true;
-        overlayController.BJ((Integer) msg.obj);
+        overlayController.updateActivityState((Integer) msg.obj);
         return true;
     }
 
     private boolean handleDestroy(Message msg) {
         if (overlayController == null) return true;
-        LauncherOverlayCallback callback = overlayController.cnC();
+        LauncherOverlayCallback callback = overlayController.closeOverlay();
         overlayController = null;
         if (msg.arg1 == 0) {
             binder.a(callback, 0);
@@ -104,22 +104,22 @@ abstract class OverlayControllerCallback extends BaseCallback {
         if (overlayController == null) return true;
         int param = msg.arg2 & 1;
         if (msg.arg1 == 1) {
-            overlayController.BK(param);
+            overlayController.openPanelIfNeeded(param);
         } else {
-            overlayController.fI(param);
+            overlayController.closePanelIfNeeded(param);
         }
         return true;
     }
 
     private boolean handleVisibility(Message msg) {
         if (overlayController == null) return true;
-        overlayController.bP(msg.arg1 == 1);
+        overlayController.configurePanel(msg.arg1 == 1);
         return true;
     }
 
     private boolean handleByteBundle(Message msg) {
         if (overlayController == null) return true;
-        overlayController.a((ByteBundleHolder) msg.obj);
+        overlayController.applyByteBundle((ByteBundleHolder) msg.obj);
         return true;
     }
 
@@ -149,8 +149,8 @@ abstract class OverlayControllerCallback extends BaseCallback {
     }
 
     private void setupOverlayController(OverlayController controller, Bundle args, LayoutParams layoutParams) {
-        controller.mIsRtl = SlidingPanelLayout.isRtl(controller.getResources());
-        controller.mPackageName = binder.getPackageName();
+        controller.isRtl = SlidingPanelLayout.isRtl(controller.getResources());
+        controller.packageName = binder.getPackageName();
 
         controller.window.setWindowManager(null, layoutParams.token,
                 new ComponentName(controller, controller.getBaseContext().getClass()).flattenToShortString(), true);
@@ -159,12 +159,12 @@ abstract class OverlayControllerCallback extends BaseCallback {
 
         Point size = new Point();
         controller.windowManager.getDefaultDisplay().getRealSize(size);
-        controller.mWindowShift = -Math.max(size.x, size.y);
+        controller.windowShift = -Math.max(size.x, size.y);
 
         controller.slidingPanelLayout = new OverlayControllerSlidingPanelLayout(controller);
         controller.container = new FrameLayout(controller);
         controller.slidingPanelLayout.setForegroundPanel(controller.container);
-        controller.slidingPanelLayout.panelController = controller.overlayControllerStateChanger;
+        controller.slidingPanelLayout.panelController = controller.panelController;
 
         layoutParams.width = LayoutParams.MATCH_PARENT;
         layoutParams.height = LayoutParams.MATCH_PARENT;

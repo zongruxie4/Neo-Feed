@@ -46,34 +46,34 @@ public final class MinusOneOverlayCallback extends OverlayControllerCallback {
 
         return switch (message.what) {
             case 3 -> {
-                if (!controller.cnD()) {
+                if (!controller.isOpen()) {
                     SlidingPanelLayout panel = controller.slidingPanelLayout;
                     if (panel.panelOffsetPx < panel.touchSlop) {
                         panel.updatePanelOffset(0);
-                        controller.mAcceptExternalMove = true;
-                        controller.unX = 0;
+                        controller.acceptExternalMove = true;
+                        controller.touchStartX = 0;
                         panel.forceDrag = true;
-                        controller.obZ = timestamp - 30;
-                        controller.b(0, controller.unX, controller.obZ);
-                        controller.b(2, controller.unX, timestamp);
+                        controller.lastTouchTime = timestamp - 30;
+                        controller.simulateMotionEvent(0, controller.touchStartX, controller.lastTouchTime);
+                        controller.simulateMotionEvent(2, controller.touchStartX, timestamp);
                     }
                 }
                 yield true;
             }
 
             case 4 -> {
-                if (controller.mAcceptExternalMove && message.obj instanceof Float floatValue) {
-                    controller.unX = (int) (floatValue * controller.slidingPanelLayout.getMeasuredWidth());
-                    controller.b(2, controller.unX, timestamp);
+                if (controller.acceptExternalMove && message.obj instanceof Float floatValue) {
+                    controller.touchStartX = (int) (floatValue * controller.slidingPanelLayout.getMeasuredWidth());
+                    controller.simulateMotionEvent(2, controller.touchStartX, timestamp);
                 }
                 yield true;
             }
 
             case 5 -> {
-                if (controller.mAcceptExternalMove) {
-                    controller.b(1, controller.unX, timestamp);
+                if (controller.acceptExternalMove) {
+                    controller.simulateMotionEvent(1, controller.touchStartX, timestamp);
                 }
-                controller.mAcceptExternalMove = false;
+                controller.acceptExternalMove = false;
                 yield true;
             }
 

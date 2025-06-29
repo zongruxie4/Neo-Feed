@@ -38,12 +38,10 @@ public class SlidingPanelLayout extends FrameLayout {
     private final int maxVelocity;
     public final boolean isRtl;
 
-    // Panel views
-    public View foregroundPanel;   // uoA
-    private View backgroundPanel;  // uoB
-    public int panelOffsetPx;      // uoC
+    public View foregroundPanel;
+    private View backgroundPanel;
+    public int panelOffsetPx;
 
-    // Interpolator
     private final SlidingPanelLayoutInterpolator panelInterpolator;
     private final DecelerateInterpolator alphaInterpolator = new DecelerateInterpolator(3.0f);
 

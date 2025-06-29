@@ -39,9 +39,9 @@ final class OverlayControllerStateChanger implements PanelController {
 
     @Override
     public void setPanelPosition(float position) {
-        if (overlayController.uoa != null && !Float.isNaN(position)) {
+        if (overlayController.overlayCallback != null && !Float.isNaN(position)) {
             try {
-                overlayController.uoa.overlayScrollChanged(position);
+                overlayController.overlayCallback.overlayScrollChanged(position);
                 overlayController.onScroll(position);
             } catch (Throwable ignored) {
                 // Optionally log the exception if needed
@@ -57,7 +57,7 @@ final class OverlayControllerStateChanger implements PanelController {
 
     @Override
     public boolean canInterceptTouchEvents() {
-        return overlayController.Ho();
+        return overlayController.shouldHandleInput();
     }
 
     private void updatePanelState(PanelState newState) {

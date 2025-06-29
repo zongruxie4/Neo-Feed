@@ -12,218 +12,162 @@ import java.io.PrintWriter;
 
 public class OverlayController extends DialogOverlayController {
 
-    public boolean mIsRtl;
-    public long obZ = 0;
-    public int mWindowShift;
-    public String mPackageName;
+    public boolean isRtl;
+    public long lastTouchTime = 0;
+    public int windowShift;
+    public String packageName;
     public SlidingPanelLayout slidingPanelLayout;
-    public final PanelController overlayControllerStateChanger = new OverlayControllerStateChanger(this);
+    public final PanelController panelController = new OverlayControllerStateChanger(this);
     public FrameLayout container;
-    public int unX = 0;
-    public boolean mAcceptExternalMove = false;
-    public boolean unZ = true;
-    public LauncherOverlayCallback uoa;
+    public int touchStartX = 0;
+    public boolean acceptExternalMove = false;
+    public boolean isVisible = true;
+    public LauncherOverlayCallback overlayCallback;
     public PanelState panelState = PanelState.CLOSED;
-    private int mActivityStateFlags = 0;
+
+    private int activityStateFlags = 0;
 
     public OverlayController(Context context, int theme, int dialogTheme) {
         super(context, theme, dialogTheme);
     }
 
-    final void b(int i, int i2, long j) {
-        MotionEvent obtain = MotionEvent.obtain(this.obZ, j, i, this.mIsRtl ? (float) (-i2) : (float) i2, 0.0f, 0);
-        obtain.setSource(4098);
-        this.slidingPanelLayout.dispatchTouchEvent(obtain);
-        obtain.recycle();
+    // Simula evento táctil
+    final void simulateMotionEvent(int action, int position, long eventTime) {
+        float x = isRtl ? -position : position;
+        MotionEvent event = MotionEvent.obtain(lastTouchTime, eventTime, action, x, 0.0f, 0);
+        event.setSource(MotionEvent.ACTION_MOVE);
+        slidingPanelLayout.dispatchTouchEvent(event);
+        event.recycle();
     }
 
-    public void onOptionsUpdated(Bundle bundle) {
-
+    public void onOptionsUpdated(Bundle options) {
+        // Placeholder para futuras opciones
     }
 
-    final LauncherOverlayCallback cnC() {
-        BJ(0);
+    // Cierra overlay y limpia recursos
+    final LauncherOverlayCallback closeOverlay() {
+        updateActivityState(0);
         try {
-            this.windowManager.removeView(this.windowView);
+            windowManager.removeView(windowView);
         } catch (Throwable ignored) {
-
         }
-        this.windowView = null;
+        windowView = null;
         dismissAllDialogs();
         onDestroy();
-        return this.uoa;
+        return overlayCallback;
     }
 
-    final void BJ(int i) {
-        int i2 = 1;
-        int i3 = 0;
-        if (this.mActivityStateFlags != i) {
-            int i4;
-            int i5;
-            int i6;
-            int i7 = (this.mActivityStateFlags & 1) != 0 ? 1 : 0;
-            if ((this.mActivityStateFlags & 2) != 0) {
-                i4 = 1;
-            } else {
-                i4 = 0;
-            }
-            if ((i & 1) != 0) {
-                i5 = 1;
-            } else {
-                i5 = 0;
-            }
-            if ((i & 2) != 0) {
-                i6 = 1;
-            } else {
-                i6 = 0;
-            }
-            if (i5 == 0 && i6 == 0) {
-                i5 = 0;
-            } else {
-                i5 = 1;
-            }
-            if (i5 == 0) {
-                i2 = 0;
-            }
-            if (i6 != 0) {
-                i3 = 2;
-            }
-            this.mActivityStateFlags = i2 | i3;
-            if (i7 == 0 && i5 != 0) {
-                onStart();
-            }
-            if (i4 == 0 && i6 != 0) {
-                onResume();
-            }
-            if (i4 != 0 && i6 == 0) {
-                onPause();
-            }
-            if (i7 != 0 && i5 == 0) {
-                onStop();
-            }
+    final void updateActivityState(int newState) {
+        if (activityStateFlags != newState) {
+            boolean wasStarted = (activityStateFlags & 1) != 0;
+            boolean wasResumed = (activityStateFlags & 2) != 0;
+            boolean shouldStart = (newState & 1) != 0;
+            boolean shouldResume = (newState & 2) != 0;
+            boolean shouldBeVisible = shouldStart || shouldResume;
+
+            activityStateFlags = (shouldBeVisible ? 1 : 0) | (shouldResume ? 2 : 0);
+
+            if (!wasStarted && shouldBeVisible) onStart();
+            if (!wasResumed && shouldResume) onResume();
+            if (wasResumed && !shouldResume) onPause();
+            if (wasStarted && !shouldBeVisible) onStop();
         }
     }
 
-    public void fI(int i) {
-        int i2 = 1;
-        int i3 = 0;
-        if (cnD()) {
-            int i4 = (i & 1) != 0 ? 1 : 0;
-            if (this.panelState == PanelState.OPEN_AS_LAYER) {
-                i2 = 0;
+    // Cierra panel si está abierto
+    public void closePanelIfNeeded(int flags) {
+        if (isOpen()) {
+            boolean shouldClose = (flags & 1) != 0;
+            if (panelState == PanelState.OPEN_AS_LAYER) {
+                shouldClose = false;
             }
-            i4 &= i2;
-            SlidingPanelLayout slidingPanelLayoutVar = this.slidingPanelLayout;
-            if (i4 != 0) {
-                i3 = 750;
-            }
-            slidingPanelLayoutVar.closePanel(i3);
+            int duration = shouldClose ? 750 : 0;
+            slidingPanelLayout.closePanel(duration);
             dismissAllDialogs();
         }
     }
 
-    public final void BK(int i) {
-        int i2 = 0;
-        if (this.panelState == PanelState.CLOSED) {
-            int i3 = (i & 1) != 0 ? 1 : 0;
-            if ((i & 2) != 0) {
-                this.slidingPanelLayout.panelController = new TransparentOverlayController(this);
-                i3 = 0;
-            }
-            SlidingPanelLayout slidingPanelLayoutVar = this.slidingPanelLayout;
-            if (i3 != 0) {
-                i2 = 750;
-            }
-            slidingPanelLayoutVar.startSettlingTo(i2, 0);
-        }
-    }
+    public final void openPanelIfNeeded(int flags) {
+        if (panelState == PanelState.CLOSED) {
+            boolean asDrawer = (flags & 1) != 0;
+            boolean transparent = (flags & 2) != 0;
 
-    public void a(ByteBundleHolder byteBundleHolderVar) {
+            if (transparent) {
+                slidingPanelLayout.panelController = new TransparentOverlayController(this);
+                asDrawer = false;
+            }
+
+            int duration = asDrawer ? 750 : 0;
+            slidingPanelLayout.startSettlingTo(duration, 0);
+        }
     }
 
     public void onBackPressed() {
-        fI(1);
+        closePanelIfNeeded(1);
     }
 
-    public void dump(PrintWriter printWriter, String str) {
-        printWriter.println(str + "mWindowShift: " + this.mWindowShift);
-        printWriter.println(str + "mAcceptExternalMove: " + this.mAcceptExternalMove);
-        String valueOf = String.valueOf(this.panelState);
-        printWriter.println(str + "mDrawerState: " + valueOf);
-        printWriter.println(str + "mActivityStateFlags: " + this.mActivityStateFlags);
-        valueOf = String.valueOf(this.slidingPanelLayout);
-        printWriter.println(str + "mWrapperView: " + valueOf);
-        SlidingPanelLayout slidingPanelLayoutVar = this.slidingPanelLayout;
-        String concat = String.valueOf(str).concat("  ");
-        printWriter.println(concat + "mPanelPositionRatio: " + slidingPanelLayoutVar.panelPositionRatio);
-        printWriter.println(concat + "mDownX: " + slidingPanelLayoutVar.downX);
-        printWriter.println(concat + "mDownY: " + slidingPanelLayoutVar.downY);
-        printWriter.println(concat + "mActivePointerId: " + slidingPanelLayoutVar.activePointerId);
-        printWriter.println(concat + "mTouchState: " + slidingPanelLayoutVar.touchState);
-        printWriter.println(concat + "mIsPanelOpen: " + slidingPanelLayoutVar.isPanelOpen);
-        printWriter.println(concat + "mIsPageMoving: " + slidingPanelLayoutVar.isPageMoving);
-        printWriter.println(concat + "mSettling: " + slidingPanelLayoutVar.settling);
-        printWriter.println(concat + "mForceDrag: " + slidingPanelLayoutVar.forceDrag);
-    }
+    public void dump(PrintWriter out, String prefix) {
+        out.println(prefix + "windowShift: " + windowShift);
+        out.println(prefix + "acceptExternalMove: " + acceptExternalMove);
+        out.println(prefix + "panelState: " + panelState);
+        out.println(prefix + "activityStateFlags: " + activityStateFlags);
+        out.println(prefix + "slidingPanelLayout: " + slidingPanelLayout);
 
+        String subPrefix = prefix + "  ";
+        out.println(subPrefix + "panelPositionRatio: " + slidingPanelLayout.panelPositionRatio);
+        out.println(subPrefix + "downX: " + slidingPanelLayout.downX);
+        out.println(subPrefix + "downY: " + slidingPanelLayout.downY);
+        out.println(subPrefix + "activePointerId: " + slidingPanelLayout.activePointerId);
+        out.println(subPrefix + "touchState: " + slidingPanelLayout.touchState);
+        out.println(subPrefix + "isPanelOpen: " + slidingPanelLayout.isPanelOpen);
+        out.println(subPrefix + "isPageMoving: " + slidingPanelLayout.isPageMoving);
+        out.println(subPrefix + "settling: " + slidingPanelLayout.settling);
+        out.println(subPrefix + "forceDrag: " + slidingPanelLayout.forceDrag);
+    }
     public void Hn() {
     }
 
-    public void onCreate(Bundle bundle) {
+    public void onCreate(Bundle savedInstanceState) {}
+    private void onPause() {}
+    private void onStop() {}
+    private void onStart() {}
+    public void onResume() {}
+    public void onDestroy() {}
+
+    public void setTitle(CharSequence title) {
+        window.setTitle(title);
     }
 
-    private void onPause() {
+    public Object getSystemService(String name) {
+        if ("window".equals(name) && windowManager != null) {
+            return windowManager;
+        }
+        return super.getSystemService(name);
     }
 
-    private void onStop() {
+    public boolean isOpen() {
+        return panelState == PanelState.OPEN_AS_DRAWER || panelState == PanelState.OPEN_AS_LAYER;
     }
 
-    private void onStart() {
+    public void setVisible(boolean visible) {
+        if (visible) {
+            window.clearFlags(24); // FLAG_NOT_TOUCHABLE | FLAG_NOT_FOCUSABLE
+        } else {
+            window.addFlags(24);
+        }
     }
 
-    public void onResume() {
+    public void setState(PanelState newState) {
+        this.panelState = newState;
     }
 
-    public Window getWindow() {
-        return this.window;
-    }
-
-    public final void setTitle(CharSequence charSequence) {
-        this.window.setTitle(charSequence);
-    }
-
-    public void onDestroy() {
-    }
-
-    public void bP(boolean z) {
-    }
-
-    public boolean Ho() {
+    public boolean shouldHandleInput() {
         return false;
     }
 
-    public void onScroll(float f) {
-    }
+    public void onScroll(float distance) {}
 
-    public Object getSystemService(String str) {
-        if (!"window".equals(str) || this.windowManager == null) {
-            return super.getSystemService(str);
-        }
-        return this.windowManager;
-    }
+    public void applyByteBundle(ByteBundleHolder holder) {}
 
-    public final boolean cnD() {
-        return this.panelState == PanelState.OPEN_AS_DRAWER || this.panelState == PanelState.OPEN_AS_LAYER;
-    }
-
-    public final void setVisible(boolean z) {
-        if (z) {
-            this.window.clearFlags(24);
-        } else {
-            this.window.addFlags(24);
-        }
-    }
-
-    public void setState(PanelState panelStateVar) {
-    }
+    public void configurePanel(boolean enable) {}
 }
