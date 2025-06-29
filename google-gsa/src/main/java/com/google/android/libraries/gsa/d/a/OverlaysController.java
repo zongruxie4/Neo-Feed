@@ -48,7 +48,7 @@ public abstract class OverlaysController {
                     iBinder = null;
                 } else {
                     iBinder = this.clients.get(port);
-                    if (!(iBinder == null || iBinder.mServerVersion == parseInt)) {
+                    if (!(iBinder == null || iBinder.getServerVersion() == parseInt)) {
                         iBinder.destroy();
                         iBinder = null;
                     }
@@ -83,9 +83,6 @@ public abstract class OverlaysController {
         this.clients.clear();
     }
 
-    public v HA() {
-        return new v();
-    }
 
     //Todo: maybe remove
     public int Hx() {

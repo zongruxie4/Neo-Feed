@@ -1,187 +1,166 @@
-package com.google.android.libraries.gsa.d.a;
+package com.google.android.libraries.gsa.d.a
 
-import android.content.res.Configuration;
-import android.os.Binder;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
-import android.util.Pair;
-import android.view.WindowManager.LayoutParams;
+import android.content.res.Configuration
+import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.os.Message
+import android.util.Log
+import android.util.Pair
+import android.view.WindowManager.LayoutParams
+import com.google.android.libraries.launcherclient.ILauncherOverlayCallback
+import com.google.android.libraries.launcherclient.LauncherOverlayInterfaceBinder
 
-import com.google.android.libraries.i.LauncherOverlayInterfaceBinder;
-import com.google.android.libraries.i.d;
+class OverlayControllerBinder(
+    private val overlaysController: OverlaysController,
+    val callerUid: Int,
+    val packageName: String,
+    val serverVersion: Int,
+    val clientVersion: Int
+) : LauncherOverlayInterfaceBinder(), Runnable {
+    private var baseCallback: BaseCallback = BaseCallback()
+    private var mainThreadHandler = Handler(Looper.getMainLooper(), baseCallback)
+    private var callback: ILauncherOverlayCallback? = null
+    var options: Int = 0
+    private var lastAttachWasLandscape: Boolean = false
 
-final class OverlayControllerBinder extends LauncherOverlayInterfaceBinder implements Runnable {
-
-    int mOptions = 0;
-    final String mPackageName;
-    private final OverlaysController overlaysController;
-    final int mCallerUid;
-    final int mServerVersion;
-    final int mClientVersion;
-    BaseCallback baseCallback = new BaseCallback();
-    private Handler mainThreadHandler = new Handler(Looper.getMainLooper(), this.baseCallback);
-    boolean mLastAttachWasLandscape;
-
-    public OverlayControllerBinder(OverlaysController overlaysControllerVar, int callerUid, String packageName, int serverVersion, int clientVersion) {
-        this.overlaysController = overlaysControllerVar;
-        this.mCallerUid = callerUid;
-        this.mPackageName = packageName;
-        this.mServerVersion = serverVersion;
-        this.mClientVersion = clientVersion;
-    }
-
-    private void checkCallerId() {
-        if (Binder.getCallingUid() != this.mCallerUid) {
-            throw new RuntimeException("Invalid client");
+    private fun checkCallerId() {
+        if (getCallingUid() != callerUid) {
+            throw RuntimeException("Invalid client")
         }
     }
 
-    public synchronized void cnK() {
-        checkCallerId();
-        Message.obtain(this.mainThreadHandler, 3).sendToTarget();
+
+    override fun startScroll() {
+        checkCallerId()
+        Message.obtain(this.mainThreadHandler, 3).sendToTarget()
     }
 
-    public synchronized void aL(float f) {
-        checkCallerId();
-        Message.obtain(this.mainThreadHandler, 4, f).sendToTarget();
+    override fun endScroll() {
+        checkCallerId()
+        Message.obtain(this.mainThreadHandler, 5).sendToTarget()
     }
 
-    public synchronized void cnL() {
-        checkCallerId();
-        Message.obtain(this.mainThreadHandler, 5).sendToTarget();
+    override fun onScroll(progress: Float) {
+        checkCallerId()
+        Message.obtain(this.mainThreadHandler, 4, progress).sendToTarget()
     }
 
-    public synchronized void a(LayoutParams layoutParams, d dVar, int clientOptions) {
-        Bundle bundle = new Bundle();
-        bundle.putParcelable("layout_params", layoutParams);
-        bundle.putInt("client_options", clientOptions);
-        a(bundle, dVar);
+    override fun onPause() {
+        closeOverlay(0)
     }
 
-    public synchronized void a(Bundle bundle, d dVar) {
-        checkCallerId();
-        this.overlaysController.handler.removeCallbacks(this);
-        Configuration configuration = bundle.getParcelable("configuration");
-        this.mLastAttachWasLandscape = configuration != null && configuration.orientation == 2;
-        BL(bundle.getInt("client_options", 7));
-        Message.obtain(this.mainThreadHandler, 0, 1, 0, Pair.create(bundle, dVar)).sendToTarget();
+    override fun onResume() {
+        closeOverlay(3)
     }
 
-    public synchronized void od(boolean z) {
-        checkCallerId();
-        Message.obtain(this.mainThreadHandler, 0, 0, 0).sendToTarget();
-        this.overlaysController.handler.postDelayed(this, z ? 5000 : 0);
+    override fun openOverlay(options: Int) {
+        checkCallerId()
+        this.mainThreadHandler.removeMessages(6)
+        Message.obtain(this.mainThreadHandler, 6, 1, options).sendToTarget()
     }
 
-    public synchronized void BJ(int i) {
-        checkCallerId();
-        this.mainThreadHandler.removeMessages(1);
-        if ((i & 2) == 0) {
-            this.mainThreadHandler.sendMessageDelayed(Message.obtain(this.mainThreadHandler, 1, i), 100);
+    override fun closeOverlay(options: Int) {
+        checkCallerId()
+        if (options and 1 != 0) {
+            overlaysController.handler.removeCallbacks(this)
+            Message.obtain(mainThreadHandler, 6, 0, 0, Pair.create(Bundle(), callback)).sendToTarget()
         } else {
-            Message.obtain(this.mainThreadHandler, 1, i).sendToTarget();
+            a(callback, options)
         }
     }
 
-    public synchronized void onPause() {
-        BJ(0);
+    override fun requestVoiceDetection(start: Boolean) {
+        checkCallerId()
+        Message.obtain(this.mainThreadHandler, 0, 0, 0).sendToTarget()
+        this.overlaysController.handler.postDelayed(this, (if (start) 5000 else 0).toLong())
     }
 
-    private synchronized void BL(int i) {
-        synchronized (this) {
-            int i2 = i & 15;
-            if ((i2 & 1) != 0) {
-                i2 = 1;
+    @Synchronized
+    override fun windowAttached(layoutParams: LayoutParams, cb: ILauncherOverlayCallback, clientOptions: Int) {
+        Log.d("Google gsa", "windowAttached called with options: $clientOptions")
+        val bundle = Bundle().apply {
+            putParcelable("layout_params", layoutParams)
+            putInt("client_options", clientOptions)
+        }
+        checkCallerId()
+        overlaysController.handler.removeCallbacks(this)
+        val configuration: Configuration? = Configuration()
+        lastAttachWasLandscape = configuration?.orientation == 2
+        callback = cb
+        BL(bundle.getInt("client_options", 7))
+        Message.obtain(mainThreadHandler, 10, 1, 0, Pair.create(bundle, callback)).sendToTarget()
+    }
+
+    @Synchronized
+    override fun windowAttached(bundle: Bundle?, dVar: ILauncherOverlayCallback?) {
+        checkCallerId()
+        this.overlaysController.handler.removeCallbacks(this)
+        val configuration = bundle!!.getParcelable<Configuration?>("configuration")
+        lastAttachWasLandscape = configuration != null && configuration.orientation == 2
+        BL(bundle.getInt("client_options", 7))
+        Message.obtain(
+            this.mainThreadHandler,
+            0,
+            1,
+            0,
+            Pair.create<Bundle?, ILauncherOverlayCallback?>(bundle, dVar)
+        ).sendToTarget()
+    }
+
+    @Synchronized
+    fun BL(i: Int) {
+        val newOptions = if ((i and 11) != 0 && (i and 1) != 0) 1 else i and 11
+        if (options != newOptions) {
+            mainThreadHandler.removeCallbacksAndMessages(null)
+            Message.obtain(mainThreadHandler, 0, 0, 0).sendToTarget()
+            of(true)
+            options = newOptions
+            baseCallback = if (options == 1) {
+                MinusOneOverlayCallback(overlaysController, this)
+            } else {
+                BaseCallback()
             }
-            if (this.mOptions != i2) {
-                BaseCallback baseCallbackVar;
-                this.mainThreadHandler.removeCallbacksAndMessages(null);
-                Message.obtain(this.mainThreadHandler, 0, 0, 0).sendToTarget();
-                of(true);
-                this.mOptions = i2;
-                if (this.mOptions == 1) {
-                    baseCallbackVar = new MinusOneOverlayCallback(this.overlaysController, this);
-                } else {
-                    baseCallbackVar = new BaseCallback();
-                }
-                this.baseCallback = baseCallbackVar;
-                this.mainThreadHandler = new Handler(Looper.getMainLooper(), this.baseCallback);
+            mainThreadHandler = Handler(Looper.getMainLooper(), baseCallback)
+        }
+    }
+
+
+    override fun windowDetached(isChangingConfigurations: Boolean) {
+        var i = 0
+        synchronized(this) {
+            checkCallerId()
+            this.mainThreadHandler.removeMessages(7)
+            val handler: Handler? = this.mainThreadHandler
+            if (isChangingConfigurations) {
+                i = 1
             }
+            Message.obtain(handler, 7, i, 0).sendToTarget()
         }
     }
 
-    public synchronized void onResume() {
-        BJ(3);
+    override fun run() {
+        destroy()
     }
 
-    public synchronized void fI(int i) {
-        checkCallerId();
-        this.mainThreadHandler.removeMessages(6);
-        Message.obtain(this.mainThreadHandler, 6, 0, i).sendToTarget();
-    }
-
-    public synchronized void BK(int i) {
-        checkCallerId();
-        this.mainThreadHandler.removeMessages(6);
-        Message.obtain(this.mainThreadHandler, 6, 1, i).sendToTarget();
-    }
-
-    public final synchronized boolean a(byte[] bArr, Bundle bundle) {
-        Message.obtain(this.mainThreadHandler, 8, new ByteBundleHolder(bArr, bundle)).sendToTarget();
-        return true;
-    }
-
-    public synchronized void oe(boolean z) {
-        int i = 0;
-        synchronized (this) {
-            checkCallerId();
-            this.mainThreadHandler.removeMessages(7);
-            Handler handler = this.mainThreadHandler;
-            if (z) {
-                i = 1;
-            }
-            Message.obtain(handler, 7, i, 0).sendToTarget();
+    @Synchronized
+    fun destroy() {
+        synchronized(overlaysController) {
+            overlaysController.handler.removeCallbacks(this)
+            of(false)
         }
     }
-
-    public String HB() {
-        return this.overlaysController.HA().HB();
+    @Synchronized
+    private fun of(isChangingConfigurations: Boolean) {
+        Message.obtain(mainThreadHandler, 11, if (isChangingConfigurations) 1 else 0, 0).sendToTarget()
     }
 
-    public boolean HC() {
-        return this.overlaysController.HA().HC();
-    }
-
-    public void run() {
-        destroy();
-    }
-
-    final void destroy() {
-        synchronized (this.overlaysController) {
-            this.overlaysController.handler.removeCallbacks(this);
-            of(false);
-        }
-    }
-
-    private synchronized void of(boolean z) {
-        int i = 0;
-        synchronized (this) {
-            Handler handler = this.mainThreadHandler;
-            if (z) {
-                i = 1;
-            }
-            Message.obtain(handler, 2, i, 0).sendToTarget();
-        }
-    }
-
-    final void a(d dVar, int i) {
-        if (dVar != null) {
+    fun a(callback: ILauncherOverlayCallback?, i: Int) {
+        callback?.let {
             try {
-                dVar.BI(this.overlaysController.Hx() | i);
-            } catch (Throwable ignored) {
-
+                it.overlayStatusChanged(overlaysController.Hx() or i)
+            } catch (_: Throwable) {
+                // Ignored as per original
             }
         }
     }

@@ -6,6 +6,9 @@ import android.view.MotionEvent;
 import android.view.Window;
 import android.widget.FrameLayout;
 
+import com.google.android.libraries.launcherclient.ILauncherOverlayCallback;
+import com.google.android.libraries.launcherclient.LauncherOverlayCallback;
+
 import java.io.PrintWriter;
 
 public class OverlayController extends DialogOverlayController {
@@ -20,7 +23,7 @@ public class OverlayController extends DialogOverlayController {
     public int unX = 0;
     public boolean mAcceptExternalMove = false;
     public boolean unZ = true;
-    public com.google.android.libraries.i.d uoa;
+    public LauncherOverlayCallback uoa;
     public PanelState panelState = PanelState.CLOSED;
     private int mActivityStateFlags = 0;
 
@@ -39,7 +42,7 @@ public class OverlayController extends DialogOverlayController {
 
     }
 
-    final com.google.android.libraries.i.d cnC() {
+    final LauncherOverlayCallback cnC() {
         BJ(0);
         try {
             this.windowManager.removeView(this.windowView);

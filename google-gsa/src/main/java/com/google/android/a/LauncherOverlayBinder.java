@@ -6,16 +6,39 @@ import android.os.IInterface;
 import android.os.Parcel;
 import android.os.RemoteException;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 public class LauncherOverlayBinder extends Binder implements IInterface {
     public IBinder asBinder() {
         return this;
     }
 
-    protected final boolean a(int i, Parcel parcel, Parcel parcel2, int i2) throws RemoteException {//Todo: throws is new
-        if (i > 16777215) {
-            return super.onTransact(i, parcel, parcel2, i2);
+    /**
+     * Handles incoming IPC transactions.
+     *
+     * @param code   The transaction code.
+     * @param data   The input Parcel containing transaction data.
+     * @param reply  The output Parcel for the response.
+     * @param flags  Additional flags for the transaction.
+     * @return True if the transaction was handled, false otherwise.
+     * @throws RemoteException If an error occurs during transaction processing.
+     */
+    @Override
+    protected boolean onTransact(int code, @NonNull Parcel data, @Nullable Parcel reply, int flags)
+            throws RemoteException {
+        // Handle high transaction codes by delegating to the superclass
+        if (code > 16777215) {
+            return super.onTransact(code, data, reply, flags);
         }
-        parcel.enforceInterface(getInterfaceDescriptor());
-        return false;
+
+        // Enforce interface descriptor to ensure correct client
+        try {
+            data.enforceInterface(getInterfaceDescriptor());
+            return false;
+        } catch (SecurityException e) {
+            // Log the error or handle it appropriately
+            throw new RemoteException("Interface descriptor mismatch: " + e.getMessage());
+        }
     }
 }

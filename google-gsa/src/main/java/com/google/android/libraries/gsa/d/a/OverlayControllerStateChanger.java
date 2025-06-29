@@ -69,7 +69,7 @@ final class OverlayControllerStateChanger implements t {
     public final void D(float f) {
         if (this.overlayController.uoa != null && !Float.isNaN(f)) {
             try {
-                this.overlayController.uoa.aK(f);
+                this.overlayController.uoa.overlayScrollChanged(f);
                 this.overlayController.onScroll(f);
             } catch (Throwable ignored) {
 

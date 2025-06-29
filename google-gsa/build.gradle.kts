@@ -47,9 +47,15 @@ android {
 }
 
 dependencies {
-    implementation(libs.core.ktx)
     implementation(libs.appcompat)
+    implementation(libs.core.ktx)
     implementation(libs.material)
+    implementation(libs.lifecycle.common.java8)
+    implementation(libs.lifecycle.livedata.ktx)
+    implementation(libs.lifecycle.runtime.ktx)
+    implementation(libs.lifecycle.service)
+    implementation(libs.lifecycle.viewmodel.ktx)
+    implementation(libs.lifecycle.viewmodel.compose)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

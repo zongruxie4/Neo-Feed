@@ -3,12 +3,13 @@ package com.google.android.libraries.gsa.d.a;
 import android.content.ComponentName;
 import android.content.res.Configuration;
 import android.graphics.Point;
-import android.os.Build.VERSION;
 import android.os.Bundle;
 import android.os.Message;
 import android.util.Pair;
 import android.view.WindowManager.LayoutParams;
 import android.widget.FrameLayout;
+
+import com.google.android.libraries.launcherclient.LauncherOverlayCallback;
 
 import java.io.PrintWriter;
 
@@ -53,7 +54,7 @@ abstract class OverlayControllerCallback extends BaseCallback {
                 try {
                     int i;
                     OverlayController overlayControllerVar3 = this.overlayController;
-                    String str = this.overlayControllerBinder.mPackageName;
+                    String str = this.overlayControllerBinder.getPackageName();
                     Bundle bundle3 = (Bundle) pair.first;
                     overlayControllerVar3.mIsRtl = SlidingPanelLayout.isRtl(overlayControllerVar3.getResources());
                     overlayControllerVar3.mPackageName = str;
@@ -96,9 +97,9 @@ abstract class OverlayControllerCallback extends BaseCallback {
                         }
                     }
                     overlayControllerVar2 = this.overlayController;
-                    overlayControllerVar2.uoa = (com.google.android.libraries.i.d) pair.second;
+                    overlayControllerVar2.uoa = (LauncherOverlayCallback) pair.second;
                     overlayControllerVar2.bP(true);
-                    this.overlayControllerBinder.a((com.google.android.libraries.i.d) pair.second, this.uor);
+                    this.overlayControllerBinder.a((LauncherOverlayCallback) pair.second, this.uor);
                     this.overlayController.onOptionsUpdated(bundle3);
                     return true;
                 } catch (Throwable e) {
@@ -118,7 +119,7 @@ abstract class OverlayControllerCallback extends BaseCallback {
                 if (this.overlayController == null) {
                     return true;
                 }
-                com.google.android.libraries.i.d cnC = this.overlayController.cnC();
+                LauncherOverlayCallback cnC = this.overlayController.cnC();
                 this.overlayController = null;
                 if (message.arg1 != 0) {
                     return true;

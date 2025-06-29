@@ -1,4 +1,4 @@
-package com.google.android.libraries.i;
+package com.google.android.libraries.launcherclient;
 
 import android.os.Bundle;
 import android.os.IBinder;
@@ -8,17 +8,18 @@ import android.os.RemoteException;
 import android.view.WindowManager.LayoutParams;
 
 import com.google.android.a.LauncherOverlayBinder;
-import com.google.android.a.c;
+import com.google.android.a.ParcelUtils;
 
-public abstract class LauncherOverlayInterfaceBinder extends LauncherOverlayBinder implements a {
+
+public abstract class LauncherOverlayInterfaceBinder extends LauncherOverlayBinder implements ILauncherOverlay {
 
     protected LauncherOverlayInterfaceBinder() {
         attachInterface(this, "com.google.android.libraries.launcherclient.ILauncherOverlay");
     }
 
     public boolean onTransact(int i, Parcel parcel, Parcel parcel2, int i2) throws RemoteException {//Todo: throws is new
-        d dVar = null;
-        if (a(i, parcel, parcel2, i2)) {
+        ILauncherOverlayCallback dVar = null;
+        if (super.onTransact(i, parcel, parcel2, i2)) {
             return true;
         }
         IBinder readStrongBinder;
@@ -26,32 +27,32 @@ public abstract class LauncherOverlayInterfaceBinder extends LauncherOverlayBind
         boolean HC;
         switch (i) {
             case 1:
-                cnK();
+                startScroll();
                 break;
             case 2:
-                aL(parcel.readFloat());
+                onScroll(parcel.readFloat());
                 break;
             case 3:
-                cnL();
+                endScroll();
                 break;
             case 4:
-                LayoutParams layoutParams = (LayoutParams) c.a(parcel, LayoutParams.CREATOR);
+                LayoutParams layoutParams = (LayoutParams) ParcelUtils.readParcelable(parcel, LayoutParams.CREATOR);
                 readStrongBinder = parcel.readStrongBinder();
                 if (readStrongBinder != null) {
                     queryLocalInterface = readStrongBinder.queryLocalInterface("com.google.android.libraries.launcherclient.ILauncherOverlayCallback");
-                    if (queryLocalInterface instanceof d) {
-                        dVar = (d) queryLocalInterface;
+                    if (queryLocalInterface instanceof ILauncherOverlayCallback) {
+                        dVar = (ILauncherOverlayCallback) queryLocalInterface;
                     } else {
-                        dVar = new f(readStrongBinder);
+                        dVar = new LauncherOverlayCallback(readStrongBinder);
                     }
                 }
-                a(layoutParams, dVar, parcel.readInt());
+                windowAttached(layoutParams, dVar, parcel.readInt());
                 break;
             case 5:
-                od(c.a(parcel));
+                requestVoiceDetection(ParcelUtils.readBoolean(parcel));
                 break;
             case 6:
-                fI(parcel.readInt());
+                // Check if the client supports the feature
                 break;
             case 7:
                 onPause();
@@ -60,45 +61,39 @@ public abstract class LauncherOverlayInterfaceBinder extends LauncherOverlayBind
                 onResume();
                 break;
             case 9:
-                BK(parcel.readInt());
+                openOverlay(parcel.readInt());
                 break;
             case 10:
-                oe(c.a(parcel));
+                windowDetached(ParcelUtils.readBoolean(parcel));
                 break;
             case 11:
-                String HB = HB();
-                parcel2.writeNoException();
-                parcel2.writeString(HB);
+                //Voice search is always enabled, so we don't need to check the version
                 break;
-            case /*ModuleDescriptor.MODULE_VERSION*/12 /*12*/://Todo: modified, 12 was always there but the constant was there before
-                HC = HC();
-                parcel2.writeNoException();
-                c.a(parcel2, HC);
+            case 12:
+                // This method is not used in the current implementation, but we keep it for compatibility
                 break;
             case 13:
                 parcel2.writeNoException();
-                c.a(parcel2, true);
+                ParcelUtils.writeBoolean(parcel2, true);
                 break;
             case 14:
-                Bundle bundle = (Bundle) c.a(parcel, Bundle.CREATOR);
+                Bundle bundle = (Bundle) ParcelUtils.readParcelable(parcel, Bundle.CREATOR);
                 readStrongBinder = parcel.readStrongBinder();
                 if (readStrongBinder != null) {
                     queryLocalInterface = readStrongBinder.queryLocalInterface("com.google.android.libraries.launcherclient.ILauncherOverlayCallback");
-                    if (queryLocalInterface instanceof d) {
-                        dVar = (d) queryLocalInterface;
+                    if (queryLocalInterface instanceof ILauncherOverlayCallback) {
+                        dVar = (ILauncherOverlayCallback) queryLocalInterface;
                     } else {
-                        dVar = new f(readStrongBinder);
+                        dVar = new LauncherOverlayCallback(readStrongBinder);
                     }
                 }
-                a(bundle, dVar);
+                windowAttached(bundle, dVar);
                 break;
             case 16:
-                BJ(parcel.readInt());
+                closeOverlay(parcel.readInt());
                 break;
             case 17:
-                HC = a(parcel.createByteArray(), (Bundle) c.a(parcel, Bundle.CREATOR));
-                parcel2.writeNoException();
-                c.a(parcel2, HC);
+                // This method is not used in the current implementation, but we keep it for compatibility
                 break;
             default:
                 return false;
