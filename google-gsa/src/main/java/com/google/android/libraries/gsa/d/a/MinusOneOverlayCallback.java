@@ -2,6 +2,9 @@ package com.google.android.libraries.gsa.d.a;
 
 import android.content.res.Configuration;
 import android.os.Message;
+
+import androidx.annotation.NonNull;
+
 import java.io.PrintWriter;
 
 public final class MinusOneOverlayCallback extends OverlayControllerCallback {
@@ -17,13 +20,13 @@ public final class MinusOneOverlayCallback extends OverlayControllerCallback {
     public OverlayController createController(Configuration configuration) {
         return overlaysController.createController(
                 configuration,
-                overlayControllerBinder.getServerVersion(),
-                overlayControllerBinder.getClientVersion()
+                binder.getServerVersion(),
+                binder.getClientVersion()
         );
     }
 
     @Override
-    public void dump(PrintWriter printWriter, String prefix) {
+    public void dump(PrintWriter printWriter, @NonNull String prefix) {
         printWriter.println(prefix + "MinusOneOverlayCallback");
         super.dump(printWriter, prefix);
     }
