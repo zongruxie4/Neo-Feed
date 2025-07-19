@@ -4,8 +4,7 @@
 #
 # For more details, see
 #   http://developer.android.com/guide/developing/tools/proguard.html
-
--keep class com.google.android.libraries.launcherclient.** {*;}
+-keep class com.google.android.libraries.launcherclient.** { *; }
 -keep class ua.itaysonlab.hfsdk.** { *; }
 
 # For Okio

@@ -14,3 +14,4 @@ out/
 # Gradle files
 .gradle/
 google-gsa/build/
+app/build/
