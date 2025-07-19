@@ -53,7 +53,7 @@ final class SlidingPanelLayoutInterpolator extends AnimatorListenerAdapter imple
         layout.settling = false;
 
         if (layout.panelOffsetPx == 0) {
-            layout.setLayerType(0);
+            layout.updateLayer();
             layout.isPanelOpen = false;
             layout.isPageMoving = false;
             if (layout.panelController != null) {

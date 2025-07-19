@@ -2,8 +2,8 @@ package com.google.android.libraries.gsa.d.a;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MotionEvent;
-import android.view.Window;
 import android.widget.FrameLayout;
 
 import com.google.android.libraries.launcherclient.LauncherOverlayCallback;
@@ -103,6 +103,7 @@ public class OverlayController extends DialogOverlayController {
     }
 
     public void onBackPressed() {
+        Log.d("OverlayController", "onBackPressed called");
         closePanelIfNeeded(1);
     }
 

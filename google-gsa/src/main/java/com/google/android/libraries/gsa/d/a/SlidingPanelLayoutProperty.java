@@ -1,7 +1,7 @@
 package com.google.android.libraries.gsa.d.a;
 
 import android.util.Property;
-
+import com.google.android.libraries.gsa.d.a.SlidingPanelLayout;
 /**
  * A Property implementation for animating SlidingPanelLayout values.
  * This allows animating properties of SlidingPanelLayout using Android's property animation system.

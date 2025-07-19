@@ -80,7 +80,6 @@ public abstract class OverlaysController {
         clientBinders.clear();
     }
 
-    // Puede eliminarse si no se usa
     public int getDefaultVersion() {
         return 24;
     }

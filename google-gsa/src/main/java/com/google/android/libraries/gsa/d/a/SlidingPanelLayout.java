@@ -2,7 +2,9 @@ package com.google.android.libraries.gsa.d.a;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.util.Log;
 import android.util.Property;
+import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
@@ -17,14 +19,12 @@ public class SlidingPanelLayout extends FrameLayout {
 
     public static final Property<SlidingPanelLayout, Integer> PANEL_X = new SlidingPanelLayoutProperty(Integer.class, "panelX");
 
-    // Touch tracking
     public float downX, downY;
     public float lastMotionX, totalMotionX;
     private float initialPanelOffset, panelOffset;
     public int activePointerId = -1;
     private VelocityTracker velocityTracker;
 
-    // Panel configuration
     public boolean isPanelOpen = false;
     public boolean isPageMoving = false;
     public boolean forceDrag = false;
@@ -42,7 +42,7 @@ public class SlidingPanelLayout extends FrameLayout {
     private View backgroundPanel;
     public int panelOffsetPx;
 
-    private final SlidingPanelLayoutInterpolator panelInterpolator;
+    private SlidingPanelLayoutInterpolator panelInterpolator;
     private final DecelerateInterpolator alphaInterpolator = new DecelerateInterpolator(3.0f);
 
     public PanelController panelController;
@@ -50,14 +50,18 @@ public class SlidingPanelLayout extends FrameLayout {
     public int touchState = 0;
 
     public SlidingPanelLayout(Context context) {
+        this(context, null);
+    }
+
+    public SlidingPanelLayout(Context context, AttributeSet attrs) {
         super(context);
         final ViewConfiguration config = ViewConfiguration.get(context);
         touchSlop = config.getScaledPagingTouchSlop();
         maxVelocity = config.getScaledMaximumFlingVelocity();
         density = getResources().getDisplayMetrics().density;
-        flingThresholdVelocity = (int) (500 * density);
-        minFlingVelocity = (int) (250 * density);
-        minSnapVelocity = (int) (1500 * density);
+        flingThresholdVelocity = (int) (300 * density);
+        minFlingVelocity = (int) (150 * density);
+        minSnapVelocity = (int) (1000 * density);
         panelInterpolator = new SlidingPanelLayoutInterpolator(this);
         isRtl = isRtl(getResources());
     }
@@ -98,9 +102,9 @@ public class SlidingPanelLayout extends FrameLayout {
     }
 
     public void startSettlingTo(int target, int duration) {
-        notifyPanelDragging();
+        startPanelDrag();
         settling = true;
-        panelInterpolator.animateTo(getMeasuredWidth(), target);
+        panelInterpolator.animateTo(target, duration);
     }
 
     public void closePanel(int duration) {
@@ -109,10 +113,10 @@ public class SlidingPanelLayout extends FrameLayout {
             panelController.setPanelEnabled(touchState == 1);
         }
         settling = true;
-        panelInterpolator.animateTo(0, duration);
+        panelInterpolator.animateTo(0, Math.min(duration, 300));
     }
 
-    private void notifyPanelDragging() {
+    private void cnN() {
         touchState = 1;
         isPageMoving = true;
         settling = false;
@@ -132,21 +136,30 @@ public class SlidingPanelLayout extends FrameLayout {
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         acquireVelocityTrackerAndAddMovement(ev);
 
-        if (getChildCount() <= 0) return super.onInterceptTouchEvent(ev);
+        if (getChildCount() <= 0) {
+            return super.onInterceptTouchEvent(ev);
+        }
+        int action = ev.getAction();
+        if (action == 2 && this.touchState == 1) {
+            return true;
+        }
 
-        switch (ev.getActionMasked()) {
+        switch (action & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_DOWN:
+                boolean z;
                 downX = ev.getX();
                 downY = ev.getY();
                 initialPanelOffset = panelOffsetPx;
                 lastMotionX = downX;
                 totalMotionX = 0;
                 activePointerId = ev.getPointerId(0);
-                boolean isNearCurrentPos = panelInterpolator.isFinished() || Math.abs(panelInterpolator.finalX - panelOffsetPx) < touchSlop / 3;
-                if (!isNearCurrentPos || forceDrag) {
+                action = Math.abs(panelInterpolator.finalX - panelOffsetPx);
+                z = panelInterpolator.isFinished() || action < touchSlop / 3;
+                if (!z || forceDrag) {
                     forceDrag = false;
-                    notifyPanelDragging();
+                    cnN();
                     panelOffset = downX;
+                    break;
                 }
                 break;
 
@@ -176,7 +189,7 @@ public class SlidingPanelLayout extends FrameLayout {
         acquireVelocityTrackerAndAddMovement(ev);
 
         final int action = ev.getActionMasked();
-        switch (action) {
+        switch (action& MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_DOWN:
                 downX = ev.getX();
                 downY = ev.getY();
@@ -188,7 +201,7 @@ public class SlidingPanelLayout extends FrameLayout {
                     if (!forceDrag) return true;
                 }
                 forceDrag = false;
-                notifyPanelDragging();
+                cnN();
                 panelOffset = downX;
                 return true;
 
@@ -216,8 +229,8 @@ public class SlidingPanelLayout extends FrameLayout {
                     boolean isFling = totalMotionX > 25 && Math.abs(velocityX) > flingThresholdVelocity;
                     if (isFling) {
                         if (Math.abs(velocityX) < minFlingVelocity) {
-                            if (velocityX >= 0) startSettlingTo(getMeasuredWidth(), 750);
-                            else closePanel(750);
+                            if (velocityX >= 0) startSettlingTo(getMeasuredWidth(), 400);
+                            else closePanel(400);
                         } else {
                             float projected = getMeasuredWidth() / 2f + (float) Math.sin((Math.min(1.0f, ((float) (velocityX < 0 ? panelOffsetPx : getMeasuredWidth() - panelOffsetPx)) / getMeasuredWidth()) - 0.5f) * 0.4712389) * getMeasuredWidth() / 2f;
                             int duration = Math.round(Math.abs(projected / Math.max(minSnapVelocity, Math.abs(velocityX))) * 1000f) * 4;
@@ -225,8 +238,8 @@ public class SlidingPanelLayout extends FrameLayout {
                             else closePanel(duration);
                         }
                     } else {
-                        if (panelOffsetPx >= getMeasuredWidth() / 2) startSettlingTo(getMeasuredWidth(), 750);
-                        else closePanel(750);
+                        if (panelOffsetPx >= getMeasuredWidth() / 2) startSettlingTo(getMeasuredWidth(), 400);
+                        else closePanel(400);
                     }
                 }
                 releaseTouch();
@@ -250,7 +263,7 @@ public class SlidingPanelLayout extends FrameLayout {
                 totalMotionX += Math.abs(lastMotionX - x);
                 panelOffset = x;
                 lastMotionX = x;
-                notifyPanelDragging();
+                cnN();
             }
         }
     }
@@ -311,19 +324,19 @@ public class SlidingPanelLayout extends FrameLayout {
         }
     }
 
+    public void startPanelDrag() {
+        isPageMoving = true;
+        if (panelController != null) panelController.startPanelDrag();
+    }
+
     public void onPanelFullyOpened() {
-        if (USE_HARDWARE_LAYER) setLayerType(LAYER_TYPE_NONE, null);
+        updateLayer();
         isPanelOpen = true;
         isPageMoving = false;
         if (panelController != null) panelController.openPanel();
     }
 
-    public void notifyPanelStart() {
-        isPageMoving = true;
-        if (panelController != null) panelController.startPanelDrag();
-    }
-
-    final void setLayerType(int layerType) {
+    final void updateLayer() {
         if (USE_HARDWARE_LAYER) {
             setLayerType(LAYER_TYPE_NONE, null);
         }

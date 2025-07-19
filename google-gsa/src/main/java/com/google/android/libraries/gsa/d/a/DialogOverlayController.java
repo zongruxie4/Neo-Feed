@@ -33,7 +33,6 @@ class DialogOverlayController extends ContextThemeWrapper implements Window.Call
     }
 
     void onBackPressed() {
-        // Override in subclass or implement logic here
     }
 
     @Override

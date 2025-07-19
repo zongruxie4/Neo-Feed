@@ -14,21 +14,13 @@ import androidx.savedstate.SavedStateRegistryController;
 import androidx.savedstate.SavedStateRegistryOwner;
 
 @SuppressLint("ViewConstructor")
-public final class OverlayControllerSlidingPanelLayout extends SlidingPanelLayout
-        implements LifecycleOwner, SavedStateRegistryOwner {
+public final class OverlayControllerSlidingPanelLayout extends SlidingPanelLayout {
 
     private final OverlayController overlayController;
-    private final SavedStateRegistryController savedStateRegistryController;
-    private final LifecycleRegistry lifecycleRegistry;
 
     public OverlayControllerSlidingPanelLayout(OverlayController overlayControllerVar) {
         super(overlayControllerVar);
         this.overlayController = overlayControllerVar;
-        this.savedStateRegistryController = SavedStateRegistryController.create(this);
-        this.lifecycleRegistry = new LifecycleRegistry(this);
-
-        // Asociar el lifecycle owner con la vista
-        ViewTreeLifecycleOwner.set(this, this);
     }
 
     @Override
@@ -67,17 +59,5 @@ public final class OverlayControllerSlidingPanelLayout extends SlidingPanelLayou
     @Override
     protected boolean fitSystemWindows(Rect insets) {
         return !overlayController.isVisible || super.fitSystemWindows(insets);
-    }
-
-    @NonNull
-    @Override
-    public Lifecycle getLifecycle() {
-        return lifecycleRegistry;
-    }
-
-    @NonNull
-    @Override
-    public SavedStateRegistry getSavedStateRegistry() {
-        return savedStateRegistryController.getSavedStateRegistry();
     }
 }

@@ -1,5 +1,6 @@
 package com.google.android.libraries.gsa.d.a;
 
+import android.util.Log;
 import android.view.WindowManager.LayoutParams;
 
 final class OverlayControllerStateChanger implements PanelController {
@@ -34,6 +35,7 @@ final class OverlayControllerStateChanger implements PanelController {
 
     @Override
     public void openPanel() {
+        Log.d("OverlayController", "Opening panel in drawer mode");
         updatePanelState(PanelState.OPEN_AS_DRAWER);
     }
 

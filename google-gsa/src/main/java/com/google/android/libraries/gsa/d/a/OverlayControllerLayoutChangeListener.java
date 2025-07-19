@@ -1,6 +1,5 @@
 package com.google.android.libraries.gsa.d.a;
 
-import android.os.Build;
 import android.view.View;
 import android.view.View.OnLayoutChangeListener;
 import android.view.WindowManager.LayoutParams;
@@ -13,7 +12,7 @@ final class OverlayControllerLayoutChangeListener implements OnLayoutChangeListe
         overlayController = overlayControllerVar;
     }
 
-    public final void onLayoutChange(View view, int i, int i2, int i3, int i4, int i5, int i6, int i7, int i8) {
+    public void onLayoutChange(View view, int i, int i2, int i3, int i4, int i5, int i6, int i7, int i8) {
         this.overlayController.window.getDecorView().removeOnLayoutChangeListener(this);
         if (this.overlayController.panelState == PanelState.CLOSED) {//Todo: PanelState.uoe was default
             OverlayController overlayControllerVar = this.overlayController;

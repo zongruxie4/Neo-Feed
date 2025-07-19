@@ -57,17 +57,13 @@ class OverlayControllerBinder(
     override fun openOverlay(options: Int) {
         checkCallerId()
         this.mainThreadHandler.removeMessages(6)
-        Message.obtain(this.mainThreadHandler, 6, 1, options).sendToTarget()
+        Message.obtain(this.mainThreadHandler, 6, 0, options).sendToTarget()
     }
 
     override fun closeOverlay(options: Int) {
         checkCallerId()
-        if (options and 1 != 0) {
-            overlaysController.handler.removeCallbacks(this)
-            Message.obtain(mainThreadHandler, 6, 0, 0, Pair.create(Bundle(), callback)).sendToTarget()
-        } else {
-            a(callback, options)
-        }
+        mainThreadHandler.removeMessages(6)
+        Message.obtain(mainThreadHandler, 6, 1, 0, Pair.create(Bundle(), callback)).sendToTarget()
     }
 
     override fun requestVoiceDetection(start: Boolean) {
@@ -89,11 +85,11 @@ class OverlayControllerBinder(
         lastAttachWasLandscape = configuration?.orientation == 2
         callback = callbacks
         BL(bundle.getInt("client_options", 7))
-        Message.obtain(mainThreadHandler, 10, 1, 0, Pair.create(bundle, callback)).sendToTarget()
+        Message.obtain(mainThreadHandler, 0, 1, 0, Pair.create(bundle, callback)).sendToTarget()
     }
 
     @Synchronized
-    override fun windowAttached(bundle: Bundle?, dVar: ILauncherOverlayCallback?) {
+    override fun windowAttached(bundle: Bundle?, callback: ILauncherOverlayCallback?) {
         checkCallerId()
         this.overlaysController.handler.removeCallbacks(this)
         val configuration = bundle!!.getParcelable<Configuration?>("configuration")
@@ -104,7 +100,7 @@ class OverlayControllerBinder(
             0,
             1,
             0,
-            Pair.create<Bundle?, ILauncherOverlayCallback?>(bundle, dVar)
+            Pair.create<Bundle?, ILauncherOverlayCallback?>(bundle, callback)
         ).sendToTarget()
     }
 

@@ -5,6 +5,7 @@ import android.content.res.Configuration;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Message;
+import android.util.Log;
 import android.util.Pair;
 import android.view.WindowManager.LayoutParams;
 import android.widget.FrameLayout;
@@ -30,22 +31,16 @@ abstract class OverlayControllerCallback extends BaseCallback {
 
     @Override
     public boolean handleMessage(Message msg) {
-        switch (msg.what) {
-            case 0:
-                return handleInit(msg);
-            case 1:
-                return handleSetState(msg);
-            case 2:
-                return handleDestroy(msg);
-            case 6:
-                return handleCommand(msg);
-            case 7:
-                return handleVisibility(msg);
-            case 8:
-                return handleByteBundle(msg);
-            default:
-                return false;
-        }
+        Log.d("OverlayControllerCallback", "handleMessage: " + msg.what);
+        return switch (msg.what) {
+            case 0 -> handleInit(msg);
+            case 1 -> handleSetState(msg);
+            case 2 -> handleDestroy(msg);
+            case 6 -> handleCommand(msg);
+            case 7 -> handleVisibility(msg);
+            case 8 -> handleByteBundle(msg);
+            default -> false;
+        };
     }
 
     private boolean handleInit(Message msg) {
@@ -55,7 +50,7 @@ abstract class OverlayControllerCallback extends BaseCallback {
 
         if (overlayController != null) {
             stateBundle = saveOverlayState(overlayController);
-            overlayController.closeOverlay(); // cleanup
+            overlayController.closeOverlay();
             overlayController = null;
         }
 
@@ -143,7 +138,7 @@ abstract class OverlayControllerCallback extends BaseCallback {
             panel.panelOffsetPx = panel.getMeasuredWidth();
             float translationX = panel.isRtl ? -panel.panelOffsetPx : panel.panelOffsetPx;
             panel.foregroundPanel.setTranslationX(translationX);
-            panel.notifyPanelStart();
+            panel.startPanelDrag();
             panel.onPanelFullyOpened();
         }
     }
