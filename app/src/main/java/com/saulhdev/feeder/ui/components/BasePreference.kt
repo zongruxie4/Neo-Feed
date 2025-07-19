@@ -33,8 +33,8 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.saulhdev.feeder.ui.compose.theme.GroupItemShape
-import com.saulhdev.feeder.ui.compose.util.addIf
+import com.saulhdev.feeder.ui.theme.GroupItemShape
+import com.saulhdev.feeder.utils.addIf
 
 @Composable
 fun BasePreference(

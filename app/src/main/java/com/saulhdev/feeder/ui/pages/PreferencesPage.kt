@@ -1,6 +1,6 @@
 /*
  * This file is part of Neo Feed
- * Copyright (c) 2022   Saul Henriquez <henriquez.saul@gmail.com>
+ * Copyright (c) 2022   Neo Feed Team
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -17,7 +17,6 @@
  */
 
 package com.saulhdev.feeder.ui.pages
-
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -35,7 +34,7 @@ import androidx.compose.ui.unit.dp
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.data.content.FeedPreferences
 import com.saulhdev.feeder.data.content.StringSelectionPref
-import com.saulhdev.feeder.ui.components.BaseDialog
+import com.saulhdev.feeder.ui.components.dialog.BaseDialog
 import com.saulhdev.feeder.ui.components.PreferenceGroup
 import com.saulhdev.feeder.ui.components.ViewWithActionBar
 import com.saulhdev.feeder.ui.components.dialog.StringSelectionPrefDialogUI
@@ -57,6 +56,7 @@ fun PreferencesPage(
         prefs.removeDuplicates,
     )
     val themePrefs = listOf(
+        prefs.dynamicColor,
         prefs.overlayTheme,
         prefs.overlayTransparency,
     )

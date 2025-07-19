@@ -1,6 +1,6 @@
 /*
  * This file is part of Neo Feed
- * Copyright (c) 2022   Saul Henriquez <henriquez.saul@gmail.com>
+ * Copyright (c) 2022   Neo Feed Team
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -24,6 +24,7 @@ import com.saulhdev.feeder.data.content.FloatPref
 import com.saulhdev.feeder.data.content.StringPref
 import com.saulhdev.feeder.data.content.StringSelectionPref
 import com.saulhdev.feeder.data.content.StringSetPref
+import com.saulhdev.feeder.ui.components.SeekBarPreference
 
 val PreferenceBuilder =
     @Composable { pref: Any, onDialogPref: (Any) -> Unit, index: Int, size: Int ->

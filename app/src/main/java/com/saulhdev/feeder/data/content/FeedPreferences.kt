@@ -29,19 +29,20 @@ import androidx.datastore.preferences.core.stringSetPreferencesKey
 import androidx.datastore.preferences.preferencesDataStoreFile
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.data.entity.SORT_CHRONOLOGICAL
-import com.saulhdev.feeder.ui.compose.icon.Phosphor
-import com.saulhdev.feeder.ui.compose.icon.phosphor.BookBookmark
-import com.saulhdev.feeder.ui.compose.icon.phosphor.Browser
-import com.saulhdev.feeder.ui.compose.icon.phosphor.Bug
-import com.saulhdev.feeder.ui.compose.icon.phosphor.CaretUp
-import com.saulhdev.feeder.ui.compose.icon.phosphor.Clock
-import com.saulhdev.feeder.ui.compose.icon.phosphor.FunnelSimple
-import com.saulhdev.feeder.ui.compose.icon.phosphor.Hash
-import com.saulhdev.feeder.ui.compose.icon.phosphor.Info
-import com.saulhdev.feeder.ui.compose.icon.phosphor.PaintRoller
-import com.saulhdev.feeder.ui.compose.icon.phosphor.SubtractSquare
-import com.saulhdev.feeder.ui.compose.icon.phosphor.WifiHigh
-import com.saulhdev.feeder.ui.navigation.NavRoute
+import com.saulhdev.feeder.navigation.NavRoute
+import com.saulhdev.feeder.ui.icons.Phosphor
+import com.saulhdev.feeder.ui.icons.phosphor.BookBookmark
+import com.saulhdev.feeder.ui.icons.phosphor.Browser
+import com.saulhdev.feeder.ui.icons.phosphor.Bug
+import com.saulhdev.feeder.ui.icons.phosphor.CaretUp
+import com.saulhdev.feeder.ui.icons.phosphor.Clock
+import com.saulhdev.feeder.ui.icons.phosphor.FunnelSimple
+import com.saulhdev.feeder.ui.icons.phosphor.Hash
+import com.saulhdev.feeder.ui.icons.phosphor.Info
+import com.saulhdev.feeder.ui.icons.phosphor.PaintRoller
+import com.saulhdev.feeder.ui.icons.phosphor.SubtractSquare
+import com.saulhdev.feeder.ui.icons.phosphor.Swatches
+import com.saulhdev.feeder.ui.icons.phosphor.WifiHigh
 import com.saulhdev.feeder.utils.getItemsPerFeed
 import com.saulhdev.feeder.utils.getSortingOptions
 import com.saulhdev.feeder.utils.getSyncFrequency
@@ -55,7 +56,6 @@ import kotlin.math.roundToInt
 
 class FeedPreferences private constructor(val context: Context) : KoinComponent {
     private val dataStore: DataStore<Preferences> by inject()
-
     /* Theme */
     var overlayTheme = StringSelectionPref(
         titleId = R.string.pref_ovr_theme,
@@ -64,6 +64,14 @@ class FeedPreferences private constructor(val context: Context) : KoinComponent 
         dataStore = dataStore,
         defaultValue = "auto_system",
         entries = getThemes(context)
+    )
+
+    val dynamicColor = BooleanPref(
+        titleId = R.string.pref_dynamic_color,
+        icon = Phosphor.Swatches,
+        key = OVERLAY_DYNAMIC_THEME,
+        dataStore = dataStore,
+        defaultValue = true
     )
 
     var overlayTransparency = FloatPref(
@@ -77,15 +85,6 @@ class FeedPreferences private constructor(val context: Context) : KoinComponent 
         steps = 100,
         specialOutputs = { "${(it * 100).roundToInt()}%" }
     )
-
-    /*var cardBackground = StringSelectionPref(
-        titleId = R.string.pref_card_bg,
-        icon = Phosphor.SelectionBackground,
-        key = OVERLAY_CARD_BACKGROUND,
-        dataStore = dataStore,
-        defaultValue = "theme",
-        entries = getBackgroundOptions(context)
-    )*/
 
     var openInBrowser = BooleanPref(
         titleId = R.string.pref_browser_theme,
@@ -109,6 +108,15 @@ class FeedPreferences private constructor(val context: Context) : KoinComponent 
         key = OFFLINE_READER,
         dataStore = dataStore,
         defaultValue = true
+    )
+
+    /*SAVE UTILITY PREF*/
+    var showBookmarks = BooleanPref(
+        titleId = R.string.title_bookmarks,
+        icon = Phosphor.BookBookmark,
+        key = SHOW_BOOKMARKS,
+        dataStore = dataStore,
+        defaultValue = false
     )
 
     /* Sync */
@@ -212,10 +220,10 @@ class FeedPreferences private constructor(val context: Context) : KoinComponent 
         val OVERLAY_THEME = stringPreferencesKey("pref_overlay_theme")
         val OVERLAY_DYNAMIC_THEME = booleanPreferencesKey("pref_dynamic_theme")
         val OVERLAY_OPACITY = floatPreferencesKey("pref_overlay_opacity")
-        val OVERLAY_CARD_BACKGROUND = stringPreferencesKey("pref_overlay_card_background")
         val OPEN_IN_BROWSER = booleanPreferencesKey("pref_open_browser")
         val REMOVE_DUPLICATES = booleanPreferencesKey("pref_remove_duplicates")
         val OFFLINE_READER = booleanPreferencesKey("pref_offline_reader")
+        val SHOW_BOOKMARKS = booleanPreferencesKey("pref_show_bookmarks")
         val SYNC_ON_WIFI = booleanPreferencesKey("pref_sync_only_wifi")
         val SYNC_FREQUENCY = stringPreferencesKey("pref_sync_frequency")
         val ITEMS_PER_FEED = stringPreferencesKey("pref_items_per_feed")

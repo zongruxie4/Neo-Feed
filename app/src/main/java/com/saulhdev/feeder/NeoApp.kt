@@ -1,87 +1,29 @@
 package com.saulhdev.feeder
 
 import android.app.Activity
+import android.app.Application.ActivityLifecycleCallbacks
 import android.os.Bundle
-import android.widget.Toast
-import androidx.lifecycle.SavedStateHandle
 import androidx.multidex.MultiDexApplication
-import androidx.work.WorkManager
-import com.google.android.material.color.DynamicColors
-import com.google.android.material.color.DynamicColorsOptions
-import com.jakewharton.threetenabp.AndroidThreeTen
 import com.saulhdev.feeder.data.content.FeedPreferences.Companion.prefsModule
-import com.saulhdev.feeder.data.db.NeoFeedDb
-import com.saulhdev.feeder.data.repository.ArticleRepository
-import com.saulhdev.feeder.data.repository.FeedRepository
-import com.saulhdev.feeder.manager.plugin.PluginFetcher
-import com.saulhdev.feeder.manager.sync.SyncRestClient
-import com.saulhdev.feeder.utils.ApplicationCoroutineScope
-import com.saulhdev.feeder.utils.OverlayBridge
-import com.saulhdev.feeder.utils.extensions.ToastMaker
-import com.saulhdev.feeder.utils.extensions.restartApp
-import com.saulhdev.feeder.viewmodels.ArticleViewModel
-import com.saulhdev.feeder.viewmodels.ArticlesViewModel
-import com.saulhdev.feeder.viewmodels.EditFeedViewModel
-import com.saulhdev.feeder.viewmodels.FeedsViewModel
-import com.saulhdev.feeder.viewmodels.SearchFeedViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import com.saulhdev.feeder.service.OverlayBridge
+import com.saulhdev.feeder.utils.Utilities
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.androix.startup.KoinStartup
 import org.koin.core.annotation.KoinExperimentalAPI
 import org.koin.core.context.GlobalContext
-import org.koin.core.module.dsl.singleOf
-import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.koinConfiguration
 import org.koin.dsl.module
-import org.koin.java.KoinJavaComponent.inject
-import java.lang.ref.WeakReference
 
 @OptIn(KoinExperimentalAPI::class)
-class NeoApp : MultiDexApplication(), KoinStartup {
+class NeoApp: MultiDexApplication(), KoinStartup {
+    val activityHandler = ActivityHandler()
+    private val coreModule = module {}
+    private val dataModule = module {}
+    private val modelModule = module {}
 
-    private val activityHandler = ActivityHandler()
-    private val applicationCoroutineScope = ApplicationCoroutineScope()
-    private val wm: WorkManager by inject(WorkManager::class.java)
-
-    private fun savedStateHandle() = SavedStateHandle()
-
-    private val modelModule = module {
-        single {
-            savedStateHandle()
-        }
-        viewModelOf(::EditFeedViewModel)
-        viewModelOf(::SearchFeedViewModel)
-        viewModelOf(::FeedsViewModel)
-        viewModelOf(::ArticlesViewModel)
-        viewModelOf(::ArticleViewModel)
-    }
-
-    // TODO Move to its class
-    private val dataModule = module {
-        single<NeoFeedDb> { NeoFeedDb.getInstance(this@NeoApp) }
-        singleOf(::ArticleRepository)
-        singleOf(::FeedRepository)
-        singleOf(::SyncRestClient)
-    }
-
-    private val coreModule = module {
-        single { contentResolver }
-        single { WorkManager.getInstance(this@NeoApp) }
-        single<ToastMaker> {
-            object : ToastMaker {
-                override suspend fun makeToast(text: String) = withContext(Dispatchers.Main) {
-                    Toast.makeText(get(), text, Toast.LENGTH_SHORT).show()
-                }
-
-                override suspend fun makeToast(resId: Int) = withContext(Dispatchers.Main) {
-                    Toast.makeText(get(), resId, Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
-        single { applicationCoroutineScope }
-        single<NeoApp> { this@NeoApp }
+    fun onAppStarted() {
+        registerActivityLifecycleCallbacks(activityHandler)
     }
 
     @KoinExperimentalAPI
@@ -94,15 +36,7 @@ class NeoApp : MultiDexApplication(), KoinStartup {
     override fun onCreate() {
         super.onCreate()
         instance = this
-        AndroidThreeTen.init(this)
-        DynamicColors.applyToActivitiesIfAvailable(
-            this,
-            DynamicColorsOptions.Builder()
-                .setPrecondition { _, _ -> DynamicColors.isDynamicColorAvailable() }
-                .build()
-        )
-        wm.pruneWork()
-        PluginFetcher.init(this)
+        onAppStarted()
     }
 
     override fun onTerminate() {
@@ -110,59 +44,55 @@ class NeoApp : MultiDexApplication(), KoinStartup {
         GlobalContext.get().close()
     }
 
-    fun restart(recreate: Boolean = false) {
+    fun onRestart(recreate: Boolean = true){
         if (recreate) {
-            activityHandler.finishAll(true)
+            activityHandler.finishAll(recreateApp = false)
         } else {
-            restartApp()
-        }
-    }
-
-    class ActivityHandler : ActivityLifecycleCallbacks {
-
-        private val activities = HashSet<Activity>()
-        private var foregroundActivity: Activity? = null
-
-        fun finishAll(recreateLauncher: Boolean = true) {
-            HashSet(activities).forEach { if (recreateLauncher && it is MainActivity) it.recreate() else it.finish() }
-        }
-
-        override fun onActivityPaused(activity: Activity) {
-        }
-
-        override fun onActivityResumed(activity: Activity) {
-            foregroundActivity = activity
-        }
-
-        override fun onActivityStarted(activity: Activity) {
-        }
-
-        override fun onActivityDestroyed(activity: Activity) {
-            if (activity == foregroundActivity)
-                foregroundActivity = null
-            activities.remove(activity)
-        }
-
-        override fun onActivitySaveInstanceState(p0: Activity, p1: Bundle) {
-        }
-
-        override fun onActivityStopped(activity: Activity) {
-        }
-
-        override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
-            activities.add(activity)
+            Utilities().restartApp(this)
         }
     }
 
     companion object {
-        lateinit var instance: NeoApp
-        val bridge = OverlayBridge()
+        private const val TAG = "NeoFeed"
+        @JvmStatic
+        var instance: NeoApp? = null
+            private set
 
-        private var mainActivityRef: WeakReference<MainActivity> = WeakReference(null)
-        var mainActivity: MainActivity?
-            get() = mainActivityRef.get()
-            set(mainActivity) {
-                mainActivityRef = WeakReference(mainActivity)
-            }
+        val bridge = OverlayBridge()
+    }
+}
+
+class ActivityHandler : ActivityLifecycleCallbacks {
+    val activities = HashSet<Activity>()
+    var foregroundActivity: Activity? = null
+
+    fun finishAll(recreateApp: Boolean = true) {
+        HashSet(activities).forEach { if (recreateApp) it.recreate() else it.finish() }
+    }
+
+    override fun onActivityPaused(activity: Activity) {
+    }
+
+    override fun onActivityResumed(activity: Activity) {
+        foregroundActivity = activity
+    }
+
+    override fun onActivityStarted(activity: Activity) {
+    }
+
+    override fun onActivityDestroyed(activity: Activity) {
+        if (activity == foregroundActivity)
+            foregroundActivity = null
+        activities.remove(activity)
+    }
+
+    override fun onActivitySaveInstanceState(p0: Activity, p1: Bundle) {
+    }
+
+    override fun onActivityStopped(activity: Activity) {
+    }
+
+    override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
+        activities.add(activity)
     }
 }

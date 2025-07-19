@@ -49,7 +49,6 @@ fun SeekBarPreference(
                     value = currentValue,
                     valueRange = pref.minValue..pref.maxValue,
                     onValueChange = { currentValue = it },
-                    steps = pref.steps,
                     onValueChangeFinished = {
                         pref.setValue(currentValue)
                         onValueChange(currentValue)

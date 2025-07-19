@@ -1,6 +1,6 @@
 /*
- * This file is part of Neo Feeder
- * Copyright (c) 2022   Neo Feeder Team
+ * This file is part of Neo Feed
+ * Copyright (c) 2025   Neo Feed Team
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -15,27 +15,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-
-package com.saulhdev.feeder.ui.components
+package com.saulhdev.feeder.ui.components.dialog
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import com.saulhdev.feeder.data.content.StringSetPref
+import androidx.compose.runtime.MutableState
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 
 @Composable
-fun StringSetPreference(
-    modifier: Modifier = Modifier,
-    pref: StringSetPref,
-    index: Int = 1,
-    groupSize: Int = 1,
-    isEnabled: Boolean = true,
+fun BaseDialog(
+    openDialogCustom: MutableState<Boolean>,
+    dialogUI: @Composable (() -> Unit)
 ) {
-    BasePreference(
-        modifier = modifier,
-        titleId = pref.titleId,
-        summaryId = pref.summaryId,
-        index = index,
-        groupSize = groupSize,
-        isEnabled = isEnabled
-    )
+    Dialog(
+        onDismissRequest = { openDialogCustom.value = false },
+        properties = DialogProperties(usePlatformDefaultWidth = false)
+    ) {
+        dialogUI()
+    }
 }

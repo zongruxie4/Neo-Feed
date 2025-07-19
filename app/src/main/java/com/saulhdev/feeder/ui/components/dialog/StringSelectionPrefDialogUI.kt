@@ -49,7 +49,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.saulhdev.feeder.data.content.StringSelectionPref
-import com.saulhdev.feeder.ui.compose.util.blockShadow
+import com.saulhdev.feeder.utils.blockShadow
 import kotlinx.coroutines.launch
 
 @Composable
@@ -96,11 +96,11 @@ fun StringSelectionPrefDialogUI(
                 Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 8.dp),
+                horizontalArrangement = Arrangement.End
             ) {
                 DialogNegativeButton(
                     onClick = { openDialogCustom.value = false }
                 )
-                Spacer(Modifier.weight(1f))
                 DialogPositiveButton(
                     modifier = Modifier.padding(start = 16.dp),
                     onClick = {
