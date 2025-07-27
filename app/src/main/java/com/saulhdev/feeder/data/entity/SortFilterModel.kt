@@ -8,6 +8,7 @@ data class SortFilterModel(
     val sort: String = SORT_CHRONOLOGICAL,
     val sortAsc: Boolean = false,
     val sourcesFilter: Set<String> = emptySet(),
+    val tagsFilter: Set<String> = emptySet()
 ) : Parcelable
 
 const val SORT_CHRONOLOGICAL = "chronological"

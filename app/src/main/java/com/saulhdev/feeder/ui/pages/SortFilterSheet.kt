@@ -32,21 +32,20 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.data.content.FeedPreferences
+import com.saulhdev.feeder.extensions.koinNeoViewModel
 import com.saulhdev.feeder.ui.components.ActionButton
 import com.saulhdev.feeder.ui.components.ChipsSwitch
 import com.saulhdev.feeder.ui.components.DeSelectAll
 import com.saulhdev.feeder.ui.components.ExpandableItemsBlock
 import com.saulhdev.feeder.ui.components.SelectChip
-import com.saulhdev.feeder.ui.compose.icon.Phosphor
-import com.saulhdev.feeder.ui.compose.icon.phosphor.ArrowUUpLeft
-import com.saulhdev.feeder.ui.compose.icon.phosphor.Check
-import com.saulhdev.feeder.ui.compose.icon.phosphor.SortAscending
-import com.saulhdev.feeder.ui.compose.icon.phosphor.SortDescending
-import com.saulhdev.feeder.utils.extensions.koinNeoViewModel
+import com.saulhdev.feeder.ui.icons.Phosphor
+import com.saulhdev.feeder.ui.icons.phosphor.ArrowUUpLeft
+import com.saulhdev.feeder.ui.icons.phosphor.Check
+import com.saulhdev.feeder.ui.icons.phosphor.SortAscending
+import com.saulhdev.feeder.ui.icons.phosphor.SortDescending
 import com.saulhdev.feeder.viewmodels.ArticlesViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.koin.compose.koinInject
-
 
 @OptIn(
     ExperimentalCoroutinesApi::class,
@@ -58,14 +57,15 @@ fun SortFilterSheet(
     prefs: FeedPreferences = koinInject(),
     onDismiss: () -> Unit,
 ) {
-    val context = LocalContext.current
     val nestedScrollConnection = rememberNestedScrollInteropConnection()
     val activeSources by viewModel.activeFeeds.collectAsState()
+    val activeTags by viewModel.getAllTags.collectAsState()
     val sortFilterModel by viewModel.prefSortFilter.collectAsState()
 
     var sortPrefVar by prefs.sortingFilter
     var sortAscPrefVar by prefs.sortingAsc
     var sourcesPrefVar by prefs.sourcesFilter
+    var tagsPrefVar by prefs.tagsFilter
 
     var sortOption by remember(sortFilterModel.sort) {
         mutableStateOf(sortFilterModel.sort)
@@ -75,6 +75,10 @@ fun SortFilterSheet(
     }
     val sourcesOption = remember(sortFilterModel.sourcesFilter) {
         mutableStateListOf(*sortFilterModel.sourcesFilter.toTypedArray())
+    }
+
+    val tagsOption = remember(sortFilterModel.tagsFilter) {
+        mutableStateListOf(*sortFilterModel.tagsFilter.toTypedArray())
     }
 
     Scaffold(
@@ -100,6 +104,7 @@ fun SortFilterSheet(
                         sortPrefVar = prefs.sortingFilter.defaultValue
                         sortAscPrefVar = prefs.sortingAsc.defaultValue
                         sourcesPrefVar = prefs.sourcesFilter.defaultValue
+                        tagsPrefVar = prefs.tagsFilter.defaultValue
                         onDismiss()
                     }
                     ActionButton(
@@ -111,6 +116,7 @@ fun SortFilterSheet(
                             sortPrefVar = sortOption
                             sortAscPrefVar = sortAscOption
                             sourcesPrefVar = sourcesOption.toSet()
+                            tagsPrefVar = tagsOption.toSet()
                             onDismiss()
                         }
                     )
@@ -161,6 +167,7 @@ fun SortFilterSheet(
                     )
                 }
             }
+
             item {
                 ExpandableItemsBlock(
                     heading = stringResource(id = R.string.title_sources),
@@ -187,7 +194,33 @@ fun SortFilterSheet(
                     }
                 }
             }
-            // TODO add categories/tags filter
+
+            item{
+                ExpandableItemsBlock(
+                    heading = stringResource(id = R.string.source_tags),
+                    preExpanded = tagsOption.isNotEmpty(),
+                ) {
+                    DeSelectAll(activeTags.map { it }, tagsOption)
+                    FlowRow(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        activeTags.sortedBy { it.lowercase() }.forEach {
+                            val checked by remember(tagsOption.toString()) {
+                                mutableStateOf(!tagsOption.contains(it))
+                            }
+
+                            SelectChip(
+                                text = it,
+                                checked = checked,
+                            ) {
+                                if (checked) tagsOption.add(it)
+                                else tagsOption.remove(it)
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }
