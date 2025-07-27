@@ -1,5 +1,6 @@
 package com.saulhdev.feeder.ui.pages
 
+
 import android.net.Uri
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
@@ -30,21 +31,21 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.rememberNavController
 import com.saulhdev.feeder.MainActivity
 import com.saulhdev.feeder.R
+import com.saulhdev.feeder.extensions.koinNeoViewModel
+import com.saulhdev.feeder.extensions.launchView
+import com.saulhdev.feeder.extensions.shareIntent
+import com.saulhdev.feeder.ui.navigation.Routes
 import com.saulhdev.feeder.ui.components.RoundButton
 import com.saulhdev.feeder.ui.components.ViewWithActionBar
 import com.saulhdev.feeder.ui.components.WithBidiDeterminedLayoutDirection
-import com.saulhdev.feeder.ui.compose.icon.Phosphor
-import com.saulhdev.feeder.ui.compose.icon.phosphor.ArrowSquareOut
-import com.saulhdev.feeder.ui.compose.icon.phosphor.ShareNetwork
-import com.saulhdev.feeder.ui.compose.theme.LinkTextStyle
-import com.saulhdev.feeder.ui.navigation.Routes
+import com.saulhdev.feeder.ui.icons.Phosphor
+import com.saulhdev.feeder.ui.icons.phosphor.ArrowSquareOut
+import com.saulhdev.feeder.ui.icons.phosphor.ShareNetwork
+import com.saulhdev.feeder.ui.theme.LinkTextStyle
 import com.saulhdev.feeder.utils.blobFile
 import com.saulhdev.feeder.utils.blobFullFile
 import com.saulhdev.feeder.utils.blobFullInputStream
 import com.saulhdev.feeder.utils.blobInputStream
-import com.saulhdev.feeder.utils.extensions.koinNeoViewModel
-import com.saulhdev.feeder.utils.extensions.launchView
-import com.saulhdev.feeder.utils.extensions.shareIntent
 import com.saulhdev.feeder.utils.htmlFormattedText
 import com.saulhdev.feeder.utils.unicodeWrap
 import com.saulhdev.feeder.utils.urlEncode
@@ -55,7 +56,7 @@ import org.threeten.bp.format.FormatStyle
 import java.util.Locale
 
 @Composable
-fun ArticleScreen(
+fun ArticlePage(
     articleId: Long,
     viewModel: ArticleViewModel = koinNeoViewModel(),
     onDismiss: (() -> Unit)? = null,
