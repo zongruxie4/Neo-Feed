@@ -1,6 +1,6 @@
 /*
  * This file is part of Neo Feed
- * Copyright (c) 2022   Saul Henriquez <henriquez.saul@gmail.com>
+ * Copyright (c) 2025   Neo Feed Team
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -26,6 +26,7 @@ import androidx.room.Query
 import androidx.room.Update
 import com.saulhdev.feeder.data.db.models.Feed
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import org.threeten.bp.Instant
 import java.net.URL
 
@@ -54,7 +55,7 @@ interface FeedSourceDao {
     suspend fun findFeedById(id: Long): List<Feed>
 
     @Query("SELECT * FROM Feeds WHERE isEnabled IS 1")
-    fun loadFeeds(): List<Feed>
+    suspend fun loadFeeds(): List<Feed>
 
     @Query("SELECT * FROM Feeds WHERE isEnabled IS 1")
     fun getEnabledFeeds(): Flow<List<Feed>>
@@ -66,10 +67,21 @@ interface FeedSourceDao {
     fun getAllFeeds(): Flow<List<Feed>>
 
     @Query("SELECT DISTINCT tag FROM Feeds ORDER BY tag COLLATE NOCASE")
-    suspend fun loadTags(): List<String>
+     fun getAllTagsFlow(): Flow<List<String>>
 
-    @Query("SELECT * FROM feeds WHERE tag IS :tag")
-    suspend fun loadFeedsByTag(tag: String): List<Feed>
+    @Query("SELECT DISTINCT tag FROM Feeds ORDER BY tag COLLATE NOCASE")
+    suspend fun getAllTags(): List<String>
+
+    @Query("SELECT * FROM feeds WHERE ',' || tag || ',' LIKE :pattern")
+    suspend fun loadFeedsByTag(pattern: String): List<Feed>
+
+    fun getFeedbyTags(tags: Set<String>): Flow<List<Feed>> = flow {
+        val allFeeds = tags.flatMap { tag ->
+            loadFeedsByTag("%,$tag,%")
+        }.distinctBy { it.id }
+        emit(allFeeds)
+    }
+
 
     @Query(
         """

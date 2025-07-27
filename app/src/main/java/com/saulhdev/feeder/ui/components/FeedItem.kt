@@ -1,6 +1,6 @@
 /*
  * This file is part of Neo Feed
- * Copyright (c) 2022   Saul Henriquez <henriquez.saul@gmail.com>
+ * Copyright (c) 2022   Neo Feed Team
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -39,8 +39,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.data.db.models.Feed
-import com.saulhdev.feeder.ui.compose.icon.Phosphor
-import com.saulhdev.feeder.ui.compose.icon.phosphor.TrashSimple
+import com.saulhdev.feeder.ui.icons.Phosphor
+import com.saulhdev.feeder.ui.icons.phosphor.TrashSimple
 
 @Composable
 fun FeedItem(
@@ -96,3 +96,4 @@ fun FeedItem(
         }
     )
 }
+
