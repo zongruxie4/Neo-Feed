@@ -1,6 +1,6 @@
 /*
  * This file is part of Neo Feed
- * Copyright (c) 2022   Saul Henriquez <henriquez.saul@gmail.com>
+ * Copyright (c) 2022   Neo Feed Team
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -16,9 +16,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.saulhdev.feeder.ui.components
+package com.saulhdev.feeder.ui.views
 
 import android.net.Uri
+import android.webkit.WebChromeClient
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.layout.Column
@@ -29,33 +32,29 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.compose.rememberNavController
-import com.google.accompanist.web.AccompanistWebViewClient
-import com.google.accompanist.web.LoadingState
-import com.google.accompanist.web.WebView
-import com.google.accompanist.web.rememberWebViewNavigator
-import com.google.accompanist.web.rememberWebViewState
+import com.saulhdev.feeder.ui.components.ViewWithActionBar
+import androidx.core.net.toUri
 
 @Composable
 fun ComposeWebView(
     pageUrl: String
 ) {
-    // TODO migrate to ??!
-    val url by remember { mutableStateOf(pageUrl) }
-    val state = rememberWebViewState(url = url)
-    val navigator = rememberWebViewNavigator()
-
-    val loadingState = state.loadingState
-    val title = remember { mutableStateOf("Neo Feed") }
-    val subTitle = remember { mutableStateOf("Neo Feed") }
-
     val navController = rememberNavController()
     val activity = LocalActivity.current
+
+    var progress by remember { mutableFloatStateOf(0f) }
+    var isLoading by remember { mutableStateOf(true) }
+    val title = remember { mutableStateOf("Neo Feed") }
+    val subTitle = remember { mutableStateOf("Neo Feed") }
 
     BackHandler {
         if (navController.currentBackStackEntry?.destination?.route == null) {
@@ -81,43 +80,52 @@ fun ComposeWebView(
                     bottom = paddingValues.calculateBottomPadding() + 8.dp
                 ),
         ) {
-            if (loadingState is LoadingState.Loading) {
+            if (isLoading) {
                 LinearProgressIndicator(
-                    progress = { loadingState.progress },
+                    progress = { progress },
                     modifier = Modifier
                         .fillMaxWidth()
                         .wrapContentHeight(),
                 )
-            } else {
-                title.value = state.pageTitle ?: "Neo Feed"
-                val currentUrl = state.content.getCurrentUrl() ?: "Neo Feed"
-                if (currentUrl != "Neo Feed" && state.content.getCurrentUrl() != null) {
-                    subTitle.value = Uri.parse(currentUrl).host!!
-                }
             }
 
+            AndroidView(
+                factory = { context ->
+                    WebView(context).apply {
+                        settings.javaScriptEnabled = true
+                        settings.domStorageEnabled = true
+                        settings.setSupportZoom(true)
+                        settings.builtInZoomControls = true
+                        settings.displayZoomControls = false
 
-            val webClient = remember {
-                object : AccompanistWebViewClient() {
-                }
-            }
+                        webViewClient = object : WebViewClient() {
+                            override fun onPageFinished(view: WebView?, url: String?) {
+                                isLoading = false
+                                title.value = view?.title ?: "Neo Feed"
+                                subTitle.value = (url ?: "").toUri().host ?: "Neo Feed"
+                            }
 
-            WebView(
-                state = state,
-                modifier = Modifier.weight(1f),
-                navigator = navigator,
-                onCreated = { webView ->
-                    webView.settings.let {
-                        it.javaScriptEnabled = true
-                        it.domStorageEnabled = true
-                        it.setSupportZoom(true)
-                        it.builtInZoomControls = true
-                        it.displayZoomControls = false
+                            override fun onPageStarted(view: WebView?, url: String?, favicon: android.graphics.Bitmap?) {
+                                isLoading = true
+                            }
+                        }
+
+                        webChromeClient = object : WebChromeClient() {
+                            override fun onProgressChanged(view: WebView?, newProgress: Int) {
+                                progress = newProgress / 100f
+                            }
+                        }
+
+                        loadUrl(pageUrl)
                     }
                 },
-                client = webClient
+                update = {
+                    if (it.url != pageUrl) {
+                        it.loadUrl(pageUrl)
+                    }
+                },
+                modifier = Modifier.weight(1f)
             )
-
         }
     }
 }
