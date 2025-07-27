@@ -1,4 +1,4 @@
-package com.saulhdev.feeder.utils.extensions
+package com.saulhdev.feeder.extensions
 
 import android.app.AlarmManager
 import android.app.PendingIntent
@@ -105,10 +105,10 @@ val Context.nightMode
 val Context.isDarkTheme: Boolean
     get() = when (get<FeedPreferences>(FeedPreferences::class.java).overlayTheme.getValue()) {
         "dark", "black"
-             -> true
+            -> true
 
         "light"
-             -> false
+            -> false
 
         else -> resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES // "auto_system"
     }
@@ -116,7 +116,7 @@ val Context.isDarkTheme: Boolean
 val Context.isBlackTheme: Boolean
     get() = when (get<FeedPreferences>(FeedPreferences::class.java).overlayTheme.getValue()) {
         "black", "auto_system_black"
-             -> true
+            -> true
 
         else -> false
     }

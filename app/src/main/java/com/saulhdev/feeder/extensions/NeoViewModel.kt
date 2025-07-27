@@ -1,11 +1,11 @@
-package com.saulhdev.feeder.utils.extensions
+package com.saulhdev.feeder.extensions
 
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.LocalActivity
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.ViewModel
-import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.component.getScopeId
 
 open class NeoViewModel : ViewModel() {
