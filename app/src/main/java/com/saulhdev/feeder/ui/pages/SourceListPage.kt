@@ -1,6 +1,6 @@
 /*
  * This file is part of Neo Feed
- * Copyright (c) 2022   Saul Henriquez <henriquez.saul@gmail.com>
+ * Copyright (c) 2022   Neo Feed Team <saulhdev@hotmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -53,20 +53,20 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.data.db.models.Feed
+import com.saulhdev.feeder.extensions.koinNeoViewModel
 import com.saulhdev.feeder.manager.models.exportOpml
 import com.saulhdev.feeder.manager.models.importOpml
+import com.saulhdev.feeder.ui.navigation.LocalNavController
+import com.saulhdev.feeder.ui.navigation.NavRoute
 import com.saulhdev.feeder.ui.components.FeedItem
 import com.saulhdev.feeder.ui.components.OverflowMenu
 import com.saulhdev.feeder.ui.components.ViewWithActionBar
 import com.saulhdev.feeder.ui.components.dialog.ActionsDialogUI
-import com.saulhdev.feeder.ui.compose.icon.Phosphor
-import com.saulhdev.feeder.ui.compose.icon.phosphor.CloudArrowDown
-import com.saulhdev.feeder.ui.compose.icon.phosphor.CloudArrowUp
-import com.saulhdev.feeder.ui.compose.icon.phosphor.Plus
-import com.saulhdev.feeder.ui.navigation.LocalNavController
-import com.saulhdev.feeder.ui.navigation.NavRoute
+import com.saulhdev.feeder.ui.icons.Phosphor
+import com.saulhdev.feeder.ui.icons.phosphor.CloudArrowDown
+import com.saulhdev.feeder.ui.icons.phosphor.CloudArrowUp
+import com.saulhdev.feeder.ui.icons.phosphor.Plus
 import com.saulhdev.feeder.utils.ApplicationCoroutineScope
-import com.saulhdev.feeder.utils.extensions.koinNeoViewModel
 import com.saulhdev.feeder.viewmodels.FeedsViewModel
 import kotlinx.coroutines.launch
 import okhttp3.internal.toLongOrDefault
@@ -75,7 +75,7 @@ import java.time.LocalDateTime
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
-fun SourcesPage(
+fun SourceListPage(
     viewModel: FeedsViewModel = koinNeoViewModel(),
 ) {
     val navController = LocalNavController.current
@@ -119,7 +119,7 @@ fun SourcesPage(
                 floatingActionButton = {
                     FloatingActionButton(
                         onClick = {
-                            navController.navigate(NavRoute.AddFeed)
+                            navController.navigate(NavRoute.SourceAdd)
                         },
                         modifier = Modifier.padding(16.dp),
                         containerColor = MaterialTheme.colorScheme.primary
@@ -232,7 +232,7 @@ fun SourcesPage(
 
             sourceId.longValue.takeIf { it != -1L }?.let { id ->
                 AnimatedPane {
-                    EditFeedPage(id) {
+                    SourceEditPage(id) {
                         scope.launch {
                             paneNavigator.navigateBack()
                         }
