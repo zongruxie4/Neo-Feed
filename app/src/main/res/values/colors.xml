@@ -11,4 +11,5 @@
     <color name="ic_launcher_background">#F9FCF6</color>
     <color name="globalAccent">#4285f4</color>
     <color name="textColorPrimary">#000000</color>
+    <color name="toggle_checked">#6200EE</color> <!-- purple -->
 </resources>

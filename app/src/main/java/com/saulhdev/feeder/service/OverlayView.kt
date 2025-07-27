@@ -2,17 +2,29 @@ package com.saulhdev.feeder.service
 
 import android.content.Context
 import android.content.res.ColorStateList
+import android.graphics.Color
+import android.graphics.PorterDuff
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
+import android.util.SparseIntArray
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.view.ContextThemeWrapper
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.ColorUtils
+import androidx.core.graphics.alpha
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.libraries.gsa.d.a.OverlayController
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.color.MaterialColors
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.saulhdev.feeder.MainActivity
 import com.saulhdev.feeder.NeoApp
@@ -46,6 +58,8 @@ class OverlayView(val context: Context): OverlayController(context, R.style.AppT
     private val viewModel: ArticlesViewModel by inject(ArticlesViewModel::class.java)
     private val articles: SyncRestClient by inject(SyncRestClient::class.java)
     val prefs: FeedPreferences by inject()
+
+    var bookmarkVisible = false
 
     private lateinit var rootView: View
     private lateinit var adapter: FeedAdapter
@@ -121,13 +135,6 @@ class OverlayView(val context: Context): OverlayController(context, R.style.AppT
                 )
             )
 
-        rootView.findViewById<MaterialButton>(R.id.header_bookmark).iconTint =
-            ColorStateList.valueOf(
-                theme.get(
-                    CardTheme.Colors.TEXT_COLOR_PRIMARY.ordinal
-                )
-            )
-
         rootView.findViewById<MaterialButton>(R.id.header_filter).iconTint =
             ColorStateList.valueOf(
                 theme.get(
@@ -179,7 +186,40 @@ class OverlayView(val context: Context): OverlayController(context, R.style.AppT
         })
     }
 
+    private  fun updateToggleColor(button: MaterialButton, isChecked: Boolean){
+        val context = button.context
+        val checkedColor =  ColorUtils.setAlphaComponent(ContextCompat.getColor(context, R.color.toggle_checked), 64)
+        val uncheckedColor = Color.TRANSPARENT
+        button.backgroundTintList = ColorStateList.valueOf(if (isChecked) checkedColor else uncheckedColor)
+
+    }
+
     private fun initHeader() {
+        val toggleButton = rootView.findViewById<MaterialButton>(R.id.header_bookmark)
+
+        updateToggleColor(toggleButton, bookmarkVisible)
+        toggleButton.setOnClickListener {
+            mainScope.launch {
+                if(bookmarkVisible) {
+                    bookmarkVisible = false
+                    toggleButton.isChecked = bookmarkVisible
+                    updateToggleColor(toggleButton, bookmarkVisible)
+                    viewModel.articlesList.collect {
+                        adapter.replace(it)
+                        adapter.notifyDataSetChanged()
+
+                    }
+                } else {
+                    bookmarkVisible = true
+                    toggleButton.isChecked = bookmarkVisible
+                    updateToggleColor(toggleButton, bookmarkVisible)
+                    viewModel.bookmarkedArticlesList.collect {
+                        adapter.replace(it)
+                        adapter.notifyDataSetChanged()
+                    }
+                }
+            }
+        }
 
         rootView.findViewById<MaterialButton>(R.id.header_settings).apply {
             setOnClickListener {

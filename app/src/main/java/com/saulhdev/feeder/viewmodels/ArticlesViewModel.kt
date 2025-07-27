@@ -163,6 +163,45 @@ class ArticlesViewModel(
             emptyList()
         )
 
+    val bookmarkedArticlesList: StateFlow<List<FeedItem>> = combine(
+        articleRepo.getBookmarkedArticles(),
+        prefSortFilter,
+        prefs.removeDuplicates.get(),
+    ) { articles, sfm, removeDuplicate ->
+        (if (removeDuplicate) articles.distinctBy { it.content.link }
+        else articles)
+            .let {
+                if (sfm.sourcesFilter.isEmpty()) it
+                else it.filterNot { sfm.sourcesFilter.contains(it.content.source.id) }
+            }
+            .let {
+                when {
+                    sfm.sort == SORT_CHRONOLOGICAL && !sfm.sortAsc
+                        -> it.sortedByDescending { it.time } // default
+
+                    sfm.sort == SORT_TITLE && sfm.sortAsc
+                        -> it.sortedBy { it.content.title }
+
+                    sfm.sort == SORT_TITLE && !sfm.sortAsc
+                        -> it.sortedByDescending { it.content.title }
+
+                    sfm.sort == SORT_SOURCE && sfm.sortAsc
+                        -> it.sortedBy { it.title }
+
+                    sfm.sort == SORT_SOURCE && !sfm.sortAsc
+                        -> it.sortedByDescending { it.title }
+
+                    else -> it.sortedBy { it.time }
+                }
+            }
+    }
+        .stateIn(
+            ioScope,
+            SharingStarted.Eagerly,
+            emptyList()
+        )
+
+
     val isSyncing = feedsRepo.isSyncing
 
     fun unpinArticle(id: Long) {

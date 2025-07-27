@@ -116,4 +116,15 @@ class ArticleRepository(db: NeoFeedDb) {
                 feedsDao.findFeedById(fa.feedId).first()
             }
         }
+
+    fun getBookmarkedArticles(): Flow<List<FeedItem>> = combine(
+        articlesDao.getAllBookmarked(),
+        feedsDao.getEnabledFeeds()
+    ) { articles, feeds ->
+        articles.mapNotNull { article ->
+            feeds.find { it.id == article.feedId }?.let { feed ->
+                FeedItem(article, feed)
+            }
+        }
+    }
 }

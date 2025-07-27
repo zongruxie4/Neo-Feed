@@ -54,7 +54,7 @@
         android:layout_gravity="center"
         app:icon="@drawable/ic_bookmarks"
         app:iconSize="24dp"
-        app:iconTint="@color/textColorPrimary" />
+        app:iconTint="@color/textColorPrimary"/>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/header_settings"

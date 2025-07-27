@@ -40,4 +40,5 @@
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:colorBackgroundCacheHint">@null</item>
     </style>
+
 </resources>
