@@ -1,6 +1,6 @@
 /*
  * This file is part of Neo Feed
- * Copyright (c) 2022   Saul Henriquez <henriquez.saul@gmail.com>
+ * Copyright (c) 2022   Neo Feed Team
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -16,7 +16,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+
 package com.saulhdev.feeder.ui.pages
+
 
 import android.content.ActivityNotFoundException
 import android.graphics.Bitmap
@@ -61,19 +63,19 @@ import androidx.core.content.res.ResourcesCompat
 import coil.annotation.ExperimentalCoilApi
 import com.saulhdev.feeder.BuildConfig
 import com.saulhdev.feeder.R
+import com.saulhdev.feeder.extensions.launchView
+import com.saulhdev.feeder.navigation.PageItem
 import com.saulhdev.feeder.ui.components.ContributorRow
 import com.saulhdev.feeder.ui.components.LinkItem
 import com.saulhdev.feeder.ui.components.PagePreference
 import com.saulhdev.feeder.ui.components.PreferenceGroupHeading
 import com.saulhdev.feeder.ui.components.ViewWithActionBar
-import com.saulhdev.feeder.ui.compose.icon.Phosphor
-import com.saulhdev.feeder.ui.compose.icon.phosphor.BracketsSquare
-import com.saulhdev.feeder.ui.compose.icon.phosphor.GithubLogo
-import com.saulhdev.feeder.ui.compose.icon.phosphor.Megaphone
-import com.saulhdev.feeder.ui.compose.icon.phosphor.TelegramLogo
-import com.saulhdev.feeder.ui.compose.navigation.PageItem
-import com.saulhdev.feeder.ui.compose.theme.kingthingsPrintingkit
-import com.saulhdev.feeder.utils.extensions.launchView
+import com.saulhdev.feeder.ui.icons.Phosphor
+import com.saulhdev.feeder.ui.icons.phosphor.BracketsSquare
+import com.saulhdev.feeder.ui.icons.phosphor.GithubLogo
+import com.saulhdev.feeder.ui.icons.phosphor.Megaphone
+import com.saulhdev.feeder.ui.icons.phosphor.TelegramLogo
+import com.saulhdev.feeder.ui.theme.kingthingsPrintingkit
 import com.saulhdev.feeder.utils.urlDecode
 import java.io.InputStream
 
@@ -253,16 +255,29 @@ private val contributors = listOf(
 )
 
 @Composable
-fun LicenseScreen() {
+fun LicensePage() {
     ViewWithActionBar(
-        title = stringResource(R.string.about_open_source),
-    ) {
-        PreferencesWebView(url = "file:///android_asset/license.htm")
+        title = stringResource(R.string.about_licenses),
+    ) { paddingValues ->
+        LazyColumn(
+            modifier = Modifier
+                .padding(
+                    start = 8.dp,
+                    end = 8.dp,
+                    top = 32.dp,
+                    bottom = paddingValues.calculateBottomPadding()
+                )
+        ) {
+            item {
+                PreferencesWebView(url = "file:///android_asset/license.htm")
+
+            }
+        }
     }
 }
 
 @Composable
-fun ChangelogScreen() {
+fun ChangelogPage() {
     ViewWithActionBar(
         title = stringResource(R.string.about_changelog),
     ) {
