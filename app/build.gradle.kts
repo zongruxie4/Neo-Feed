@@ -150,13 +150,12 @@ dependencies {
     implementation(libs.compose.ui.tooling)
     implementation(libs.compose.ui.tooling.preview)
     implementation(libs.navigation.compose)
-    implementation(libs.accompanist.webview)
-    implementation(libs.accompanist.systemuicontroller)
 
     //Room
     implementation(libs.room.ktx)
     implementation(libs.room.paging)
     implementation(libs.room.runtime)
+    implementation(libs.androidx.foundation)
     ksp(libs.room.compiler)
 
     //Squareup
