@@ -1,3 +1,21 @@
+/*
+ * This file is part of Neo Feed
+ * Copyright (c) 2025   Neo Feed Team
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package com.saulhdev.feeder.data.repository
 
 import androidx.work.WorkInfo
@@ -10,6 +28,7 @@ import com.saulhdev.feeder.manager.sync.requestFeedSync
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
@@ -23,36 +42,18 @@ import kotlinx.coroutines.withContext
 import org.koin.java.KoinJavaComponent.inject
 import org.threeten.bp.Instant
 import org.threeten.bp.ZonedDateTime
-import java.net.URL
 
-class FeedRepository(db: NeoFeedDb) {
+class SourcesRepository(db: NeoFeedDb) {
     private val jcc = Dispatchers.IO + SupervisorJob()
     private val scope = CoroutineScope(Dispatchers.IO) + CoroutineName("FeedSourceRepository")
     private val feedsDao = db.feedSourceDao()
     private val workManager: WorkManager by inject(WorkManager::class.java)
 
-    suspend fun insertFeed(feed: Feed) = withContext(jcc) {
+    suspend fun inserSource(feed: Feed) = withContext(jcc) {
         feedsDao.insert(feed)
     }
 
-    suspend fun updateFeed(
-        title: String,
-        url: URL,
-        fullTextByDefault: Boolean,
-        isEnabled: Boolean
-    ) = withContext(jcc) {
-        feedsDao.getFeedByURL(url)
-            ?.copy(
-                title = title,
-                url = url,
-                fullTextByDefault = fullTextByDefault,
-                isEnabled = isEnabled
-            )?.let {
-                feedsDao.update(it)
-            }
-    }
-
-    fun updateFeed(feed: Feed, resync: Boolean = false) {
+    fun updateSource(feed: Feed, resync: Boolean = false) {
         scope.launch {
             val list: List<Feed> = feedsDao.findFeedById(feed.id)
             if (list.isNotEmpty()) {
@@ -64,14 +65,13 @@ class FeedRepository(db: NeoFeedDb) {
         }
     }
 
-    fun getAllFeeds(): Flow<List<Feed>> = feedsDao.getAllFeeds()
+    fun getAllSourcesFlow(): Flow<List<Feed>> = feedsDao.getAllFeeds()
 
-    fun getEnabledFeeds(): Flow<List<Feed>> = feedsDao.getEnabledFeeds()
+    suspend fun getAllSources(): List<Feed> = feedsDao.loadFeeds()
 
-    fun getFeedById(id: Long): Flow<Feed?> = feedsDao.getFeedById(id)
+    fun getEnabledSources(): Flow<List<Feed>> = feedsDao.getEnabledFeeds()
 
-    // TODO make suspend
-    fun loadFeeds(): List<Feed> = feedsDao.loadFeeds()
+    fun getSourceById(id: Long): Flow<Feed?> = feedsDao.getFeedById(id)
 
     suspend fun loadFeedsByTag(tag: String): List<Feed> = withContext(jcc) {
         feedsDao.loadFeedsByTag(tag)
@@ -85,14 +85,24 @@ class FeedRepository(db: NeoFeedDb) {
         feedsDao.loadFeedIfStale(feedId, staleTime)
     }
 
-    suspend fun loadTags(): List<String> {
-        return feedsDao.loadTags()
+    suspend fun getAllTags(): List<String> {
+        return feedsDao.getAllTags()
+    }
+
+    fun getAllTagsFlow():  Flow<List<String>> {
+        return feedsDao.getAllTagsFlow()
+            .map { rawTags ->
+                rawTags.flatMap { tagString ->
+                    tagString.split(",").map { it.trim() }.filter { it.isNotEmpty() }
+                }.distinct()
+            }
     }
 
     fun loadFeedIds(): List<Long> {
         return feedsDao.loadFeedIds()
     }
 
+    @OptIn(FlowPreview::class)
     val isSyncing: StateFlow<Boolean> =
         workManager.getWorkInfosByTagFlow(FeedSyncer::class.qualifiedName!!)
             .map {
