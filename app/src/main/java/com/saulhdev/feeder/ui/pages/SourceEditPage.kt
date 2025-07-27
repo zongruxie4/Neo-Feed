@@ -1,6 +1,6 @@
 /*
  * This file is part of Neo Feed
- * Copyright (c) 2022   Saul Henriquez <henriquez.saul@gmail.com>
+ * Copyright (c) 2025   Neo Feed Team <saulhdev@hotmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -41,8 +41,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester.Companion.FocusRequesterFactory.component1
-import androidx.compose.ui.focus.FocusRequester.Companion.FocusRequesterFactory.component2
 import androidx.compose.ui.focus.FocusRequester.Companion.createRefs
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.key.Key
@@ -51,25 +49,26 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.saulhdev.feeder.R
-import com.saulhdev.feeder.manager.models.EditFeedViewState
+import com.saulhdev.feeder.data.entity.SourceEditViewState
+import com.saulhdev.feeder.extensions.interceptKey
+import com.saulhdev.feeder.extensions.koinNeoViewModel
 import com.saulhdev.feeder.ui.components.ComposeSwitchView
 import com.saulhdev.feeder.ui.components.ViewWithActionBar
-import com.saulhdev.feeder.ui.compose.util.interceptKey
-import com.saulhdev.feeder.utils.extensions.koinNeoViewModel
-import com.saulhdev.feeder.viewmodels.EditFeedViewModel
+import com.saulhdev.feeder.viewmodels.SourceEditViewModel
 
 @Composable
-fun EditFeedPage(
+fun SourceEditPage(
     feedId: Long = -1,
-    editFeedViewModel: EditFeedViewModel = koinNeoViewModel(),
+    sourceEditViewModel: SourceEditViewModel = koinNeoViewModel(),
     onDismiss: (() -> Unit),
 ) {
     val title = stringResource(id = R.string.edit_rss)
 
-    editFeedViewModel.setFeedId(feedId)
-    val viewState by editFeedViewModel.viewState.collectAsState()
+    sourceEditViewModel.setFeedId(feedId)
+    val viewState by sourceEditViewModel.viewState.collectAsState()
 
     BackHandler {
         onDismiss()
@@ -89,9 +88,9 @@ fun EditFeedPage(
             ),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            EditFeedView(
+            SourceEditView(
                 viewState = viewState,
-                updateFeed = editFeedViewModel::updateFeed,
+                updateFeed = sourceEditViewModel::updateFeed,
                 onDismiss = onDismiss
             )
         }
@@ -99,9 +98,9 @@ fun EditFeedPage(
 }
 
 @Composable
-fun EditFeedView(
-    viewState: EditFeedViewState,
-    updateFeed: (EditFeedViewState) -> Unit,
+fun SourceEditView(
+    viewState: SourceEditViewState,
+    updateFeed: (SourceEditViewState) -> Unit,
     onDismiss: (() -> Unit),
 ) {
     val (focusTitle, focusTag) = createRefs()
@@ -179,6 +178,40 @@ fun EditFeedView(
             )
         }
         item {
+            OutlinedTextField(
+                value = feedState.value.tag,
+                onValueChange = {
+                    feedState.value = feedState.value.copy(tag = it)
+                },
+                label = {
+                    Text(stringResource(id = R.string.source_tags))
+                },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(
+                    capitalization = KeyboardCapitalization.Words,
+                    autoCorrectEnabled = true,
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Next
+                ),
+                keyboardActions = KeyboardActions(
+                    onNext = {
+                        focusTag.requestFocus()
+                    }
+                ),
+                modifier = Modifier
+                    .focusRequester(focusTitle)
+                    .fillMaxWidth()
+                    .heightIn(min = 64.dp)
+                    .interceptKey(Key.Enter) {
+                        focusTag.requestFocus()
+                    }
+                    .interceptKey(Key.Escape) {
+                        focusManager.clearFocus()
+                    }
+            )
+        }
+        
+        item {
             ComposeSwitchView(
                 titleId = R.string.fetch_full_articles_by_default,
                 isChecked = feedState.value.fullTextByDefault,
@@ -225,4 +258,19 @@ fun EditFeedView(
             }
         }
     }
+}
+
+@Composable
+@Preview
+fun SourceEditPagePreview() {
+    SourceEditView(
+        viewState = SourceEditViewState(
+            url = "https://example.com/feed",
+            title = "Example Feed",
+            fullTextByDefault = true,
+            isEnabled = true
+        ),
+        updateFeed = {},
+        onDismiss = {}
+    )
 }
