@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <style name="AppTheme" parent="HFBaseTheme">
+    <style name="AppTheme" parent="BaseTheme">
         <item name="android:statusBarColor">?colorSurface</item>
         <item name="android:windowLightStatusBar">@bool/isLight</item>
         <item name="android:windowLightNavigationBar">@bool/isLight</item>

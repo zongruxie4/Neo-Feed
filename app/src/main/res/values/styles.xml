@@ -1,8 +1,7 @@
 <resources>
-
-    <style name="HFBaseTheme" parent="Theme.Material3.DynamicColors.Light">
+    <style name="BaseTheme" parent="Theme.Material3.DynamicColors.Light">
         <item name="toolbarStyle">@style/Widget.MaterialComponents.Toolbar.Surface</item>
-        <item name="materialCardViewStyle">@style/HFMaterialCard</item>
+        <item name="materialCardViewStyle">@style/MaterialCard</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="alertDialogTheme">@style/AlertDialogTheme</item>
@@ -10,26 +9,20 @@
         <item name="android:windowLightStatusBar">@bool/isLight</item>
     </style>
 
-    <style name="roundedCorner" parent="">
-        <item name="cornerFamily">rounded</item>
-        <item name="cornerSize">16dp</item>
-    </style>
-
     <style name="AlertDialogTheme" parent="MaterialAlertDialog.Material3">
         <item name="shapeAppearanceMediumComponent">@style/RoundShapeAppearance</item>
     </style>
 
     <style name="RoundShapeAppearance" parent="ShapeAppearance.Material3.MediumComponent">
-
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">16dp</item>
     </style>
 
-    <style name="HFMaterialCard" parent="Widget.Material3.CardView.Filled">
+    <style name="MaterialCard" parent="Widget.Material3.CardView.Filled">
         <item name="cardCornerRadius">16dp</item>
     </style>
 
-    <style name="AppTheme" parent="HFBaseTheme">
+    <style name="AppTheme" parent="BaseTheme">
         <item name="android:statusBarColor">@android:color/black</item>
         <item name="android:navigationBarColor">@android:color/black</item>
         <item name="android:windowTranslucentStatus">true</item>
