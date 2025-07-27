@@ -1,6 +1,6 @@
 /*
  * This file is part of Neo Feed
- * Copyright (c) 2023   Saul Henriquez <henriquez.saul@gmail.com>
+ * Copyright (c) 2023   Neo Feed Team
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -39,10 +39,10 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.saulhdev.feeder.ui.compose.icon.Phosphor
-import com.saulhdev.feeder.ui.compose.icon.phosphor.HeartStraight
-import com.saulhdev.feeder.ui.compose.icon.phosphor.HeartStraightFill
-import com.saulhdev.feeder.ui.compose.icon.phosphor.ShareNetwork
+import com.saulhdev.feeder.ui.icons.Phosphor
+import com.saulhdev.feeder.ui.icons.phosphor.HeartStraight
+import com.saulhdev.feeder.ui.icons.phosphor.HeartStraightFill
+import com.saulhdev.feeder.ui.icons.phosphor.ShareNetwork
 import kotlinx.coroutines.launch
 
 @Composable
