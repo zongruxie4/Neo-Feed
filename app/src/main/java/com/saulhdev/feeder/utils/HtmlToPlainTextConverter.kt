@@ -1,4 +1,4 @@
-package com.saulhdev.feeder.ui.views
+package com.saulhdev.feeder.utils
 
 import org.ccil.cowan.tagsoup.HTMLSchema
 import org.ccil.cowan.tagsoup.Parser
