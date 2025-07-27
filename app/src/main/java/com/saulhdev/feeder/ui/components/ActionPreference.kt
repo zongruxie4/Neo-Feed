@@ -25,8 +25,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import com.saulhdev.feeder.data.content.StringPref
-import com.saulhdev.feeder.navigation.LocalNavController
-import com.saulhdev.feeder.navigation.NavRoute
+import com.saulhdev.feeder.ui.navigation.LocalNavController
+import com.saulhdev.feeder.ui.navigation.NavRoute
 
 @Composable
 fun ActionPreference(

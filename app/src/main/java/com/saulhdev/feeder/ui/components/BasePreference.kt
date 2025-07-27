@@ -34,7 +34,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.saulhdev.feeder.ui.theme.GroupItemShape
-import com.saulhdev.feeder.utils.addIf
+import com.saulhdev.feeder.extensions.addIf
 
 @Composable
 fun BasePreference(

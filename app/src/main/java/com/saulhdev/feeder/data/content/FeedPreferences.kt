@@ -29,7 +29,7 @@ import androidx.datastore.preferences.core.stringSetPreferencesKey
 import androidx.datastore.preferences.preferencesDataStoreFile
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.data.entity.SORT_CHRONOLOGICAL
-import com.saulhdev.feeder.navigation.NavRoute
+import com.saulhdev.feeder.ui.navigation.NavRoute
 import com.saulhdev.feeder.ui.icons.Phosphor
 import com.saulhdev.feeder.ui.icons.phosphor.BookBookmark
 import com.saulhdev.feeder.ui.icons.phosphor.Browser
@@ -180,6 +180,14 @@ class FeedPreferences private constructor(val context: Context) : KoinComponent 
         defaultValue = emptySet(),
     )
 
+    var tagsFilter = StringSetPref(
+        titleId = R.string.source_tags,
+        icon = Phosphor.Info,
+        key = FILTER_TAGS,
+        dataStore = dataStore,
+        defaultValue = emptySet(),
+    )
+
     var sortingFilter = StringSelectionPref(
         titleId = R.string.sorting_order,
         icon = Phosphor.Info,
@@ -233,6 +241,7 @@ class FeedPreferences private constructor(val context: Context) : KoinComponent 
 
         // Filter & Sort
         val FILTER_SOURCES = stringSetPreferencesKey("filter_sources")
+        val FILTER_TAGS = stringSetPreferencesKey("filter_tags")
         val FILTER_SORT = stringPreferencesKey("filter_sorting")
         val FILTER_SORT_ASC = booleanPreferencesKey("filter_sorting_ascending")
     }

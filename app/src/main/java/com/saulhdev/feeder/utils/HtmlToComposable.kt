@@ -1,3 +1,21 @@
+/*
+ * This file is part of Neo Feed
+ * Copyright (c) 2025   Neo Feed Team
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package com.saulhdev.feeder.utils
 
 import androidx.annotation.DrawableRes
@@ -49,6 +67,7 @@ import coil.request.ImageRequest
 import coil.size.Precision
 import coil.size.Scale
 import com.saulhdev.feeder.R
+import com.saulhdev.feeder.extensions.launchView
 import com.saulhdev.feeder.ui.components.Table
 import com.saulhdev.feeder.ui.components.TableCell
 import com.saulhdev.feeder.ui.components.TextComposer
@@ -57,15 +76,14 @@ import com.saulhdev.feeder.ui.components.withAnnotation
 import com.saulhdev.feeder.ui.components.withComposableStyle
 import com.saulhdev.feeder.ui.components.withParagraph
 import com.saulhdev.feeder.ui.components.withStyle
-import com.saulhdev.feeder.ui.compose.icon.Phosphor
-import com.saulhdev.feeder.ui.compose.icon.phosphor.Play
-import com.saulhdev.feeder.ui.compose.theme.BlockQuoteStyle
-import com.saulhdev.feeder.ui.compose.theme.CodeBlockBackground
-import com.saulhdev.feeder.ui.compose.theme.CodeBlockStyle
-import com.saulhdev.feeder.ui.compose.theme.CodeInlineStyle
-import com.saulhdev.feeder.ui.compose.theme.LinkTextStyle
-import com.saulhdev.feeder.ui.compose.theme.LocalDimens
-import com.saulhdev.feeder.utils.extensions.launchView
+import com.saulhdev.feeder.ui.icons.Phosphor
+import com.saulhdev.feeder.ui.icons.phosphor.Play
+import com.saulhdev.feeder.ui.theme.BlockQuoteStyle
+import com.saulhdev.feeder.ui.theme.CodeBlockBackground
+import com.saulhdev.feeder.ui.theme.CodeBlockStyle
+import com.saulhdev.feeder.ui.theme.CodeInlineStyle
+import com.saulhdev.feeder.ui.theme.LinkTextStyle
+import com.saulhdev.feeder.ui.theme.LocalDimens
 import org.jsoup.Jsoup
 import org.jsoup.internal.StringUtil
 import org.jsoup.nodes.Element
@@ -115,8 +133,7 @@ private fun LazyListScope.formatBody(
                         text = paragraph,
                         style = MaterialTheme.typography.bodyLarge
                             .merge(TextStyle(color = MaterialTheme.colorScheme.onBackground)),
-                        modifier = Modifier
-                            .width(dimens.maxContentWidth)
+                        modifier = Modifier.width(dimens.maxContentWidth)
                     ) { offset ->
                         paragraph.getStringAnnotations("URL", offset, offset)
                             .firstOrNull()
@@ -129,8 +146,7 @@ private fun LazyListScope.formatBody(
                         text = paragraph,
                         style = MaterialTheme.typography.bodyLarge
                             .merge(TextStyle(color = MaterialTheme.colorScheme.onBackground)),
-                        modifier = Modifier
-                            .width(dimens.maxContentWidth)
+                        modifier = Modifier.width(dimens.maxContentWidth)
                     )
                 }
             }

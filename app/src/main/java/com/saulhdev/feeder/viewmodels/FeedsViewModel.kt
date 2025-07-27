@@ -1,6 +1,6 @@
 /*
  * This file is part of Neo Feed
- * Copyright (c) 2025   Saul Henriquez <henriquez.saul@gmail.com>
+ * Copyright (c) 2025   Neo Feed Team
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -19,19 +19,19 @@
 package com.saulhdev.feeder.viewmodels
 
 import androidx.lifecycle.viewModelScope
-import com.saulhdev.feeder.data.repository.FeedRepository
+import com.saulhdev.feeder.data.repository.SourcesRepository
 import com.saulhdev.feeder.data.db.models.Feed
-import com.saulhdev.feeder.utils.extensions.NeoViewModel
+import com.saulhdev.feeder.extensions.NeoViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 
-class FeedsViewModel(private val feedsRepo: FeedRepository) : NeoViewModel() {
+class FeedsViewModel(private val feedsRepo: SourcesRepository) : NeoViewModel() {
     private val ioScope = viewModelScope.plus(Dispatchers.IO)
 
-    val allFeeds = feedsRepo.getAllFeeds()
+    val allFeeds = feedsRepo.getAllSourcesFlow()
         .stateIn(
             ioScope,
             SharingStarted.Eagerly,
@@ -40,7 +40,7 @@ class FeedsViewModel(private val feedsRepo: FeedRepository) : NeoViewModel() {
 
     fun insertFeed(feed: Feed) {
         viewModelScope.launch {
-            feedsRepo.insertFeed(feed)
+            feedsRepo.inserSource(feed)
         }
     }
 

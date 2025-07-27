@@ -1,6 +1,6 @@
 /*
  * This file is part of Neo Feed
- * Copyright (c) 2022   Saul Henriquez <henriquez.saul@gmail.com>
+ * Copyright (c) 2025   Neo Feed Team
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -33,20 +33,20 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navDeepLink
 import androidx.navigation.toRoute
 import com.saulhdev.feeder.R
-import com.saulhdev.feeder.ui.components.ComposeWebView
-import com.saulhdev.feeder.ui.compose.icon.Phosphor
-import com.saulhdev.feeder.ui.compose.icon.phosphor.GearSix
-import com.saulhdev.feeder.ui.compose.icon.phosphor.Graph
-import com.saulhdev.feeder.ui.compose.icon.phosphor.Info
+import com.saulhdev.feeder.ui.icons.Phosphor
+import com.saulhdev.feeder.ui.icons.phosphor.GearSix
+import com.saulhdev.feeder.ui.icons.phosphor.Graph
+import com.saulhdev.feeder.ui.icons.phosphor.Info
 import com.saulhdev.feeder.ui.pages.AboutPage
-import com.saulhdev.feeder.ui.pages.AddFeedPage
-import com.saulhdev.feeder.ui.pages.ArticleScreen
-import com.saulhdev.feeder.ui.pages.ChangelogScreen
-import com.saulhdev.feeder.ui.pages.LicenseScreen
+import com.saulhdev.feeder.ui.pages.ArticleListPage
+import com.saulhdev.feeder.ui.pages.ArticlePage
+import com.saulhdev.feeder.ui.pages.ChangelogPage
+import com.saulhdev.feeder.ui.pages.LicensePage
 import com.saulhdev.feeder.ui.pages.MainPage
-import com.saulhdev.feeder.ui.pages.OverlayPage
 import com.saulhdev.feeder.ui.pages.PreferencesPage
-import com.saulhdev.feeder.ui.pages.SourcesPage
+import com.saulhdev.feeder.ui.pages.SourceAddPage
+import com.saulhdev.feeder.ui.pages.SourceListPage
+import com.saulhdev.feeder.ui.views.ComposeWebView
 import kotlinx.serialization.Serializable
 
 val LocalNavController = staticCompositionLocalOf<NavController> {
@@ -68,6 +68,7 @@ fun NavigationManager(navController: NavHostController) {
             popEnterTransition = { fadeIn() + slideInHorizontally { -it } },
             popExitTransition = { fadeOut() + slideOutHorizontally { it / 2 } },
         ) {
+
             composable<NavRoute.Main>(
                 deepLinks = listOf(navDeepLink { uriPattern = "$NAV_BASE${Routes.MAIN}/{page}" })
             ) {
@@ -75,9 +76,9 @@ fun NavigationManager(navController: NavHostController) {
                 MainPage(args.page)
             }
             composable<NavRoute.About> { AboutPage() }
-            composable<NavRoute.License> { LicenseScreen() }
-            composable<NavRoute.Changelog> { ChangelogScreen() }
-            composable<NavRoute.AddFeed> { AddFeedPage() }
+            composable<NavRoute.License> { LicensePage() }
+            composable<NavRoute.Changelog> { ChangelogPage() }
+            composable<NavRoute.SourceAdd> { SourceAddPage() }
             composable<NavRoute.WebView>(
                 deepLinks = listOf(navDeepLink { uriPattern = "$NAV_BASE${Routes.WEB_VIEW}/{url}" })
             ) {
@@ -90,7 +91,7 @@ fun NavigationManager(navController: NavHostController) {
                 })
             ) {
                 val args = it.toRoute<NavRoute.ArticleView>()
-                ArticleScreen(args.id)
+                ArticlePage(args.id)
             }
         }
     }
@@ -98,6 +99,7 @@ fun NavigationManager(navController: NavHostController) {
 
 object Routes {
     const val MAIN = "main"
+    const val SETTINGS = "settings"
     const val WEB_VIEW = "web_view"
     const val ARTICLE_VIEW = "article_page"
 }
@@ -107,9 +109,9 @@ sealed class NavItem(
     val icon: ImageVector,
     val content: @Composable () -> Unit = {}
 ) {
-    data object Overlay :
-        NavItem(R.string.app_name, Phosphor.Info, {
-            OverlayPage()
+    data object Feed :
+        NavItem(R.string.home, Phosphor.Info, {
+            ArticleListPage()
         })
 
     data object Settings :
@@ -119,7 +121,7 @@ sealed class NavItem(
 
     data object Sources :
         NavItem(R.string.title_sources, Phosphor.Graph, {
-            SourcesPage()
+            SourceListPage()
         })
 }
 
@@ -129,7 +131,7 @@ open class NavRoute {
     data object About : NavRoute()
 
     @Serializable
-    data object AddFeed : NavRoute()
+    data object SourceAdd : NavRoute()
 
     @Serializable
     data class ArticleView(val id: Long = 0L) : NavRoute()

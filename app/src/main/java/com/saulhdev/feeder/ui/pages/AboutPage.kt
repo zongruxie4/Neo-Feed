@@ -64,7 +64,7 @@ import coil.annotation.ExperimentalCoilApi
 import com.saulhdev.feeder.BuildConfig
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.extensions.launchView
-import com.saulhdev.feeder.navigation.PageItem
+import com.saulhdev.feeder.ui.navigation.PageItem
 import com.saulhdev.feeder.ui.components.ContributorRow
 import com.saulhdev.feeder.ui.components.LinkItem
 import com.saulhdev.feeder.ui.components.PagePreference

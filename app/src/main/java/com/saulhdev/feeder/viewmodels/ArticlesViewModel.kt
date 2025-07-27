@@ -1,6 +1,6 @@
 /*
  * This file is part of Neo Feed
- * Copyright (c) 2025   Saul Henriquez <henriquez.saul@gmail.com>
+ * Copyright (c) 2025   Neo Feed Team
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -19,16 +19,18 @@
 package com.saulhdev.feeder.viewmodels
 
 import androidx.lifecycle.viewModelScope
-import com.saulhdev.feeder.data.entity.FeedItem
 import com.saulhdev.feeder.data.entity.SORT_CHRONOLOGICAL
 import com.saulhdev.feeder.data.entity.SORT_SOURCE
 import com.saulhdev.feeder.data.entity.SORT_TITLE
 import com.saulhdev.feeder.data.entity.SortFilterModel
-import com.saulhdev.feeder.data.repository.ArticleRepository
-import com.saulhdev.feeder.data.repository.FeedRepository
+import com.saulhdev.feeder.data.repository.SourcesRepository
 import com.saulhdev.feeder.data.content.FeedPreferences
-import com.saulhdev.feeder.utils.extensions.NeoViewModel
+import com.saulhdev.feeder.data.db.models.Feed
+import com.saulhdev.feeder.data.entity.FeedItem
+import com.saulhdev.feeder.data.repository.ArticleRepository
+import com.saulhdev.feeder.extensions.NeoViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -39,12 +41,19 @@ import kotlinx.coroutines.plus
 
 class ArticlesViewModel(
     private val articleRepo: ArticleRepository,
-    feedsRepo: FeedRepository,
-    private val prefs: FeedPreferences,
+    val feedsRepo: SourcesRepository,
+    val prefs: FeedPreferences,
 ) : NeoViewModel() {
     private val ioScope = viewModelScope.plus(Dispatchers.IO)
 
-    val activeFeeds = feedsRepo.getEnabledFeeds()
+    val activeFeeds = feedsRepo.getEnabledSources()
+        .stateIn(
+            viewModelScope,
+            SharingStarted.Eagerly,
+            emptyList()
+        )
+
+    val getAllTags = feedsRepo.getAllTagsFlow()
         .stateIn(
             viewModelScope,
             SharingStarted.Eagerly,
@@ -55,8 +64,9 @@ class ArticlesViewModel(
         prefs.sortingFilter.get(),
         prefs.sortingAsc.get(),
         prefs.sourcesFilter.get(),
-    ) { sort, sortAsc, sources ->
-        SortFilterModel(sort, sortAsc, sources)
+        prefs.tagsFilter.get()
+    ) { sort, sortAsc, sources, tags->
+        SortFilterModel(sort, sortAsc, sources, tags)
     }
         .stateIn(
             viewModelScope,
@@ -73,6 +83,14 @@ class ArticlesViewModel(
             true
         )
 
+    fun getArticles(prefs: FeedPreferences): Flow<List<FeedItem>> {
+        return if(prefs.tagsFilter.getValue().any()){
+            articleRepo.getFeedArticles(prefs.tagsFilter.getValue())
+        }else{
+            articleRepo.getFeedArticles()
+        }
+    }
+
     val articlesList: StateFlow<List<FeedItem>> = combine(
         articleRepo.getFeedArticles(),
         prefSortFilter,
@@ -87,21 +105,20 @@ class ArticlesViewModel(
             .let {
                 when {
                     sfm.sort == SORT_CHRONOLOGICAL && !sfm.sortAsc
-                         -> it.sortedByDescending { it.time } // default
+                        -> it.sortedByDescending { it.time } // default
 
                     sfm.sort == SORT_TITLE && sfm.sortAsc
-                         -> it.sortedBy { it.content.title }
+                        -> it.sortedBy { it.content.title }
 
                     sfm.sort == SORT_TITLE && !sfm.sortAsc
-                         -> it.sortedByDescending { it.content.title }
+                        -> it.sortedByDescending { it.content.title }
 
                     sfm.sort == SORT_SOURCE && sfm.sortAsc
-                         -> it.sortedBy { it.title }
+                        -> it.sortedBy { it.title }
 
                     sfm.sort == SORT_SOURCE && !sfm.sortAsc
-                         -> it.sortedByDescending { it.title }
+                        -> it.sortedByDescending { it.title }
 
-                    // sfm.sort == SORT_CHRONOLOGICAL && sfm.sortAsc
                     else -> it.sortedBy { it.time }
                 }
             }
@@ -121,21 +138,20 @@ class ArticlesViewModel(
             .let {
                 when {
                     sfm.sort == SORT_CHRONOLOGICAL && !sfm.sortAsc
-                         -> it.sortedByDescending { it.key.pubDate } // default
+                        -> it.sortedByDescending { it.key.pubDate } // default
 
                     sfm.sort == SORT_TITLE && sfm.sortAsc
-                         -> it.sortedBy { it.key.title }
+                        -> it.sortedBy { it.key.title }
 
                     sfm.sort == SORT_TITLE && !sfm.sortAsc
-                         -> it.sortedByDescending { it.key.title }
+                        -> it.sortedByDescending { it.key.title }
 
                     sfm.sort == SORT_SOURCE && sfm.sortAsc
-                         -> it.sortedBy { it.value.title }
+                        -> it.sortedBy { it.value.title }
 
                     sfm.sort == SORT_SOURCE && !sfm.sortAsc
-                         -> it.sortedByDescending { it.value.title }
+                        -> it.sortedByDescending { it.value.title }
 
-                    // sfm.sort == SORT_CHRONOLOGICAL && sfm.sortAsc
                     else -> it.sortedBy { it.key.pubDate }
                 }
             }

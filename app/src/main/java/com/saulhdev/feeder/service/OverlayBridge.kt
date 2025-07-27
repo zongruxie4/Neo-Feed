@@ -1,4 +1,4 @@
-package com.saulhdev.feeder.utils
+package com.saulhdev.feeder.service
 
 class OverlayBridge {
     private var callback: OverlayBridgeCallback? = null
@@ -9,9 +9,7 @@ class OverlayBridge {
 
     interface OverlayBridgeCallback {
         fun applyNewTheme(value: String)
-        //fun applyNewCardBg(value: String)
         fun applyCompactCard(value: Boolean)
-        fun applySysColors(value: Boolean)
         fun applyNewTransparency(value: Float)
         fun onClientMessage(action: String)
     }

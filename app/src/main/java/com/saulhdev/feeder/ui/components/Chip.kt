@@ -1,3 +1,21 @@
+/*
+ * This file is part of Neo Feed
+ * Copyright (c) 2025   Neo Feed Team
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package com.saulhdev.feeder.ui.components
 
 import androidx.compose.animation.AnimatedVisibility
@@ -42,12 +60,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.saulhdev.feeder.R
-import com.saulhdev.feeder.ui.compose.icon.Phosphor
-import com.saulhdev.feeder.ui.compose.icon.phosphor.Asterisk
-import com.saulhdev.feeder.ui.compose.icon.phosphor.CheckCircle
-import com.saulhdev.feeder.ui.compose.icon.phosphor.Circle
-import com.saulhdev.feeder.ui.compose.icon.phosphor.FunnelSimple
-import com.saulhdev.feeder.ui.compose.util.addIf
+import com.saulhdev.feeder.extensions.addIf
+import com.saulhdev.feeder.ui.icons.Phosphor
+import com.saulhdev.feeder.ui.icons.phosphor.Asterisk
+import com.saulhdev.feeder.ui.icons.phosphor.Circle
+import com.saulhdev.feeder.ui.icons.phosphor.CheckCircle
+import com.saulhdev.feeder.ui.icons.phosphor.SortAscending
+import com.saulhdev.feeder.ui.icons.phosphor.SortDescending
 
 @Composable
 fun SelectChip(
@@ -157,7 +176,7 @@ fun SortFilterChip(
     ) {
         ActionChip(
             text = stringResource(id = R.string.sort_filter),
-            icon = Phosphor.FunnelSimple,
+            icon = Phosphor.SortDescending,
             fullWidth = fullWidth,
             onClick = onClick
         )

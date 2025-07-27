@@ -1,6 +1,6 @@
 /*
- * This file is part of Omega Launcher
- * Copyright (c) 2022   Omega Launcher Team
+ * This file is part of Neo Feed
+ * Copyright (c) 2022   Neo Feed Team
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -15,6 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 package com.saulhdev.feeder.ui.components
 
 import androidx.annotation.StringRes
@@ -32,7 +33,7 @@ import androidx.compose.ui.unit.dp
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
-import com.saulhdev.feeder.utils.extensions.launchView
+import com.saulhdev.feeder.extensions.launchView
 
 @ExperimentalCoilApi
 @Composable

@@ -23,7 +23,7 @@ import android.net.Uri
 import android.util.Log
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.data.db.NeoFeedDb
-import com.saulhdev.feeder.data.repository.FeedRepository
+import com.saulhdev.feeder.data.repository.SourcesRepository
 import com.saulhdev.feeder.extensions.ToastMaker
 import com.saulhdev.feeder.manager.sync.requestFeedSync
 import kotlinx.coroutines.Dispatchers
@@ -38,11 +38,11 @@ suspend fun exportOpml(uri: Uri) = withContext(Dispatchers.IO) {
     try {
         val time = measureTimeMillis {
             val contentResolver: ContentResolver by inject(ContentResolver::class.java)
-            val sourceRepository: FeedRepository by inject(FeedRepository::class.java)
+            val sourceRepository: SourcesRepository by inject(SourcesRepository::class.java)
             contentResolver.openOutputStream(uri)?.let {
                 writeOutputStream(
                     it,
-                    sourceRepository.loadTags()
+                    sourceRepository.getAllTags()
                 ) { tag ->
                     sourceRepository.loadFeedsByTag(tag = tag)
                 }
@@ -50,7 +50,7 @@ suspend fun exportOpml(uri: Uri) = withContext(Dispatchers.IO) {
         }
         Log.d("OPML", "Exported OPML in $time ms on ${Thread.currentThread().name}")
     } catch (e: Throwable) {
-        Log.e("OMPL", "Failed to export OPML", e)
+        Log.e("OPML", "Failed to export OPML", e)
         val toastMaker: ToastMaker by inject(ToastMaker::class.java)
         toastMaker.makeToast(R.string.failed_to_export_OPML)
         (e.localizedMessage ?: e.message)?.let { message ->
@@ -77,7 +77,7 @@ suspend fun importOpml(uri: Uri) = withContext(Dispatchers.IO) {
         }
         Log.d("OPML", "Imported OPML in $time ms on ${Thread.currentThread().name}")
     } catch (e: Throwable) {
-        Log.e("OMPL", "Failed to import OPML", e)
+        Log.e("OPML", "Failed to import OPML", e)
         val toastMaker: ToastMaker by inject(ToastMaker::class.java)
         toastMaker.makeToast(R.string.failed_to_import_OPML)
         (e.localizedMessage ?: e.message)?.let { message ->

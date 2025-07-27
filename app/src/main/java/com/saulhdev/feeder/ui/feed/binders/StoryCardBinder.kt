@@ -13,11 +13,11 @@ import com.saulhdev.feeder.data.content.FeedPreferences
 import com.saulhdev.feeder.data.entity.FeedItem
 import com.saulhdev.feeder.data.repository.ArticleRepository
 import com.saulhdev.feeder.databinding.FeedCardStoryLargeBinding
-import com.saulhdev.feeder.ui.compose.theme.Theming
+import com.saulhdev.feeder.extensions.isDark
+import com.saulhdev.feeder.extensions.launchView
 import com.saulhdev.feeder.ui.navigation.Routes
+import com.saulhdev.feeder.ui.theme.CardTheme
 import com.saulhdev.feeder.utils.RelativeTimeHelper
-import com.saulhdev.feeder.utils.extensions.isDark
-import com.saulhdev.feeder.utils.extensions.launchView
 import com.saulhdev.feeder.utils.openLinkInCustomTab
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -115,19 +115,19 @@ object StoryCardBinder : FeedBinder {
         }
 
         theme ?: return
-        binding.cardStory.setCardBackgroundColor(ColorStateList.valueOf(theme.get(Theming.Colors.CARD_BG.ordinal)))
-        val themeCard = if (theme.get(Theming.Colors.CARD_BG.ordinal).isDark())
-            Theming.defaultDarkThemeColors
+        binding.cardStory.setCardBackgroundColor(ColorStateList.valueOf(theme.get(CardTheme.Colors.CARD_BG.ordinal)))
+        val themeCard = if (theme.get(CardTheme.Colors.CARD_BG.ordinal).isDark())
+            CardTheme.defaultDarkThemeColors
         else
-            Theming.defaultLightThemeColors
-        binding.storyTitle.setTextColor(themeCard.get(Theming.Colors.TEXT_COLOR_PRIMARY.ordinal))
-        binding.storySource.setTextColor(themeCard.get(Theming.Colors.TEXT_COLOR_SECONDARY.ordinal))
-        binding.storyDate.setTextColor(themeCard.get(Theming.Colors.TEXT_COLOR_SECONDARY.ordinal))
-        binding.storySummary.setTextColor(themeCard.get(Theming.Colors.TEXT_COLOR_SECONDARY.ordinal))
+            CardTheme.defaultLightThemeColors
+        binding.storyTitle.setTextColor(themeCard.get(CardTheme.Colors.TEXT_COLOR_PRIMARY.ordinal))
+        binding.storySource.setTextColor(themeCard.get(CardTheme.Colors.TEXT_COLOR_SECONDARY.ordinal))
+        binding.storyDate.setTextColor(themeCard.get(CardTheme.Colors.TEXT_COLOR_SECONDARY.ordinal))
+        binding.storySummary.setTextColor(themeCard.get(CardTheme.Colors.TEXT_COLOR_SECONDARY.ordinal))
         binding.shareButton.iconTint =
-            ColorStateList.valueOf(themeCard.get(Theming.Colors.TEXT_COLOR_PRIMARY.ordinal))
+            ColorStateList.valueOf(themeCard.get(CardTheme.Colors.TEXT_COLOR_PRIMARY.ordinal))
         binding.saveButton.iconTint =
-            ColorStateList.valueOf(themeCard.get(Theming.Colors.TEXT_COLOR_PRIMARY.ordinal))
+            ColorStateList.valueOf(themeCard.get(CardTheme.Colors.TEXT_COLOR_PRIMARY.ordinal))
     }
 
     private fun updateSaveIcon(button: MaterialButton, bookmarked: Boolean) {

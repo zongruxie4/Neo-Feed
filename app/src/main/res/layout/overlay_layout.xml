@@ -92,6 +92,7 @@
                 android:id="@+id/nas_icon"
                 android:layout_width="72dp"
                 android:layout_height="72dp"
+                android:contentDescription="@string/app_name"
                 android:src="@drawable/ic_notification" />
 
             <TextView

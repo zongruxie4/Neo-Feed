@@ -1,6 +1,6 @@
 /*
  * This file is part of Neo Feed
- * Copyright (c) 2024   NeoApplications Team
+ * Copyright (c) 2024   Neo Feed Team
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -40,6 +40,6 @@ class LinearLayoutManagerWrapper : LinearLayoutManager {
     }
 
     override fun supportsPredictiveItemAnimations(): Boolean {
-        return false
+        return true
     }
 }

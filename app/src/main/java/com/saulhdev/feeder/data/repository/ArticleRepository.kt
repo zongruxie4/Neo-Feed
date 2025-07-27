@@ -1,6 +1,6 @@
 /*
  * This file is part of Neo Feed
- * Copyright (c) 2022   Saul Henriquez <henriquez.saul@gmail.com>
+ * Copyright (c) 2022   Neo Feed Team
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -18,12 +18,13 @@
 
 package com.saulhdev.feeder.data.repository
 
+import android.util.Log
 import com.saulhdev.feeder.data.db.NeoFeedDb
 import com.saulhdev.feeder.data.db.dao.insertOrUpdate
 import com.saulhdev.feeder.data.db.models.Feed
 import com.saulhdev.feeder.data.db.models.FeedArticle
-import com.saulhdev.feeder.data.db.models.FeedItemIdWithLink
 import com.saulhdev.feeder.data.entity.FeedItem
+import com.saulhdev.feeder.data.entity.FeedItemIdWithLink
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
@@ -31,18 +32,14 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.withContext
+import org.koin.core.module.dsl.singleOf
+import org.koin.dsl.module
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ArticleRepository(db: NeoFeedDb) {
     private val jcc = Dispatchers.IO + SupervisorJob()
     private val articlesDao = db.feedArticleDao()
     private val feedsDao = db.feedSourceDao()
-
-    suspend fun getFeedArticles(feed: Feed): ArrayList<FeedArticle> = withContext(jcc) {
-        val list: ArrayList<FeedArticle> = arrayListOf()
-        list.addAll(articlesDao.loadArticles(feed.id))
-        list
-    }
 
     suspend fun deleteArticles(ids: List<Long>) = withContext(jcc) {
         articlesDao.deleteArticles(ids)
@@ -60,6 +57,19 @@ class ArticleRepository(db: NeoFeedDb) {
     fun getFeedArticles(): Flow<List<FeedItem>> = combine(
         articlesDao.getAllEnabledFeedArticles(),
         feedsDao.getEnabledFeeds()
+    ) { articles, feeds ->
+        Log.d("Repository", "getFeedArticles: ${articles.size} articles, ${feeds.size} feeds")
+
+        articles.mapNotNull { article ->
+            feeds.find { it.id == article.feedId }?.let { feed ->
+                FeedItem(article, feed)
+            }
+        }
+    }
+
+    fun getFeedArticles(tags:Set<String>): Flow<List<FeedItem>> = combine(
+        articlesDao.getAllEnabledFeedArticles(),
+        feedsDao.getFeedbyTags(tags)
     ) { articles, feeds ->
         articles.mapNotNull { article ->
             feeds.find { it.id == article.feedId }?.let { feed ->

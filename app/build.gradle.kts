@@ -155,7 +155,6 @@ dependencies {
     implementation(libs.room.ktx)
     implementation(libs.room.paging)
     implementation(libs.room.runtime)
-    implementation(libs.androidx.foundation)
     ksp(libs.room.compiler)
 
     //Squareup

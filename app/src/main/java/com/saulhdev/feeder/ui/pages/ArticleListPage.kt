@@ -1,6 +1,6 @@
 /*
  * This file is part of Neo Feed
- * Copyright (c) 2023   Saul Henriquez <henriquez.saul@gmail.com>
+ * Copyright (c) 2025   Saul Henriquez <henriquez.saul@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -18,16 +18,16 @@
 
 package com.saulhdev.feeder.ui.pages
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -36,7 +36,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.BottomSheetScaffold
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -49,6 +48,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.layout.AnimatedPane
@@ -58,6 +58,7 @@ import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaf
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -76,20 +77,21 @@ import androidx.compose.ui.unit.dp
 import com.saulhdev.feeder.NeoApp
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.data.content.FeedPreferences
+import com.saulhdev.feeder.extensions.koinNeoViewModel
+import com.saulhdev.feeder.extensions.launchView
 import com.saulhdev.feeder.manager.sync.SyncRestClient
 import com.saulhdev.feeder.ui.components.ArticleItem
 import com.saulhdev.feeder.ui.components.BookmarkItem
+import com.saulhdev.feeder.ui.components.OverflowMenu
 import com.saulhdev.feeder.ui.components.PullToRefreshLazyColumn
-import com.saulhdev.feeder.ui.components.SortFilterChip
-import com.saulhdev.feeder.ui.compose.icon.Phosphor
-import com.saulhdev.feeder.ui.compose.icon.phosphor.ArrowCounterClockwise
-import com.saulhdev.feeder.ui.compose.icon.phosphor.Bookmarks
-import com.saulhdev.feeder.ui.compose.icon.phosphor.CaretUp
-import com.saulhdev.feeder.ui.compose.icon.phosphor.Nut
-import com.saulhdev.feeder.ui.compose.icon.phosphor.Power
-import com.saulhdev.feeder.ui.navigation.LocalNavController
-import com.saulhdev.feeder.utils.extensions.koinNeoViewModel
-import com.saulhdev.feeder.utils.extensions.launchView
+import com.saulhdev.feeder.ui.icons.Phosphor
+import com.saulhdev.feeder.ui.icons.phosphor.ArrowCounterClockwise
+import com.saulhdev.feeder.ui.icons.phosphor.Bookmarks
+import com.saulhdev.feeder.ui.icons.phosphor.CaretUp
+import com.saulhdev.feeder.ui.icons.phosphor.Filter
+import com.saulhdev.feeder.ui.icons.phosphor.Filtered
+import com.saulhdev.feeder.ui.icons.phosphor.Nut
+import com.saulhdev.feeder.ui.icons.phosphor.Power
 import com.saulhdev.feeder.utils.openLinkInCustomTab
 import com.saulhdev.feeder.viewmodels.ArticlesViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -103,14 +105,12 @@ import org.koin.compose.koinInject
     ExperimentalMaterial3AdaptiveApi::class,
 )
 @Composable
-fun OverlayPage(
-    isOverlay: Boolean = false,
+fun ArticleListPage(
     prefs: FeedPreferences = koinInject(),
     syncClient: SyncRestClient = koinInject(),
     viewModel: ArticlesViewModel = koinNeoViewModel(),
-) {
+    ) {
     val context = LocalContext.current
-    val navController = LocalNavController.current
     val scope = rememberCoroutineScope()
     val scaffoldState = rememberBottomSheetScaffoldState()
     val paneNavigator = rememberListDetailPaneScaffoldNavigator<Any>()
@@ -119,18 +119,17 @@ fun OverlayPage(
     val feedList by viewModel.articlesList.collectAsState()
     val bookmarked by viewModel.bookmarked.collectAsState()
     val isSyncing by viewModel.isSyncing.collectAsState(false)
-    val notModifiedSortFilter by viewModel.notModifiedFilter.collectAsState()
+    val filtered by viewModel.notModifiedFilter.collectAsState()
 
-    var showMenu by remember { mutableStateOf(false) }
     var showBookmarks by remember { mutableStateOf(false) }
     val listState = rememberLazyListState()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
     val showFAB by remember { derivedStateOf { listState.firstVisibleItemIndex > 4 } }
-
-    BackHandler(scaffoldState.bottomSheetState.currentValue == SheetValue.Expanded) {
-        scope.launch { scaffoldState.bottomSheetState.partialExpand() }
+    BackHandler(scaffoldState.bottomSheetState.currentValue == SheetValue.Expanded ) {
+        scope.launch {
+            scaffoldState.bottomSheetState.partialExpand()
+        }
     }
-
     NavigableListDetailPaneScaffold(
         navigator = paneNavigator,
         listPane = {
@@ -154,14 +153,31 @@ fun OverlayPage(
                     modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
                     containerColor = Color.Transparent,
                     topBar = {
-                        CenterAlignedTopAppBar(
-                            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                                containerColor = MaterialTheme.colorScheme.background,
-                                scrolledContainerColor = MaterialTheme.colorScheme.background,
-                            ),
+                        TopAppBar(
+                            colors = TopAppBarDefaults.topAppBarColors(
+                            containerColor = MaterialTheme.colorScheme.background,
+                            scrolledContainerColor = MaterialTheme.colorScheme.background,
+                        ),
                             title = { Text(text = stringResource(id = R.string.app_name)) },
                             scrollBehavior = scrollBehavior,
                             actions = {
+                                IconButton(
+                                    modifier = Modifier
+                                        .size(size = 40.dp)
+                                        .clip(CircleShape),
+                                    onClick = {
+                                        scope.launch {
+                                            scaffoldState.bottomSheetState.expand()
+                                        }
+                                    }
+                                ) {
+                                    Icon(
+                                        imageVector = if(filtered) Phosphor.Filter else Phosphor.Filtered,
+                                        contentDescription = stringResource(id = R.string.sorting_order),
+                                        tint = MaterialTheme.colorScheme.primary
+                                    )
+                                }
+
                                 Surface(
                                     color = if (showBookmarks) MaterialTheme.colorScheme.primaryContainer
                                     else Color.Transparent,
@@ -174,62 +190,45 @@ fun OverlayPage(
                                         modifier = Modifier.padding(8.dp),
                                         imageVector = Phosphor.Bookmarks,
                                         contentDescription = stringResource(id = R.string.title_bookmarks),
+                                        tint = MaterialTheme.colorScheme.primary
                                     )
                                 }
 
-                                IconButton(
-                                    modifier = Modifier
-                                        .size(size = 40.dp)
-                                        .clip(CircleShape),
-                                    onClick = {
-                                        showMenu = true
-                                    }
-                                ) {
-                                    Icon(
-                                        imageVector = Phosphor.Nut,
-                                        contentDescription = "Settings",
-                                        tint = MaterialTheme.colorScheme.primary
+                                OverflowMenu {
+                                    DropdownMenuItem(
+                                        text = {
+                                            Text(text = stringResource(id = R.string.action_reload))
+                                        },
+                                        onClick = {
+                                            hideMenu()
+                                            scope.launch {
+                                                syncClient.syncAllFeeds()
+                                            }
+                                        },
+                                        leadingIcon = {
+                                            Icon(
+                                                imageVector = Phosphor.ArrowCounterClockwise,
+                                                contentDescription = null,
+                                            )
+                                        }
                                     )
+                                    HorizontalDivider()
 
-                                    DropdownMenu(
-                                        expanded = showMenu,
-                                        onDismissRequest = { showMenu = false }
-                                    ) {
-                                        DropdownMenuItem(
-                                            text = {
-                                                Text(text = stringResource(id = R.string.action_reload))
-                                            },
-                                            onClick = {
-                                                showMenu = false
-                                                scope.launch {
-                                                    syncClient.syncAllFeeds()
-                                                }
-                                            },
-                                            leadingIcon = {
-                                                Icon(
-                                                    imageVector = Phosphor.ArrowCounterClockwise,
-                                                    contentDescription = null,
-                                                )
-                                            }
-                                        )
-                                        HorizontalDivider()
-
-                                        DropdownMenuItem(
-                                            text = {
-                                                Text(text = stringResource(id = R.string.action_restart))
-                                            },
-                                            onClick = {
-                                                showMenu = false
-                                                NeoApp.instance.restart(false)
-                                            },
-                                            leadingIcon = {
-                                                Icon(
-                                                    imageVector = Phosphor.Power,
-                                                    contentDescription = null,
-                                                )
-                                            }
-                                        )
-                                    }
+                                    DropdownMenuItem(
+                                        text = {
+                                            Text(text = stringResource(id = R.string.action_restart))
+                                        },
+                                        onClick = {
+                                            hideMenu()
+                                            NeoApp.instance!!.restart(false)
+                                        },
+                                        leadingIcon = {
+                                            Icon(
+                                                imageVector = Phosphor.Power,
+                                                contentDescription = null,
+                                            )
+                                        }
+                                    )
                                 }
                             }
                         )
@@ -262,18 +261,6 @@ fun OverlayPage(
                             .fillMaxSize()
                             .padding(paddingValues)
                     ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 12.dp),
-                            horizontalArrangement = Arrangement.End
-                        ) {
-                            SortFilterChip(notModified = notModifiedSortFilter) {
-                                scope.launch {
-                                    scaffoldState.bottomSheetState.expand()
-                                }
-                            }
-                        }
                         when {
                             showBookmarks -> LazyColumn(
                                 state = listState,
@@ -347,7 +334,7 @@ fun OverlayPage(
                                             }
                                         }
                                     }
-                                },
+                                }
                             )
                         }
                     }
@@ -361,7 +348,7 @@ fun OverlayPage(
 
             articleId.longValue.takeIf { it != -1L }?.let { id ->
                 AnimatedPane {
-                    ArticleScreen(id) {
+                    ArticlePage(id) {
                         scope.launch {
                             paneNavigator.navigateBack()
                         }

@@ -1,3 +1,21 @@
+/*
+ * This file is part of Neo Feed
+ * Copyright (c) 2025   Neo Feed Team
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package com.saulhdev.feeder.manager.sync
 
 import android.content.Context
@@ -7,12 +25,12 @@ import com.saulhdev.feeder.data.db.ID_ALL
 import com.saulhdev.feeder.data.db.ID_UNSET
 import com.saulhdev.feeder.data.db.models.Feed
 import com.saulhdev.feeder.data.db.models.FeedArticle
+import com.saulhdev.feeder.data.entity.JsonFeed
 import com.saulhdev.feeder.data.repository.ArticleRepository
-import com.saulhdev.feeder.data.repository.FeedRepository
+import com.saulhdev.feeder.data.repository.SourcesRepository
 import com.saulhdev.feeder.manager.models.FeedParser
 import com.saulhdev.feeder.manager.models.getResponse
 import com.saulhdev.feeder.manager.models.scheduleFullTextParse
-import com.saulhdev.feeder.utils.JsonFeed
 import com.saulhdev.feeder.utils.blobFile
 import com.saulhdev.feeder.utils.blobOutputStream
 import com.saulhdev.feeder.utils.sloppyLinkToStrictURLNoThrows
@@ -66,19 +84,19 @@ internal suspend fun syncFeeds(
     context: Context,
     feedId: Long = ID_UNSET,
     feedTag: String = "",
-    maxFeedItemCount: Int = 50,
+    maxFeedItemCount: Int = 100,
     forceNetwork: Boolean = false,
     minFeedAgeMinutes: Int = 5
 ): Boolean {
     var result = false
-    val feedsRepo: FeedRepository by inject(FeedRepository::class.java)
+    val feedsRepo: SourcesRepository by inject(SourcesRepository::class.java)
     val articlesRepo: ArticleRepository by inject(ArticleRepository::class.java)
     val downloadTime = Instant.now()
     var needFullTextSync = false
     val time = measureTimeMillis {
         try {
             supervisorScope {
-                val sRepository: FeedRepository by inject(FeedRepository::class.java)
+                val sRepository: SourcesRepository by inject(SourcesRepository::class.java)
                 val staleTime: Long = if (forceNetwork) {
                     Instant.now().toEpochMilli()
                 } else {
@@ -141,7 +159,7 @@ internal suspend fun syncFeeds(
 }
 
 private suspend fun syncFeed(
-    feedsRepo: FeedRepository,
+    feedsRepo: SourcesRepository,
     articleRepo: ArticleRepository,
     feedSql: Feed,
     filesDir: File,
@@ -204,7 +222,7 @@ private suspend fun syncFeed(
         }
     }
 
-    feedsRepo.updateFeed(
+    feedsRepo.updateSource(
         feedSql.copy(
             title = feedSql.title,
             feedImage = feed.icon?.let { sloppyLinkToStrictURLNoThrows(it) }
@@ -233,7 +251,7 @@ private suspend fun syncFeed(
 class ResponseFailure(message: String?) : Exception(message)
 
 internal suspend fun feedsToSync(
-    repository: FeedRepository,
+    repository: SourcesRepository,
     feedId: Long,
     tag: String,
     staleTime: Long = -1L
@@ -269,6 +287,6 @@ internal suspend fun feedsToSync(
             feedDao.loadFeed(feedId)?.let { listOf(it) } ?: emptyList()
         }*/
 
-        else -> repository.loadFeeds()
+        else -> repository.getAllSources()
     }
 }

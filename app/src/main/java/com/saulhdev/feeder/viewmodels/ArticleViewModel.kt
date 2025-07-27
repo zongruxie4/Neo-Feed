@@ -1,6 +1,6 @@
 /*
  * This file is part of Neo Feed
- * Copyright (c) 2025 Saul Henriquez <henriquez.saul@gmail.com>
+ * Copyright (c) 2025   Neo Feed Team
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -20,9 +20,9 @@ package com.saulhdev.feeder.viewmodels
 
 import androidx.lifecycle.viewModelScope
 import com.saulhdev.feeder.data.repository.ArticleRepository
-import com.saulhdev.feeder.data.repository.FeedRepository
+import com.saulhdev.feeder.data.repository.SourcesRepository
 import com.saulhdev.feeder.data.db.models.Feed
-import com.saulhdev.feeder.utils.extensions.NeoViewModel
+import com.saulhdev.feeder.extensions.NeoViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
@@ -31,7 +31,7 @@ import kotlinx.coroutines.plus
 
 class ArticleViewModel(
     private val articleRepo: ArticleRepository,
-    private val feedsRepo: FeedRepository,
+    private val feedsRepo: SourcesRepository,
 ) : NeoViewModel() {
     private val ioScope = viewModelScope.plus(Dispatchers.IO)
 
@@ -43,6 +43,6 @@ class ArticleViewModel(
         )
 
     fun getFeedById(id: Long): Flow<Feed?> {
-        return feedsRepo.getFeedById(id)
+        return feedsRepo.getSourceById(id)
     }
 }

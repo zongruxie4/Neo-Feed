@@ -21,7 +21,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:shapeAppearanceOverlay="@style/roundedCorner"
+            app:shapeAppearanceOverlay="@style/RoundShapeAppearance"
             tools:src="@tools:sample/backgrounds/scenic" />
 
         <LinearLayout

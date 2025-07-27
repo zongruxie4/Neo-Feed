@@ -3,24 +3,84 @@ package com.saulhdev.feeder
 import android.app.Activity
 import android.app.Application.ActivityLifecycleCallbacks
 import android.os.Bundle
+import android.widget.Toast
+import androidx.lifecycle.SavedStateHandle
 import androidx.multidex.MultiDexApplication
+import androidx.work.WorkManager
+import com.google.android.material.color.DynamicColors
+import com.jakewharton.threetenabp.AndroidThreeTen
 import com.saulhdev.feeder.data.content.FeedPreferences.Companion.prefsModule
+import com.saulhdev.feeder.data.db.NeoFeedDb
+import com.saulhdev.feeder.data.repository.ArticleRepository
+import com.saulhdev.feeder.data.repository.SourcesRepository
+import com.saulhdev.feeder.extensions.ToastMaker
+import com.saulhdev.feeder.extensions.restartApp
+import com.saulhdev.feeder.manager.sync.SyncRestClient
 import com.saulhdev.feeder.service.OverlayBridge
+import com.saulhdev.feeder.utils.ApplicationCoroutineScope
 import com.saulhdev.feeder.utils.Utilities
+import com.saulhdev.feeder.viewmodels.ArticleViewModel
+import com.saulhdev.feeder.viewmodels.ArticlesViewModel
+import com.saulhdev.feeder.viewmodels.SourceEditViewModel
+import com.saulhdev.feeder.viewmodels.FeedsViewModel
+import com.saulhdev.feeder.viewmodels.SearchFeedViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.androix.startup.KoinStartup
 import org.koin.core.annotation.KoinExperimentalAPI
 import org.koin.core.context.GlobalContext
+import org.koin.core.module.dsl.singleOf
+import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.koinConfiguration
 import org.koin.dsl.module
+import org.koin.java.KoinJavaComponent.inject
 
 @OptIn(KoinExperimentalAPI::class)
 class NeoApp: MultiDexApplication(), KoinStartup {
     val activityHandler = ActivityHandler()
-    private val coreModule = module {}
-    private val dataModule = module {}
-    private val modelModule = module {}
+    private val applicationCoroutineScope = ApplicationCoroutineScope()
+    private val wm: WorkManager by inject(WorkManager::class.java)
+
+    private fun savedStateHandle() = SavedStateHandle()
+
+    private val modelModule = module {
+        single {
+            savedStateHandle()
+        }
+        viewModelOf(::SourceEditViewModel)
+        viewModelOf(::SearchFeedViewModel)
+        viewModelOf(::FeedsViewModel)
+        viewModelOf(::ArticlesViewModel)
+        viewModelOf(::ArticleViewModel)
+    }
+
+    // TODO Move to its class
+    private val dataModule = module {
+        single<NeoFeedDb> { NeoFeedDb.getInstance(this@NeoApp) }
+        singleOf(::ArticleRepository)
+        singleOf(::SourcesRepository)
+        singleOf(::SyncRestClient)
+    }
+
+    private val coreModule = module {
+        single { contentResolver }
+        single { WorkManager.getInstance(this@NeoApp) }
+        single<ToastMaker> {
+            object : ToastMaker {
+                override suspend fun makeToast(text: String) = withContext(Dispatchers.Main) {
+                    Toast.makeText(get(), text, Toast.LENGTH_SHORT).show()
+                }
+
+                override suspend fun makeToast(resId: Int) = withContext(Dispatchers.Main) {
+                    Toast.makeText(get(), resId, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+        single { applicationCoroutineScope }
+        single<NeoApp> { this@NeoApp }
+    }
 
     fun onAppStarted() {
         registerActivityLifecycleCallbacks(activityHandler)
@@ -36,6 +96,14 @@ class NeoApp: MultiDexApplication(), KoinStartup {
     override fun onCreate() {
         super.onCreate()
         instance = this
+        AndroidThreeTen.init(this)
+        DynamicColors.applyToActivitiesIfAvailable(
+            this,
+            _root_ide_package_.com.google.android.material.color.DynamicColorsOptions.Builder()
+                .setPrecondition { _, _ -> DynamicColors.isDynamicColorAvailable() }
+                .build()
+        )
+        wm.pruneWork()
         onAppStarted()
     }
 
@@ -44,11 +112,11 @@ class NeoApp: MultiDexApplication(), KoinStartup {
         GlobalContext.get().close()
     }
 
-    fun onRestart(recreate: Boolean = true){
+    fun restart(recreate: Boolean = false) {
         if (recreate) {
-            activityHandler.finishAll(recreateApp = false)
+            activityHandler.finishAll(true)
         } else {
-            Utilities().restartApp(this)
+            restartApp()
         }
     }
 
