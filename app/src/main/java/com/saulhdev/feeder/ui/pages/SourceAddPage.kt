@@ -1,6 +1,6 @@
 /*
  * This file is part of Neo Feed
- * Copyright (c) 2022   Saul Henriquez <henriquez.saul@gmail.com>
+ * Copyright (c) 2022   Neo Feed Team <saulhdev@hotmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -60,12 +60,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.data.db.models.Feed
-import com.saulhdev.feeder.ui.components.ViewWithActionBar
-import com.saulhdev.feeder.ui.compose.util.StableHolder
-import com.saulhdev.feeder.ui.compose.util.interceptKey
-import com.saulhdev.feeder.ui.compose.util.safeSemantics
+import com.saulhdev.feeder.extensions.StableHolder
+import com.saulhdev.feeder.extensions.interceptKey
+import com.saulhdev.feeder.extensions.koinNeoViewModel
+import com.saulhdev.feeder.extensions.safeSemantics
 import com.saulhdev.feeder.ui.navigation.LocalNavController
-import com.saulhdev.feeder.utils.extensions.koinNeoViewModel
+import com.saulhdev.feeder.ui.components.ViewWithActionBar
 import com.saulhdev.feeder.utils.sloppyLinkToStrictURL
 import com.saulhdev.feeder.utils.sloppyLinkToStrictURLNoThrows
 import com.saulhdev.feeder.viewmodels.FeedsViewModel
@@ -77,7 +77,7 @@ import java.net.MalformedURLException
 import java.net.URL
 
 @Composable
-fun AddFeedPage(
+fun SourceAddPage(
     searchFeedViewModel: SearchFeedViewModel = koinNeoViewModel(),
     feedsViewModel: FeedsViewModel = koinNeoViewModel(),
 ) {
@@ -418,6 +418,6 @@ private fun isNotValidUrl(url: String) = !isValidUrl(url)
 
 @Preview
 @Composable
-fun AddFeedPagePreview() {
-    AddFeedPage()
+fun SourceAddPagePreview() {
+    SourceAddPage()
 }
