@@ -26,9 +26,11 @@ import androidx.room.Query
 import androidx.room.Update
 import com.saulhdev.feeder.data.db.models.Feed
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flow
 import org.threeten.bp.Instant
 import java.net.URL
+import kotlin.collections.flatten
 
 @Dao
 interface FeedSourceDao {
@@ -67,7 +69,7 @@ interface FeedSourceDao {
     fun getAllFeeds(): Flow<List<Feed>>
 
     @Query("SELECT DISTINCT tag FROM Feeds ORDER BY tag COLLATE NOCASE")
-     fun getAllTagsFlow(): Flow<List<String>>
+    fun getAllTagsFlow(): Flow<List<String>>
 
     @Query("SELECT DISTINCT tag FROM Feeds ORDER BY tag COLLATE NOCASE")
     suspend fun getAllTags(): List<String>
@@ -75,13 +77,12 @@ interface FeedSourceDao {
     @Query("SELECT * FROM feeds WHERE ',' || tag || ',' LIKE :pattern")
     suspend fun loadFeedsByTag(pattern: String): List<Feed>
 
-    fun getFeedbyTags(tags: Set<String>): Flow<List<Feed>> = flow {
+    fun getFeedByTags(tags: Set<String>): Flow<List<Feed>> = flow {
         val allFeeds = tags.flatMap { tag ->
             loadFeedsByTag("%,$tag,%")
         }.distinctBy { it.id }
         emit(allFeeds)
     }
-
 
     @Query(
         """

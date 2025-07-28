@@ -32,9 +32,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.withContext
-import org.koin.core.module.dsl.singleOf
-import org.koin.dsl.module
-
 @OptIn(ExperimentalCoroutinesApi::class)
 class ArticleRepository(db: NeoFeedDb) {
     private val jcc = Dispatchers.IO + SupervisorJob()
@@ -58,8 +55,7 @@ class ArticleRepository(db: NeoFeedDb) {
         articlesDao.getAllEnabledFeedArticles(),
         feedsDao.getEnabledFeeds()
     ) { articles, feeds ->
-        Log.d("Repository", "getFeedArticles: ${articles.size} articles, ${feeds.size} feeds")
-
+        Log.d("ArticleRepository", "getFeedArticles: ${articles.size} articles, ${feeds.size} feeds")
         articles.mapNotNull { article ->
             feeds.find { it.id == article.feedId }?.let { feed ->
                 FeedItem(article, feed)
@@ -69,8 +65,9 @@ class ArticleRepository(db: NeoFeedDb) {
 
     fun getFeedArticles(tags:Set<String>): Flow<List<FeedItem>> = combine(
         articlesDao.getAllEnabledFeedArticles(),
-        feedsDao.getFeedbyTags(tags)
+        feedsDao.getFeedByTags(tags)
     ) { articles, feeds ->
+        Log.d("ArticleRepository", "getFeedArticles: ${articles.size} articles, ${feeds.size} feeds")
         articles.mapNotNull { article ->
             feeds.find { it.id == article.feedId }?.let { feed ->
                 FeedItem(article, feed)
@@ -118,7 +115,7 @@ class ArticleRepository(db: NeoFeedDb) {
         }
 
     fun getBookmarkedArticles(): Flow<List<FeedItem>> = combine(
-        articlesDao.getAllBookmarked(),
+         articlesDao.getAllBookmarked(),
         feedsDao.getEnabledFeeds()
     ) { articles, feeds ->
         articles.mapNotNull { article ->

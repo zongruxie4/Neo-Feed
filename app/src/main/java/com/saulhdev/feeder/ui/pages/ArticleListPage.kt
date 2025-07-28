@@ -18,12 +18,10 @@
 
 package com.saulhdev.feeder.ui.pages
 
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -36,7 +34,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.BottomSheetScaffold
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -58,7 +55,6 @@ import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaf
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -90,7 +86,6 @@ import com.saulhdev.feeder.ui.icons.phosphor.Bookmarks
 import com.saulhdev.feeder.ui.icons.phosphor.CaretUp
 import com.saulhdev.feeder.ui.icons.phosphor.Filter
 import com.saulhdev.feeder.ui.icons.phosphor.Filtered
-import com.saulhdev.feeder.ui.icons.phosphor.Nut
 import com.saulhdev.feeder.ui.icons.phosphor.Power
 import com.saulhdev.feeder.utils.openLinkInCustomTab
 import com.saulhdev.feeder.viewmodels.ArticlesViewModel
@@ -106,9 +101,9 @@ import org.koin.compose.koinInject
 )
 @Composable
 fun ArticleListPage(
-    prefs: FeedPreferences = koinInject(),
-    syncClient: SyncRestClient = koinInject(),
-    viewModel: ArticlesViewModel = koinNeoViewModel(),
+        prefs: FeedPreferences = koinInject(),
+        syncClient: SyncRestClient = koinInject(),
+        viewModel: ArticlesViewModel = koinNeoViewModel(),
     ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()

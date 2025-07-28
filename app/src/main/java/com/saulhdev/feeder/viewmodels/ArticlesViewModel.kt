@@ -25,7 +25,6 @@ import com.saulhdev.feeder.data.entity.SORT_TITLE
 import com.saulhdev.feeder.data.entity.SortFilterModel
 import com.saulhdev.feeder.data.repository.SourcesRepository
 import com.saulhdev.feeder.data.content.FeedPreferences
-import com.saulhdev.feeder.data.db.models.Feed
 import com.saulhdev.feeder.data.entity.FeedItem
 import com.saulhdev.feeder.data.repository.ArticleRepository
 import com.saulhdev.feeder.extensions.NeoViewModel
@@ -83,7 +82,7 @@ class ArticlesViewModel(
             true
         )
 
-    fun getArticles(prefs: FeedPreferences): Flow<List<FeedItem>> {
+    fun getArticles(): Flow<List<FeedItem>> {
         return if(prefs.tagsFilter.getValue().any()){
             articleRepo.getFeedArticles(prefs.tagsFilter.getValue())
         }else{
@@ -92,7 +91,7 @@ class ArticlesViewModel(
     }
 
     val articlesList: StateFlow<List<FeedItem>> = combine(
-        articleRepo.getFeedArticles(),
+        getArticles(),
         prefSortFilter,
         prefs.removeDuplicates.get(),
     ) { articles, sfm, removeDuplicate ->
@@ -101,6 +100,9 @@ class ArticlesViewModel(
             .let {
                 if (sfm.sourcesFilter.isEmpty()) it
                 else it.filterNot { sfm.sourcesFilter.contains(it.content.source.id) }
+
+                if (sfm.tagsFilter.isEmpty()) it
+                else it.filterNot { sfm.tagsFilter.contains(it.content.tag) }
             }
             .let {
                 when {
