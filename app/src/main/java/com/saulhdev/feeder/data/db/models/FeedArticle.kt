@@ -95,7 +95,7 @@ data class FeedArticle(
 
         val absoluteImage = when {
             feed.feed_url != null && safeImage != null -> {
-                relativeLinkIntoAbsolute(sloppyLinkToStrictURL(feed.feed_url.toString()), safeImage)
+                relativeLinkIntoAbsolute(sloppyLinkToStrictURL(feed.feed_url), safeImage)
             }
 
             else -> safeImage

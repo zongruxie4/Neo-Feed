@@ -67,7 +67,6 @@ class ArticleRepository(db: NeoFeedDb) {
         articlesDao.getAllEnabledFeedArticles(),
         feedsDao.getFeedByTags(tags)
     ) { articles, feeds ->
-        Log.d("ArticleRepository", "getFeedArticles: ${articles.size} articles, ${feeds.size} feeds")
         articles.mapNotNull { article ->
             feeds.find { it.id == article.feedId }?.let { feed ->
                 FeedItem(article, feed)

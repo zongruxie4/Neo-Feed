@@ -212,7 +212,6 @@ private suspend fun syncFeed(
                 article.feedId = feedSql.id
                 article to (item.content_html ?: item.content_text ?: "")
             } ?: emptyList()
-    Log.d(TAG, "Articles  ${articles.size}")
 
     articleRepo.updateOrInsertArticle(articles) { feedItem, text ->
         withContext(Dispatchers.IO) {
