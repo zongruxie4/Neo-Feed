@@ -58,12 +58,12 @@ fun ArticleItem(
             modifier = Modifier
                 .padding(8.dp),
         ) {
-            if (content.background_url.isNotEmpty()
-                && !content.background_url.contains(".rss")
+            if (content.backgroundUrl.isNotEmpty()
+                && !content.backgroundUrl.contains(".rss")
             ) {
                 AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
-                        .data(content.background_url)
+                        .data(content.backgroundUrl)
                         .crossfade(true)
                         .crossfade(500)
                         .build(),

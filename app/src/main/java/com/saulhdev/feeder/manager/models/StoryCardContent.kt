@@ -27,7 +27,7 @@ data class StoryCardContent(
     val title: String,
     val text: String,
     val tag: String = "",
-    val background_url: String,
+    val backgroundUrl: String,
     val link: String,
     val source: FeedCategory
 ) : Parcelable {

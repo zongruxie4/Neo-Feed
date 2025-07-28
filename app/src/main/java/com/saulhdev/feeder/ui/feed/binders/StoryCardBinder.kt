@@ -45,14 +45,14 @@ object StoryCardBinder : FeedBinder {
         }
 
         if (
-            content.background_url.isEmpty() ||
-            content.background_url == "null" ||
-            content.background_url.contains(".rss")
+            content.backgroundUrl.isEmpty() ||
+            content.backgroundUrl == "null" ||
+            content.backgroundUrl.contains(".rss")
         ) {
             binding.storyPic.visibility = View.GONE
         } else {
             binding.storyPic.visibility = View.VISIBLE
-            binding.storyPic.load(content.background_url) {
+            binding.storyPic.load(content.backgroundUrl) {
                 crossfade(true)
                 crossfade(500)
             }

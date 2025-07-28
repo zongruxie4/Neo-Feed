@@ -47,7 +47,7 @@ data class FeedItem(
         content = StoryCardContent(
             title = article.title,
             text = article.description,
-            background_url = article.imageUrl ?: "",
+            backgroundUrl = article.imageUrl ?: "",
             tag = feed.tag,
             link = article.link ?: "",
             source = FeedCategory(
