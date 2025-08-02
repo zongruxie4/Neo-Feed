@@ -111,4 +111,16 @@
     <string name="theme_auto_system_black">Авто (системная; чёрная)</string>
     <string name="theme_black">Чёрная</string>
     <string name="edit_rss">Изменить ленту</string>
+    <string name="select_all">Выбрать все</string>
+    <string name="deselect_all">Снять выделение</string>
+    <string name="sort_filter">Порядок и фильтрация</string>
+    <string name="state_modified">По дате изменения</string>
+    <string name="action_apply">Применить</string>
+    <string name="action_reset">Сбросить</string>
+    <string name="sorting_order">Порядок</string>
+    <string name="sorting_chronological">Хронологический</string>
+    <string name="sorting_title">По названию</string>
+    <string name="sorting_source">По источнику</string>
+    <string name="sort_ascending">По возрастанию</string>
+    <string name="sort_descending">По убыванию</string>
 </resources>
