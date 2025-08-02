@@ -24,6 +24,6 @@ import kotlinx.coroutines.withContext
 
 class SyncRestClient() {
     suspend fun syncAllFeeds() = withContext(Dispatchers.IO) {
-        requestFeedSync(ID_ALL)
+        requestFeedSync(feedId = ID_ALL, forceNetwork = true)
     }
 }

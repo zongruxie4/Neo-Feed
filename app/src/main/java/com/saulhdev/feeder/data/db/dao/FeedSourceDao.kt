@@ -95,6 +95,14 @@ interface FeedSourceDao {
 
     @Query(
         """
+       SELECT * FROM Feeds
+       WHERE lastSync < :staleTime and isEnabled IS 1
+    """
+    )
+    suspend fun loadFeedIfStale(staleTime: Long): Feed?
+
+    @Query(
+        """
             UPDATE feeds
             SET currentlySyncing = :syncing
             WHERE id IS :feedId

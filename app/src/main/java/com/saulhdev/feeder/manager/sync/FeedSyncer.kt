@@ -59,7 +59,7 @@ class FeedSyncer(val context: Context, workerParams: WorkerParameters) :
     }
 }
 
-private const val syncNotificationId = 42623
+private const val syncNotificationId = 42624
 private const val syncChannelId = "feederSyncNotifications"
 private const val syncNotificationGroup = "com.saulhdev.neofeed.SYNC"
 
@@ -108,24 +108,25 @@ fun requestFeedSync(
     feedTag: String = "",
     forceNetwork: Boolean = false,
 ) {
-    val workRequest = OneTimeWorkRequestBuilder<FeedSyncer>()
-        .addTag("FeedSyncer")
-        .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
-        .keepResultsForAtLeast(5, TimeUnit.MINUTES)
-
+    val workManager: WorkManager by inject(WorkManager::class.java)
     val data = workDataOf(
         "feed_id" to feedId,
         "feed_tag" to feedTag,
         "force_network" to forceNetwork,
     )
 
-    workRequest.setInputData(data)
-    //get work manager by injecting from koin
-    val workManager: WorkManager by inject(WorkManager::class.java)
+    val workRequestBuilder = OneTimeWorkRequestBuilder<FeedSyncer>()
+        .addTag("FeedSyncer")
+        .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
+        .keepResultsForAtLeast(1, TimeUnit.MINUTES)
+        .setInputData(data)
 
+    val syncWork = workRequestBuilder
+        .addTag("PeriodicFeedSyncer")
+        .build()
     workManager.enqueueUniqueWork(
         "feeder_sync_onetime_$feedId",
         ExistingWorkPolicy.REPLACE,
-        workRequest.build()
+        syncWork
     )
 }

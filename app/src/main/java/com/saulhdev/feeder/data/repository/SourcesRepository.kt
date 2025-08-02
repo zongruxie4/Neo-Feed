@@ -20,6 +20,7 @@ package com.saulhdev.feeder.data.repository
 
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
+import com.saulhdev.feeder.data.db.ID_ALL
 import com.saulhdev.feeder.data.db.NeoFeedDb
 import com.saulhdev.feeder.data.db.models.Feed
 import com.saulhdev.feeder.manager.models.scheduleFullTextParse
@@ -82,7 +83,10 @@ class SourcesRepository(db: NeoFeedDb) {
     }
 
     suspend fun loadFeedIfStale(feedId: Long, staleTime: Long): Feed? = withContext(jcc) {
-        feedsDao.loadFeedIfStale(feedId, staleTime)
+        if (feedId == ID_ALL)
+            feedsDao.loadFeedIfStale(staleTime)
+        else
+            feedsDao.loadFeedIfStale(feedId, staleTime)
     }
 
     suspend fun getAllTags(): List<String> {
