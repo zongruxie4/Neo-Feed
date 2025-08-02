@@ -245,6 +245,7 @@ class OverlayView(val context: Context): OverlayController(context, R.style.AppT
                 }
 
                 "reload" -> {
+                    rootView.findViewById<RecyclerView>(R.id.recycler).recycledViewPool.clear()
                     refreshNotifications()
                 }
 
