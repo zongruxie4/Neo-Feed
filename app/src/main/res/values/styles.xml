@@ -7,6 +7,16 @@
         <item name="alertDialogTheme">@style/AlertDialogTheme</item>
         <!--Status bar theme -->
         <item name="android:windowLightStatusBar">@bool/isLight</item>
+        <item name="bottomSheetDialogTheme">@style/bottomSheetDialogTheme</item>
+        <item name="android:textColorSecondary">#A8A7A7</item>
+    </style>
+
+    <style name="bottomSheetDialogTheme" parent="Theme.Material3.Light.NoActionBar">
+        <item name="android:colorEdgeEffect">?android:attr/textColorSecondary</item>
+        <item name="bottomSheetNavBarColor">@android:color/transparent</item>
+        <item name="bottomSheetScrimColor">@color/grey_50</item>
+        <item name="colorBackgroundFloating">?backgroundColor</item>
+        <item name="android:colorPrimary">@color/grey_100</item>
     </style>
 
     <style name="AlertDialogTheme" parent="MaterialAlertDialog.Material3">

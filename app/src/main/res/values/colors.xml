@@ -12,4 +12,9 @@
     <color name="globalAccent">#4285f4</color>
     <color name="textColorPrimary">#000000</color>
     <color name="toggle_checked">#6200EE</color> <!-- purple -->
+
+
+    <color name="navbar_color">#28000000</color>
+    <color name="grey_50">#fffafafa</color>
+    <color name="grey_100">#fff5f5f5</color>
 </resources>
