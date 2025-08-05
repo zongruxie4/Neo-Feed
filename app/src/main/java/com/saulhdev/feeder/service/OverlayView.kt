@@ -3,28 +3,20 @@ package com.saulhdev.feeder.service
 import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
-import android.graphics.PorterDuff
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
-import android.util.SparseIntArray
 import android.view.View
+import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.view.ContextThemeWrapper
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
-import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.ColorUtils
-import androidx.core.graphics.alpha
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.libraries.gsa.d.a.OverlayController
 import com.google.android.material.button.MaterialButton
-import com.google.android.material.color.MaterialColors
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.saulhdev.feeder.MainActivity
 import com.saulhdev.feeder.NeoApp
@@ -38,7 +30,9 @@ import com.saulhdev.feeder.ui.feed.FeedAdapter
 import com.saulhdev.feeder.ui.navigation.Routes
 import com.saulhdev.feeder.ui.theme.CardTheme
 import com.saulhdev.feeder.ui.theme.OverlayThemeHolder
+import com.saulhdev.feeder.ui.views.AbstractBottomSheet
 import com.saulhdev.feeder.ui.views.DialogMenu
+import com.saulhdev.feeder.ui.views.FilterBottomSheet
 import com.saulhdev.feeder.utils.LinearLayoutManagerWrapper
 import com.saulhdev.feeder.viewmodels.ArticlesViewModel
 import kotlinx.coroutines.CoroutineName
@@ -72,6 +66,8 @@ class OverlayView(val context: Context): OverlayController(context, R.style.AppT
             R.layout.overlay_layout,
             this.container
         )
+        val container = rootView.findViewById<ViewGroup>(R.id.overlay_root)
+        AbstractBottomSheet.container = container
 
         themeHolder = OverlayThemeHolder(this)
 
@@ -79,6 +75,7 @@ class OverlayView(val context: Context): OverlayController(context, R.style.AppT
         initHeader()
         refreshNotifications()
 
+        AbstractBottomSheet.closeAllOpenViews(context)
         syncScope.launch {
             viewModel.articlesList.collect {
                 mainScope.launch {
@@ -122,6 +119,11 @@ class OverlayView(val context: Context): OverlayController(context, R.style.AppT
             }
         )
         setCustomTheme()
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+
     }
 
     private fun updateStubUi() {
@@ -186,24 +188,28 @@ class OverlayView(val context: Context): OverlayController(context, R.style.AppT
         })
     }
 
-    private  fun updateToggleColor(button: MaterialButton, isChecked: Boolean){
+    private fun updateToggleColor(button: MaterialButton, isChecked: Boolean) {
         val context = button.context
-        val checkedColor =  ColorUtils.setAlphaComponent(ContextCompat.getColor(context, R.color.toggle_checked), 64)
+        val checkedColor = ColorUtils.setAlphaComponent(
+            ContextCompat.getColor(context, R.color.toggle_checked),
+            64
+        )
         val uncheckedColor = Color.TRANSPARENT
-        button.backgroundTintList = ColorStateList.valueOf(if (isChecked) checkedColor else uncheckedColor)
+        button.backgroundTintList =
+            ColorStateList.valueOf(if (isChecked) checkedColor else uncheckedColor)
 
     }
 
     private fun initHeader() {
-        val toggleButton = rootView.findViewById<MaterialButton>(R.id.header_bookmark)
+        val bookmarkButton = rootView.findViewById<MaterialButton>(R.id.header_bookmark)
 
-        updateToggleColor(toggleButton, bookmarkVisible)
-        toggleButton.setOnClickListener {
+        updateToggleColor(bookmarkButton, bookmarkVisible)
+        bookmarkButton.setOnClickListener {
             mainScope.launch {
-                if(bookmarkVisible) {
+                if (bookmarkVisible) {
                     bookmarkVisible = false
-                    toggleButton.isChecked = bookmarkVisible
-                    updateToggleColor(toggleButton, bookmarkVisible)
+                    bookmarkButton.isChecked = bookmarkVisible
+                    updateToggleColor(bookmarkButton, bookmarkVisible)
                     viewModel.articlesList.collect {
                         adapter.replace(it)
                         adapter.notifyDataSetChanged()
@@ -211,8 +217,8 @@ class OverlayView(val context: Context): OverlayController(context, R.style.AppT
                     }
                 } else {
                     bookmarkVisible = true
-                    toggleButton.isChecked = bookmarkVisible
-                    updateToggleColor(toggleButton, bookmarkVisible)
+                    bookmarkButton.isChecked = bookmarkVisible
+                    updateToggleColor(bookmarkButton, bookmarkVisible)
                     viewModel.bookmarkedArticlesList.collect {
                         adapter.replace(it)
                         adapter.notifyDataSetChanged()
@@ -220,6 +226,15 @@ class OverlayView(val context: Context): OverlayController(context, R.style.AppT
                 }
             }
         }
+
+        rootView.findViewById<MaterialButton>(R.id.header_filter).apply {
+            setOnClickListener {
+                FilterBottomSheet.show(context, true){
+
+                }
+            }
+        }
+
 
         rootView.findViewById<MaterialButton>(R.id.header_settings).apply {
             setOnClickListener {
@@ -304,5 +319,8 @@ class OverlayView(val context: Context): OverlayController(context, R.style.AppT
             MenuItem(R.drawable.ic_gear, R.string.title_settings, 2, "config"),
             MenuItem(R.drawable.ic_power, R.string.action_restart, 2, "restart")
         )
+    }
+    companion object{
+
     }
 }
