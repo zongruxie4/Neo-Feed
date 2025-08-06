@@ -24,6 +24,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -260,6 +261,7 @@ fun ArticleListPage(
                             showBookmarks -> LazyColumn(
                                 state = listState,
                                 verticalArrangement = Arrangement.spacedBy(8.dp),
+                                contentPadding = PaddingValues(8.dp)
                             ) {
                                 items(bookmarked, key = { it.key.id }) { item ->
                                     BookmarkItem(
