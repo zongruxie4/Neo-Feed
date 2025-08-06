@@ -93,7 +93,7 @@ class SourcesRepository(db: NeoFeedDb) {
         return feedsDao.getAllTags()
     }
 
-    fun getAllTagsFlow():  Flow<List<String>> {
+    fun getAllTagsFlow(): Flow<List<String>> {
         return feedsDao.getAllTagsFlow()
             .map { rawTags ->
                 rawTags.flatMap { tagString ->
@@ -102,8 +102,8 @@ class SourcesRepository(db: NeoFeedDb) {
             }
     }
 
-    fun loadFeedIds(): List<Long> {
-        return feedsDao.loadFeedIds()
+    suspend fun loadFeedIds(): List<Long> = withContext(jcc) {
+        feedsDao.loadFeedIds()
     }
 
     @OptIn(FlowPreview::class)
