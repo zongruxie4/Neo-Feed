@@ -19,6 +19,7 @@
 package com.saulhdev.feeder.utils
 
 import android.content.Context
+import android.os.Build
 import android.text.BidiFormatter
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.data.entity.SORT_CHRONOLOGICAL
@@ -156,3 +157,9 @@ fun Context.unicodeWrap(text: String): String =
 
 fun Context.getLocale(): Locale =
     resources.configuration.locales[0]
+
+object Android {
+    fun sdk(sdk: Int): Boolean {
+        return Build.VERSION.SDK_INT >= sdk
+    }
+}
