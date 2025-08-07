@@ -121,6 +121,7 @@ fun ArticleListPage(
     val listState = rememberLazyListState()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
     val showFAB by remember { derivedStateOf { listState.firstVisibleItemIndex > 4 } }
+
     BackHandler(scaffoldState.bottomSheetState.currentValue == SheetValue.Expanded) {
         scope.launch {
             scaffoldState.bottomSheetState.partialExpand()

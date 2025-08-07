@@ -18,7 +18,6 @@
 
 package com.saulhdev.feeder.ui.pages
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -41,6 +40,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester.Companion.FocusRequesterFactory.component1
+import androidx.compose.ui.focus.FocusRequester.Companion.FocusRequesterFactory.component2
 import androidx.compose.ui.focus.FocusRequester.Companion.createRefs
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.key.Key
@@ -69,10 +70,6 @@ fun SourceEditPage(
 
     sourceEditViewModel.setFeedId(feedId)
     val viewState by sourceEditViewModel.viewState.collectAsState()
-
-    BackHandler {
-        onDismiss()
-    }
 
     ViewWithActionBar(
         title = title,
@@ -210,7 +207,7 @@ fun SourceEditView(
                     }
             )
         }
-        
+
         item {
             ComposeSwitchView(
                 titleId = R.string.fetch_full_articles_by_default,
