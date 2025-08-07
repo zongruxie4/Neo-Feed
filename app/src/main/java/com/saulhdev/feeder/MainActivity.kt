@@ -13,6 +13,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.core.net.toUri
@@ -26,6 +27,7 @@ import androidx.work.NetworkType
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.saulhdev.feeder.data.content.FeedPreferences
+import com.saulhdev.feeder.extensions.isDarkTheme
 import com.saulhdev.feeder.manager.models.exportOpml
 import com.saulhdev.feeder.manager.models.importOpml
 import com.saulhdev.feeder.manager.sync.FeedSyncer
@@ -95,9 +97,13 @@ class MainActivity : ComponentActivity(){
         setContent {
             navController = rememberNavController()
             TransparentSystemBars()
-            AppTheme (
+            AppTheme(
+                darkTheme = when (com.saulhdev.feeder.manager.sync.prefs.overlayTheme.getValue()) {
+                    "auto_system" -> isSystemInDarkTheme()
+                    else          -> isDarkTheme
+                },
                 dynamicColor = prefs.dynamicColor.getValue(),
-            ){
+            ) {
                 NavigationManager(navController = navController)
             }
         }
