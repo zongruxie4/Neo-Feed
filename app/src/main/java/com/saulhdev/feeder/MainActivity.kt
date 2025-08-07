@@ -43,7 +43,7 @@ import org.threeten.bp.LocalDateTime
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.resume
 
-class MainActivity : ComponentActivity(){
+class MainActivity : ComponentActivity() {
     private lateinit var navController: NavHostController
     private val prefs: FeedPreferences by inject(FeedPreferences::class.java)
 
@@ -114,9 +114,7 @@ class MainActivity : ComponentActivity(){
 
     @Composable
     fun TransparentSystemBars() {
-        //TODO: get key 2 and key 1 from preferences
-        val isDarkTheme = false // Replace with actual preference retrieval logic
-        DisposableEffect(isDarkTheme, false) {
+        DisposableEffect(isDarkTheme, prefs.overlayTheme.getValue()) {
             enableEdgeToEdge(
                 statusBarStyle = SystemBarStyle.auto(
                     android.graphics.Color.TRANSPARENT,
