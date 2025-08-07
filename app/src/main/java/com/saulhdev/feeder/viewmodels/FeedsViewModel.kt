@@ -19,8 +19,8 @@
 package com.saulhdev.feeder.viewmodels
 
 import androidx.lifecycle.viewModelScope
-import com.saulhdev.feeder.data.repository.SourcesRepository
 import com.saulhdev.feeder.data.db.models.Feed
+import com.saulhdev.feeder.data.repository.SourcesRepository
 import com.saulhdev.feeder.extensions.NeoViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
@@ -40,7 +40,7 @@ class FeedsViewModel(private val feedsRepo: SourcesRepository) : NeoViewModel() 
 
     fun insertFeed(feed: Feed) {
         viewModelScope.launch {
-            feedsRepo.inserSource(feed)
+            feedsRepo.insertSource(feed)
         }
     }
 
