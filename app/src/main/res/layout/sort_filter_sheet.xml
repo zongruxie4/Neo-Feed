@@ -62,6 +62,7 @@
                 android:text="@string/sorting_chronological"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:checked="true"
                 android:checkable="true" />
 
             <com.google.android.material.chip.Chip
@@ -106,7 +107,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:checkable="true"
-                android:checked="false"
+                android:checked="true"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
         </com.google.android.material.button.MaterialButtonToggleGroup>
 
@@ -130,12 +131,10 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/all_sources"
-                android:orientation="horizontal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-            </androidx.recyclerview.widget.RecyclerView>
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/all_sources_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
         <View
             android:layout_width="match_parent"
@@ -157,12 +156,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/all_tags"
-                android:orientation="horizontal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-            </androidx.recyclerview.widget.RecyclerView>
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/all_tags_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
         <LinearLayout
             android:orientation="horizontal"

@@ -20,16 +20,18 @@ package com.saulhdev.feeder.ui.views
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.res.ColorStateList
 import android.util.Log
+import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.content.ContextCompat
+import com.google.android.material.chip.Chip
+import com.google.android.material.chip.ChipGroup
 import com.saulhdev.feeder.R
-import com.saulhdev.feeder.data.adapter.SelectableAdapter
 import com.saulhdev.feeder.data.content.FeedPreferences
-import com.saulhdev.feeder.utils.LinearLayoutManagerWrapper
 import com.saulhdev.feeder.viewmodels.SourceViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -41,11 +43,11 @@ class FilterBottomSheet(
     context: Context,
     private val callback: (Boolean) -> Unit
 ) : FrameLayout(context), View.OnClickListener {
-    private var sourcesAdapter: SelectableAdapter
-    private var tagsAdapter: SelectableAdapter
     private val mainScope = CoroutineScope(Dispatchers.Main)
     private val viewModel: SourceViewModel by inject(SourceViewModel::class.java)
     private val prefs: FeedPreferences by inject(FeedPreferences::class.java)
+    private val sourcesChipGroup: ChipGroup
+    private val tagsChipGroup: ChipGroup
 
    init {
        View.inflate(context, R.layout.sort_filter_sheet, this)
@@ -54,43 +56,80 @@ class FilterBottomSheet(
        findViewById<View>(R.id.btn_apply)?.setOnClickListener(this)
        findViewById<View>(R.id.btn_reset)?.setOnClickListener(this)
 
-       sourcesAdapter = SelectableAdapter(context)
-       tagsAdapter = SelectableAdapter(context)
+       sourcesChipGroup = findViewById(R.id.all_sources_group)
+       tagsChipGroup = findViewById(R.id.all_tags_group)
 
-       findViewById<RecyclerView>(R.id.all_sources).apply {
-           layoutManager = LinearLayoutManagerWrapper(context, LinearLayoutManager.VERTICAL, false)
-           adapter = this@FilterBottomSheet.sourcesAdapter
-       }
        getSources()
-
-       findViewById<RecyclerView>(R.id.all_tags).apply {
-           layoutManager = LinearLayoutManagerWrapper(context, LinearLayoutManager.VERTICAL, false)
-           adapter = this@FilterBottomSheet.tagsAdapter
-       }
        getAllTags()
-
    }
 
     private fun getAllTags() {
         mainScope.launch {
             val selectedTags: ArrayList<String> =
                 prefs.tagsFilter.getValue().toCollection(ArrayList())
-            viewModel.allTags.collect {
-                tagsAdapter.replace(it, selectedTags)
+            viewModel.allTags.collect { tags ->
+                tagsChipGroup.removeAllViews()
+                tags.forEach { tagName ->
+                    val chip = createChip(tagName, selectedTags.contains(tagName)) {
+                        if (it) {
+                            selectedTags.add(tagName)
+                        } else {
+                            selectedTags.remove(tagName)
+                        }
+                    }
+                    tagsChipGroup.addView(chip)
+                }
             }
         }
+    }
+
+    private fun createChip(chipName: String, checked: Boolean, callback: (Boolean) -> Unit): Chip {
+        val chip = Chip(context).apply {
+            text = chipName
+            isCheckable = true
+            isChecked = checked
+            checkedIcon = AppCompatResources.getDrawable(context, R.drawable.ic_check_24)
+            checkedIconTint = getColorStateList()
+            chipIcon = AppCompatResources.getDrawable(context, R.drawable.ic_circle_24dp)
+            chipStrokeColor = getColorStateList()
+            chipStrokeWidth = 1f
+            setOnClickListener {
+                chipIcon = if (isChecked) {
+                    AppCompatResources.getDrawable(context, R.drawable.ic_check_24)
+                } else {
+                    AppCompatResources.getDrawable(context, R.drawable.ic_circle_24dp)
+                }
+            }
+            callback(isChecked)
+        }
+        return chip
     }
 
     private fun getSources() {
         val selectedSources: ArrayList<String> =
             prefs.sourcesFilter.getValue().toCollection(ArrayList())
         mainScope.launch {
-            viewModel.allEnabledFeeds.collect { source ->
-                val sources = source.map { it.title }
-                sourcesAdapter.replace(sources, selectedSources)
+            viewModel.allEnabledFeeds.collect { sourceList ->
+                val sources = sourceList.map { it.title }
+                sources.forEach { sourceName ->
+                    val chip = createChip(sourceName, selectedSources.contains(sourceName)) {
+                        if (it) {
+                            selectedSources.add(sourceName)
+                        } else {
+                            selectedSources.remove(sourceName)
+                        }
+                    }
+                    sourcesChipGroup.addView(chip)
+                }
             }
         }
+    }
 
+    private fun getColorStateList(): ColorStateList? {
+        val colorAttribute = com.google.android.material.R.attr.colorPrimary
+        val typedValue = TypedValue()
+        context.theme.resolveAttribute(colorAttribute, typedValue, true)
+        return ContextCompat.getColorStateList(context, typedValue.resourceId)
     }
 
     override fun onClick(v: View) {
