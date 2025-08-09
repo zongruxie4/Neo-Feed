@@ -85,7 +85,7 @@ class FilterBottomSheet(
         val selectedSources: ArrayList<String> =
             prefs.sourcesFilter.getValue().toCollection(ArrayList())
         mainScope.launch {
-            viewModel.allFeeds.collect { source ->
+            viewModel.allEnabledFeeds.collect { source ->
                 val sources = source.map { it.title }
                 sourcesAdapter.replace(sources, selectedSources)
             }
