@@ -3,28 +3,20 @@ package com.saulhdev.feeder.service
 import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
-import android.graphics.PorterDuff
 import android.graphics.drawable.ColorDrawable
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import android.util.SparseIntArray
 import android.view.View
+import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.view.ContextThemeWrapper
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
-import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
-import androidx.core.graphics.ColorUtils
-import androidx.core.graphics.alpha
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.libraries.gsa.d.a.OverlayController
 import com.google.android.material.button.MaterialButton
-import com.google.android.material.color.MaterialColors
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.saulhdev.feeder.MainActivity
 import com.saulhdev.feeder.NeoApp
@@ -50,7 +42,8 @@ import kotlinx.coroutines.plus
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import org.koin.java.KoinJavaComponent.inject
-import androidx.core.graphics.drawable.toDrawable
+import com.saulhdev.feeder.ui.views.FilterBottomSheet
+import com.saulhdev.feeder.utils.Android
 
 class OverlayView(val context: Context): OverlayController(context, R.style.AppTheme, R.style.WindowTheme),
     KoinComponent,OverlayBridge.OverlayBridgeCallback {
@@ -64,7 +57,6 @@ class OverlayView(val context: Context): OverlayController(context, R.style.AppT
     var bookmarkVisible = false
 
     private lateinit var rootView: View
-    private lateinit var mainContainer: ViewGroup
     private lateinit var adapter: FeedAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -75,8 +67,8 @@ class OverlayView(val context: Context): OverlayController(context, R.style.AppT
             R.layout.overlay_layout,
             this.container
         )
-        mainContainer = rootView.findViewById(R.id.overlay_root)
-        AbstractFloatingView.container = container
+        val mainContainer = rootView.findViewById<ViewGroup>(R.id.overlay_root)
+        AbstractFloatingView.container = mainContainer
         AbstractFloatingView.closeAllOpenViews(context)
 
         themeHolder = OverlayThemeHolder(this)
@@ -126,7 +118,6 @@ class OverlayView(val context: Context): OverlayController(context, R.style.AppT
         }
     }
 
-
     private fun updateTheme(force: String? = null) {
         setTheme(force)
         updateStubUi()
@@ -137,10 +128,10 @@ class OverlayView(val context: Context): OverlayController(context, R.style.AppT
         themeHolder.setTheme(
             when (force ?: prefs.overlayTheme.getValue()) {
                 "auto_system_black" -> CardTheme.getThemeBySystem(context, true)
-                "auto_system" -> CardTheme.getThemeBySystem(context, false)
-                "dark" -> CardTheme.defaultDarkThemeColors
-                "black" -> CardTheme.defaultBlackThemeColors
-                else -> CardTheme.defaultLightThemeColors
+                "auto_system"       -> CardTheme.getThemeBySystem(context, false)
+                "dark"              -> CardTheme.defaultDarkThemeColors
+                "black"             -> CardTheme.defaultBlackThemeColors
+                else                -> CardTheme.defaultLightThemeColors
             }
         )
         setCustomTheme()
