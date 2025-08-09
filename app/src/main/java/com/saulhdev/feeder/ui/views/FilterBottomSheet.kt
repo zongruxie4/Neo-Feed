@@ -24,13 +24,29 @@ import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.saulhdev.feeder.R
+import com.saulhdev.feeder.data.adapter.SelectableAdapter
+import com.saulhdev.feeder.data.content.FeedPreferences
+import com.saulhdev.feeder.utils.LinearLayoutManagerWrapper
+import com.saulhdev.feeder.viewmodels.SourceViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import org.koin.java.KoinJavaComponent.inject
 
 @SuppressLint("ViewConstructor")
 class FilterBottomSheet(
     context: Context,
     private val callback: (Boolean) -> Unit
 ) : FrameLayout(context), View.OnClickListener {
+    private var sourcesAdapter: SelectableAdapter
+    private var tagsAdapter: SelectableAdapter
+    private val mainScope = CoroutineScope(Dispatchers.Main)
+    private val viewModel: SourceViewModel by inject(SourceViewModel::class.java)
+    private val prefs: FeedPreferences by inject(FeedPreferences::class.java)
+
    init {
        View.inflate(context, R.layout.sort_filter_sheet, this)
        val container = findViewById<ViewGroup>(R.id.sort_filter_sheet)
@@ -38,7 +54,44 @@ class FilterBottomSheet(
        findViewById<View>(R.id.btn_apply)?.setOnClickListener(this)
        findViewById<View>(R.id.btn_reset)?.setOnClickListener(this)
 
+       sourcesAdapter = SelectableAdapter()
+       tagsAdapter = SelectableAdapter()
+
+       findViewById<RecyclerView>(R.id.all_sources).apply {
+           layoutManager = LinearLayoutManagerWrapper(context, LinearLayoutManager.VERTICAL, false)
+           adapter = this@FilterBottomSheet.sourcesAdapter
+       }
+       getSources()
+
+       findViewById<RecyclerView>(R.id.all_tags).apply {
+           layoutManager = LinearLayoutManagerWrapper(context, LinearLayoutManager.VERTICAL, false)
+           adapter = this@FilterBottomSheet.tagsAdapter
+       }
+       getAllTags()
+
    }
+
+    private fun getAllTags() {
+        mainScope.launch {
+            val selectedTags: ArrayList<String> =
+                prefs.tagsFilter.getValue().toCollection(ArrayList())
+            viewModel.allTags.collect {
+                tagsAdapter.replace(it, selectedTags)
+            }
+        }
+    }
+
+    private fun getSources() {
+        val selectedSources: ArrayList<String> =
+            prefs.sourcesFilter.getValue().toCollection(ArrayList())
+        mainScope.launch {
+            viewModel.allFeeds.collect { source ->
+                val sources = source.map { it.title }
+                sourcesAdapter.replace(sources, selectedSources)
+            }
+        }
+
+    }
 
     override fun onClick(v: View) {
         Log.d("FilterBottomSheet", "onClick: ${v.id}")

@@ -2,11 +2,9 @@ package com.saulhdev.feeder.ui.views
 
 import android.animation.PropertyValuesHolder
 import android.content.Context
-import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.PathInterpolator
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.anim.Interpolators
 
@@ -74,7 +72,7 @@ class BaseBottomSheet @JvmOverloads constructor(
         const val DEFAULT_CLOSE_DURATION = 200
 
         fun inflate(context: Context): BaseBottomSheet {
-            return View.inflate(context, R.layout.base_bottom_sheet,null) as BaseBottomSheet
+            return inflate(context, R.layout.base_bottom_sheet, null) as BaseBottomSheet
         }
     }
 }

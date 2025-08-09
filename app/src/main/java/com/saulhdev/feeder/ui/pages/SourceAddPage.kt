@@ -64,13 +64,13 @@ import com.saulhdev.feeder.extensions.StableHolder
 import com.saulhdev.feeder.extensions.interceptKey
 import com.saulhdev.feeder.extensions.koinNeoViewModel
 import com.saulhdev.feeder.extensions.safeSemantics
-import com.saulhdev.feeder.ui.navigation.LocalNavController
 import com.saulhdev.feeder.ui.components.ViewWithActionBar
+import com.saulhdev.feeder.ui.navigation.LocalNavController
 import com.saulhdev.feeder.utils.sloppyLinkToStrictURL
 import com.saulhdev.feeder.utils.sloppyLinkToStrictURLNoThrows
-import com.saulhdev.feeder.viewmodels.FeedsViewModel
 import com.saulhdev.feeder.viewmodels.SearchFeedViewModel
 import com.saulhdev.feeder.viewmodels.SearchResult
+import com.saulhdev.feeder.viewmodels.SourceViewModel
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.launch
 import java.net.MalformedURLException
@@ -79,7 +79,7 @@ import java.net.URL
 @Composable
 fun SourceAddPage(
     searchFeedViewModel: SearchFeedViewModel = koinNeoViewModel(),
-    feedsViewModel: FeedsViewModel = koinNeoViewModel(),
+    sourceViewModel: SourceViewModel = koinNeoViewModel(),
 ) {
     val coroutineScope = rememberCoroutineScope()
     val navController = LocalNavController.current
@@ -90,14 +90,14 @@ fun SourceAddPage(
     }
 
     BackHandler {
-        feedsViewModel.saveFeed(results)
+        sourceViewModel.saveFeed(results)
         navController.popBackStack()
     }
 
     ViewWithActionBar(
         title = title,
         onBackAction = {
-            feedsViewModel.saveFeed(results)
+            sourceViewModel.saveFeed(results)
             navController.popBackStack()
         }
     ) { paddingValues ->
@@ -151,7 +151,7 @@ fun SourceAddPage(
     }
 }
 
-fun FeedsViewModel.saveFeed(results: List<SearchResult>) {
+fun SourceViewModel.saveFeed(results: List<SearchResult>) {
     results.forEach { result ->
         if (result.isError) {
             return@forEach

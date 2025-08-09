@@ -18,12 +18,10 @@ import com.saulhdev.feeder.extensions.restartApp
 import com.saulhdev.feeder.manager.sync.SyncRestClient
 import com.saulhdev.feeder.service.OverlayBridge
 import com.saulhdev.feeder.utils.ApplicationCoroutineScope
-import com.saulhdev.feeder.utils.Utilities
 import com.saulhdev.feeder.viewmodels.ArticleViewModel
-import com.saulhdev.feeder.viewmodels.ArticlesViewModel
-import com.saulhdev.feeder.viewmodels.SourceEditViewModel
-import com.saulhdev.feeder.viewmodels.FeedsViewModel
 import com.saulhdev.feeder.viewmodels.SearchFeedViewModel
+import com.saulhdev.feeder.viewmodels.SourceEditViewModel
+import com.saulhdev.feeder.viewmodels.SourceViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.koin.android.ext.koin.androidContext
@@ -51,8 +49,8 @@ class NeoApp: MultiDexApplication(), KoinStartup {
         }
         viewModelOf(::SourceEditViewModel)
         viewModelOf(::SearchFeedViewModel)
-        viewModelOf(::FeedsViewModel)
-        viewModelOf(::ArticlesViewModel)
+        viewModelOf(::ArticleViewModel)
+        viewModelOf(::SourceViewModel)
         viewModelOf(::ArticleViewModel)
     }
 

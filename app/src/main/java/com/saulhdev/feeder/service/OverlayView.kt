@@ -32,8 +32,10 @@ import com.saulhdev.feeder.ui.theme.CardTheme
 import com.saulhdev.feeder.ui.theme.OverlayThemeHolder
 import com.saulhdev.feeder.ui.views.AbstractFloatingView
 import com.saulhdev.feeder.ui.views.DialogMenu
+import com.saulhdev.feeder.ui.views.FilterBottomSheet
+import com.saulhdev.feeder.utils.Android
 import com.saulhdev.feeder.utils.LinearLayoutManagerWrapper
-import com.saulhdev.feeder.viewmodels.ArticlesViewModel
+import com.saulhdev.feeder.viewmodels.ArticleViewModel
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -42,15 +44,13 @@ import kotlinx.coroutines.plus
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import org.koin.java.KoinJavaComponent.inject
-import com.saulhdev.feeder.ui.views.FilterBottomSheet
-import com.saulhdev.feeder.utils.Android
 
 class OverlayView(val context: Context): OverlayController(context, R.style.AppTheme, R.style.WindowTheme),
     KoinComponent,OverlayBridge.OverlayBridgeCallback {
     private lateinit var themeHolder: OverlayThemeHolder
     private val syncScope = CoroutineScope(Dispatchers.IO) + CoroutineName("NeoFeedSync")
     private val mainScope = CoroutineScope(Dispatchers.Main)
-    private val viewModel: ArticlesViewModel by inject(ArticlesViewModel::class.java)
+    private val viewModel: ArticleViewModel by inject(ArticleViewModel::class.java)
     private val articles: SyncRestClient by inject(SyncRestClient::class.java)
     val prefs: FeedPreferences by inject()
 

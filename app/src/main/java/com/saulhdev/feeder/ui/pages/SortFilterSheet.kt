@@ -25,7 +25,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.rememberNestedScrollInteropConnection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.LayoutDirection
@@ -43,7 +42,8 @@ import com.saulhdev.feeder.ui.icons.phosphor.ArrowUUpLeft
 import com.saulhdev.feeder.ui.icons.phosphor.Check
 import com.saulhdev.feeder.ui.icons.phosphor.SortAscending
 import com.saulhdev.feeder.ui.icons.phosphor.SortDescending
-import com.saulhdev.feeder.viewmodels.ArticlesViewModel
+import com.saulhdev.feeder.viewmodels.ArticleViewModel
+import com.saulhdev.feeder.viewmodels.SourceViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.koin.compose.koinInject
 
@@ -53,14 +53,16 @@ import org.koin.compose.koinInject
 )
 @Composable
 fun SortFilterSheet(
-    viewModel: ArticlesViewModel = koinNeoViewModel(),
+    viewModel: ArticleViewModel = koinNeoViewModel(),
+    sourcesViewModel: SourceViewModel = koinNeoViewModel(),
     prefs: FeedPreferences = koinInject(),
     onDismiss: () -> Unit,
 ) {
+    val articlesViewModel = koinNeoViewModel<ArticleViewModel>()
     val nestedScrollConnection = rememberNestedScrollInteropConnection()
     val activeSources by viewModel.activeFeeds.collectAsState()
-    val activeTags by viewModel.getAllTags.collectAsState()
-    val sortFilterModel by viewModel.prefSortFilter.collectAsState()
+    val activeTags by sourcesViewModel.allTags.collectAsState()
+    val sortFilterModel by articlesViewModel.prefSortFilter.collectAsState()
 
     var sortPrefVar by prefs.sortingFilter
     var sortAscPrefVar by prefs.sortingAsc

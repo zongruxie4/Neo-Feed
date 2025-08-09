@@ -67,7 +67,7 @@ import com.saulhdev.feeder.ui.icons.phosphor.Plus
 import com.saulhdev.feeder.ui.navigation.LocalNavController
 import com.saulhdev.feeder.ui.navigation.NavRoute
 import com.saulhdev.feeder.utils.ApplicationCoroutineScope
-import com.saulhdev.feeder.viewmodels.FeedsViewModel
+import com.saulhdev.feeder.viewmodels.SourceViewModel
 import kotlinx.coroutines.launch
 import okhttp3.internal.toLongOrDefault
 import org.koin.java.KoinJavaComponent.inject
@@ -76,7 +76,7 @@ import java.time.LocalDateTime
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
 fun SourceListPage(
-    viewModel: FeedsViewModel = koinNeoViewModel(),
+    viewModel: SourceViewModel = koinNeoViewModel(),
 ) {
     val navController = LocalNavController.current
     val scope = rememberCoroutineScope()

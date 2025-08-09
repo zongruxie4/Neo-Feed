@@ -50,6 +50,7 @@ import com.saulhdev.feeder.utils.htmlFormattedText
 import com.saulhdev.feeder.utils.unicodeWrap
 import com.saulhdev.feeder.utils.urlEncode
 import com.saulhdev.feeder.viewmodels.ArticleViewModel
+import com.saulhdev.feeder.viewmodels.SourceViewModel
 import org.threeten.bp.ZonedDateTime
 import org.threeten.bp.format.DateTimeFormatter
 import org.threeten.bp.format.FormatStyle
@@ -59,12 +60,13 @@ import java.util.Locale
 fun ArticlePage(
     articleId: Long,
     viewModel: ArticleViewModel = koinNeoViewModel(),
+    sourceViewModel: SourceViewModel = koinNeoViewModel(),
     onDismiss: (() -> Unit)? = null,
 ) {
     val context = LocalContext.current
     val activity = LocalActivity.current
     val article by viewModel.articleById(articleId).collectAsState(initial = null)
-    val feed by viewModel.getFeedById(article?.feedId ?: 0).collectAsState(initial = null)
+    val feed by sourceViewModel.getFeedById(article?.feedId ?: 0).collectAsState(initial = null)
 
     val showFullArticle by remember {
         derivedStateOf { feed?.fullTextByDefault ?: false }
