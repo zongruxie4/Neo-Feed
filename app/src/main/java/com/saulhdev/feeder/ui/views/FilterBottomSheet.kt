@@ -111,6 +111,7 @@ class FilterBottomSheet(
         mainScope.launch {
             viewModel.allEnabledFeeds.collect { sourceList ->
                 val sources = sourceList.map { it.title }
+                sourcesChipGroup.removeAllViews()
                 sources.forEach { sourceName ->
                     val chip = createChip(sourceName, selectedSources.contains(sourceName)) {
                         if (it) {
