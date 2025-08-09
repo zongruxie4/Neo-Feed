@@ -2,24 +2,33 @@ package com.saulhdev.feeder.ui.views;
 
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 
+import static com.saulhdev.feeder.anim.Interpolators.scrollInterpolatorForVelocity;
+
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
+import android.animation.ValueAnimator;
 import android.content.Context;
+import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.util.Property;
+import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.Interpolator;
 import android.widget.FrameLayout;
+
+import com.saulhdev.feeder.anim.Interpolators;
+import com.saulhdev.feeder.touch.BaseSwipeDetector;
+import com.saulhdev.feeder.touch.SingleAxisSwipeDetector;
+import com.saulhdev.feeder.utils.Utilities;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AbstractSlideInView extends AbstractBottomSheet {
+public abstract class AbstractSlideInView extends AbstractFloatingView implements SingleAxisSwipeDetector.Listener {
     protected static final Property<AbstractSlideInView, Float> TRANSLATION_SHIFT =
-            new Property<AbstractSlideInView, Float>(Float.class, "translationShift") {
+            new Property<>(Float.class, "translationShift") {
 
                 @Override
                 public Float get(AbstractSlideInView view) {
@@ -34,48 +43,131 @@ public abstract class AbstractSlideInView extends AbstractBottomSheet {
 
     protected static final float TRANSLATION_SHIFT_CLOSED = 1f;
     protected static final float TRANSLATION_SHIFT_OPENED = 0f;
+    protected static final int DEFAULT_DURATION = 300;
+    protected final SingleAxisSwipeDetector mSwipeDetector;
     protected final ObjectAnimator mOpenCloseAnimator;
-    protected Interpolator mScrollInterpolator;
     protected float mTranslationShift = TRANSLATION_SHIFT_CLOSED;
-    protected List<OnCloseListener> mOnCloseListeners = new ArrayList<>();
     protected View mContent;
     protected final View mColorScrim;
+    protected Interpolator mScrollInterpolator;
+    private long mScrollDuration;
+    protected boolean mNoIntercept;
+    protected List<OnCloseListener> mOnCloseListeners = new ArrayList<>();
+    private Rect mHitRect =new Rect();
+    private float[] mTmpXY = new float[2];
 
     public AbstractSlideInView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-
-        mScrollInterpolator =  new Interpolator() {
-            @Override
-            public float getInterpolation(float t) {
-                t -= 1.0f;
-                return t*t*t + 1;
-            }
-        };
+        mScrollInterpolator = Interpolators.SCROLL_CUBIC;
+        mScrollDuration = DEFAULT_DURATION;
+        mSwipeDetector = new SingleAxisSwipeDetector(context, this, SingleAxisSwipeDetector.VERTICAL);
 
         mOpenCloseAnimator = ObjectAnimator.ofPropertyValuesHolder(this);
         mOpenCloseAnimator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
+                mSwipeDetector.finishedScrolling();
             }
         });
         int scrimColor = getScrimColor(context);
         mColorScrim = scrimColor != -1 ? createColorScrim(context, scrimColor) : null;
     }
 
+    protected void attachToContainer() {
+        if (mColorScrim != null) {
+            container.addView(mColorScrim);
+        }
+        container.addView(this);
+    }
+
     protected int getScrimColor(Context context) {
         return -1;
     }
 
-    protected View createColorScrim(Context context, int bgColor) {
-        View view = new View(context);
-        view.forceHasOverlappingRendering(false);
-        view.setBackgroundColor(bgColor);
-
-        FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT);
-        view.setLayoutParams(lp);
-
-        return view;
+    protected void setTranslationShift(float translationShift) {
+        mTranslationShift = translationShift;
+        mContent.setTranslationY(mTranslationShift * mContent.getHeight());
+        if (mColorScrim != null) {
+            mColorScrim.setAlpha(1 - mTranslationShift);
+        }
     }
+
+
+    @Override
+    public boolean onControllerInterceptTouchEvent(MotionEvent ev) {
+        if (mNoIntercept) {
+            return false;
+        }
+
+        int directionsToDetectScroll = mSwipeDetector.isIdleState()
+                ? SingleAxisSwipeDetector.DIRECTION_NEGATIVE : 0;
+        mSwipeDetector.setDetectableScrollConditions(
+                directionsToDetectScroll, false);
+        mSwipeDetector.onTouchEvent(ev);
+        return mSwipeDetector.isDraggingOrSettling()
+                || !isEventOverView(mContent, ev);
+    }
+    private boolean isEventOverView(View view, MotionEvent ev) {
+        getDescendantRectRelativeToSelf(view, mHitRect);
+        return mHitRect.contains((int)ev.getX(), (int)ev.getY());
+    }
+    public float getDescendantRectRelativeToSelf(View descendant, Rect r) {
+        mTmpXY[0] = 0f;
+        mTmpXY[1] = 0f;
+        float scale = getDescendantCoordRelativeToSelf(descendant, mTmpXY);
+
+        r.set((int) mTmpXY[0], (int) mTmpXY[1],
+                (int) (mTmpXY[0] + scale * descendant.getMeasuredWidth()),
+                (int) (mTmpXY[1] + scale * descendant.getMeasuredHeight()));
+        return scale;
+    }
+
+    private float getDescendantCoordRelativeToSelf(View descendant, float[] coord) {
+        return getDescendantCoordRelativeToSelf(descendant, coord, false);
+    }
+
+    public float getDescendantCoordRelativeToSelf(View descendant, float[] coord,
+                                                  boolean includeRootScroll) {
+        return Utilities.getDescendantCoordRelativeToAncestor(descendant, this,
+                coord, includeRootScroll);
+    }
+
+    private boolean isOpeningAnimationRunning() {
+        return mIsOpen && mOpenCloseAnimator.isRunning();
+    }
+
+    @Override
+    public void onDragStart(boolean start, float startDisplacement) {
+    }
+
+    @Override
+    public boolean onDrag(float displacement) {
+        float range = mContent.getHeight();
+        displacement = Utilities.boundToRange(displacement, 0, range);
+        setTranslationShift(displacement / range);
+        return true;
+    }
+
+
+    @Override
+    public void onDragEnd(float velocity) {
+        if ((mSwipeDetector.isFling(velocity) && velocity > 0) || mTranslationShift > 0.5f) {
+            mScrollInterpolator = scrollInterpolatorForVelocity(velocity);
+            mOpenCloseAnimator.setDuration(BaseSwipeDetector.calculateDuration(
+                    velocity, TRANSLATION_SHIFT_CLOSED - mTranslationShift));
+            mScrollDuration = BaseSwipeDetector.calculateDuration(
+                    velocity, TRANSLATION_SHIFT_CLOSED - mTranslationShift);
+            close(true);
+        } else {
+            mOpenCloseAnimator.setValues(PropertyValuesHolder.ofFloat(
+                    TRANSLATION_SHIFT, TRANSLATION_SHIFT_OPENED));
+            mOpenCloseAnimator.setDuration(
+                            BaseSwipeDetector.calculateDuration(velocity, mTranslationShift))
+                    .setInterpolator(Interpolators.DEACCEL);
+            mOpenCloseAnimator.start();
+        }
+    }
+
     protected void handleClose(boolean animate, long defaultDuration) {
         if (!mIsOpen) {
             return;
@@ -96,15 +188,8 @@ public abstract class AbstractSlideInView extends AbstractBottomSheet {
         });
 
         mOpenCloseAnimator.setInterpolator(mScrollInterpolator);
+        mOpenCloseAnimator.setDuration(mScrollDuration);
         mOpenCloseAnimator.start();
-    }
-
-    protected void setTranslationShift(float translationShift) {
-        mTranslationShift = translationShift;
-        mContent.setTranslationY(mTranslationShift * mContent.getHeight());
-        if (mColorScrim != null) {
-            mColorScrim.setAlpha(1 - mTranslationShift);
-        }
     }
 
     protected void onCloseComplete() {
@@ -116,7 +201,16 @@ public abstract class AbstractSlideInView extends AbstractBottomSheet {
         mOnCloseListeners.forEach(OnCloseListener::onSlideInViewClosed);
     }
 
+    protected View createColorScrim(Context context, int bgColor) {
+        View view = new View(context);
+        view.forceHasOverlappingRendering(false);
+        view.setBackgroundColor(bgColor);
 
+        FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT);
+        view.setLayoutParams(lp);
+
+        return view;
+    }
 
     /**
      * Interface to report that the {@link AbstractSlideInView} has closed.

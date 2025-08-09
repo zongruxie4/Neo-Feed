@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
@@ -30,7 +31,7 @@ import com.saulhdev.feeder.ui.feed.FeedAdapter
 import com.saulhdev.feeder.ui.navigation.Routes
 import com.saulhdev.feeder.ui.theme.CardTheme
 import com.saulhdev.feeder.ui.theme.OverlayThemeHolder
-import com.saulhdev.feeder.ui.views.AbstractBottomSheet
+import com.saulhdev.feeder.ui.views.AbstractFloatingView
 import com.saulhdev.feeder.ui.views.DialogMenu
 import com.saulhdev.feeder.ui.views.FilterBottomSheet
 import com.saulhdev.feeder.utils.LinearLayoutManagerWrapper
@@ -56,6 +57,7 @@ class OverlayView(val context: Context): OverlayController(context, R.style.AppT
     var bookmarkVisible = false
 
     private lateinit var rootView: View
+    private lateinit var mainContainer: ViewGroup
     private lateinit var adapter: FeedAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,8 +68,9 @@ class OverlayView(val context: Context): OverlayController(context, R.style.AppT
             R.layout.overlay_layout,
             this.container
         )
-        val container = rootView.findViewById<ViewGroup>(R.id.overlay_root)
-        AbstractBottomSheet.container = container
+        mainContainer = rootView.findViewById(R.id.overlay_root)
+        AbstractFloatingView.container = container
+        AbstractFloatingView.closeAllOpenViews(context)
 
         themeHolder = OverlayThemeHolder(this)
 
@@ -75,7 +78,6 @@ class OverlayView(val context: Context): OverlayController(context, R.style.AppT
         initHeader()
         refreshNotifications()
 
-        AbstractBottomSheet.closeAllOpenViews(context)
         syncScope.launch {
             viewModel.articlesList.collect {
                 mainScope.launch {
@@ -100,6 +102,11 @@ class OverlayView(val context: Context): OverlayController(context, R.style.AppT
             }
         }
         NeoApp.bridge.setCallback(this)
+    }
+
+    override fun closePanelIfNeeded(flags: Int) {
+        super.closePanelIfNeeded(flags)
+        AbstractFloatingView.closeAllOpenViews(context)
     }
 
     private fun updateTheme(force: String? = null) {

@@ -4,8 +4,11 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.res.Resources
+import android.view.View
+import kotlin.math.max
+import kotlin.math.min
 import kotlin.system.exitProcess
-
 
 class Utilities {
     fun restartApp(context: Context) {
@@ -39,5 +42,63 @@ class Utilities {
 
 
         exitProcess(0)
+    }
+
+
+    companion object{
+        @JvmStatic
+        fun isRtl(res: Resources): Boolean {
+            return res.configuration.layoutDirection == View.LAYOUT_DIRECTION_RTL
+        }
+        @JvmStatic
+        fun boundToRange(value: Float, lowerBound: Float, upperBound: Float): Float {
+            return max(lowerBound, min(value, upperBound))
+        }
+        @JvmStatic
+        fun getDescendantCoordRelativeToAncestor(
+            descendant: View, ancestor: View, coord: FloatArray, includeRootScroll: Boolean
+        ): Float {
+            return getDescendantCoordRelativeToAncestor(
+                descendant, ancestor, coord, includeRootScroll,
+                false
+            )
+        }
+        fun getDescendantCoordRelativeToAncestor(
+            descendant: View,
+            ancestor: View,
+            coord: FloatArray,
+            includeRootScroll: Boolean,
+            ignoreTransform: Boolean
+        ): Float {
+            var scale = 1.0f
+            var v: View? = descendant
+            while (v != ancestor && v != null) {
+                // For TextViews, scroll has a meaning which relates to the text position
+                // which is very strange... ignore the scroll.
+                if (v != descendant || includeRootScroll) {
+                    offsetPoints(coord, -v.scrollX.toFloat(), -v.scrollY.toFloat())
+                }
+
+                if (!ignoreTransform) {
+                    v.matrix.mapPoints(coord)
+                }
+
+                offsetPoints(coord, v.left.toFloat(), v.top.toFloat())
+                scale *= v.scaleX
+
+                v = v.parent as? View
+            }
+            return scale
+        }
+
+
+        fun offsetPoints(points: FloatArray, offsetX: Float, offsetY: Float) {
+            var i = 0
+            while (i < points.size) {
+                points[i] += offsetX
+                points[i + 1] += offsetY
+                i += 2
+            }
+        }
     }
 }

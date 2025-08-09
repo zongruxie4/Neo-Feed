@@ -21,4 +21,5 @@
         android:layout_gravity="bottom"
         android:background="?attr/bottomSheetNavBarColor"
         android:focusable="false" />
+
 </com.saulhdev.feeder.ui.views.BaseBottomSheet>

@@ -8,13 +8,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.PathInterpolator
 import com.saulhdev.feeder.R
+import com.saulhdev.feeder.anim.Interpolators
 
 class BaseBottomSheet @JvmOverloads constructor(
     context: Context?,
     attrs: AttributeSet?,
     defStyleAttr: Int = 0
 ) : AbstractSlideInView(context, attrs, defStyleAttr){
-    private val mInsets: Rect = Rect()
     init {
         setWillNotDraw(false)
         mContent = this
@@ -34,6 +34,7 @@ class BaseBottomSheet @JvmOverloads constructor(
 
     override fun onCloseComplete() {
         super.onCloseComplete()
+        clearNavBarColor()
     }
 
     private fun animateOpen(animate: Boolean) {
@@ -41,22 +42,32 @@ class BaseBottomSheet @JvmOverloads constructor(
             return
         }
         mIsOpen = true
+        setupNavBarColor()
         mOpenCloseAnimator.setValues(
             PropertyValuesHolder.ofFloat(TRANSLATION_SHIFT, TRANSLATION_SHIFT_OPENED)
         )
-        mOpenCloseAnimator.interpolator = PathInterpolator(0.4f, 0f, 0.2f, 1f)
+        mOpenCloseAnimator.interpolator = Interpolators.FAST_OUT_SLOW_IN
         if (!animate) {
             mOpenCloseAnimator.duration = 0
         }
         mOpenCloseAnimator.start()
     }
 
+    private fun clearNavBarColor() {
+        //TODO reset to previous state instead of always light
+    }
+
+    private fun setupNavBarColor() {
+        //TODO set to dark
+    }
+
+
     override fun handleClose(animate: Boolean) {
         handleClose(animate, DEFAULT_CLOSE_DURATION.toLong())
     }
 
     override fun isOfType(type: Int): Boolean {
-        return type and TYPE_FILTER_SHEET == 0
+        return type and TYPE_FILTER_SHEET == 1
     }
 
     companion object{
