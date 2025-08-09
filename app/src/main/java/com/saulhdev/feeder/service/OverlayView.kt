@@ -6,7 +6,6 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
-import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
@@ -32,7 +31,6 @@ import com.saulhdev.feeder.ui.navigation.Routes
 import com.saulhdev.feeder.ui.theme.CardTheme
 import com.saulhdev.feeder.ui.theme.OverlayThemeHolder
 import com.saulhdev.feeder.ui.views.AbstractFloatingView
-import com.saulhdev.feeder.ui.views.AbstractFloatingView.TYPE_FILTER_SHEET
 import com.saulhdev.feeder.ui.views.DialogMenu
 import com.saulhdev.feeder.ui.views.FilterBottomSheet
 import com.saulhdev.feeder.utils.LinearLayoutManagerWrapper
@@ -45,6 +43,7 @@ import kotlinx.coroutines.plus
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import org.koin.java.KoinJavaComponent.inject
+import androidx.core.graphics.drawable.toDrawable
 
 class OverlayView(val context: Context): OverlayController(context, R.style.AppTheme, R.style.WindowTheme),
     KoinComponent,OverlayBridge.OverlayBridgeCallback {
@@ -208,9 +207,8 @@ class OverlayView(val context: Context): OverlayController(context, R.style.AppT
             ContextCompat.getColor(context, R.color.toggle_checked),
             64
         )
-        val uncheckedColor = Color.TRANSPARENT
         button.backgroundTintList =
-            ColorStateList.valueOf(if (isChecked) checkedColor else uncheckedColor)
+            ColorStateList.valueOf(if (isChecked) checkedColor else 0)
 
     }
 
@@ -297,7 +295,7 @@ class OverlayView(val context: Context): OverlayController(context, R.style.AppT
         val bgColor = themeHolder.currentTheme.get(CardTheme.Colors.OVERLAY_BG.ordinal)
         val color =
             (prefs.overlayTransparency.getValue() * 255.0f).toInt() shl 24 or (bgColor and 0x00ffffff)
-        getWindow().setBackgroundDrawable(ColorDrawable(color))
+        getWindow().setBackgroundDrawable(color.toDrawable())
     }
 
     override fun onClientMessage(action: String) {
@@ -333,8 +331,5 @@ class OverlayView(val context: Context): OverlayController(context, R.style.AppT
             MenuItem(R.drawable.ic_gear, R.string.title_settings, 2, "config"),
             MenuItem(R.drawable.ic_power, R.string.action_restart, 2, "restart")
         )
-    }
-    companion object{
-
     }
 }
