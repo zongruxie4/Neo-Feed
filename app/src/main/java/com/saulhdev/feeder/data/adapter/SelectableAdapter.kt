@@ -2,11 +2,9 @@ package com.saulhdev.feeder.data.adapter
 
 import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.chip.Chip
-import com.saulhdev.feeder.R
+import com.saulhdev.feeder.databinding.ItemListSelectableBinding
 
 class SelectableAdapter(val context: Context) :
     RecyclerView.Adapter<SelectableAdapter.ViewHolder>() {
@@ -53,30 +51,29 @@ class SelectableAdapter(val context: Context) :
         selectedPositions.forEach { notifyItemChanged(it) }
     }
 
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_list_selectable, parent, false)
-        return ViewHolder(view)
+        val binding = ItemListSelectableBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent,
+            false
+        )
+        return ViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = items[position]
-        holder.chip.text = item
-        val isSelected = selectedItems.contains(item)
-        holder.chip.isChecked = isSelected
-
+        holder.bind(item, selectedItems.contains(item))
         holder.itemView.setOnClickListener {
-            if (selectedItems.contains(item)) {
-                selectedItems.remove(item)
-            } else {
-                selectedItems.add(item)
-            }
+            toggleSelection(item)
             notifyItemChanged(position)
         }
     }
 
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val chip: Chip = itemView.findViewById(R.id.chip_item)
+    class ViewHolder(private val binding: ItemListSelectableBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        fun bind(item: String, isSelected: Boolean) {
+            binding.chipItem.text = item
+            binding.chipItem.isChecked = isSelected
+        }
     }
 }
