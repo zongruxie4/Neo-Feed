@@ -32,6 +32,7 @@ import com.saulhdev.feeder.ui.navigation.Routes
 import com.saulhdev.feeder.ui.theme.CardTheme
 import com.saulhdev.feeder.ui.theme.OverlayThemeHolder
 import com.saulhdev.feeder.ui.views.AbstractFloatingView
+import com.saulhdev.feeder.ui.views.AbstractFloatingView.TYPE_FILTER_SHEET
 import com.saulhdev.feeder.ui.views.DialogMenu
 import com.saulhdev.feeder.ui.views.FilterBottomSheet
 import com.saulhdev.feeder.utils.LinearLayoutManagerWrapper
@@ -109,6 +110,17 @@ class OverlayView(val context: Context): OverlayController(context, R.style.AppT
         AbstractFloatingView.closeAllOpenViews(context)
     }
 
+    override fun onBackPressed(){
+        if (AbstractFloatingView.isAnyOpen()) {
+            AbstractFloatingView.closeAllOpenViews(context)
+            return
+        }
+        else {
+            super.onBackPressed()
+        }
+    }
+
+
     private fun updateTheme(force: String? = null) {
         setTheme(force)
         updateStubUi()
@@ -126,11 +138,6 @@ class OverlayView(val context: Context): OverlayController(context, R.style.AppT
             }
         )
         setCustomTheme()
-    }
-
-    override fun onBackPressed() {
-        super.onBackPressed()
-
     }
 
     private fun updateStubUi() {
