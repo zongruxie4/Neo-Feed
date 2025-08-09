@@ -18,21 +18,23 @@
 
 package com.saulhdev.feeder.viewmodels
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
+import com.saulhdev.feeder.data.content.FeedPreferences
+import com.saulhdev.feeder.data.entity.FeedItem
 import com.saulhdev.feeder.data.entity.SORT_CHRONOLOGICAL
 import com.saulhdev.feeder.data.entity.SORT_SOURCE
 import com.saulhdev.feeder.data.entity.SORT_TITLE
 import com.saulhdev.feeder.data.entity.SortFilterModel
-import com.saulhdev.feeder.data.repository.SourcesRepository
-import com.saulhdev.feeder.data.content.FeedPreferences
-import com.saulhdev.feeder.data.entity.FeedItem
 import com.saulhdev.feeder.data.repository.ArticleRepository
+import com.saulhdev.feeder.data.repository.SourcesRepository
 import com.saulhdev.feeder.extensions.NeoViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -64,7 +66,7 @@ class ArticlesViewModel(
         prefs.sortingAsc.get(),
         prefs.sourcesFilter.get(),
         prefs.tagsFilter.get()
-    ) { sort, sortAsc, sources, tags->
+    ) { sort, sortAsc, sources, tags ->
         SortFilterModel(sort, sortAsc, sources, tags)
     }
         .stateIn(
@@ -82,16 +84,45 @@ class ArticlesViewModel(
             true
         )
 
-    fun getArticles(): Flow<List<FeedItem>> {
-        return if(prefs.tagsFilter.getValue().any()){
-            articleRepo.getFeedArticles(prefs.tagsFilter.getValue())
-        }else{
-            articleRepo.getFeedArticles()
+    val tagsFeeds = prefs.tagsFilter.get()
+        .flatMapLatest { tags ->
+            articleRepo.getFeedByTags(tags)
+        }
+
+    val tagsArticles = combine(
+        articleRepo.getEnabledFeedArticles(),
+        tagsFeeds,
+    ) { articles, feeds ->
+        articles.mapNotNull { article ->
+            feeds.find { it.id == article.feedId }?.let { feed ->
+                FeedItem(article, feed)
+            }
         }
     }
 
+    val allArticles = combine(
+        articleRepo.getEnabledFeedArticles(),
+        activeFeeds
+    ) { articles, feeds ->
+        Log.d(
+            "ArticleRepository",
+            "getFeedArticles: ${articles.size} articles, ${feeds.size} feeds"
+        )
+        articles.mapNotNull { article ->
+            feeds.find { it.id == article.feedId }?.let { feed ->
+                FeedItem(article, feed)
+            }
+        }
+    }
+
+    val articles = prefs.tagsFilter.get()
+        .flatMapLatest { tags ->
+            if (tags.any()) tagsArticles
+            else allArticles
+        }
+
     val articlesList: StateFlow<List<FeedItem>> = combine(
-        getArticles(),
+        articles,
         prefSortFilter,
         prefs.removeDuplicates.get(),
     ) { articles, sfm, removeDuplicate ->
@@ -107,19 +138,19 @@ class ArticlesViewModel(
             .let {
                 when {
                     sfm.sort == SORT_CHRONOLOGICAL && !sfm.sortAsc
-                        -> it.sortedByDescending { it.time } // default
+                         -> it.sortedByDescending { it.time } // default
 
                     sfm.sort == SORT_TITLE && sfm.sortAsc
-                        -> it.sortedBy { it.content.title }
+                         -> it.sortedBy { it.content.title }
 
                     sfm.sort == SORT_TITLE && !sfm.sortAsc
-                        -> it.sortedByDescending { it.content.title }
+                         -> it.sortedByDescending { it.content.title }
 
                     sfm.sort == SORT_SOURCE && sfm.sortAsc
-                        -> it.sortedBy { it.title }
+                         -> it.sortedBy { it.title }
 
                     sfm.sort == SORT_SOURCE && !sfm.sortAsc
-                        -> it.sortedByDescending { it.title }
+                         -> it.sortedByDescending { it.title }
 
                     else -> it.sortedBy { it.time }
                 }
@@ -140,19 +171,19 @@ class ArticlesViewModel(
             .let {
                 when {
                     sfm.sort == SORT_CHRONOLOGICAL && !sfm.sortAsc
-                        -> it.sortedByDescending { it.key.pubDate } // default
+                         -> it.sortedByDescending { it.key.pubDate } // default
 
                     sfm.sort == SORT_TITLE && sfm.sortAsc
-                        -> it.sortedBy { it.key.title }
+                         -> it.sortedBy { it.key.title }
 
                     sfm.sort == SORT_TITLE && !sfm.sortAsc
-                        -> it.sortedByDescending { it.key.title }
+                         -> it.sortedByDescending { it.key.title }
 
                     sfm.sort == SORT_SOURCE && sfm.sortAsc
-                        -> it.sortedBy { it.value.title }
+                         -> it.sortedBy { it.value.title }
 
                     sfm.sort == SORT_SOURCE && !sfm.sortAsc
-                        -> it.sortedByDescending { it.value.title }
+                         -> it.sortedByDescending { it.value.title }
 
                     else -> it.sortedBy { it.key.pubDate }
                 }
@@ -165,8 +196,24 @@ class ArticlesViewModel(
             emptyList()
         )
 
-    val bookmarkedArticlesList: StateFlow<List<FeedItem>> = combine(
+    val bookmarkedArticles: Flow<List<FeedItem>> = combine(
         articleRepo.getBookmarkedArticles(),
+        activeFeeds
+    ) { articles, feeds ->
+        articles.mapNotNull { article ->
+            feeds.find { it.id == article.feedId }?.let { feed ->
+                FeedItem(article, feed)
+            }
+        }
+    }
+        .stateIn(
+            ioScope,
+            SharingStarted.Eagerly,
+            emptyList()
+        )
+
+    val bookmarkedArticlesList: StateFlow<List<FeedItem>> = combine(
+        bookmarkedArticles,
         prefSortFilter,
         prefs.removeDuplicates.get(),
     ) { articles, sfm, removeDuplicate ->
@@ -179,19 +226,19 @@ class ArticlesViewModel(
             .let {
                 when {
                     sfm.sort == SORT_CHRONOLOGICAL && !sfm.sortAsc
-                        -> it.sortedByDescending { it.time } // default
+                         -> it.sortedByDescending { it.time } // default
 
                     sfm.sort == SORT_TITLE && sfm.sortAsc
-                        -> it.sortedBy { it.content.title }
+                         -> it.sortedBy { it.content.title }
 
                     sfm.sort == SORT_TITLE && !sfm.sortAsc
-                        -> it.sortedByDescending { it.content.title }
+                         -> it.sortedByDescending { it.content.title }
 
                     sfm.sort == SORT_SOURCE && sfm.sortAsc
-                        -> it.sortedBy { it.title }
+                         -> it.sortedBy { it.title }
 
                     sfm.sort == SORT_SOURCE && !sfm.sortAsc
-                        -> it.sortedByDescending { it.title }
+                         -> it.sortedByDescending { it.title }
 
                     else -> it.sortedBy { it.time }
                 }
@@ -202,7 +249,6 @@ class ArticlesViewModel(
             SharingStarted.Eagerly,
             emptyList()
         )
-
 
     val isSyncing = feedsRepo.isSyncing
 

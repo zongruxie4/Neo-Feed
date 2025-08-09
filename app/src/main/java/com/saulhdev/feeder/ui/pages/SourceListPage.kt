@@ -56,8 +56,6 @@ import com.saulhdev.feeder.data.db.models.Feed
 import com.saulhdev.feeder.extensions.koinNeoViewModel
 import com.saulhdev.feeder.manager.models.exportOpml
 import com.saulhdev.feeder.manager.models.importOpml
-import com.saulhdev.feeder.ui.navigation.LocalNavController
-import com.saulhdev.feeder.ui.navigation.NavRoute
 import com.saulhdev.feeder.ui.components.FeedItem
 import com.saulhdev.feeder.ui.components.OverflowMenu
 import com.saulhdev.feeder.ui.components.ViewWithActionBar
@@ -66,6 +64,8 @@ import com.saulhdev.feeder.ui.icons.Phosphor
 import com.saulhdev.feeder.ui.icons.phosphor.CloudArrowDown
 import com.saulhdev.feeder.ui.icons.phosphor.CloudArrowUp
 import com.saulhdev.feeder.ui.icons.phosphor.Plus
+import com.saulhdev.feeder.ui.navigation.LocalNavController
+import com.saulhdev.feeder.ui.navigation.NavRoute
 import com.saulhdev.feeder.utils.ApplicationCoroutineScope
 import com.saulhdev.feeder.viewmodels.FeedsViewModel
 import kotlinx.coroutines.launch
@@ -113,114 +113,116 @@ fun SourceListPage(
     NavigableListDetailPaneScaffold(
         navigator = paneNavigator,
         listPane = {
-            ViewWithActionBar(
-                title = stringResource(id = R.string.title_sources),
-                showBackButton = false,
-                floatingActionButton = {
-                    FloatingActionButton(
-                        onClick = {
-                            navController.navigate(NavRoute.SourceAdd)
-                        },
-                        modifier = Modifier.padding(16.dp),
-                        containerColor = MaterialTheme.colorScheme.primary
+            AnimatedPane {
+                ViewWithActionBar(
+                    title = stringResource(id = R.string.title_sources),
+                    showBackButton = false,
+                    floatingActionButton = {
+                        FloatingActionButton(
+                            onClick = {
+                                navController.navigate(NavRoute.SourceAdd)
+                            },
+                            modifier = Modifier.padding(16.dp),
+                            containerColor = MaterialTheme.colorScheme.primary
+                        ) {
+                            Icon(
+                                imageVector = Phosphor.Plus,
+                                contentDescription = stringResource(id = R.string.add_feed),
+                                tint = MaterialTheme.colorScheme.onPrimary
+                            )
+                        }
+                    },
+                    actions = {
+                        OverflowMenu {
+                            DropdownMenuItem(
+                                leadingIcon = {
+                                    Icon(
+                                        Phosphor.CloudArrowDown,
+                                        contentDescription = stringResource(id = R.string.sources_import_opml),
+                                    )
+                                },
+                                onClick = {
+                                    hideMenu()
+                                    opmlImporter.launch(
+                                        arrayOf(
+                                            "text/plain",
+                                            "text/xml",
+                                            "text/opml",
+                                            "*/*"
+                                        )
+                                    )
+                                },
+                                text = { Text(text = stringResource(id = R.string.sources_import_opml)) }
+                            )
+                            DropdownMenuItem(
+                                leadingIcon = {
+                                    Icon(
+                                        Phosphor.CloudArrowUp,
+                                        contentDescription = stringResource(id = R.string.sources_export_opml),
+                                    )
+                                },
+                                onClick = {
+                                    hideMenu()
+                                    opmlExporter.launch("NF-${localTime}.opml")
+                                },
+                                text = { Text(text = stringResource(id = R.string.sources_export_opml)) }
+                            )
+                        }
+                    }
+                ) { paddingValues ->
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize(),
+                        contentPadding = PaddingValues(
+                            start = 8.dp,
+                            end = 8.dp,
+                            top = paddingValues.calculateTopPadding()
+                        ),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
-                        Icon(
-                            imageVector = Phosphor.Plus,
-                            contentDescription = stringResource(id = R.string.add_feed),
-                            tint = MaterialTheme.colorScheme.onPrimary
-                        )
-                    }
-                },
-                actions = {
-                    OverflowMenu {
-                        DropdownMenuItem(
-                            leadingIcon = {
-                                Icon(
-                                    Phosphor.CloudArrowDown,
-                                    contentDescription = stringResource(id = R.string.sources_import_opml),
-                                )
-                            },
-                            onClick = {
-                                hideMenu()
-                                opmlImporter.launch(
-                                    arrayOf(
-                                        "text/plain",
-                                        "text/xml",
-                                        "text/opml",
-                                        "*/*"
-                                    )
-                                )
-                            },
-                            text = { Text(text = stringResource(id = R.string.sources_import_opml)) }
-                        )
-                        DropdownMenuItem(
-                            leadingIcon = {
-                                Icon(
-                                    Phosphor.CloudArrowUp,
-                                    contentDescription = stringResource(id = R.string.sources_export_opml),
-                                )
-                            },
-                            onClick = {
-                                hideMenu()
-                                opmlExporter.launch("NF-${localTime}.opml")
-                            },
-                            text = { Text(text = stringResource(id = R.string.sources_export_opml)) }
-                        )
-                    }
-                }
-            ) { paddingValues ->
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    contentPadding = PaddingValues(
-                        start = 8.dp,
-                        end = 8.dp,
-                        top = paddingValues.calculateTopPadding()
-                    ),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    items(list.value, key = { it.id }) { item ->
-                        FeedItem(
-                            feed = item,
-                            onClickAction = {
-                                scope.launch {
-                                    paneNavigator.navigateTo(
-                                        ListDetailPaneScaffoldRole.Detail,
-                                        item.id
-                                    )
+                        items(list.value, key = { it.id }) { item ->
+                            FeedItem(
+                                feed = item,
+                                onClickAction = {
+                                    scope.launch {
+                                        paneNavigator.navigateTo(
+                                            ListDetailPaneScaffoldRole.Detail,
+                                            item.id
+                                        )
+                                    }
+                                },
+                                onRemoveAction = {
+                                    removeItem.value = item
+                                    showDialog.value = true
                                 }
-                            },
-                            onRemoveAction = {
-                                removeItem.value = item
-                                showDialog.value = true
-                            }
-                        )
+                            )
+                        }
+                        item {
+                            Spacer(modifier = Modifier.height(64.dp))
+                        }
                     }
-                    item {
-                        Spacer(modifier = Modifier.height(64.dp))
-                    }
-                }
 
-                if (showDialog.value) {
-                    Dialog(
-                        onDismissRequest = { showDialog.value = false },
-                        DialogProperties(
-                            dismissOnBackPress = true,
-                            dismissOnClickOutside = true
-                        )
-                    ) {
-                        ActionsDialogUI(
-                            titleText = stringResource(id = R.string.remove_title),
-                            messageText = stringResource(
-                                id = R.string.remove_desc,
-                                removeItem.value!!.title
-                            ),
-                            openDialogCustom = showDialog,
-                            primaryText = stringResource(id = android.R.string.ok),
-                            primaryAction = {
-                                viewModel.deleteFeed(removeItem.value!!)
-                            }
-                        )
+                    if (showDialog.value) {
+                        Dialog(
+                            onDismissRequest = { showDialog.value = false },
+                            DialogProperties(
+                                dismissOnBackPress = true,
+                                dismissOnClickOutside = true
+                            )
+                        ) {
+                            ActionsDialogUI(
+                                titleText = stringResource(id = R.string.remove_title),
+                                messageText = stringResource(
+                                    id = R.string.remove_desc,
+                                    removeItem.value!!.title
+                                ),
+                                openDialogCustom = showDialog,
+                                primaryText = stringResource(id = android.R.string.ok),
+                                primaryAction = {
+                                    viewModel.deleteFeed(removeItem.value!!)
+                                }
+                            )
+                        }
                     }
                 }
             }

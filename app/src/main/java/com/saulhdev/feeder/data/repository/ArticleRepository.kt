@@ -18,22 +18,22 @@
 
 package com.saulhdev.feeder.data.repository
 
-import android.util.Log
 import com.saulhdev.feeder.data.db.NeoFeedDb
 import com.saulhdev.feeder.data.db.dao.insertOrUpdate
 import com.saulhdev.feeder.data.db.models.Feed
 import com.saulhdev.feeder.data.db.models.FeedArticle
-import com.saulhdev.feeder.data.entity.FeedItem
 import com.saulhdev.feeder.data.entity.FeedItemIdWithLink
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.withContext
+
 @OptIn(ExperimentalCoroutinesApi::class)
 class ArticleRepository(db: NeoFeedDb) {
+    private val cc = Dispatchers.IO
     private val jcc = Dispatchers.IO + SupervisorJob()
     private val articlesDao = db.feedArticleDao()
     private val feedsDao = db.feedSourceDao()
@@ -50,29 +50,13 @@ class ArticleRepository(db: NeoFeedDb) {
 
     fun getArticleById(articleId: Long): Flow<FeedArticle?> =
         articlesDao.loadArticleById(id = articleId)
+            .flowOn(cc)
 
-    fun getFeedArticles(): Flow<List<FeedItem>> = combine(
-        articlesDao.getAllEnabledFeedArticles(),
-        feedsDao.getEnabledFeeds()
-    ) { articles, feeds ->
-        Log.d("ArticleRepository", "getFeedArticles: ${articles.size} articles, ${feeds.size} feeds")
-        articles.mapNotNull { article ->
-            feeds.find { it.id == article.feedId }?.let { feed ->
-                FeedItem(article, feed)
-            }
-        }
-    }
+    fun getEnabledFeedArticles(): Flow<List<FeedArticle>> = articlesDao.getAllEnabledFeedArticles()
+        .flowOn(cc)
 
-    fun getFeedArticles(tags:Set<String>): Flow<List<FeedItem>> = combine(
-        articlesDao.getAllEnabledFeedArticles(),
-        feedsDao.getFeedByTags(tags)
-    ) { articles, feeds ->
-        articles.mapNotNull { article ->
-            feeds.find { it.id == article.feedId }?.let { feed ->
-                FeedItem(article, feed)
-            }
-        }
-    }
+    fun getFeedByTags(tags: Set<String>): Flow<List<Feed>> = feedsDao.getFeedByTags(tags)
+        .flowOn(cc)
 
     suspend fun updateOrInsertArticle(
         itemsWithText: List<Pair<FeedArticle, String>>,
@@ -105,22 +89,16 @@ class ArticleRepository(db: NeoFeedDb) {
 
     fun getFeedsItemsWithDefaultFullTextParse(): Flow<List<FeedItemIdWithLink>> =
         articlesDao.getFeedsItemsWithDefaultFullTextParse()
+            .flowOn(cc)
 
-    fun getBookmarkedArticlesMap(): Flow<Map<FeedArticle, Feed>> =
-        articlesDao.getAllBookmarked().mapLatest {
+    fun getBookmarkedArticlesMap(): Flow<Map<FeedArticle, Feed>> = articlesDao.getAllBookmarked()
+        .mapLatest {
             it.associateWith { fa ->
                 feedsDao.findFeedById(fa.feedId).first()
             }
         }
+        .flowOn(cc)
 
-    fun getBookmarkedArticles(): Flow<List<FeedItem>> = combine(
-         articlesDao.getAllBookmarked(),
-        feedsDao.getEnabledFeeds()
-    ) { articles, feeds ->
-        articles.mapNotNull { article ->
-            feeds.find { it.id == article.feedId }?.let { feed ->
-                FeedItem(article, feed)
-            }
-        }
-    }
+    fun getBookmarkedArticles(): Flow<List<FeedArticle>> = articlesDao.getAllBookmarked()
+        .flowOn(cc)
 }

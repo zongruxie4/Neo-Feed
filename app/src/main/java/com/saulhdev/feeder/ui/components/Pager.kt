@@ -55,7 +55,7 @@ fun SlidePager(
     pageItems: ImmutableList<NavItem>,
     pagerState: PagerState,
 ) {
-    HorizontalPager(modifier = modifier, state = pagerState, beyondViewportPageCount = 2) { page ->
+    HorizontalPager(modifier = modifier, state = pagerState, beyondViewportPageCount = 0) { page ->
         pageItems[page].content()
     }
 }

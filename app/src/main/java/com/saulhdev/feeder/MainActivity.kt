@@ -13,6 +13,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.core.net.toUri
@@ -26,6 +27,7 @@ import androidx.work.NetworkType
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.saulhdev.feeder.data.content.FeedPreferences
+import com.saulhdev.feeder.extensions.isDarkTheme
 import com.saulhdev.feeder.manager.models.exportOpml
 import com.saulhdev.feeder.manager.models.importOpml
 import com.saulhdev.feeder.manager.sync.FeedSyncer
@@ -41,7 +43,7 @@ import org.threeten.bp.LocalDateTime
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.resume
 
-class MainActivity : ComponentActivity(){
+class MainActivity : ComponentActivity() {
     private lateinit var navController: NavHostController
     private val prefs: FeedPreferences by inject(FeedPreferences::class.java)
 
@@ -95,9 +97,13 @@ class MainActivity : ComponentActivity(){
         setContent {
             navController = rememberNavController()
             TransparentSystemBars()
-            AppTheme (
+            AppTheme(
+                darkTheme = when (com.saulhdev.feeder.manager.sync.prefs.overlayTheme.getValue()) {
+                    "auto_system" -> isSystemInDarkTheme()
+                    else          -> isDarkTheme
+                },
                 dynamicColor = prefs.dynamicColor.getValue(),
-            ){
+            ) {
                 NavigationManager(navController = navController)
             }
         }
@@ -108,9 +114,7 @@ class MainActivity : ComponentActivity(){
 
     @Composable
     fun TransparentSystemBars() {
-        //TODO: get key 2 and key 1 from preferences
-        val isDarkTheme = false // Replace with actual preference retrieval logic
-        DisposableEffect(isDarkTheme, false) {
+        DisposableEffect(isDarkTheme, prefs.overlayTheme.getValue()) {
             enableEdgeToEdge(
                 statusBarStyle = SystemBarStyle.auto(
                     android.graphics.Color.TRANSPARENT,

@@ -120,7 +120,9 @@ fun ArticleItem(
                     )
                 }
                 Row {
-                    var bookmarked by remember { mutableStateOf(false) }
+                    var bookmarked by remember(article.bookmarked) {
+                        mutableStateOf(article.bookmarked)
+                    }
 
                     FavoriteButton(bookmarked = bookmarked) {
                         scope.launch {

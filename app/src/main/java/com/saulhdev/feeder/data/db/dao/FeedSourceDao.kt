@@ -26,11 +26,9 @@ import androidx.room.Query
 import androidx.room.Update
 import com.saulhdev.feeder.data.db.models.Feed
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flow
 import org.threeten.bp.Instant
 import java.net.URL
-import kotlin.collections.flatten
 
 @Dao
 interface FeedSourceDao {
@@ -63,7 +61,7 @@ interface FeedSourceDao {
     fun getEnabledFeeds(): Flow<List<Feed>>
 
     @Query("SELECT id FROM Feeds WHERE isEnabled IS 1")
-    fun loadFeedIds(): List<Long>
+    suspend fun loadFeedIds(): List<Long>
 
     @Query("SELECT * FROM Feeds")
     fun getAllFeeds(): Flow<List<Feed>>

@@ -34,13 +34,13 @@ import com.saulhdev.feeder.R
 import com.saulhdev.feeder.extensions.koinNeoViewModel
 import com.saulhdev.feeder.extensions.launchView
 import com.saulhdev.feeder.extensions.shareIntent
-import com.saulhdev.feeder.ui.navigation.Routes
 import com.saulhdev.feeder.ui.components.RoundButton
 import com.saulhdev.feeder.ui.components.ViewWithActionBar
 import com.saulhdev.feeder.ui.components.WithBidiDeterminedLayoutDirection
 import com.saulhdev.feeder.ui.icons.Phosphor
 import com.saulhdev.feeder.ui.icons.phosphor.ArrowSquareOut
 import com.saulhdev.feeder.ui.icons.phosphor.ShareNetwork
+import com.saulhdev.feeder.ui.navigation.Routes
 import com.saulhdev.feeder.ui.theme.LinkTextStyle
 import com.saulhdev.feeder.utils.blobFile
 import com.saulhdev.feeder.utils.blobFullFile
@@ -82,13 +82,12 @@ fun ArticlePage(
     val feedTitle by remember { derivedStateOf { feed?.title ?: "Neo Feed" } }
 
     val navController = rememberNavController()
-    BackHandler {
-        onDismiss?.invoke()
-            ?: if (navController.currentBackStackEntry?.destination?.route == null) {
-                activity?.finish()
-            } else {
-                navController.popBackStack()
-            }
+    BackHandler(onDismiss == null) {
+        if (navController.currentBackStackEntry?.destination?.route == null) {
+            activity?.finish()
+        } else {
+            navController.popBackStack()
+        }
     }
 
     val dateTimeFormat: DateTimeFormatter =
@@ -119,6 +118,7 @@ fun ArticlePage(
         titleSize = 16.sp,
         subTitle = subTitle,
         showBackButton = true,
+        onBackAction = onDismiss,
         actions = {
             RoundButton(
                 icon = Phosphor.ArrowSquareOut,
@@ -133,7 +133,6 @@ fun ArticlePage(
                 context.shareIntent(currentUrl, title)
             }
         }
-
     ) { paddingValues ->
         SelectionContainer {
             LazyColumn(

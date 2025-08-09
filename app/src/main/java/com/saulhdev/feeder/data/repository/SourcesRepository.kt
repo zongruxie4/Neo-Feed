@@ -35,6 +35,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -45,12 +46,13 @@ import org.threeten.bp.Instant
 import org.threeten.bp.ZonedDateTime
 
 class SourcesRepository(db: NeoFeedDb) {
+    private val cc = Dispatchers.IO
     private val jcc = Dispatchers.IO + SupervisorJob()
     private val scope = CoroutineScope(Dispatchers.IO) + CoroutineName("FeedSourceRepository")
     private val feedsDao = db.feedSourceDao()
     private val workManager: WorkManager by inject(WorkManager::class.java)
 
-    suspend fun inserSource(feed: Feed) = withContext(jcc) {
+    suspend fun insertSource(feed: Feed) = withContext(jcc) {
         feedsDao.insert(feed)
     }
 
@@ -67,12 +69,15 @@ class SourcesRepository(db: NeoFeedDb) {
     }
 
     fun getAllSourcesFlow(): Flow<List<Feed>> = feedsDao.getAllFeeds()
+        .flowOn(cc)
 
     suspend fun getAllSources(): List<Feed> = feedsDao.loadFeeds()
 
     fun getEnabledSources(): Flow<List<Feed>> = feedsDao.getEnabledFeeds()
+        .flowOn(cc)
 
     fun getSourceById(id: Long): Flow<Feed?> = feedsDao.getFeedById(id)
+        .flowOn(cc)
 
     suspend fun loadFeedsByTag(tag: String): List<Feed> = withContext(jcc) {
         feedsDao.loadFeedsByTag(tag)
@@ -93,17 +98,16 @@ class SourcesRepository(db: NeoFeedDb) {
         return feedsDao.getAllTags()
     }
 
-    fun getAllTagsFlow():  Flow<List<String>> {
-        return feedsDao.getAllTagsFlow()
-            .map { rawTags ->
-                rawTags.flatMap { tagString ->
-                    tagString.split(",").map { it.trim() }.filter { it.isNotEmpty() }
-                }.distinct()
-            }
-    }
+    fun getAllTagsFlow(): Flow<List<String>> = feedsDao.getAllTagsFlow()
+        .map { rawTags ->
+            rawTags.flatMap { tagString ->
+                tagString.split(",").map { it.trim() }.filter { it.isNotEmpty() }
+            }.distinct()
+        }
+        .flowOn(cc)
 
-    fun loadFeedIds(): List<Long> {
-        return feedsDao.loadFeedIds()
+    suspend fun loadFeedIds(): List<Long> = withContext(jcc) {
+        feedsDao.loadFeedIds()
     }
 
     @OptIn(FlowPreview::class)

@@ -3,20 +3,28 @@ package com.saulhdev.feeder.service
 import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
+import android.graphics.PorterDuff
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
+import android.util.SparseIntArray
 import android.view.View
-import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.view.ContextThemeWrapper
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.ColorUtils
+import androidx.core.graphics.alpha
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.libraries.gsa.d.a.OverlayController
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.color.MaterialColors
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.saulhdev.feeder.MainActivity
 import com.saulhdev.feeder.NeoApp
@@ -32,7 +40,6 @@ import com.saulhdev.feeder.ui.theme.CardTheme
 import com.saulhdev.feeder.ui.theme.OverlayThemeHolder
 import com.saulhdev.feeder.ui.views.AbstractFloatingView
 import com.saulhdev.feeder.ui.views.DialogMenu
-import com.saulhdev.feeder.ui.views.FilterBottomSheet
 import com.saulhdev.feeder.utils.LinearLayoutManagerWrapper
 import com.saulhdev.feeder.viewmodels.ArticlesViewModel
 import kotlinx.coroutines.CoroutineName
@@ -157,6 +164,13 @@ class OverlayView(val context: Context): OverlayController(context, R.style.AppT
                 )
             )
 
+        rootView.findViewById<MaterialButton>(R.id.header_bookmark).iconTint =
+            ColorStateList.valueOf(
+                theme.get(
+                    CardTheme.Colors.TEXT_COLOR_PRIMARY.ordinal
+                )
+            )
+
         rootView.findViewById<TextView>(R.id.header_title)
             .setTextColor(theme.get(CardTheme.Colors.TEXT_COLOR_PRIMARY.ordinal))
     }
@@ -201,27 +215,48 @@ class OverlayView(val context: Context): OverlayController(context, R.style.AppT
         })
     }
 
-    private fun updateToggleColor(button: MaterialButton, isChecked: Boolean) {
+    private  fun updateToggleColor(button: MaterialButton, isChecked: Boolean){
         val context = button.context
-        val checkedColor = ColorUtils.setAlphaComponent(
-            ContextCompat.getColor(context, R.color.toggle_checked),
-            64
-        )
-        button.backgroundTintList =
-            ColorStateList.valueOf(if (isChecked) checkedColor else 0)
+        val darkTheme = themeHolder.currentTheme.get(CardTheme.Colors.OVERLAY_BG.ordinal).isDark()
+        val a14 = Android.sdk(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
+        val a12 = Android.sdk(Build.VERSION_CODES.S)
+        val backgroundTint = when {
+            !isChecked       -> Color.TRANSPARENT
+
+            a14 && darkTheme -> ContextCompat.getColor(
+                context,
+                android.R.color.system_primary_dark
+            )
+
+            a14              -> ContextCompat.getColor(
+                context,
+                android.R.color.system_primary_light
+            )
+
+            a12              -> ContextCompat.getColor(
+                context,
+                android.R.color.system_accent1_400
+            )
+
+            else             -> ContextCompat.getColor(
+                context,
+                R.color.md_theme_primary
+            )
+        }
+        button.backgroundTintList = ColorStateList.valueOf(backgroundTint)
 
     }
 
     private fun initHeader() {
-        val bookmarkButton = rootView.findViewById<MaterialButton>(R.id.header_bookmark)
+        val toggleButton = rootView.findViewById<MaterialButton>(R.id.header_bookmark)
 
-        updateToggleColor(bookmarkButton, bookmarkVisible)
-        bookmarkButton.setOnClickListener {
+        updateToggleColor(toggleButton, bookmarkVisible)
+        toggleButton.setOnClickListener {
             mainScope.launch {
-                if (bookmarkVisible) {
+                if(bookmarkVisible) {
                     bookmarkVisible = false
-                    bookmarkButton.isChecked = bookmarkVisible
-                    updateToggleColor(bookmarkButton, bookmarkVisible)
+                    toggleButton.isChecked = bookmarkVisible
+                    updateToggleColor(toggleButton, bookmarkVisible)
                     viewModel.articlesList.collect {
                         adapter.replace(it)
                         adapter.notifyDataSetChanged()
@@ -229,8 +264,8 @@ class OverlayView(val context: Context): OverlayController(context, R.style.AppT
                     }
                 } else {
                     bookmarkVisible = true
-                    bookmarkButton.isChecked = bookmarkVisible
-                    updateToggleColor(bookmarkButton, bookmarkVisible)
+                    toggleButton.isChecked = bookmarkVisible
+                    updateToggleColor(toggleButton, bookmarkVisible)
                     viewModel.bookmarkedArticlesList.collect {
                         adapter.replace(it)
                         adapter.notifyDataSetChanged()
@@ -295,7 +330,7 @@ class OverlayView(val context: Context): OverlayController(context, R.style.AppT
         val bgColor = themeHolder.currentTheme.get(CardTheme.Colors.OVERLAY_BG.ordinal)
         val color =
             (prefs.overlayTransparency.getValue() * 255.0f).toInt() shl 24 or (bgColor and 0x00ffffff)
-        getWindow().setBackgroundDrawable(color.toDrawable())
+        getWindow().setBackgroundDrawable(ColorDrawable(color))
     }
 
     override fun onClientMessage(action: String) {
