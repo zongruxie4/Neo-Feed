@@ -29,6 +29,12 @@ class SourceViewModel(
             SharingStarted.Eagerly,
             emptyList()
         )
+    val allEnabledFeeds = feedsRepo.getEnabledSources()
+        .stateIn(
+            ioScope,
+            SharingStarted.Eagerly,
+            emptyList()
+        )
 
     val allTags = feedsRepo.getAllTagsFlow()
         .stateIn(
