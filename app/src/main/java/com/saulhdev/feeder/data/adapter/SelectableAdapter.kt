@@ -1,14 +1,15 @@
 package com.saulhdev.feeder.data.adapter
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.chip.Chip
 import com.saulhdev.feeder.R
 
-class SelectableAdapter : RecyclerView.Adapter<SelectableAdapter.ViewHolder>() {
+class SelectableAdapter(val context: Context) :
+    RecyclerView.Adapter<SelectableAdapter.ViewHolder>() {
     private var items = listOf<String>()
     private var selectedItems = arrayListOf<String>()
 
@@ -24,6 +25,14 @@ class SelectableAdapter : RecyclerView.Adapter<SelectableAdapter.ViewHolder>() {
 
     override fun getItemCount(): Int {
         return items.size
+    }
+
+    fun toggleSelection(item: String) {
+        if (selectedItems.contains(item)) {
+            selectedItems.remove(item)
+        } else {
+            selectedItems.add(item)
+        }
     }
 
     fun getSelectedItems(): List<String> {
@@ -51,32 +60,23 @@ class SelectableAdapter : RecyclerView.Adapter<SelectableAdapter.ViewHolder>() {
         return ViewHolder(view)
     }
 
-    private fun setIcon(holder: ViewHolder, isSelected: Boolean) {
-        if (isSelected) {
-            holder.iconCheckmark.setImageResource(R.drawable.ic_check_24)
-        } else {
-            holder.iconCheckmark.setImageResource(R.drawable.ic_circle_24dp)
-        }
-    }
-
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = items[position]
-        holder.textView.text = item
+        holder.chip.text = item
         val isSelected = selectedItems.contains(item)
-        setIcon(holder, isSelected)
+        holder.chip.isChecked = isSelected
+
         holder.itemView.setOnClickListener {
             if (selectedItems.contains(item)) {
                 selectedItems.remove(item)
             } else {
                 selectedItems.add(item)
             }
-            setIcon(holder, !isSelected)
             notifyItemChanged(position)
         }
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val textView: TextView = itemView.findViewById(R.id.text_item)
-        val iconCheckmark: ImageView = itemView.findViewById(R.id.icon_checkmark)
+        val chip: Chip = itemView.findViewById(R.id.chip_item)
     }
 }

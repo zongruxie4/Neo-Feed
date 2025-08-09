@@ -54,8 +54,8 @@ class FilterBottomSheet(
        findViewById<View>(R.id.btn_apply)?.setOnClickListener(this)
        findViewById<View>(R.id.btn_reset)?.setOnClickListener(this)
 
-       sourcesAdapter = SelectableAdapter()
-       tagsAdapter = SelectableAdapter()
+       sourcesAdapter = SelectableAdapter(context)
+       tagsAdapter = SelectableAdapter(context)
 
        findViewById<RecyclerView>(R.id.all_sources).apply {
            layoutManager = LinearLayoutManagerWrapper(context, LinearLayoutManager.VERTICAL, false)
