@@ -41,6 +41,7 @@ class BaseBottomSheet @JvmOverloads constructor(
         }
         mIsOpen = true
         setupNavBarColor()
+        attachToContainer();
         mOpenCloseAnimator.setValues(
             PropertyValuesHolder.ofFloat(TRANSLATION_SHIFT, TRANSLATION_SHIFT_OPENED)
         )

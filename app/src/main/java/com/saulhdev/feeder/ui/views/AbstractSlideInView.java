@@ -1,14 +1,12 @@
 package com.saulhdev.feeder.ui.views;
 
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
-
 import static com.saulhdev.feeder.anim.Interpolators.scrollInterpolatorForVelocity;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
-import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Rect;
 import android.util.AttributeSet;
@@ -17,6 +15,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Interpolator;
 import android.widget.FrameLayout;
+
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 import com.saulhdev.feeder.anim.Interpolators;
 import com.saulhdev.feeder.touch.BaseSwipeDetector;
@@ -74,10 +74,28 @@ public abstract class AbstractSlideInView extends AbstractFloatingView implement
     }
 
     protected void attachToContainer() {
-        if (mColorScrim != null) {
+        if (mColorScrim != null && mColorScrim.getParent() == null) {
             container.addView(mColorScrim);
         }
-        container.addView(this);
+
+        if (this.getParent() != null) {
+            android.view.ViewGroup.LayoutParams params = this.getLayoutParams();
+            if (params instanceof CoordinatorLayout.LayoutParams lp) {
+                lp.gravity = android.view.Gravity.BOTTOM;
+                this.setLayoutParams(lp);
+            } else if (params instanceof FrameLayout.LayoutParams lp) {
+                lp.gravity = android.view.Gravity.BOTTOM;
+                this.setLayoutParams(lp);
+            }
+        } else {
+            FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(
+                    FrameLayout.LayoutParams.MATCH_PARENT,
+                    FrameLayout.LayoutParams.WRAP_CONTENT
+            );
+            lp.gravity = android.view.Gravity.BOTTOM;
+            this.setLayoutParams(lp);
+            container.addView(this);
+        }
     }
 
     protected int getScrimColor(Context context) {
@@ -205,7 +223,8 @@ public abstract class AbstractSlideInView extends AbstractFloatingView implement
         View view = new View(context);
         view.forceHasOverlappingRendering(false);
         view.setBackgroundColor(bgColor);
-
+        view.setClickable(true);
+        view.setFocusable(true);
         FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT);
         view.setLayoutParams(lp);
 
