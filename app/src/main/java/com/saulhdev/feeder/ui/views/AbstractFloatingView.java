@@ -60,8 +60,21 @@ public abstract class AbstractFloatingView extends LinearLayout implements Touch
 
     protected abstract void handleClose(boolean animate);
 
-    public final boolean isOpen() {
+    public boolean isOpen() {
         return mIsOpen;
+    }
+
+    public static boolean isAnyOpen() {
+        for (int i = 0; i < container.getChildCount(); i++) {
+            View child = container.getChildAt(i);
+            if (child instanceof AbstractFloatingView) {
+                AbstractFloatingView abs = (AbstractFloatingView) child;
+                if (abs.isOpen()) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     protected abstract boolean isOfType(@FloatingViewType int type);
@@ -69,10 +82,6 @@ public abstract class AbstractFloatingView extends LinearLayout implements Touch
     /**
      * @return Whether the back is consumed. If false, Launcher will handle the back as well.
      */
-    public boolean onBackPressed() {
-        close(true);
-        return true;
-    }
 
     @Override
     public boolean onControllerTouchEvent(MotionEvent ev) {
