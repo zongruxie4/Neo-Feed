@@ -31,7 +31,6 @@ public class OverlayController extends DialogOverlayController {
         super(context, theme, dialogTheme);
     }
 
-    // Simula evento táctil
     final void simulateMotionEvent(int action, int position, long eventTime) {
         float x = isRtl ? -position : position;
         MotionEvent event = MotionEvent.obtain(lastTouchTime, eventTime, action, x, 0.0f, 0);
@@ -41,10 +40,8 @@ public class OverlayController extends DialogOverlayController {
     }
 
     public void onOptionsUpdated(Bundle options) {
-        // Placeholder para futuras opciones
     }
 
-    // Cierra overlay y limpia recursos
     final LauncherOverlayCallback closeOverlay() {
         updateActivityState(0);
         try {
@@ -74,7 +71,6 @@ public class OverlayController extends DialogOverlayController {
         }
     }
 
-    // Cierra panel si está abierto
     public void closePanelIfNeeded(int flags) {
         if (isOpen()) {
             boolean shouldClose = (flags & 1) != 0;
@@ -103,7 +99,6 @@ public class OverlayController extends DialogOverlayController {
     }
 
     public void onBackPressed() {
-        Log.d("OverlayController", "onBackPressed called");
         closePanelIfNeeded(1);
     }
 
