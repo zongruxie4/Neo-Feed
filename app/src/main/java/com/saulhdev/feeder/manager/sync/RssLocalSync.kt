@@ -203,13 +203,11 @@ private suspend fun syncFeed(
     val articles =
         items?.reversed()
             ?.map { item ->
-                val article = articleRepo.getArticleByGuid(
+                val article = (articleRepo.getArticleByGuid(
                     guid = item.id.toString(),
                     feedId = feedSql.id
-                ) ?: FeedArticle(firstSyncedTime = downloadTime)
-
-                article.updateFromParsedEntry(item, item.id.toString(), feed)
-                article.feedId = feedSql.id
+                ) ?: FeedArticle(firstSyncedTime = downloadTime))
+                    .updateFromParsedEntry(item, item.id.toString(), feed, feedSql.id)
                 article to (item.content_html ?: item.content_text ?: "")
             } ?: emptyList()
 

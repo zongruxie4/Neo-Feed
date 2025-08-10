@@ -144,9 +144,6 @@ suspend fun FeedArticleDao.insertOrUpdate(
 
     insertedIds.zip(insertedItems).forEach { (itemId, itemToText) ->
         val (item, text) = itemToText
-
-        item.id = itemId
-
-        block(item, text)
+        block(item.copy(id = itemId), text)
     }
 }
