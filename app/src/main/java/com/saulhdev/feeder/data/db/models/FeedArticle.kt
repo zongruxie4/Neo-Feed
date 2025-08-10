@@ -104,10 +104,11 @@ data class FeedArticle(
             else -> safeImage
         }
 
+        val plainTitle  = entry.title?.take(200) ?: this.plainTitle
         return copy(
             guid = entryGuid,
-            plainTitle = entry.title?.take(200) ?: this.plainTitle,
-            title = this.plainTitle,
+            plainTitle = plainTitle,
+            title = plainTitle,
             plainSnippet = summary,
             imageUrl = absoluteImage,
             enclosureLink = entry.attachments?.firstOrNull()?.url,
