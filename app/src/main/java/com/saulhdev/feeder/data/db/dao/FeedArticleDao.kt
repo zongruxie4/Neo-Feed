@@ -24,9 +24,12 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Update
 import com.saulhdev.feeder.data.db.ID_UNSET
+import com.saulhdev.feeder.data.db.models.Feed
 import com.saulhdev.feeder.data.db.models.FeedArticle
+import com.saulhdev.feeder.data.db.models.FeedItem
 import com.saulhdev.feeder.data.entity.FeedItemIdWithLink
 import kotlinx.coroutines.flow.Flow
 
@@ -83,7 +86,6 @@ interface FeedArticleDao {
     @Query("SELECT * FROM feedArticle WHERE feedId IS :feedId")
     suspend fun loadArticles(feedId: Long?): List<FeedArticle>
 
-
     @Query(
         """
         SELECT FeedArticle.* FROM FeedArticle
@@ -122,28 +124,102 @@ interface FeedArticleDao {
         """
     )
     fun getAllBookmarked(): Flow<List<FeedArticle>>
-}
 
-suspend fun FeedArticleDao.insertOrUpdate(
-    itemsWithText: List<Pair<FeedArticle, String>>,
-    block: suspend (FeedArticle, String) -> Unit
-) {
-    val updatedItems = itemsWithText.filter { (item, _) ->
-        item.id > ID_UNSET
+    // Embedded FeedItem
+    @Query(
+        """
+    SELECT FeedArticle.*, Feeds.* FROM FeedArticle
+    JOIN Feeds ON FeedArticle.feedId = Feeds.id
+    WHERE Feeds.isEnabled = 1
+    ORDER BY FeedArticle.primarySortTime DESC
+    """
+    )
+    fun getAllEnabledFeedItems(): Flow<List<FeedItem>>
+
+    @Query(
+        """
+    SELECT FeedArticle.*, Feeds.* FROM FeedArticle
+    JOIN Feeds ON FeedArticle.feedId = Feeds.id
+    WHERE FeedArticle.bookmarked = 1 AND Feeds.isEnabled = 1
+    ORDER BY FeedArticle.pinned DESC, FeedArticle.pubDate DESC
+    """
+    )
+    fun getAllBookmarkedFeedItems(): Flow<List<FeedItem>>
+
+    @Query(
+        """
+    SELECT FeedArticle.*, Feeds.* FROM FeedArticle
+    JOIN Feeds ON FeedArticle.feedId = Feeds.id
+    WHERE Feeds.isEnabled = 1 AND Feeds.tag IN (:tags)
+    ORDER BY FeedArticle.primarySortTime DESC
+    """
+    )
+    fun getFeedItemsByTagsSimple(tags: Set<String>): Flow<List<FeedItem>>
+
+    @Query(
+        """
+    SELECT FeedArticle.*, Feeds.* FROM FeedArticle
+    JOIN Feeds ON FeedArticle.feedId = Feeds.id
+    WHERE FeedArticle.feedId = :feedId AND Feeds.isEnabled = 1
+    ORDER BY FeedArticle.primarySortTime DESC
+    """
+    )
+    fun getFeedItemsForFeed(feedId: Long): Flow<List<FeedItem>>
+
+    @Query(
+        """
+    SELECT FeedArticle.*, Feeds.* FROM FeedArticle
+    JOIN Feeds ON FeedArticle.feedId = Feeds.id
+    WHERE FeedArticle.pinned = 1 AND Feeds.isEnabled = 1
+    ORDER BY FeedArticle.primarySortTime DESC
+    """
+    )
+    fun getPinnedFeedItems(): Flow<List<FeedItem>>
+
+    @Query("SELECT * FROM Feeds WHERE ',' || tag || ',' LIKE :pattern AND isEnabled = 1")
+    suspend fun getEnabledFeedsByTagPattern(pattern: String): List<Feed>
+
+    @Transaction
+    suspend fun getFeedItemsByTagsComplex(tags: Set<String>): List<FeedItem> {
+        val feedIds = tags.flatMap { tag ->
+            getEnabledFeedsByTagPattern("%,$tag,%")
+        }.distinctBy { it.id }.map { it.id }
+
+        return getFeedItemsByFeedIds(feedIds)
     }
-    updateFeedArticle(updatedItems.map { (item, _) -> item })
 
-    val insertedItems = itemsWithText.filter { (item, _) ->
-        item.id <= ID_UNSET
-    }
-    val insertedIds = insertFeedArticle(insertedItems.map { (item, _) -> item })
+    @Query(
+        """
+    SELECT FeedArticle.*, Feeds.* FROM FeedArticle
+    JOIN Feeds ON FeedArticle.feedId = Feeds.id
+    WHERE FeedArticle.feedId IN (:feedIds) AND Feeds.isEnabled = 1
+    ORDER BY FeedArticle.primarySortTime DESC
+    """
+    )
+    suspend fun getFeedItemsByFeedIds(feedIds: List<Long>): List<FeedItem>
 
-    updatedItems.forEach { (item, text) ->
-        block(item, text)
-    }
+    @Transaction
+    suspend fun insertOrUpdate(
+        itemsWithText: List<Pair<FeedArticle, String>>,
+        block: suspend (FeedArticle, String) -> Unit
+    ) {
+        val updatedItems = itemsWithText.filter { (item, _) ->
+            item.id > ID_UNSET
+        }
+        updateFeedArticle(updatedItems.map { (item, _) -> item })
 
-    insertedIds.zip(insertedItems).forEach { (itemId, itemToText) ->
-        val (item, text) = itemToText
-        block(item.copy(id = itemId), text)
+        val insertedItems = itemsWithText.filter { (item, _) ->
+            item.id <= ID_UNSET
+        }
+        val insertedIds = insertFeedArticle(insertedItems.map { (item, _) -> item })
+
+        updatedItems.forEach { (item, text) ->
+            block(item, text)
+        }
+
+        insertedIds.zip(insertedItems).forEach { (itemId, itemToText) ->
+            val (item, text) = itemToText
+            block(item.copy(id = itemId), text)
+        }
     }
 }
