@@ -19,9 +19,9 @@
 package com.saulhdev.feeder.data.repository
 
 import com.saulhdev.feeder.data.db.NeoFeedDb
-import com.saulhdev.feeder.data.db.dao.insertOrUpdate
 import com.saulhdev.feeder.data.db.models.Feed
 import com.saulhdev.feeder.data.db.models.FeedArticle
+import com.saulhdev.feeder.data.db.models.FeedItem
 import com.saulhdev.feeder.data.entity.FeedItemIdWithLink
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -52,11 +52,22 @@ class ArticleRepository(db: NeoFeedDb) {
         articlesDao.loadArticleById(id = articleId)
             .flowOn(cc)
 
+    fun getFeedItemsById(feedId: Long): Flow<List<FeedItem>> =
+        articlesDao.getFeedItemsForFeed(feedId)
+            .flowOn(cc)
+
     fun getEnabledFeedArticles(): Flow<List<FeedArticle>> = articlesDao.getAllEnabledFeedArticles()
+        .flowOn(cc)
+
+    fun getEnabledFeedItems(): Flow<List<FeedItem>> = articlesDao.getAllEnabledFeedItems()
         .flowOn(cc)
 
     fun getFeedByTags(tags: Set<String>): Flow<List<Feed>> = feedsDao.getFeedByTags(tags)
         .flowOn(cc)
+
+    fun getFeedItemsByTags(tags: Set<String>): Flow<List<FeedItem>> =
+        articlesDao.getFeedItemsByTagsSimple(tags)
+            .flowOn(cc)
 
     suspend fun updateOrInsertArticle(
         itemsWithText: List<Pair<FeedArticle, String>>,
@@ -100,5 +111,11 @@ class ArticleRepository(db: NeoFeedDb) {
         .flowOn(cc)
 
     fun getBookmarkedArticles(): Flow<List<FeedArticle>> = articlesDao.getAllBookmarked()
+        .flowOn(cc)
+
+    fun getBookmarkedFeedItems(): Flow<List<FeedItem>> = articlesDao.getAllBookmarkedFeedItems()
+        .flowOn(cc)
+
+    fun getPinnedFeedItems(): Flow<List<FeedItem>> = articlesDao.getPinnedFeedItems()
         .flowOn(cc)
 }
