@@ -197,7 +197,7 @@ private suspend fun syncFeed(
         }
     }
 
-    feedSql.lastSync = Instant.now()
+    val syncedFeed = feedSql.copy(lastSync = Instant.now())
     val items = feed.items
 
     val articles =
@@ -205,9 +205,9 @@ private suspend fun syncFeed(
             ?.map { item ->
                 val article = (articleRepo.getArticleByGuid(
                     guid = item.id.toString(),
-                    feedId = feedSql.id
+                    feedId = syncedFeed.id
                 ) ?: FeedArticle(firstSyncedTime = downloadTime))
-                    .updateFromParsedEntry(item, item.id.toString(), feed, feedSql.id)
+                    .updateFromParsedEntry(item, item.id.toString(), feed, syncedFeed.id)
                 article to (item.content_html ?: item.content_text ?: "")
             } ?: emptyList()
 
@@ -220,14 +220,14 @@ private suspend fun syncFeed(
     }
 
     feedsRepo.updateSource(
-        feedSql.copy(
-            title = feedSql.title,
+        syncedFeed.copy(
+            title = syncedFeed.title,
             feedImage = feed.icon?.let { sloppyLinkToStrictURLNoThrows(it) }
-                ?: feedSql.feedImage
+                ?: syncedFeed.feedImage
         ))
 
     val ids = articleRepo.getItemsToBeCleanedFromFeed(
-        feedId = feedSql.id,
+        feedId = syncedFeed.id,
         keepCount = max(maxFeedItemCount, items?.size ?: 0)
     )
 

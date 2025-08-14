@@ -60,10 +60,10 @@ class SourcesRepository(db: NeoFeedDb) {
         scope.launch {
             val list: List<Feed> = feedsDao.findFeedById(feed.id)
             if (list.isNotEmpty()) {
-                feed.lastSync = ZonedDateTime.now().toInstant()
-                feedsDao.update(feed)
-                if (resync) requestFeedSync(feed.id)
-                if (feed.fullTextByDefault) scheduleFullTextParse()
+                val newFeed = feed.copy(lastSync = ZonedDateTime.now().toInstant())
+                feedsDao.update(newFeed)
+                if (resync) requestFeedSync(newFeed.id)
+                if (newFeed.fullTextByDefault) scheduleFullTextParse()
             }
         }
     }
