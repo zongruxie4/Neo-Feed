@@ -10,7 +10,7 @@ import com.google.android.material.button.MaterialButton
 import com.saulhdev.feeder.MainActivity
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.data.content.FeedPreferences
-import com.saulhdev.feeder.data.entity.FeedItem
+import com.saulhdev.feeder.data.db.models.FeedItem
 import com.saulhdev.feeder.data.repository.ArticleRepository
 import com.saulhdev.feeder.databinding.FeedCardStoryLargeBinding
 import com.saulhdev.feeder.extensions.isDark
@@ -28,7 +28,7 @@ import org.koin.java.KoinJavaComponent.inject
 object StoryCardBinder : FeedBinder {
     override fun bind(theme: SparseIntArray?, item: FeedItem, view: View) {
         val context = view.context
-        val content = item.content
+        val content = item.toStoryCardContent()
         val binding = FeedCardStoryLargeBinding.bind(view)
         val prefs = get<FeedPreferences>(FeedPreferences::class.java)
         val repository: ArticleRepository by inject(ArticleRepository::class.java)
@@ -36,7 +36,10 @@ object StoryCardBinder : FeedBinder {
         binding.storyTitle.text = content.title
         binding.storySource.text = content.source.title
         binding.storyDate.text =
-            RelativeTimeHelper.getDateFormattedRelative(view.context, (item.time / 1000) - 1000)
+            RelativeTimeHelper.getDateFormattedRelative(
+                view.context,
+                (item.timeMillis / 1000) - 1000
+            )
 
         if (content.text.isEmpty()) {
             binding.storySummary.visibility = View.GONE

@@ -29,7 +29,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.saulhdev.feeder.data.entity.FeedItem
+import com.saulhdev.feeder.data.db.models.FeedItem
 import com.saulhdev.feeder.utils.RelativeTimeHelper
 import kotlinx.coroutines.launch
 
@@ -39,7 +39,7 @@ fun ArticleItem(
     onBookmark: suspend (Boolean) -> Unit,
     onClick: () -> Unit
 ) {
-    val content = article.content
+    val content = article.toStoryCardContent()
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
@@ -112,7 +112,7 @@ fun ArticleItem(
                     Text(
                         text = RelativeTimeHelper.getDateFormattedRelative(
                             LocalContext.current,
-                            (article.time / 1000) - 1000
+                            (article.timeMillis / 1000) - 1000
                         ),
                         style = MaterialTheme.typography.bodySmall,
                         maxLines = 1,

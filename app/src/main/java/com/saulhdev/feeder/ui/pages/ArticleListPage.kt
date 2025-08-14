@@ -316,7 +316,7 @@ fun ArticleListPage(
                                                 },
                                             ) {
                                                 if (prefs.openInBrowser.getValue()) {
-                                                    context.launchView(item.content.link)
+                                                    context.launchView(item.link)
                                                 } else {
                                                     if (prefs.offlineReader.getValue()) {
                                                         scope.launch {
@@ -328,7 +328,7 @@ fun ArticleListPage(
                                                     } else {
                                                         openLinkInCustomTab(
                                                             context,
-                                                            item.content.link
+                                                            item.link
                                                         )
                                                     }
                                                 }
