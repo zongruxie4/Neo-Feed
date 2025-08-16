@@ -211,6 +211,13 @@ private suspend fun syncFeed(
                 article to (item.content_html ?: item.content_text ?: "")
             } ?: emptyList()
 
+    feedsRepo.updateSource(
+        syncedFeed.copy(
+            title = syncedFeed.title,
+            feedImage = feed.icon?.let { sloppyLinkToStrictURLNoThrows(it) }
+                ?: syncedFeed.feedImage
+        ))
+
     articleRepo.updateOrInsertArticle(articles) { feedItem, text ->
         withContext(Dispatchers.IO) {
             blobOutputStream(feedItem.id, filesDir).bufferedWriter().use {
@@ -218,13 +225,6 @@ private suspend fun syncFeed(
             }
         }
     }
-
-    feedsRepo.updateSource(
-        syncedFeed.copy(
-            title = syncedFeed.title,
-            feedImage = feed.icon?.let { sloppyLinkToStrictURLNoThrows(it) }
-                ?: syncedFeed.feedImage
-        ))
 
     val ids = articleRepo.getItemsToBeCleanedFromFeed(
         feedId = syncedFeed.id,
