@@ -40,7 +40,7 @@ const val ID_ALL: Long = -1L
         FeedArticle::class
     ],
     version = 3,
-    exportSchema = false
+    exportSchema = true,
 )
 @TypeConverters(Converters::class)
 abstract class NeoFeedDb : RoomDatabase() {
