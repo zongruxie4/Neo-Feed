@@ -58,7 +58,7 @@ import java.util.Locale
 
 @Composable
 fun ArticlePage(
-    articleId: Long,
+    articleId: String,
     viewModel: ArticleViewModel = koinNeoViewModel(),
     sourceViewModel: SourceViewModel = koinNeoViewModel(),
     onDismiss: (() -> Unit)? = null,

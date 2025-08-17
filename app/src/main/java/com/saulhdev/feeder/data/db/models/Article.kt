@@ -36,7 +36,6 @@ import org.threeten.bp.ZoneOffset
 import org.threeten.bp.ZonedDateTime
 import java.net.URI
 import java.net.URL
-import java.util.UUID
 
 @Entity(
     tableName = "Article",
@@ -57,7 +56,7 @@ import java.util.UUID
 )
 data class Article(
     @PrimaryKey
-    val uuid: String = UUID.randomUUID().toString(),
+    val uuid: String = "",
     val guid: String = "",
     val title: String = "",
     val plainTitle: String = "",

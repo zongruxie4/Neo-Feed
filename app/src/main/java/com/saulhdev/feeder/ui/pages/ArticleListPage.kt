@@ -59,7 +59,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -92,7 +91,6 @@ import com.saulhdev.feeder.utils.openLinkInCustomTab
 import com.saulhdev.feeder.viewmodels.ArticleViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
-import okhttp3.internal.toLongOrDefault
 import org.koin.compose.koinInject
 
 @OptIn(
@@ -110,7 +108,7 @@ fun ArticleListPage(
     val scope = rememberCoroutineScope()
     val scaffoldState = rememberBottomSheetScaffoldState()
     val paneNavigator = rememberListDetailPaneScaffoldNavigator<Any>()
-    val articleId = remember { mutableLongStateOf(-1L) }
+    val articleId = remember { mutableStateOf("") }
 
     val feedList by viewModel.articlesList.collectAsState()
     val bookmarked by viewModel.bookmarked.collectAsState()
@@ -266,7 +264,7 @@ fun ArticleListPage(
                                     verticalArrangement = Arrangement.spacedBy(8.dp),
                                     contentPadding = PaddingValues(8.dp)
                                 ) {
-                                    items(bookmarked, key = { it.key.id }) { item ->
+                                    items(bookmarked, key = { it.key.uuid }) { item ->
                                         BookmarkItem(
                                             article = item.key,
                                             feed = item.value,
@@ -279,7 +277,7 @@ fun ArticleListPage(
                                                             scope.launch {
                                                                 paneNavigator.navigateTo(
                                                                     ListDetailPaneScaffoldRole.Detail,
-                                                                    article.id
+                                                                    article.uuid
                                                                 )
                                                             }
                                                         } else {
@@ -291,12 +289,12 @@ fun ArticleListPage(
                                                     }
                                                 }
                                                 scope.launch {
-                                                    viewModel.unpinArticle(article.id)
+                                                    viewModel.unpinArticle(article.uuid)
                                                 }
                                             },
                                             onRemoveAction = {
                                                 scope.launch {
-                                                    viewModel.bookmarkArticle(it.id, false)
+                                                    viewModel.bookmarkArticle(it.uuid, false)
                                                 }
                                             }
                                         )
@@ -343,11 +341,11 @@ fun ArticleListPage(
             }
         },
         detailPane = {
-            articleId.longValue = paneNavigator.currentDestination
+            articleId.value = paneNavigator.currentDestination
                 ?.takeIf { it.pane == this.paneRole }?.contentKey
-                .toString().toLongOrDefault(-1L)
+                ?.toString().orEmpty()
 
-            articleId.longValue.takeIf { it != -1L }?.let { id ->
+            articleId.value.takeIf { it.isNotEmpty() }?.let { id ->
                 AnimatedPane {
                     ArticlePage(id) {
                         scope.launch {

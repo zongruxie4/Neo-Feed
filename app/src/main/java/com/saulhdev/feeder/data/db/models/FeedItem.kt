@@ -11,7 +11,7 @@ import java.util.Date
 
 data class FeedItem(
     @Embedded
-    val article: FeedArticle,
+    val article: Article,
 
     @Relation(
         parentColumn = "feedId",
@@ -35,8 +35,8 @@ data class FeedItem(
         )
     }
 
-    val id: Long
-        get() = article.id
+    val id: String
+        get() = article.uuid
 
     val link: String
         get() = article.link ?: ""

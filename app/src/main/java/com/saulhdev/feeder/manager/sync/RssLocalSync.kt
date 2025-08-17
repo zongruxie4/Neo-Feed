@@ -23,8 +23,8 @@ import android.util.Log
 import com.saulhdev.feeder.data.content.FeedPreferences
 import com.saulhdev.feeder.data.db.ID_ALL
 import com.saulhdev.feeder.data.db.ID_UNSET
+import com.saulhdev.feeder.data.db.models.Article
 import com.saulhdev.feeder.data.db.models.Feed
-import com.saulhdev.feeder.data.db.models.FeedArticle
 import com.saulhdev.feeder.data.entity.JsonFeed
 import com.saulhdev.feeder.data.repository.ArticleRepository
 import com.saulhdev.feeder.data.repository.SourcesRepository
@@ -206,7 +206,7 @@ private suspend fun syncFeed(
                 val article = (articleRepo.getArticleByGuid(
                     guid = item.id.toString(),
                     feedId = syncedFeed.id
-                ) ?: FeedArticle(firstSyncedTime = downloadTime))
+                ) ?: Article(firstSyncedTime = downloadTime))
                     .updateFromParsedEntry(item, item.id.toString(), feed, syncedFeed.id)
                 article to (item.content_html ?: item.content_text ?: "")
             } ?: emptyList()
@@ -218,9 +218,9 @@ private suspend fun syncFeed(
                 ?: syncedFeed.feedImage
         ))
 
-    articleRepo.updateOrInsertArticle(articles) { feedItem, text ->
+    articleRepo.updateOrInsertArticle(articles) { article, text ->
         withContext(Dispatchers.IO) {
-            blobOutputStream(feedItem.id, filesDir).bufferedWriter().use {
+            blobOutputStream(article.uuid, filesDir).bufferedWriter().use {
                 it.write(text)
             }
         }

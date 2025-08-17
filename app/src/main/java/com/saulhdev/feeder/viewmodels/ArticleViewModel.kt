@@ -61,8 +61,7 @@ class ArticleViewModel(
             SortFilterModel()
         )
 
-
-    fun articleById(id: Long) = articleRepo.getArticleById(id)
+    fun articleById(id: String) = articleRepo.getArticleById(id)
         .stateIn(
             ioScope,
             SharingStarted.Eagerly,
@@ -227,13 +226,13 @@ class ArticleViewModel(
 
     val isSyncing = feedsRepo.isSyncing
 
-    fun unpinArticle(id: Long) {
+    fun unpinArticle(id: String) {
         viewModelScope.launch {
             articleRepo.unpinArticle(id)
         }
     }
 
-    fun bookmarkArticle(id: Long, boolean: Boolean) {
+    fun bookmarkArticle(id: String, boolean: Boolean) {
         viewModelScope.launch {
             articleRepo.bookmarkArticle(id, boolean)
         }

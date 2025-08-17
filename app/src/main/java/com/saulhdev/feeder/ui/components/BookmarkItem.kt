@@ -45,8 +45,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.saulhdev.feeder.data.db.models.Article
 import com.saulhdev.feeder.data.db.models.Feed
-import com.saulhdev.feeder.data.db.models.FeedArticle
 import com.saulhdev.feeder.utils.RelativeTimeHelper
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
@@ -54,11 +54,11 @@ import java.util.Date
 
 @Composable
 fun BookmarkItem(
-    article: FeedArticle,
+    article: Article,
     feed: Feed,
     modifier: Modifier = Modifier,
-    onClickAction: (FeedArticle) -> Unit = {},
-    onRemoveAction: (FeedArticle) -> Unit = {},
+    onClickAction: (Article) -> Unit = {},
+    onRemoveAction: (Article) -> Unit = {},
 ) {
     val context = LocalContext.current
     val time = Date.from(
