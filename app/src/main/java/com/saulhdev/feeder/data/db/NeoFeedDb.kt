@@ -22,6 +22,7 @@ package com.saulhdev.feeder.data.db
 import android.content.Context
 import androidx.room.AutoMigration
 import androidx.room.Database
+import androidx.room.DeleteTable
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
@@ -31,8 +32,8 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import com.saulhdev.feeder.data.db.dao.FeedArticleDao
 import com.saulhdev.feeder.data.db.dao.FeedSourceDao
 import com.saulhdev.feeder.data.db.models.Article
+import com.saulhdev.feeder.data.db.models.ArticleIdWithLink
 import com.saulhdev.feeder.data.db.models.Feed
-import com.saulhdev.feeder.data.db.models.FeedArticle
 import java.util.UUID
 
 const val ID_UNSET: Long = 0
@@ -41,10 +42,9 @@ const val ID_ALL: Long = -1L
 @Database(
     entities = [
         Feed::class,
-        FeedArticle::class,
         Article::class,
     ],
-    version = 4,
+    version = 5,
     exportSchema = true,
     autoMigrations = [
         AutoMigration(
@@ -52,6 +52,14 @@ const val ID_ALL: Long = -1L
             to = 4,
             spec = NeoFeedDb.MigrationMoveToArticle::class
         ),
+        AutoMigration(
+            from = 4,
+            to = 5,
+            spec = NeoFeedDb.MigrationRemoveFeedArticle::class
+        ),
+    ],
+    views = [
+        ArticleIdWithLink::class,
     ],
 )
 @TypeConverters(Converters::class)
@@ -109,7 +117,7 @@ abstract class NeoFeedDb : RoomDatabase() {
                     cursor.getLong(cursor.getColumnIndexOrThrow("firstSyncedTime"))
                 val primarySortTime =
                     cursor.getLong(cursor.getColumnIndexOrThrow("primarySortTime"))
-                val categoriesBlob = cursor.getBlob(cursor.getColumnIndexOrThrow("categories"))
+                val categoriesString = cursor.getString(cursor.getColumnIndexOrThrow("categories"))
                 val pinned = cursor.getInt(cursor.getColumnIndexOrThrow("pinned"))
                 val bookmarked = cursor.getInt(cursor.getColumnIndexOrThrow("bookmarked"))
 
@@ -152,7 +160,7 @@ abstract class NeoFeedDb : RoomDatabase() {
                 insertStmt.bindLong(12, feedId)
                 insertStmt.bindLong(13, firstSyncedTime)
                 insertStmt.bindLong(14, primarySortTime)
-                insertStmt.bindBlob(15, categoriesBlob)
+                insertStmt.bindString(15, categoriesString)
                 insertStmt.bindLong(16, pinned.toLong())
                 insertStmt.bindLong(17, bookmarked.toLong())
 
@@ -162,8 +170,8 @@ abstract class NeoFeedDb : RoomDatabase() {
         }
     }
 
-    /*@DeleteTable(tableName = "FeedArticle")
-    class MigrationRemoveFeedArticle : AutoMigrationSpec*/
+    @DeleteTable(tableName = "FeedArticle")
+    class MigrationRemoveFeedArticle : AutoMigrationSpec
 }
 
 val allMigrations = arrayOf(MIGRATION_1_2, MIGRATION_2_3)
