@@ -145,40 +145,6 @@ class ArticleViewModel(
             emptyList()
         )
 
-    val bookmarked = combine(
-        articleRepo.getBookmarkedArticlesMap(),
-        prefSortFilter,
-    ) { articles, sfm ->
-        (if (sfm.sourcesFilter.isEmpty()) articles.entries
-        else articles.entries.filterNot { sfm.sourcesFilter.contains(it.value.id.toString()) })
-            .let {
-                when {
-                    sfm.sort == SORT_CHRONOLOGICAL && !sfm.sortAsc
-                         -> it.sortedByDescending { it.key.pubDate } // default
-
-                    sfm.sort == SORT_TITLE && sfm.sortAsc
-                         -> it.sortedBy { it.key.title }
-
-                    sfm.sort == SORT_TITLE && !sfm.sortAsc
-                         -> it.sortedByDescending { it.key.title }
-
-                    sfm.sort == SORT_SOURCE && sfm.sortAsc
-                         -> it.sortedBy { it.value.title }
-
-                    sfm.sort == SORT_SOURCE && !sfm.sortAsc
-                         -> it.sortedByDescending { it.value.title }
-
-                    else -> it.sortedBy { it.key.pubDate }
-                }
-            }
-
-    }
-        .stateIn(
-            ioScope,
-            SharingStarted.Eagerly,
-            emptyList()
-        )
-
     val bookmarkedArticles: Flow<List<FeedItem>> = articleRepo.getBookmarkedFeedItems()
         .stateIn(
             ioScope,
@@ -191,8 +157,11 @@ class ArticleViewModel(
         prefSortFilter,
         prefs.removeDuplicates.get(),
     ) { articles, sfm, removeDuplicate ->
-        (if (removeDuplicate) articles.distinctBy { it.link }
-        else articles)
+        articles
+            .let {
+                if (removeDuplicate) it.distinctBy(FeedItem::link)
+                else it
+            }
             .let {
                 if (sfm.sourcesFilter.isEmpty()) it
                 else it.filterNot { sfm.sourcesFilter.contains(it.sourceId) }

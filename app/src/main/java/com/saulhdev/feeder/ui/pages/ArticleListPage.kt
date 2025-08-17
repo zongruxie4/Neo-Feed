@@ -111,7 +111,7 @@ fun ArticleListPage(
     val articleId = remember { mutableStateOf("") }
 
     val feedList by viewModel.articlesList.collectAsState()
-    val bookmarked by viewModel.bookmarked.collectAsState()
+    val bookmarked by viewModel.bookmarkedArticlesList.collectAsState()
     val isSyncing by viewModel.isSyncing.collectAsState(false)
     val filtered by viewModel.notModifiedFilter.collectAsState()
 
@@ -264,10 +264,10 @@ fun ArticleListPage(
                                     verticalArrangement = Arrangement.spacedBy(8.dp),
                                     contentPadding = PaddingValues(8.dp)
                                 ) {
-                                    items(bookmarked, key = { it.key.uuid }) { item ->
+                                    items(bookmarked, key = { it.id }) { item ->
                                         BookmarkItem(
-                                            article = item.key,
-                                            feed = item.value,
+                                            article = item.article,
+                                            feed = item.feed,
                                             onClickAction = { article ->
                                                 if (prefs.openInBrowser.getValue()) {
                                                     context.launchView(article.link ?: "")

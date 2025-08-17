@@ -21,14 +21,12 @@ package com.saulhdev.feeder.data.repository
 import com.saulhdev.feeder.data.db.NeoFeedDb
 import com.saulhdev.feeder.data.db.models.Article
 import com.saulhdev.feeder.data.db.models.ArticleIdWithLink
-import com.saulhdev.feeder.data.db.models.Feed
 import com.saulhdev.feeder.data.db.models.FeedItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -56,13 +54,7 @@ class ArticleRepository(db: NeoFeedDb) {
         articlesDao.getFeedItemsForFeed(feedId)
             .flowOn(cc)
 
-    fun getEnabledFeedArticles(): Flow<List<FeedArticle>> = articlesDao.getAllEnabledFeedArticles()
-        .flowOn(cc)
-
     fun getEnabledFeedItems(): Flow<List<FeedItem>> = articlesDao.getAllEnabledFeedItems()
-        .flowOn(cc)
-
-    fun getFeedByTags(tags: Set<String>): Flow<List<Feed>> = feedsDao.getFeedByTags(tags)
         .flowOn(cc)
 
     fun getFeedItemsByTags(tags: Set<String>): Flow<List<FeedItem>> =
@@ -101,17 +93,6 @@ class ArticleRepository(db: NeoFeedDb) {
     fun getFeedsItemsWithDefaultFullTextParse(): Flow<List<ArticleIdWithLink>> =
         articlesDao.getArticleIdLinks()
             .flowOn(cc)
-
-    fun getBookmarkedArticlesMap(): Flow<Map<Article, Feed>> = articlesDao.getAllBookmarked()
-        .mapLatest {
-            it.associateWith { fa ->
-                feedsDao.findFeedById(fa.feedId).first()
-            }
-        }
-        .flowOn(cc)
-
-    fun getBookmarkedArticles(): Flow<List<FeedArticle>> = articlesDao.getAllBookmarked()
-        .flowOn(cc)
 
     fun getBookmarkedFeedItems(): Flow<List<FeedItem>> = articlesDao.getAllBookmarkedFeedItems()
         .flowOn(cc)
