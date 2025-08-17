@@ -267,9 +267,7 @@ class OverlayView(val context: Context): OverlayController(context, R.style.AppT
 
         rootView.findViewById<MaterialButton>(R.id.header_filter).apply {
             setOnClickListener {
-                FilterBottomSheet.show(context, true){
-
-                }
+                FilterBottomSheet.show(context, true)
             }
         }
 

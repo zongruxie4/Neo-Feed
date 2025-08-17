@@ -27,14 +27,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@android:color/transparent"
-        app:liftOnScrollColor="@android:color/transparent"
-        android:fitsSystemWindows="true">
+        app:liftOnScrollColor="@android:color/transparent">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
             style="?attr/collapsingToolbarLayoutMediumStyle"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:fitsSystemWindows="true"
             app:contentScrim="@android:color/transparent"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
             app:titleCollapseMode="fade">

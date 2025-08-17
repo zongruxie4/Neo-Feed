@@ -28,6 +28,9 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
+import androidx.core.view.children
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.button.MaterialButtonToggleGroup
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.saulhdev.feeder.R
@@ -41,13 +44,15 @@ import org.koin.java.KoinJavaComponent.inject
 @SuppressLint("ViewConstructor")
 class FilterBottomSheet(
     context: Context,
-    private val callback: (Boolean) -> Unit
+    private val callback: () -> Unit
 ) : FrameLayout(context), View.OnClickListener {
     private val mainScope = CoroutineScope(Dispatchers.Main)
     private val viewModel: SourceViewModel by inject(SourceViewModel::class.java)
     private val prefs: FeedPreferences by inject(FeedPreferences::class.java)
     private val sourcesChipGroup: ChipGroup
     private val tagsChipGroup: ChipGroup
+    private val sortingChipGroup: ChipGroup
+    private val filterOption: MaterialButtonToggleGroup
 
    init {
        View.inflate(context, R.layout.sort_filter_sheet, this)
@@ -58,6 +63,8 @@ class FilterBottomSheet(
 
        sourcesChipGroup = findViewById(R.id.all_sources_group)
        tagsChipGroup = findViewById(R.id.all_tags_group)
+       sortingChipGroup = findViewById(R.id.cg_sort_options)
+       filterOption = findViewById(R.id.toggle_sort_direction)
 
        getSources()
        getAllTags()
@@ -134,26 +141,65 @@ class FilterBottomSheet(
     }
 
     override fun onClick(v: View) {
-        Log.d("FilterBottomSheet", "onClick: ${v.id}")
         when (v.id) {
-            R.id.btn_apply -> callback(true)
-            R.id.btn_reset -> callback(false)
+            R.id.btn_apply -> {
+                val selectedSources: Set<String> = sourcesChipGroup.children
+                    .filterIsInstance<Chip>()
+                    .filter { it.isChecked }
+                    .map { it.text.toString() }
+                    .toSet()
+
+                val selectedTags: Set<String> = tagsChipGroup.children
+                    .filterIsInstance<Chip>()
+                    .filter { it.isChecked }
+                    .map { it.text.toString() }
+                    .toSet()
+
+                val sortingFilter = filterOption.children
+                    .filterIsInstance<MaterialButton>()
+                    .filter { it.isChecked }
+                    .map { it.id }
+                    .firstOrNull() ?: R.id.btn_sort_desc
+
+                val sortingOption = when (sortingFilter) {
+                    R.id.btn_sort_asc -> true
+                    R.id.btn_sort_desc -> false
+                    else -> true
+                }
+
+                val sorting = sortingChipGroup.children
+                    .filterIsInstance<Chip>()
+                    .filter { it.isChecked }
+                    .map { it.text.toString().lowercase() }
+                    .firstOrNull() ?: context.getString(R.string.sorting_chronological)
+
+                prefs.sourcesFilter.setValue(selectedSources)
+                prefs.tagsFilter.setValue(selectedTags)
+                prefs.sortingAsc.setValue(sortingOption)
+                prefs.sortingFilter.setValue(sorting)
+            }
+
+            R.id.btn_reset -> {
+                prefs.sourcesFilter.setValue(emptySet())
+                prefs.tagsFilter.setValue(emptySet())
+                prefs.sortingAsc.setValue(false)
+                prefs.sortingFilter.setValue(context.getString(R.string.sorting_chronological))
+            }
+
+            else -> {
+                Log.w("FilterBottomSheet", "Unknown button clicked: ${v.id}")
+            }
         }
+        callback()
     }
 
     companion object {
         fun show(
             context: Context,
-            animate: Boolean,
-            callback: () -> Unit
+            animate: Boolean
         ) {
             val sheet = BaseBottomSheet.inflate(context)
             sheet.show(FilterBottomSheet(context) {
-                Log.d("FilterBottomSheet", "onClick: $it")
-
-                if (it) {
-                    callback()
-                }
                 sheet.close(true)
             }, animate)
         }
