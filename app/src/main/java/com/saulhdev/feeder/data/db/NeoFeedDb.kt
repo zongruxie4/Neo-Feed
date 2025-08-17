@@ -20,16 +20,20 @@
 package com.saulhdev.feeder.data.db
 
 import android.content.Context
+import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import androidx.room.migration.AutoMigrationSpec
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.saulhdev.feeder.data.db.dao.FeedArticleDao
 import com.saulhdev.feeder.data.db.dao.FeedSourceDao
+import com.saulhdev.feeder.data.db.models.Article
 import com.saulhdev.feeder.data.db.models.Feed
 import com.saulhdev.feeder.data.db.models.FeedArticle
+import java.util.UUID
 
 const val ID_UNSET: Long = 0
 const val ID_ALL: Long = -1L
@@ -37,10 +41,18 @@ const val ID_ALL: Long = -1L
 @Database(
     entities = [
         Feed::class,
-        FeedArticle::class
+        FeedArticle::class,
+        Article::class,
     ],
-    version = 3,
+    version = 4,
     exportSchema = true,
+    autoMigrations = [
+        AutoMigration(
+            from = 3,
+            to = 4,
+            spec = NeoFeedDb.MigrationMoveToArticle::class
+        ),
+    ],
 )
 @TypeConverters(Converters::class)
 abstract class NeoFeedDb : RoomDatabase() {
@@ -63,6 +75,95 @@ abstract class NeoFeedDb : RoomDatabase() {
                 .build()
         }
     }
+
+    class MigrationMoveToArticle : AutoMigrationSpec {
+        override fun onPostMigrate(db: SupportSQLiteDatabase) {
+            super.onPostMigrate(db)
+            val cursor = db.query("SELECT * FROM FeedArticle")
+            val insertStmt = db.compileStatement(
+                """
+                INSERT INTO Article (
+                    uuid, guid, title, plainTitle, imageUrl, enclosureLink,
+                    plainSnippet, description, author,
+                    pubDate, link, feedId, firstSyncedTime, primarySortTime,
+                    categories, pinned, bookmarked
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """.trimIndent()
+            )
+
+            while (cursor.moveToNext()) {
+                val id = cursor.getLong(cursor.getColumnIndexOrThrow("id"))
+                val guid = cursor.getString(cursor.getColumnIndexOrThrow("guid"))
+                val title = cursor.getString(cursor.getColumnIndexOrThrow("title"))
+                val plainTitle = cursor.getString(cursor.getColumnIndexOrThrow("plainTitle"))
+                val imageUrl = cursor.getString(cursor.getColumnIndexOrThrow("imageUrl"))
+                val enclosureLink = cursor.getString(cursor.getColumnIndexOrThrow("enclosureLink"))
+                val plainSnippet = cursor.getString(cursor.getColumnIndexOrThrow("plainSnippet"))
+                val description = cursor.getString(cursor.getColumnIndexOrThrow("description"))
+                val contentHtml = cursor.getString(cursor.getColumnIndexOrThrow("content_html"))
+                val author = cursor.getString(cursor.getColumnIndexOrThrow("author"))
+                val pubDate = cursor.getLong(cursor.getColumnIndexOrThrow("pubDate"))
+                val link = cursor.getString(cursor.getColumnIndexOrThrow("link"))
+                val feedId = cursor.getLong(cursor.getColumnIndexOrThrow("feedId"))
+                val firstSyncedTime =
+                    cursor.getLong(cursor.getColumnIndexOrThrow("firstSyncedTime"))
+                val primarySortTime =
+                    cursor.getLong(cursor.getColumnIndexOrThrow("primarySortTime"))
+                val categoriesBlob = cursor.getBlob(cursor.getColumnIndexOrThrow("categories"))
+                val pinned = cursor.getInt(cursor.getColumnIndexOrThrow("pinned"))
+                val bookmarked = cursor.getInt(cursor.getColumnIndexOrThrow("bookmarked"))
+
+                val uuid = UUID.randomUUID().toString()
+
+                insertStmt.bindString(1, uuid)
+                insertStmt.bindString(2, guid)
+                insertStmt.bindString(3, title)
+                insertStmt.bindString(4, plainTitle)
+
+                if (imageUrl != null)
+                    insertStmt.bindString(5, imageUrl)
+                else
+                    insertStmt.bindNull(5)
+
+                if (enclosureLink != null)
+                    insertStmt.bindString(6, enclosureLink)
+                else
+                    insertStmt.bindNull(6)
+
+                insertStmt.bindString(7, plainSnippet)
+                insertStmt.bindString(8, description)
+
+                if (author != null)
+                    insertStmt.bindString(9, author)
+                else
+                    insertStmt.bindNull(9)
+
+                // pubDate can be null, so bind accordingly
+                if (pubDate != 0L)
+                    insertStmt.bindLong(10, pubDate)
+                else
+                    insertStmt.bindNull(10)
+
+                if (link != null)
+                    insertStmt.bindString(11, link)
+                else
+                    insertStmt.bindNull(11)
+
+                insertStmt.bindLong(12, feedId)
+                insertStmt.bindLong(13, firstSyncedTime)
+                insertStmt.bindLong(14, primarySortTime)
+                insertStmt.bindBlob(15, categoriesBlob)
+                insertStmt.bindLong(16, pinned.toLong())
+                insertStmt.bindLong(17, bookmarked.toLong())
+
+                insertStmt.executeInsert()
+            }
+            cursor.close()
+        }
+    }
+
+    /*@DeleteTable(tableName = "FeedArticle")
+    class MigrationRemoveFeedArticle : AutoMigrationSpec*/
 }
 
 val allMigrations = arrayOf(MIGRATION_1_2, MIGRATION_2_3)
