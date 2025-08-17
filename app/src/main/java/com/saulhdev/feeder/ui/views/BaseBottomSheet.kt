@@ -60,11 +60,6 @@ class BaseBottomSheet @JvmOverloads constructor(
         //TODO set to dark
     }
 
-
-    override fun handleClose(animate: Boolean) {
-        handleClose(animate, DEFAULT_CLOSE_DURATION.toLong())
-    }
-
     override fun isOfType(type: Int): Boolean {
         return type and TYPE_FILTER_SHEET == 1
     }

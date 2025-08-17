@@ -110,6 +110,10 @@ public abstract class AbstractSlideInView extends AbstractFloatingView implement
         }
     }
 
+    @Override
+    public boolean onControllerTouchEvent(MotionEvent ev) {
+        return mSwipeDetector.onTouchEvent(ev);
+    }
 
     @Override
     public boolean onControllerInterceptTouchEvent(MotionEvent ev) {
@@ -125,6 +129,8 @@ public abstract class AbstractSlideInView extends AbstractFloatingView implement
         return mSwipeDetector.isDraggingOrSettling()
                 || !isEventOverView(mContent, ev);
     }
+
+
     private boolean isEventOverView(View view, MotionEvent ev) {
         getDescendantRectRelativeToSelf(view, mHitRect);
         return mHitRect.contains((int)ev.getX(), (int)ev.getY());
@@ -148,10 +154,6 @@ public abstract class AbstractSlideInView extends AbstractFloatingView implement
                                                   boolean includeRootScroll) {
         return Utilities.getDescendantCoordRelativeToAncestor(descendant, this,
                 coord, includeRootScroll);
-    }
-
-    private boolean isOpeningAnimationRunning() {
-        return mIsOpen && mOpenCloseAnimator.isRunning();
     }
 
     @Override
@@ -184,6 +186,11 @@ public abstract class AbstractSlideInView extends AbstractFloatingView implement
                     .setInterpolator(Interpolators.DEACCEL);
             mOpenCloseAnimator.start();
         }
+
+    }
+
+    public void close(boolean animate) {
+        handleClose(animate, mScrollDuration);
     }
 
     protected void handleClose(boolean animate, long defaultDuration) {
