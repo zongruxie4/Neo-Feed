@@ -24,129 +24,193 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Update
-import com.saulhdev.feeder.data.db.ID_UNSET
-import com.saulhdev.feeder.data.db.models.FeedArticle
-import com.saulhdev.feeder.data.entity.FeedItemIdWithLink
+import com.saulhdev.feeder.data.db.models.Article
+import com.saulhdev.feeder.data.db.models.ArticleIdWithLink
+import com.saulhdev.feeder.data.db.models.Feed
+import com.saulhdev.feeder.data.db.models.FeedItem
 import kotlinx.coroutines.flow.Flow
+import java.util.UUID
 
 @Dao
 interface FeedArticleDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertFeedArticle(item: FeedArticle): Long
+    suspend fun insertFeedArticle(item: Article): Long
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertFeedArticle(items: List<FeedArticle>): List<Long>
+    suspend fun insertFeedArticle(items: List<Article>): List<Long>
 
     @Update
-    suspend fun updateFeedArticle(item: FeedArticle): Int
+    suspend fun updateFeedArticle(item: Article): Int
 
     @Update
-    suspend fun updateFeedArticle(items: List<FeedArticle>): Int
+    suspend fun updateFeedArticle(items: List<Article>): Int
 
     @Delete
-    suspend fun deleteFeedArticle(item: FeedArticle): Int
+    suspend fun deleteFeedArticle(item: Article): Int
 
     @Query(
         """
-        DELETE FROM FeedArticle WHERE id IN (:ids)
+        DELETE FROM Article WHERE uuid IN (:ids)
         """
     )
-    suspend fun deleteArticles(ids: List<Long>): Int
+    suspend fun deleteArticles(ids: List<String>): Int
 
     @Query(
         """
-        DELETE FROM FeedArticle WHERE id IN (:ids)
+        DELETE FROM Article WHERE uuid IN (:ids)
         """
     )
-    suspend fun deleteFeedArticle(ids: List<Long>): Int
+    suspend fun deleteFeedArticle(ids: List<String>): Int
 
     @Query(
         """
-        DELETE FROM FeedArticle WHERE feedId = :feedId
+        DELETE FROM Article WHERE feedId = :feedId
         """
     )
     suspend fun deleteFeedArticle(feedId: Long?): Int
 
-    @Query("SELECT * FROM feedArticle WHERE guid IS :guid AND feedId IS :feedId")
-    suspend fun loadArticle(guid: String, feedId: Long?): FeedArticle?
+    @Query("SELECT * FROM Article WHERE guid IS :guid AND feedId IS :feedId")
+    suspend fun loadArticle(guid: String, feedId: Long?): Article?
 
-    @Query("SELECT * FROM feedArticle WHERE guid IS :guid")
-    suspend fun loadArticleByGuid(guid: String): FeedArticle?
+    @Query("SELECT * FROM Article WHERE guid IS :guid")
+    suspend fun loadArticleByGuid(guid: String): Article?
 
-    @Query("SELECT * FROM feedArticle WHERE id IS :id")
-    suspend fun getArticleById(id: Long): FeedArticle?
+    @Query("SELECT * FROM Article WHERE uuid IS :id")
+    suspend fun getArticleById(id: String): Article?
 
-    @Query("SELECT * FROM feedArticle WHERE id IS :id")
-    fun loadArticleById(id: Long): Flow<FeedArticle?>
+    @Query("SELECT * FROM Article WHERE uuid IS :id")
+    fun loadArticleById(id: String): Flow<Article?>
 
-    @Query("SELECT * FROM feedArticle WHERE feedId IS :feedId")
-    suspend fun loadArticles(feedId: Long?): List<FeedArticle>
-
+    @Query("SELECT * FROM Article WHERE feedId IS :feedId")
+    suspend fun loadArticles(feedId: Long?): List<Article>
 
     @Query(
         """
-        SELECT FeedArticle.* FROM FeedArticle
-        JOIN Feeds ON FeedArticle.feedId = Feeds.id
+        SELECT Article.* FROM Article
+        JOIN Feeds ON Article.feedId = Feeds.id
         WHERE Feeds.isEnabled = 1
     """
     )
-    fun getAllEnabledFeedArticles(): Flow<List<FeedArticle>>
+    fun getAllEnabledFeedArticles(): Flow<List<Article>>
 
     @Query(
         """
-        SELECT id FROM FeedArticle
+        SELECT uuid FROM Article
         WHERE feedId IS :feedId AND pinned = 0 AND bookmarked = 0
         ORDER BY primarySortTime DESC, pubDate DESC
         LIMIT -1 OFFSET :keepCount
         """
     )
-    suspend fun getItemsToBeCleanedFromFeed(feedId: Long, keepCount: Int): List<Long>
+    suspend fun getItemsToBeCleanedFromFeed(feedId: Long, keepCount: Int): List<String>
 
-    @Query(
-        """
-            SELECT fi.id, fi.link
-            FROM feedArticle fi
-            JOIN feeds f ON fi.feedId = f.id
-            WHERE f.fulltextByDefault = 1 OR fi.bookmarked = 1
-        """
-    )
-    fun getFeedsItemsWithDefaultFullTextParse(): Flow<List<FeedItemIdWithLink>>
+    @Query("SELECT * FROM ArticleIdWithLink")
+    fun getArticleIdLinks(): Flow<List<ArticleIdWithLink>>
 
     @Query(
         """
             SELECT *
-            FROM feedArticle fi
-            WHERE fi.bookmarked = 1
+            FROM Article
+            WHERE bookmarked = 1
             ORDER BY pinned DESC, pubDate DESC
         """
     )
-    fun getAllBookmarked(): Flow<List<FeedArticle>>
-}
+    fun getAllBookmarked(): Flow<List<Article>>
 
-suspend fun FeedArticleDao.insertOrUpdate(
-    itemsWithText: List<Pair<FeedArticle, String>>,
-    block: suspend (FeedArticle, String) -> Unit
-) {
-    val updatedItems = itemsWithText.filter { (item, _) ->
-        item.id > ID_UNSET
+    // Embedded FeedItem
+    @Query(
+        """
+    SELECT Article.*, Feeds.* FROM Article
+    JOIN Feeds ON Article.feedId = Feeds.id
+    WHERE Feeds.isEnabled = 1
+    ORDER BY Article.primarySortTime DESC
+    """
+    )
+    fun getAllEnabledFeedItems(): Flow<List<FeedItem>>
+
+    @Query(
+        """
+    SELECT Article.*, Feeds.* FROM Article
+    JOIN Feeds ON Article.feedId = Feeds.id
+    WHERE Article.bookmarked = 1 AND Feeds.isEnabled = 1
+    ORDER BY Article.pinned DESC, Article.pubDate DESC
+    """
+    )
+    fun getAllBookmarkedFeedItems(): Flow<List<FeedItem>>
+
+    @Query(
+        """
+    SELECT Article.*, Feeds.* FROM Article
+    JOIN Feeds ON Article.feedId = Feeds.id
+    WHERE Feeds.isEnabled = 1 AND Feeds.tag IN (:tags)
+    ORDER BY Article.primarySortTime DESC
+    """
+    )
+    fun getFeedItemsByTagsSimple(tags: Set<String>): Flow<List<FeedItem>>
+
+    @Query(
+        """
+    SELECT Article.*, Feeds.* FROM Article
+    JOIN Feeds ON Article.feedId = Feeds.id
+    WHERE Article.feedId = :feedId AND Feeds.isEnabled = 1
+    ORDER BY Article.primarySortTime DESC
+    """
+    )
+    fun getFeedItemsForFeed(feedId: Long): Flow<List<FeedItem>>
+
+    @Query(
+        """
+    SELECT Article.*, Feeds.* FROM Article
+    JOIN Feeds ON Article.feedId = Feeds.id
+    WHERE Article.pinned = 1 AND Feeds.isEnabled = 1
+    ORDER BY Article.primarySortTime DESC
+    """
+    )
+    fun getPinnedFeedItems(): Flow<List<FeedItem>>
+
+    @Query("SELECT * FROM Feeds WHERE ',' || tag || ',' LIKE :pattern AND isEnabled = 1")
+    suspend fun getEnabledFeedsByTagPattern(pattern: String): List<Feed>
+
+    @Transaction
+    suspend fun getFeedItemsByTagsComplex(tags: Set<String>): List<FeedItem> {
+        val feedIds = tags.flatMap { tag ->
+            getEnabledFeedsByTagPattern("%,$tag,%")
+        }.distinctBy { it.id }.map { it.id }
+
+        return getFeedItemsByFeedIds(feedIds)
     }
-    updateFeedArticle(updatedItems.map { (item, _) -> item })
 
-    val insertedItems = itemsWithText.filter { (item, _) ->
-        item.id <= ID_UNSET
-    }
-    val insertedIds = insertFeedArticle(insertedItems.map { (item, _) -> item })
+    @Query(
+        """
+    SELECT Article.*, Feeds.* FROM Article
+    JOIN Feeds ON Article.feedId = Feeds.id
+    WHERE Article.feedId IN (:feedIds) AND Feeds.isEnabled = 1
+    ORDER BY Article.primarySortTime DESC
+    """
+    )
+    suspend fun getFeedItemsByFeedIds(feedIds: List<Long>): List<FeedItem>
 
-    updatedItems.forEach { (item, text) ->
-        block(item, text)
-    }
+    @Transaction
+    suspend fun insertOrUpdate(
+        itemsWithText: List<Pair<Article, String>>,
+        block: suspend (Article, String) -> Unit
+    ) {
+        val (toUpdateItems, toInsertItems) = itemsWithText.partition { (item, _) ->
+            item.uuid.isNotEmpty()
+        }
 
-    insertedIds.zip(insertedItems).forEach { (itemId, itemToText) ->
-        val (item, text) = itemToText
+        updateFeedArticle(toUpdateItems.map { (item, _) -> item })
+        toUpdateItems.forEach { (item, text) ->
+            block(item, text)
+        }
 
-        item.id = itemId
-
-        block(item, text)
+        toInsertItems.map { (item, text) -> item.copy(uuid = UUID.randomUUID().toString()) to text }
+            .apply {
+                forEach { (article, text) ->
+                    insertFeedArticle(article)
+                    block(article, text)
+                }
+            }
     }
 }

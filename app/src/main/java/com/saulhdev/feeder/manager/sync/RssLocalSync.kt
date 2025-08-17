@@ -23,8 +23,8 @@ import android.util.Log
 import com.saulhdev.feeder.data.content.FeedPreferences
 import com.saulhdev.feeder.data.db.ID_ALL
 import com.saulhdev.feeder.data.db.ID_UNSET
+import com.saulhdev.feeder.data.db.models.Article
 import com.saulhdev.feeder.data.db.models.Feed
-import com.saulhdev.feeder.data.db.models.FeedArticle
 import com.saulhdev.feeder.data.entity.JsonFeed
 import com.saulhdev.feeder.data.repository.ArticleRepository
 import com.saulhdev.feeder.data.repository.SourcesRepository
@@ -197,39 +197,37 @@ private suspend fun syncFeed(
         }
     }
 
-    feedSql.lastSync = Instant.now()
+    val syncedFeed = feedSql.copy(lastSync = Instant.now())
     val items = feed.items
 
     val articles =
         items?.reversed()
             ?.map { item ->
-                val article = articleRepo.getArticleByGuid(
+                val article = (articleRepo.getArticleByGuid(
                     guid = item.id.toString(),
-                    feedId = feedSql.id
-                ) ?: FeedArticle(firstSyncedTime = downloadTime)
-
-                article.updateFromParsedEntry(item, item.id.toString(), feed)
-                article.feedId = feedSql.id
+                    feedId = syncedFeed.id
+                ) ?: Article(firstSyncedTime = downloadTime))
+                    .updateFromParsedEntry(item, item.id.toString(), feed, syncedFeed.id)
                 article to (item.content_html ?: item.content_text ?: "")
             } ?: emptyList()
 
-    articleRepo.updateOrInsertArticle(articles) { feedItem, text ->
+    feedsRepo.updateSource(
+        syncedFeed.copy(
+            title = syncedFeed.title,
+            feedImage = feed.icon?.let { sloppyLinkToStrictURLNoThrows(it) }
+                ?: syncedFeed.feedImage
+        ))
+
+    articleRepo.updateOrInsertArticle(articles) { article, text ->
         withContext(Dispatchers.IO) {
-            blobOutputStream(feedItem.id, filesDir).bufferedWriter().use {
+            blobOutputStream(article.uuid, filesDir).bufferedWriter().use {
                 it.write(text)
             }
         }
     }
 
-    feedsRepo.updateSource(
-        feedSql.copy(
-            title = feedSql.title,
-            feedImage = feed.icon?.let { sloppyLinkToStrictURLNoThrows(it) }
-                ?: feedSql.feedImage
-        ))
-
     val ids = articleRepo.getItemsToBeCleanedFromFeed(
-        feedId = feedSql.id,
+        feedId = syncedFeed.id,
         keepCount = max(maxFeedItemCount, items?.size ?: 0)
     )
 

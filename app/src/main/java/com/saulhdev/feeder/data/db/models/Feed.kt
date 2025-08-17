@@ -42,7 +42,8 @@ data class Feed(
     val description: String = "",
     val url: URL = sloppyLinkToStrictURL(""),
     val feedImage: URL = sloppyLinkToStrictURL(""),
-    @ColumnInfo(typeAffinity = ColumnInfo.INTEGER) var lastSync: Instant = Instant.EPOCH,
+    @ColumnInfo(typeAffinity = ColumnInfo.INTEGER)
+    val lastSync: Instant = Instant.EPOCH,
     val alternateId: Boolean = false,
     val fullTextByDefault: Boolean = false,
     val tag: String = "",

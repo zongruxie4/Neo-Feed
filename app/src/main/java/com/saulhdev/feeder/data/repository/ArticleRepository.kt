@@ -19,16 +19,14 @@
 package com.saulhdev.feeder.data.repository
 
 import com.saulhdev.feeder.data.db.NeoFeedDb
-import com.saulhdev.feeder.data.db.dao.insertOrUpdate
-import com.saulhdev.feeder.data.db.models.Feed
-import com.saulhdev.feeder.data.db.models.FeedArticle
-import com.saulhdev.feeder.data.entity.FeedItemIdWithLink
+import com.saulhdev.feeder.data.db.models.Article
+import com.saulhdev.feeder.data.db.models.ArticleIdWithLink
+import com.saulhdev.feeder.data.db.models.FeedItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -38,35 +36,40 @@ class ArticleRepository(db: NeoFeedDb) {
     private val articlesDao = db.feedArticleDao()
     private val feedsDao = db.feedSourceDao()
 
-    suspend fun deleteArticles(ids: List<Long>) = withContext(jcc) {
+    suspend fun deleteArticles(ids: List<String>) = withContext(jcc) {
         articlesDao.deleteArticles(ids)
     }
 
-    suspend fun getArticleByGuid(guid: String, feedId: Long): FeedArticle? {
+    suspend fun getArticleByGuid(guid: String, feedId: Long): Article? {
         return withContext(jcc) {
             articlesDao.loadArticle(guid = guid, feedId = feedId)
         }
     }
 
-    fun getArticleById(articleId: Long): Flow<FeedArticle?> =
+    fun getArticleById(articleId: String): Flow<Article?> =
         articlesDao.loadArticleById(id = articleId)
             .flowOn(cc)
 
-    fun getEnabledFeedArticles(): Flow<List<FeedArticle>> = articlesDao.getAllEnabledFeedArticles()
+    fun getFeedItemsById(feedId: Long): Flow<List<FeedItem>> =
+        articlesDao.getFeedItemsForFeed(feedId)
+            .flowOn(cc)
+
+    fun getEnabledFeedItems(): Flow<List<FeedItem>> = articlesDao.getAllEnabledFeedItems()
         .flowOn(cc)
 
-    fun getFeedByTags(tags: Set<String>): Flow<List<Feed>> = feedsDao.getFeedByTags(tags)
-        .flowOn(cc)
+    fun getFeedItemsByTags(tags: Set<String>): Flow<List<FeedItem>> =
+        articlesDao.getFeedItemsByTagsSimple(tags)
+            .flowOn(cc)
 
     suspend fun updateOrInsertArticle(
-        itemsWithText: List<Pair<FeedArticle, String>>,
-        block: suspend (FeedArticle, String) -> Unit
+        itemsWithText: List<Pair<Article, String>>,
+        block: suspend (Article, String) -> Unit
     ) = withContext(jcc) {
         articlesDao.insertOrUpdate(itemsWithText, block)
     }
 
     suspend fun bookmarkArticle(
-        articleId: Long,
+        articleId: String,
         bookmark: Boolean,
     ) = withContext(jcc) {
         articlesDao.getArticleById(articleId)?.let {
@@ -75,7 +78,7 @@ class ArticleRepository(db: NeoFeedDb) {
     }
 
     suspend fun unpinArticle(
-        articleId: Long,
+        articleId: String,
         pin: Boolean = false,
     ) = withContext(jcc) {
         articlesDao.getArticleById(articleId)?.let {
@@ -87,18 +90,13 @@ class ArticleRepository(db: NeoFeedDb) {
         articlesDao.getItemsToBeCleanedFromFeed(feedId = feedId, keepCount = keepCount)
     }
 
-    fun getFeedsItemsWithDefaultFullTextParse(): Flow<List<FeedItemIdWithLink>> =
-        articlesDao.getFeedsItemsWithDefaultFullTextParse()
+    fun getFeedsItemsWithDefaultFullTextParse(): Flow<List<ArticleIdWithLink>> =
+        articlesDao.getArticleIdLinks()
             .flowOn(cc)
 
-    fun getBookmarkedArticlesMap(): Flow<Map<FeedArticle, Feed>> = articlesDao.getAllBookmarked()
-        .mapLatest {
-            it.associateWith { fa ->
-                feedsDao.findFeedById(fa.feedId).first()
-            }
-        }
+    fun getBookmarkedFeedItems(): Flow<List<FeedItem>> = articlesDao.getAllBookmarkedFeedItems()
         .flowOn(cc)
 
-    fun getBookmarkedArticles(): Flow<List<FeedArticle>> = articlesDao.getAllBookmarked()
+    fun getPinnedFeedItems(): Flow<List<FeedItem>> = articlesDao.getPinnedFeedItems()
         .flowOn(cc)
 }

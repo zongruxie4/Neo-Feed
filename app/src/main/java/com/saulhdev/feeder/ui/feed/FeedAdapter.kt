@@ -24,7 +24,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.saulhdev.feeder.R
-import com.saulhdev.feeder.data.entity.FeedItem
+import com.saulhdev.feeder.data.db.models.FeedItem
 import com.saulhdev.feeder.ui.feed.binders.StoryCardBinder
 
 class FeedAdapter : RecyclerView.Adapter<FeedAdapter.FeedViewHolder>() {
@@ -46,10 +46,6 @@ class FeedAdapter : RecyclerView.Adapter<FeedAdapter.FeedViewHolder>() {
 
     override fun getItemCount(): Int {
         return list.size
-    }
-
-    override fun getItemViewType(position: Int): Int {
-        return (list[position].type.ordinal)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FeedViewHolder {

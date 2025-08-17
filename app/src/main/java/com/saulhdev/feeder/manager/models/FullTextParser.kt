@@ -7,8 +7,8 @@ import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
+import com.saulhdev.feeder.data.db.models.ArticleIdWithLink
 import com.saulhdev.feeder.data.repository.ArticleRepository
-import com.saulhdev.feeder.data.db.models.FeedItemForFetching
 import com.saulhdev.feeder.utils.blobFullFile
 import com.saulhdev.feeder.utils.blobFullOutputStream
 import kotlinx.coroutines.Dispatchers
@@ -44,7 +44,7 @@ class FullTextWorker(
 
     override suspend fun doWork(): Result {
         Log.i("FeederFullText", "Parsing full texts for articles if missing")
-        val itemsToSync: List<FeedItemForFetching> =
+        val itemsToSync: List<ArticleIdWithLink> =
             repository.getFeedsItemsWithDefaultFullTextParse()
                 .firstOrNull()
                 ?: return Result.success()
@@ -62,18 +62,18 @@ class FullTextWorker(
             }
 
         return when (success) {
-            true -> Result.success()
+            true  -> Result.success()
             false -> Result.failure()
         }
     }
 }
 
 suspend fun parseFullArticleIfMissing(
-    feedItem: FeedItemForFetching,
+    feedItem: ArticleIdWithLink,
     okHttpClient: OkHttpClient,
     filesDir: File
 ): Boolean {
-    val fullArticleFile = blobFullFile(itemId = feedItem.id, filesDir = filesDir)
+    val fullArticleFile = blobFullFile(itemId = feedItem.uuid, filesDir = filesDir)
     return fullArticleFile.isFile || parseFullArticle(
         feedItem = feedItem,
         okHttpClient = okHttpClient,
@@ -82,7 +82,7 @@ suspend fun parseFullArticleIfMissing(
 }
 
 suspend fun parseFullArticle(
-    feedItem: FeedItemForFetching,
+    feedItem: ArticleIdWithLink,
     okHttpClient: OkHttpClient,
     filesDir: File
 ): Pair<Boolean, Throwable?> = withContext(Dispatchers.Default) {
@@ -100,7 +100,7 @@ suspend fun parseFullArticle(
 
         Log.d("FeederFullText", "Writing article ${feedItem.link}")
         withContext(Dispatchers.IO) {
-            blobFullOutputStream(feedItem.id, filesDir).bufferedWriter().use { writer ->
+            blobFullOutputStream(feedItem.uuid, filesDir).bufferedWriter().use { writer ->
                 writer.write(article.contentWithUtf8Encoding)
             }
         }

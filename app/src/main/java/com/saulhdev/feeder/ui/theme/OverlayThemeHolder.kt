@@ -43,11 +43,6 @@ class OverlayThemeHolder(private val overlay: OverlayView) {
     var shouldUseSN = true
 
     /**
-     * If we are applied light statusbar/navbar
-     */
-    var isSNApplied = false
-
-    /**
      * If we are using system colors instead of [LauncherAPI]
      */
     var systemColors = false
@@ -57,12 +52,11 @@ class OverlayThemeHolder(private val overlay: OverlayView) {
      */
     fun setTheme(theme: SparseIntArray) {
         currentTheme = theme
+        val isLightTheme = currentTheme.get(CardTheme.Colors.IS_LIGHT.ordinal) == 1
 
-        if (shouldUseSN && !isSNApplied) {
-            isSNApplied = true
+        if (isLightTheme && shouldUseSN) {
             overlay.window.setLightFlags()
-        } else if (shouldUseSN && isSNApplied) {
-            isSNApplied = false
+        } else if (shouldUseSN) {
             overlay.window.clearLightFlags()
         }
     }

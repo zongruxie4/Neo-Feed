@@ -91,7 +91,7 @@ fun NavigationManager(navController: NavHostController) {
                 })
             ) {
                 val args = it.toRoute<NavRoute.ArticleView>()
-                ArticlePage(args.id)
+                ArticlePage(args.uuid)
             }
         }
     }
@@ -134,7 +134,7 @@ open class NavRoute {
     data object SourceAdd : NavRoute()
 
     @Serializable
-    data class ArticleView(val id: Long = 0L) : NavRoute()
+    data class ArticleView(val uuid: String = "") : NavRoute()
 
     @Serializable
     data object Changelog : NavRoute()

@@ -20,12 +20,12 @@
 package com.saulhdev.feeder.data.db.models
 
 import androidx.room.ColumnInfo
+import androidx.room.DatabaseView
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.ForeignKey.Companion.CASCADE
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import com.saulhdev.feeder.data.db.ID_UNSET
 import com.saulhdev.feeder.data.entity.Item
 import com.saulhdev.feeder.data.entity.JsonFeed
 import com.saulhdev.feeder.utils.HtmlToPlainTextConverter
@@ -38,10 +38,12 @@ import java.net.URI
 import java.net.URL
 
 @Entity(
-    tableName = "FeedArticle",
+    tableName = "Article",
     indices = [
-        Index(value = ["id", "feedId"], unique = true),
-        Index(value = ["feedId"])
+        Index(value = ["feedId", "uuid"], unique = true),
+        Index(value = ["feedId", "guid"]),
+        Index(value = ["uuid", "link"]),
+        Index(value = ["feedId"]),
     ],
     foreignKeys = [
         ForeignKey(
@@ -50,35 +52,36 @@ import java.net.URL
             childColumns = ["feedId"],
             onDelete = CASCADE
         )
-    ]
+    ],
 )
-
-data class FeedArticle(
-    @PrimaryKey(autoGenerate = true)
-    var id: Long = ID_UNSET,
-    var guid: String = "",
-    var title: String = "",
-    var plainTitle: String = "",
-    var imageUrl: String? = null,
-    var enclosureLink: String? = null,
-    var plainSnippet: String = "",
-    var description: String = "",
-    var content_html: String = "",
-    var author: String? = "",
-    var pubDate: ZonedDateTime? = null,
-    var link: String? = "",
-    var feedId: Long = 0,
-    @ColumnInfo(typeAffinity = ColumnInfo.INTEGER) var firstSyncedTime: Instant = Instant.EPOCH,
-    @ColumnInfo(typeAffinity = ColumnInfo.INTEGER) var primarySortTime: Instant = Instant.EPOCH,
-    var categories: ArrayList<String> = arrayListOf(),
-    var pinned: Boolean = false,
-    var bookmarked: Boolean = false,
+data class Article(
+    @PrimaryKey
+    val uuid: String = "",
+    val guid: String = "",
+    val title: String = "",
+    val plainTitle: String = "",
+    val imageUrl: String? = null,
+    val enclosureLink: String? = null,
+    val plainSnippet: String = "",
+    val description: String = "",
+    val author: String? = "",
+    val pubDate: ZonedDateTime? = null,
+    val link: String? = "",
+    val feedId: Long = 0,
+    @ColumnInfo(typeAffinity = ColumnInfo.INTEGER)
+    val firstSyncedTime: Instant = Instant.EPOCH,
+    @ColumnInfo(typeAffinity = ColumnInfo.INTEGER)
+    val primarySortTime: Instant = Instant.EPOCH,
+    val categories: ArrayList<String> = arrayListOf(),
+    val pinned: Boolean = false,
+    val bookmarked: Boolean = false,
 ) {
     fun updateFromParsedEntry(
         entry: Item,
         entryGuid: String,
         feed: JsonFeed,
-    ) {
+        feedId: Long,
+    ): Article {
         val converter = HtmlToPlainTextConverter()
         // Be careful about nulls.
         val text = entry.content_html ?: entry.content_text ?: ""
@@ -89,37 +92,39 @@ data class FeedArticle(
 
         // Make double sure no base64 images are used as thumbnails
         val safeImage = when {
-            entry.image?.startsWith("data") == true -> null
+            entry.image?.startsWith("data") == true
+                 -> null
+
             else -> entry.image
         }
 
         val absoluteImage = when {
-            feed.feed_url != null && safeImage != null -> {
-                relativeLinkIntoAbsolute(sloppyLinkToStrictURL(feed.feed_url), safeImage)
-            }
+            feed.feed_url != null && safeImage != null
+                 -> relativeLinkIntoAbsolute(sloppyLinkToStrictURL(feed.feed_url), safeImage)
 
             else -> safeImage
         }
 
-        this.guid = entryGuid
-        entry.title?.let { this.plainTitle = it.take(200) }
-        this.title = this.plainTitle
-        this.plainSnippet = summary
-
-        this.imageUrl = absoluteImage
-        this.enclosureLink = entry.attachments?.firstOrNull()?.url
-        this.author = entry.author?.name ?: feed.author?.name
-        this.link = entry.url
-
-        this.pubDate =
-            try {
+        val plainTitle = entry.title?.take(200) ?: this.plainTitle
+        return copy(
+            guid = entryGuid,
+            plainTitle = plainTitle,
+            title = plainTitle,
+            plainSnippet = summary,
+            imageUrl = absoluteImage,
+            enclosureLink = entry.attachments?.firstOrNull()?.url,
+            author = entry.author?.name ?: feed.author?.name,
+            link = entry.url,
+            pubDate = try {
                 // Allow an actual pubdate to be updated
                 ZonedDateTime.parse(entry.date_published)
-            } catch (t: Throwable) {
+            } catch (_: Throwable) {
                 // If a pubdate is missing, then don't update if one is already set
                 this.pubDate ?: ZonedDateTime.now(ZoneOffset.UTC)
-            }
-        primarySortTime = minOf(firstSyncedTime, pubDate?.toInstant() ?: firstSyncedTime)
+            },
+            primarySortTime = minOf(firstSyncedTime, pubDate?.toInstant() ?: firstSyncedTime),
+            feedId = feedId,
+        )
     }
 
     val enclosureFilename: String?
@@ -152,7 +157,15 @@ data class FeedArticle(
         }
 }
 
-interface FeedItemForFetching {
-    val id: Long
-    val link: String?
-}
+@DatabaseView(
+    """
+    SELECT Article.uuid, Article.link
+    FROM Article
+    JOIN feeds f ON Article.feedId = f.id
+    WHERE f.fulltextByDefault = 1 OR Article.bookmarked = 1
+"""
+)
+data class ArticleIdWithLink(
+    val uuid: String,
+    val link: String
+)
