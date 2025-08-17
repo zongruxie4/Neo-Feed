@@ -1,7 +1,5 @@
 package com.saulhdev.feeder.ui.views;
 
-import static android.animation.ValueAnimator.areAnimatorsEnabled;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.AttributeSet;
@@ -48,17 +46,7 @@ public abstract class AbstractFloatingView extends LinearLayout implements Touch
         return false;
     }
 
-    public final void close(boolean animate) {
-        Log.d("AbstractBottomSheet", "close");
-        animate &= areAnimatorsEnabled();
-        if (mIsOpen) {
-            // Add to WW logging
-        }
-        handleClose(animate);
-        mIsOpen = false;
-    }
-
-    protected abstract void handleClose(boolean animate);
+    public abstract void close(boolean animate);
 
     public boolean isOpen() {
         return mIsOpen;
@@ -82,7 +70,6 @@ public abstract class AbstractFloatingView extends LinearLayout implements Touch
     /**
      * @return Whether the back is consumed. If false, Launcher will handle the back as well.
      */
-
     @Override
     public boolean onControllerTouchEvent(MotionEvent ev) {
         return false;
@@ -109,5 +96,4 @@ public abstract class AbstractFloatingView extends LinearLayout implements Touch
     public static void closeAllOpenViews(Context context) {
         closeAllOpenViews(context, true);
     }
-
 }
