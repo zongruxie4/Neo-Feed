@@ -37,13 +37,13 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_21
-        targetCompatibility = JavaVersion.VERSION_21
-    }
-    kotlin {
-        jvmToolchain(21)
+        sourceCompatibility(libs.versions.jvmVersion.get())
+        targetCompatibility(libs.versions.jvmVersion.get())
     }
 
+    kotlin {
+        jvmToolchain(libs.versions.jvmVersion.get().toInt())
+    }
 }
 
 dependencies {

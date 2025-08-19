@@ -16,7 +16,11 @@ allprojects {
     }
 }
 
-val jvmVersion = JavaVersion.VERSION_21
+ksp {
+    arg("room.schemaLocation", "$projectDir/schemas")
+    arg("room.incremental", "true")
+    arg("room.generateKotlin", "true")
+}
 
 android {
     namespace = "com.saulhdev.feeder"
@@ -32,23 +36,13 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled = true
-
-        javaCompileOptions {
-            annotationProcessorOptions {
-                ksp {
-                    arg("room.schemaLocation", "$projectDir/schemas")
-                    arg("room.incremental", "true")
-                    arg("room.generateKotlin", "true")
-                }
-            }
-        }
     }
 
     applicationVariants.all {
         val variant = this
         outputs.all {
             (this as com.android.build.gradle.internal.api.BaseVariantOutputImpl).outputFileName =
-                "Neo_Feed_${variant.versionCode}_${variant.name}.apk"
+                "Neo_Feed_${variant.versionName}_${variant.name}.apk"
         }
     }
 
@@ -84,12 +78,12 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = jvmVersion
-        targetCompatibility = jvmVersion
+        sourceCompatibility(libs.versions.jvmVersion.get())
+        targetCompatibility(libs.versions.jvmVersion.get())
     }
 
     kotlin {
-        jvmToolchain(jvmVersion.toString().toInt())
+        jvmToolchain(libs.versions.jvmVersion.get().toInt())
     }
 
     buildFeatures {
