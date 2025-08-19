@@ -87,7 +87,7 @@ fun NavigationManager(navController: NavHostController) {
             }
             composable<NavRoute.ArticleView>(
                 deepLinks = listOf(navDeepLink {
-                    uriPattern = "$NAV_BASE${Routes.ARTICLE_VIEW}/{id}"
+                    uriPattern = "$NAV_BASE${Routes.ARTICLE_VIEW}/{uuid}"
                 })
             ) {
                 val args = it.toRoute<NavRoute.ArticleView>()
