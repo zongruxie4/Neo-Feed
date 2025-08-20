@@ -97,6 +97,8 @@
                 android:layout_height="wrap_content"
                 android:checkable="true"
                 android:layout_weight="1"
+                app:iconGravity="start"
+                app:icon="@drawable/ic_sort_ascending"
                 android:checked="true" />
 
             <com.google.android.material.button.MaterialButton
@@ -107,6 +109,8 @@
                 android:layout_weight="1"
                 android:checkable="true"
                 android:checked="false"
+                app:iconGravity="end"
+                app:icon="@drawable/ic_sort_descending"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
         </com.google.android.material.button.MaterialButtonToggleGroup>
 
@@ -153,7 +157,15 @@
                 android:text="@string/deselect_all"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:visibility="gone"
                 android:layout_marginTop="4dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_select_all_tags"
+            android:text="@string/select_all"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp" />
 
         <com.google.android.material.chip.ChipGroup
             android:id="@+id/all_tags_group"

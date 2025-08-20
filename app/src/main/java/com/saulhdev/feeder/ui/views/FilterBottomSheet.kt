@@ -53,6 +53,8 @@ class FilterBottomSheet(
     private val tagsChipGroup: ChipGroup
     private val sortingChipGroup: ChipGroup
     private val filterOption: MaterialButtonToggleGroup
+    private val selectAllTags: MaterialButton
+    private val deselectAllTags: MaterialButton
 
    init {
        View.inflate(context, R.layout.sort_filter_sheet, this)
@@ -65,6 +67,8 @@ class FilterBottomSheet(
        tagsChipGroup = findViewById(R.id.all_tags_group)
        sortingChipGroup = findViewById(R.id.cg_sort_options)
        filterOption = findViewById(R.id.toggle_sort_direction)
+       selectAllTags = findViewById(R.id.btn_select_all_tags)
+       deselectAllTags = findViewById(R.id.btn_deselect_all_tags)
 
        getSources()
        getAllTags()
@@ -177,6 +181,8 @@ class FilterBottomSheet(
                 prefs.tagsFilter.setValue(selectedTags)
                 prefs.sortingAsc.setValue(sortingOption)
                 prefs.sortingFilter.setValue(sorting)
+
+                callback()
             }
 
             R.id.btn_reset -> {
@@ -184,13 +190,30 @@ class FilterBottomSheet(
                 prefs.tagsFilter.setValue(emptySet())
                 prefs.sortingAsc.setValue(false)
                 prefs.sortingFilter.setValue(context.getString(R.string.sorting_chronological))
+
+                callback()
+            }
+
+            R.id.btn_deselect_all_tags -> {
+                tagsChipGroup.children
+                    .filterIsInstance<Chip>()
+                    .forEach { it.isChecked = false }
+                deselectAllTags.visibility = GONE
+                selectAllTags.visibility = VISIBLE
+            }
+
+            R.id.btn_select_all_tags -> {
+                tagsChipGroup.children
+                    .filterIsInstance<Chip>()
+                    .forEach { it.isChecked = true }
+                selectAllTags.visibility = GONE
+                deselectAllTags.visibility = VISIBLE
             }
 
             else -> {
                 Log.w("FilterBottomSheet", "Unknown button clicked: ${v.id}")
             }
         }
-        callback()
     }
 
     companion object {
