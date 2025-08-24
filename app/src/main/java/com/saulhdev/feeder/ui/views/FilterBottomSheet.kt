@@ -72,6 +72,9 @@ class FilterBottomSheet(
         tagsBinding.btnSelectAllTags.setOnClickListener(this)
         tagsBinding.btnDeselectAllTags.setOnClickListener(this)
 
+        sourcesBinding.btnSelectAllSources.setOnClickListener(this)
+        sourcesBinding.btnDeselectAllSources.setOnClickListener(this)
+
         getSources()
         getAllTags()
     }
@@ -168,6 +171,14 @@ class FilterBottomSheet(
         tagsBinding.btnDeselectAllTags.visibility = if (anyChecked) VISIBLE else GONE
     }
 
+    private fun updateSourcesButtonsVisibility() {
+        val anyChecked = sourcesBinding.allSourcesGroup.children
+            .filterIsInstance<Chip>()
+            .any { it.isChecked }
+        sourcesBinding.btnSelectAllSources.visibility = if (anyChecked) GONE else VISIBLE
+        sourcesBinding.btnDeselectAllSources.visibility = if (anyChecked) VISIBLE else GONE
+    }
+
     override fun onClick(v: View) {
         when (v.id) {
             R.id.btn_apply -> {
@@ -235,6 +246,20 @@ class FilterBottomSheet(
                     .filterIsInstance<Chip>()
                     .forEach { it.isChecked = true }
                 updateTagButtonsVisibility()
+            }
+
+            R.id.btn_deselect_all_sources -> {
+                sourcesBinding.allSourcesGroup.children
+                    .filterIsInstance<Chip>()
+                    .forEach { it.isChecked = false }
+                updateSourcesButtonsVisibility()
+            }
+
+            R.id.btn_select_all_sources -> {
+                sourcesBinding.allSourcesGroup.children
+                    .filterIsInstance<Chip>()
+                    .forEach { it.isChecked = true }
+                updateSourcesButtonsVisibility()
             }
         }
     }
