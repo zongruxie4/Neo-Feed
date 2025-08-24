@@ -267,7 +267,12 @@ class OverlayView(val context: Context): OverlayController(context, R.style.AppT
 
         rootView.findViewById<MaterialButton>(R.id.header_filter).apply {
             setOnClickListener {
-                FilterBottomSheet.show(context, true)
+                if (AbstractFloatingView.isAnyOpen()) {
+                    AbstractFloatingView.closeAllOpenViews(context)
+                    return@setOnClickListener
+                } else {
+                    FilterBottomSheet.show(context, true)
+                }
             }
         }
 
