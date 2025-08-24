@@ -15,4 +15,9 @@
         <attr name="optionPaddingEnd" format="dimension" />
         <attr name="optionPaddingStart" format="dimension" />
     </declare-styleable>
+    <declare-styleable name="ExpandableCardView">
+        <attr name="sectionIcon" format="reference" />
+        <attr name="sectionTitle" format="string" />
+        <attr name="iconContentDescription" format="string" />
+    </declare-styleable>
 </resources>

@@ -142,4 +142,9 @@
     <string name="select_all">Select all</string>
     <string name="deselect_all">Deselect all</string>
     <string name="item_selected">Item selected</string>
+
+    <string name="collapse_handle_description">Drag to collapse bottom sheet</string>
+    <string name="section_icon_description">Section icon</string>
+    <string name="expand_section_description">Expand section</string>
+    <string name="collapse_section_description">Collapse section</string>
 </resources>
