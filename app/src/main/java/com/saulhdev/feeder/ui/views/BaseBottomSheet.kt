@@ -5,6 +5,7 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.anim.Interpolators
 
@@ -34,6 +35,11 @@ class BaseBottomSheet @JvmOverloads constructor(
         super.onCloseComplete()
         clearNavBarColor()
     }
+
+    override fun getScrimColor(context: Context): Int {
+        return ContextCompat.getColor(context, R.color.botttom_sheet_scrim)
+    }
+
 
     private fun animateOpen(animate: Boolean) {
         if (mIsOpen || mOpenCloseAnimator.isRunning) {
@@ -65,7 +71,6 @@ class BaseBottomSheet @JvmOverloads constructor(
     }
 
     companion object{
-        const val DEFAULT_CLOSE_DURATION = 200
 
         fun inflate(context: Context): BaseBottomSheet {
             return inflate(context, R.layout.base_bottom_sheet, null) as BaseBottomSheet

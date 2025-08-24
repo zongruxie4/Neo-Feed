@@ -12,12 +12,18 @@
         <item name="colorOnSurface">#3C3C3C</item>
     </style>
 
-    <style name="bottomSheetDialogTheme" parent="Theme.Material3.Light.NoActionBar">
+    <style name="bottomSheetDialogTheme" parent="Theme.Material3.DayNight.BottomSheetDialog">
         <item name="android:colorEdgeEffect">?android:attr/textColorSecondary</item>
-        <item name="bottomSheetNavBarColor">@android:color/transparent</item>
-        <item name="bottomSheetScrimColor">@color/grey_50</item>
-        <item name="colorBackgroundFloating">?backgroundColor</item>
         <item name="android:colorPrimary">@color/grey_100</item>
+        <item name="android:background">@color/bottom_sheet_background</item>
+        <item name="android:windowBackground">@color/bottom_sheet_background</item>
+        <item name="bottomSheetScrimColor">@color/grey_100</item>
+        <item name="bottomSheetNavBarColor">#66000000</item>
+        <item name="bottomSheetStyle">@style/BottomSheetStyle</item>
+    </style>
+
+    <style name="BottomSheetStyle" parent="Widget.Material3.BottomSheet">
+        <item name="shapeAppearanceMediumComponent">@style/RoundShapeAppearance</item>
     </style>
 
     <style name="AlertDialogTheme" parent="MaterialAlertDialog.Material3">
