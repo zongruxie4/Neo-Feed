@@ -18,9 +18,7 @@
 
 package com.saulhdev.feeder.ui.components
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -29,10 +27,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.DpOffset
-import androidx.compose.ui.unit.dp
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.ui.icons.Phosphor
 import com.saulhdev.feeder.ui.icons.phosphor.DotsThreeVertical
@@ -57,7 +52,6 @@ fun OverflowMenu(
         DropdownMenu(
             expanded = showMenu.value,
             onDismissRequest = { showMenu.value = false },
-            offset = DpOffset(x = 8.dp, y = (-4).dp)
         ) {
             block(overflowMenuScope)
         }
