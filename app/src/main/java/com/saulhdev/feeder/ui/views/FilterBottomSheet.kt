@@ -156,7 +156,7 @@ class FilterBottomSheet(
     private fun getColorStateList(): android.content.res.ColorStateList? {
         val typedValue = TypedValue()
         context.theme.resolveAttribute(
-            com.google.android.material.R.attr.colorPrimary,
+            com.google.android.material.R.attr.colorPrimaryFixed,
             typedValue,
             true
         )
