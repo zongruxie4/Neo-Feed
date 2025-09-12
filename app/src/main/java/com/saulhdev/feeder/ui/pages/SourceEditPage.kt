@@ -26,11 +26,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ElevatedButton
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -75,6 +77,46 @@ fun SourceEditPage(
         title = title,
         showBackButton = true,
         onBackAction = onDismiss,
+        bottomBar = {
+            Column {
+                HorizontalDivider(thickness = 2.dp)
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp)
+                ) {
+                    // TODO abstract into ActionButton
+                    ElevatedButton(
+                        modifier = Modifier.weight(1f),
+                        onClick = onDismiss,
+                        colors = ButtonDefaults.elevatedButtonColors(
+                            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
+                        )
+                    ) {
+                        Text(
+                            text = stringResource(id = android.R.string.cancel)
+                        )
+                    }
+                    ElevatedButton(
+                        modifier = Modifier.weight(1f),
+                        colors = ButtonDefaults.elevatedButtonColors(
+                            containerColor = MaterialTheme.colorScheme.primaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                        ),
+                        onClick = {
+                            sourceEditViewModel.updateFeed(viewState)
+                            onDismiss()
+                        }
+                    ) {
+                        Text(
+                            text = stringResource(id = android.R.string.ok)
+                        )
+                    }
+                }
+            }
+        }
     ) { paddingValues ->
         Column(
             modifier = Modifier.padding(
@@ -86,9 +128,7 @@ fun SourceEditPage(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             SourceEditView(
-                viewState = viewState,
-                updateFeed = sourceEditViewModel::updateFeed,
-                onDismiss = onDismiss
+                viewState = viewState
             )
         }
     }
@@ -97,8 +137,6 @@ fun SourceEditPage(
 @Composable
 fun SourceEditView(
     viewState: SourceEditViewState,
-    updateFeed: (SourceEditViewState) -> Unit,
-    onDismiss: (() -> Unit),
 ) {
     val (focusTitle, focusTag) = createRefs()
     val feedState = remember(viewState) {
@@ -129,6 +167,7 @@ fun SourceEditView(
                         focusTitle.requestFocus()
                     }
                 ),
+                shape = MaterialTheme.shapes.large,
                 singleLine = true,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -138,7 +177,7 @@ fun SourceEditView(
                     }
                     .interceptKey(Key.Escape) {
                         focusManager.clearFocus()
-                    }
+                    },
             )
         }
         item {
@@ -150,6 +189,7 @@ fun SourceEditView(
                 label = {
                     Text(stringResource(id = R.string.title))
                 },
+                shape = MaterialTheme.shapes.large,
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(
                     capitalization = KeyboardCapitalization.Words,
@@ -171,7 +211,7 @@ fun SourceEditView(
                     }
                     .interceptKey(Key.Escape) {
                         focusManager.clearFocus()
-                    }
+                    },
             )
         }
         item {
@@ -183,6 +223,7 @@ fun SourceEditView(
                 label = {
                     Text(stringResource(id = R.string.source_tags))
                 },
+                shape = MaterialTheme.shapes.large,
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(
                     capitalization = KeyboardCapitalization.Words,
@@ -229,31 +270,6 @@ fun SourceEditView(
                 groupSize = 2
             )
         }
-        item {
-            Row(
-                horizontalArrangement = Arrangement.End,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                OutlinedButton(
-                    onClick = onDismiss
-                ) {
-                    Text(
-                        text = stringResource(id = android.R.string.cancel)
-                    )
-                }
-                Spacer(modifier = Modifier.width(8.dp))
-                OutlinedButton(
-                    onClick = {
-                        updateFeed(feedState.value)
-                        onDismiss()
-                    }
-                ) {
-                    Text(
-                        text = stringResource(id = android.R.string.ok)
-                    )
-                }
-            }
-        }
     }
 }
 
@@ -266,8 +282,6 @@ fun SourceEditPagePreview() {
             title = "Example Feed",
             fullTextByDefault = true,
             isEnabled = true
-        ),
-        updateFeed = {},
-        onDismiss = {}
+        )
     )
 }
