@@ -27,6 +27,7 @@ import org.threeten.bp.Instant
 import org.threeten.bp.ZonedDateTime
 import java.lang.reflect.Type
 import java.net.URL
+import kotlin.time.ExperimentalTime
 
 class Converters {
     @TypeConverter
@@ -76,5 +77,19 @@ class Converters {
     @TypeConverter
     fun longFromInstant(value: Instant?): Long? =
         value?.toEpochMilli()
+
+    @OptIn(ExperimentalTime::class)
+    @TypeConverter
+    fun kInstantFromLong(value: Long?): kotlin.time.Instant? =
+        try {
+            value?.let { kotlin.time.Instant.fromEpochMilliseconds(it) }
+        } catch (t: Throwable) {
+            null
+        }
+
+    @OptIn(ExperimentalTime::class)
+    @TypeConverter
+    fun longFromKInstant(value: kotlin.time.Instant?): Long? =
+        value?.toEpochMilliseconds()
 
 }

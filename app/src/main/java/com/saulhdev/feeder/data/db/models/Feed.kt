@@ -25,8 +25,9 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.saulhdev.feeder.data.db.ID_UNSET
 import com.saulhdev.feeder.utils.sloppyLinkToStrictURL
-import org.threeten.bp.Instant
 import java.net.URL
+import kotlin.time.Clock
+import kotlin.time.Instant
 
 @Entity(
     tableName = "Feeds",
@@ -43,7 +44,7 @@ data class Feed(
     val url: URL = sloppyLinkToStrictURL(""),
     val feedImage: URL = sloppyLinkToStrictURL(""),
     @ColumnInfo(typeAffinity = ColumnInfo.INTEGER)
-    val lastSync: Instant = Instant.EPOCH,
+    val lastSync: Instant = Clock.System.now(),
     val alternateId: Boolean = false,
     val fullTextByDefault: Boolean = false,
     val tag: String = "",

@@ -22,6 +22,7 @@ package com.saulhdev.feeder.data.db
 import android.content.Context
 import androidx.room.AutoMigration
 import androidx.room.Database
+import androidx.room.DeleteColumn
 import androidx.room.DeleteTable
 import androidx.room.Room
 import androidx.room.RoomDatabase
@@ -34,6 +35,7 @@ import com.saulhdev.feeder.data.db.dao.FeedSourceDao
 import com.saulhdev.feeder.data.db.models.Article
 import com.saulhdev.feeder.data.db.models.ArticleIdWithLink
 import com.saulhdev.feeder.data.db.models.Feed
+import org.threeten.bp.ZonedDateTime
 import java.util.UUID
 
 const val ID_UNSET: Long = 0
@@ -44,7 +46,7 @@ const val ID_ALL: Long = -1L
         Feed::class,
         Article::class,
     ],
-    version = 5,
+    version = 7,
     exportSchema = true,
     autoMigrations = [
         AutoMigration(
@@ -56,6 +58,16 @@ const val ID_ALL: Long = -1L
             from = 4,
             to = 5,
             spec = NeoFeedDb.MigrationRemoveFeedArticle::class
+        ),
+        AutoMigration(
+            from = 5,
+            to = 6,
+            spec = NeoFeedDb.ReplaceThreetenInstances::class
+        ),
+        AutoMigration(
+            from = 6,
+            to = 7,
+            spec = NeoFeedDb.RemoveLegacyPubDate::class
         ),
     ],
     views = [
@@ -172,6 +184,39 @@ abstract class NeoFeedDb : RoomDatabase() {
 
     @DeleteTable(tableName = "FeedArticle")
     class MigrationRemoveFeedArticle : AutoMigrationSpec
+
+    class ReplaceThreetenInstances : AutoMigrationSpec {
+        override fun onPostMigrate(db: SupportSQLiteDatabase) {
+            // Copy data from legacy pubDate to pubDateV2 before the column is deleted
+            val cursor = db.query("SELECT uuid, pubDate FROM article")
+            while (cursor.moveToNext()) {
+                val uuid = cursor.getString(0)
+                val pubDateStr = cursor.getString(1)
+
+                // Convert pubDateStr to epoch millis for pubDateV2
+                val pubDateMillis = convertZDT2Millis(pubDateStr)
+
+                val stmt = db.compileStatement("UPDATE article SET pubDateV2 = ? WHERE uuid = ?")
+                stmt.bindLong(1, pubDateMillis)
+                stmt.bindString(2, uuid)
+                stmt.executeUpdateDelete()
+            }
+            cursor.close()
+        }
+
+        private fun convertZDT2Millis(pubDateStr: String?): Long {
+            if (pubDateStr == null) return 0L
+            return try {
+                val zdt = ZonedDateTime.parse(pubDateStr)
+                zdt.toInstant().toEpochMilli()
+            } catch (_: Exception) {
+                0L
+            }
+        }
+    }
+
+    @DeleteColumn(tableName = "Article", columnName = "pubDate")
+    class RemoveLegacyPubDate : AutoMigrationSpec
 }
 
 val allMigrations = arrayOf(MIGRATION_1_2, MIGRATION_2_3)

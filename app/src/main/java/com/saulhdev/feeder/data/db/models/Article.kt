@@ -31,11 +31,11 @@ import com.saulhdev.feeder.data.entity.JsonFeed
 import com.saulhdev.feeder.utils.HtmlToPlainTextConverter
 import com.saulhdev.feeder.utils.relativeLinkIntoAbsolute
 import com.saulhdev.feeder.utils.sloppyLinkToStrictURL
-import org.threeten.bp.Instant
-import org.threeten.bp.ZoneOffset
-import org.threeten.bp.ZonedDateTime
 import java.net.URI
 import java.net.URL
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 
 @Entity(
     tableName = "Article",
@@ -54,7 +54,7 @@ import java.net.URL
         )
     ],
 )
-data class Article(
+data class Article @OptIn(ExperimentalTime::class) constructor(
     @PrimaryKey
     val uuid: String = "",
     val guid: String = "",
@@ -65,13 +65,14 @@ data class Article(
     val plainSnippet: String = "",
     val description: String = "",
     val author: String? = "",
-    val pubDate: ZonedDateTime? = null,
+    @ColumnInfo(name = "pubDateV2", defaultValue = "0")
+    val pubDate: Long = 0L,
     val link: String? = "",
     val feedId: Long = 0,
     @ColumnInfo(typeAffinity = ColumnInfo.INTEGER)
-    val firstSyncedTime: Instant = Instant.EPOCH,
+    val firstSyncedTime: Instant = Clock.System.now(),
     @ColumnInfo(typeAffinity = ColumnInfo.INTEGER)
-    val primarySortTime: Instant = Instant.EPOCH,
+    val primarySortTime: Instant = Clock.System.now(),
     val categories: ArrayList<String> = arrayListOf(),
     val pinned: Boolean = false,
     val bookmarked: Boolean = false,
@@ -117,12 +118,17 @@ data class Article(
             link = entry.url,
             pubDate = try {
                 // Allow an actual pubdate to be updated
-                ZonedDateTime.parse(entry.date_published)
+                kotlin.time.Instant.parse(entry.date_published ?: "")
+                    .toEpochMilliseconds()
             } catch (_: Throwable) {
-                // If a pubdate is missing, then don't update if one is already set
-                this.pubDate ?: ZonedDateTime.now(ZoneOffset.UTC)
+                // If a pubDate is missing, then don't update if one is already set
+                this.pubDate.takeIf { it > 0L }
+                    ?: Clock.System.now().toEpochMilliseconds()
             },
-            primarySortTime = minOf(firstSyncedTime, pubDate?.toInstant() ?: firstSyncedTime),
+            primarySortTime = minOf(
+                firstSyncedTime,
+                Instant.fromEpochMilliseconds(pubDate) ?: firstSyncedTime
+            ),
             feedId = feedId,
         )
     }

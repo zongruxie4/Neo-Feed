@@ -99,7 +99,7 @@ interface FeedArticleDao {
         """
         SELECT uuid FROM Article
         WHERE feedId IS :feedId AND pinned = 0 AND bookmarked = 0
-        ORDER BY primarySortTime DESC, pubDate DESC
+        ORDER BY primarySortTime DESC, pubDateV2 DESC
         LIMIT -1 OFFSET :keepCount
         """
     )
@@ -113,7 +113,7 @@ interface FeedArticleDao {
             SELECT *
             FROM Article
             WHERE bookmarked = 1
-            ORDER BY pinned DESC, pubDate DESC
+            ORDER BY pinned DESC, pubDateV2 DESC
         """
     )
     fun getAllBookmarked(): Flow<List<Article>>
@@ -134,7 +134,7 @@ interface FeedArticleDao {
     SELECT Article.*, Feeds.* FROM Article
     JOIN Feeds ON Article.feedId = Feeds.id
     WHERE Article.bookmarked = 1 AND Feeds.isEnabled = 1
-    ORDER BY Article.pinned DESC, Article.pubDate DESC
+    ORDER BY Article.pinned DESC, Article.pubDateV2 DESC
     """
     )
     fun getAllBookmarkedFeedItems(): Flow<List<FeedItem>>

@@ -27,8 +27,8 @@ import androidx.room.Update
 import com.saulhdev.feeder.data.db.models.Feed
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import org.threeten.bp.Instant
 import java.net.URL
+import kotlin.time.Instant
 
 @Dao
 interface FeedSourceDao {
