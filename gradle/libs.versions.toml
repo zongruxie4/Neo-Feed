@@ -7,6 +7,7 @@ compose-bom = "2025.07.00"
 compose-accompanist = "0.36.0"
 core-ktx = "1.16.0"
 datastore-preferences = "1.1.7"
+datetime = "0.7.1"
 immutables = "0.4.0"
 jsoup = "1.21.1"
 jvmVersion = "21"
@@ -45,6 +46,7 @@ appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "a
 browser = { group = "androidx.browser", name = "browser", version.ref = "browser" }
 multidex = { group = "androidx.multidex", name = "multidex", version.ref = "multidex" }
 work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "work-runtime-ktx" }
+datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "datetime" }
 
 lifecycle-common-java8 = { group = "androidx.lifecycle", name = "lifecycle-common-java8", version.ref = "lifecycle" }
 lifecycle-livedata-ktx = { group = "androidx.lifecycle", name = "lifecycle-livedata-ktx", version.ref = "lifecycle" }

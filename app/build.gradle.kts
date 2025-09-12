@@ -12,6 +12,7 @@ allprojects {
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
         compilerOptions {
             freeCompilerArgs.add("-opt-in=kotlin.RequiresOptIn")
+            freeCompilerArgs.add("-opt-in=kotlin.time.ExperimentalTime")
         }
     }
 }
@@ -119,6 +120,7 @@ dependencies {
     implementation(libs.multidex)
     implementation(libs.swiperefreshlayout)
     implementation(libs.work.runtime.ktx)
+    implementation(libs.datetime)
     implementation(libs.material)
     implementation(libs.browser)
     implementation(libs.collections.immutable)
