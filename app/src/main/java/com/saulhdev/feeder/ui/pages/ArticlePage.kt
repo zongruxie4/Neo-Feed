@@ -51,11 +51,16 @@ import com.saulhdev.feeder.utils.unicodeWrap
 import com.saulhdev.feeder.utils.urlEncode
 import com.saulhdev.feeder.viewmodels.ArticleViewModel
 import com.saulhdev.feeder.viewmodels.SourceViewModel
-import org.threeten.bp.ZonedDateTime
-import org.threeten.bp.format.DateTimeFormatter
-import org.threeten.bp.format.FormatStyle
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toJavaLocalDateTime
+import kotlinx.datetime.toLocalDateTime
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 import java.util.Locale
+import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 
+@OptIn(ExperimentalTime::class)
 @Composable
 fun ArticlePage(
     articleId: String,
@@ -97,22 +102,28 @@ fun ArticlePage(
             .withLocale(Locale.getDefault())
 
     val authorDate = when {
-        article?.author == null && article?.pubDate != null ->
+        article?.author == null && article?.pubDate != null && (article?.pubDate ?: 0L) > 0L ->
             stringResource(
                 R.string.on_date,
-                (article?.pubDate ?: ZonedDateTime.now()).format(dateTimeFormat)
+                Instant.fromEpochMilliseconds(article?.pubDate ?: 0L)
+                    .toLocalDateTime(TimeZone.currentSystemDefault())
+                    .toJavaLocalDateTime()
+                    .format(dateTimeFormat)
             )
 
-        article?.author != null && article?.pubDate != null ->
+        article?.author != null && (article?.pubDate ?: 0L) > 0L                             ->
             stringResource(
                 R.string.by_author_on_date,
                 // Must wrap author in unicode marks to ensure it formats
                 // correctly in RTL
                 context.unicodeWrap(article?.author ?: ""),
-                (article?.pubDate ?: ZonedDateTime.now()).format(dateTimeFormat)
+                Instant.fromEpochMilliseconds(article?.pubDate ?: 0L)
+                    .toLocalDateTime(TimeZone.currentSystemDefault())
+                    .toJavaLocalDateTime()
+                    .format(dateTimeFormat)
             )
 
-        else                                                -> null
+        else                                                                                 -> null
     }
 
     ViewWithActionBar(

@@ -48,9 +48,6 @@ import coil.request.ImageRequest
 import com.saulhdev.feeder.data.db.models.Article
 import com.saulhdev.feeder.data.db.models.Feed
 import com.saulhdev.feeder.utils.RelativeTimeHelper
-import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
-import java.util.Date
 
 @Composable
 fun BookmarkItem(
@@ -61,12 +58,6 @@ fun BookmarkItem(
     onRemoveAction: (Article) -> Unit = {},
 ) {
     val context = LocalContext.current
-    val time = Date.from(
-        ZonedDateTime.parse(
-            article.pubDate.toString(),
-            DateTimeFormatter.ISO_ZONED_DATE_TIME
-        ).toInstant()
-    ).time
 
     val isPinned by remember(article.pinned) {
         mutableStateOf(article.pinned)
@@ -138,7 +129,7 @@ fun BookmarkItem(
                     Text(
                         text = RelativeTimeHelper.getDateFormattedRelative(
                             LocalContext.current,
-                            (time / 1000) - 1000
+                            (article.pubDate / 1000) - 1000
                         ),
                         style = MaterialTheme.typography.bodySmall,
                         maxLines = 1,

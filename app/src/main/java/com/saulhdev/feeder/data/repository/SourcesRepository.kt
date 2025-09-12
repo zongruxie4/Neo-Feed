@@ -42,8 +42,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 import kotlinx.coroutines.withContext
 import org.koin.java.KoinJavaComponent.inject
-import org.threeten.bp.Instant
-import org.threeten.bp.ZonedDateTime
+import kotlin.time.Clock
 
 class SourcesRepository(db: NeoFeedDb) {
     private val cc = Dispatchers.IO
@@ -60,7 +59,7 @@ class SourcesRepository(db: NeoFeedDb) {
         scope.launch {
             val list: List<Feed> = feedsDao.findFeedById(feed.id)
             if (list.isNotEmpty()) {
-                val newFeed = feed.copy(lastSync = ZonedDateTime.now().toInstant())
+                val newFeed = feed.copy(lastSync = Clock.System.now())
                 feedsDao.update(newFeed)
                 if (resync) requestFeedSync(newFeed.id)
                 if (newFeed.fullTextByDefault) scheduleFullTextParse()
@@ -132,7 +131,7 @@ class SourcesRepository(db: NeoFeedDb) {
         }
     }
 
-    fun setCurrentlySyncingOn(feedId: Long, syncing: Boolean, lastSync: Instant) {
+    fun setCurrentlySyncingOn(feedId: Long, syncing: Boolean, lastSync: kotlin.time.Instant) {
         scope.launch {
             feedsDao.setCurrentlySyncingOn(feedId, syncing, lastSync)
         }

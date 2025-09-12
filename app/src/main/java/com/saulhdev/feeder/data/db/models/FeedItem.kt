@@ -5,9 +5,6 @@ import androidx.room.Embedded
 import androidx.room.Relation
 import com.saulhdev.feeder.data.entity.FeedCategory
 import com.saulhdev.feeder.manager.models.StoryCardContent
-import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
-import java.util.Date
 
 data class FeedItem(
     @Embedded
@@ -54,14 +51,7 @@ data class FeedItem(
         get() = article.title
 
     val timeMillis: Long
-        get() = article.pubDate?.let { pubDate ->
-            Date.from(
-                ZonedDateTime.parse(
-                    pubDate.toString(),
-                    DateTimeFormatter.ISO_ZONED_DATE_TIME
-                ).toInstant()
-            ).time
-        } ?: 0L
+        get() = article.pubDate
 
     val bookmarked: Boolean
         get() = article.bookmarked

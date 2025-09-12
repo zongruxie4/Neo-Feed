@@ -43,16 +43,18 @@ import kotlinx.coroutines.supervisorScope
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.minus
 import okhttp3.OkHttpClient
 import okhttp3.Response
 import org.koin.java.KoinJavaComponent.inject
-import org.threeten.bp.Instant
-import org.threeten.bp.temporal.ChronoUnit
 import java.io.File
 import java.io.IOException
 import java.util.concurrent.Executors
 import kotlin.math.max
 import kotlin.system.measureTimeMillis
+import kotlin.time.Clock
+import kotlin.time.Instant
 
 val syncMutex = Mutex()
 val prefs: FeedPreferences by inject(FeedPreferences::class.java)
@@ -91,17 +93,17 @@ internal suspend fun syncFeeds(
     var result = false
     val feedsRepo: SourcesRepository by inject(SourcesRepository::class.java)
     val articlesRepo: ArticleRepository by inject(ArticleRepository::class.java)
-    val downloadTime = Instant.now()
+    val downloadTime = Clock.System.now()
     var needFullTextSync = false
     val time = measureTimeMillis {
         try {
             supervisorScope {
                 val sRepository: SourcesRepository by inject(SourcesRepository::class.java)
                 val staleTime: Long = if (forceNetwork) {
-                    Instant.now().toEpochMilli()
+                    Clock.System.now().toEpochMilliseconds()
                 } else {
-                    Instant.now().minus(minFeedAgeMinutes.toLong(), ChronoUnit.MINUTES)
-                        .toEpochMilli()
+                    Clock.System.now().minus(minFeedAgeMinutes.toLong(), DateTimeUnit.MINUTE)
+                        .toEpochMilliseconds()
                 }
 
                 val coroutineContext =
@@ -122,7 +124,7 @@ internal suspend fun syncFeeds(
                             feedsRepo.setCurrentlySyncingOn(
                                 feedId = it.id,
                                 syncing = true,
-                                lastSync = Instant.now(),
+                                lastSync = Clock.System.now(),
                             )
                             syncFeed(
                                 feedsRepo = feedsRepo,
@@ -197,7 +199,7 @@ private suspend fun syncFeed(
         }
     }
 
-    val syncedFeed = feedSql.copy(lastSync = Instant.now())
+    val syncedFeed = feedSql.copy(lastSync = Clock.System.now())
     val items = feed.items
 
     val articles =
