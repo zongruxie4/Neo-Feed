@@ -29,7 +29,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -118,17 +118,16 @@ fun SourceListPage(
                     title = stringResource(id = R.string.title_sources),
                     showBackButton = false,
                     floatingActionButton = {
-                        FloatingActionButton(
+                        ExtendedFloatingActionButton(
                             onClick = {
                                 navController.navigate(NavRoute.SourceAdd)
                             },
                             modifier = Modifier.padding(16.dp),
-                            containerColor = MaterialTheme.colorScheme.primary
+                            shape = MaterialTheme.shapes.extraLarge
                         ) {
                             Icon(
                                 imageVector = Phosphor.Plus,
                                 contentDescription = stringResource(id = R.string.add_feed),
-                                tint = MaterialTheme.colorScheme.onPrimary
                             )
                         }
                     },
