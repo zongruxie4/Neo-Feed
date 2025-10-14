@@ -8,6 +8,7 @@ import com.saulhdev.feeder.extensions.NeoViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
@@ -29,6 +30,7 @@ class SourceViewModel(
             SharingStarted.Eagerly,
             emptyList()
         )
+
     val allEnabledFeeds = feedsRepo.getEnabledSources()
         .stateIn(
             ioScope,
@@ -41,6 +43,15 @@ class SourceViewModel(
             viewModelScope,
             SharingStarted.Eagerly,
             emptyList()
+        )
+
+    val tagsFeedsMap = combine(allTags, allFeeds) { tags, feeds ->
+        tags.plus("").associateWith { tag -> feeds.filter { it.tag.contains(tag) } }
+    }
+        .stateIn(
+            viewModelScope,
+            SharingStarted.Eagerly,
+            emptyMap()
         )
 
     fun insertFeed(feed: Feed) {
