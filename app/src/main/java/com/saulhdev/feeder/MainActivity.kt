@@ -12,7 +12,6 @@ import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -28,18 +27,12 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.saulhdev.feeder.data.content.FeedPreferences
 import com.saulhdev.feeder.extensions.isDarkTheme
-import com.saulhdev.feeder.manager.models.exportOpml
-import com.saulhdev.feeder.manager.models.importOpml
 import com.saulhdev.feeder.manager.sync.FeedSyncer
 import com.saulhdev.feeder.ui.navigation.NAV_BASE
 import com.saulhdev.feeder.ui.navigation.NavigationManager
 import com.saulhdev.feeder.ui.theme.AppTheme
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import org.koin.java.KoinJavaComponent.inject
-import org.threeten.bp.LocalDateTime
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.resume
 
@@ -47,53 +40,9 @@ class MainActivity : ComponentActivity() {
     private lateinit var navController: NavHostController
     private val prefs: FeedPreferences by inject(FeedPreferences::class.java)
 
-    private val localTime = LocalDateTime.now().toString().replace(":", "_").substring(0, 19)
-    private val opmlImporterLauncher =
-        registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
-            if (uri != null) {
-                CoroutineScope(Dispatchers.Main).launch {
-                    when (pendingOperation) {
-                        DocumentOperation.IMPORT -> importOpml(uri)
-                        else                     -> {} // No relevant operation pending
-                    }
-                }
-            }
-        }
-
-    private val opmlExporter = registerForActivityResult(
-        ActivityResultContracts.CreateDocument("application/xml")
-    ) { uri ->
-        if (uri != null) {
-            CoroutineScope(Dispatchers.Main).launch {
-                when (pendingOperation) {
-                    DocumentOperation.EXPORT -> exportOpml(uri)
-                    else                     -> {} // No relevant operation pending
-                }
-            }
-        }
-    }
-
-    private enum class DocumentOperation { IMPORT, EXPORT }
-
-    private var pendingOperation: DocumentOperation? = null
-
-    private fun launchOpmlImporter() {
-        pendingOperation = DocumentOperation.IMPORT
-        opmlImporterLauncher.launch(arrayOf("application/xml", "text/xml", "text/opml"))
-    }
-
-    private fun launchOpmlExporter() {
-        pendingOperation = DocumentOperation.EXPORT
-        opmlExporter.launch("NF-${localTime}.opml")
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
-        when {
-            intent.hasExtra("import") -> launchOpmlImporter()
-            intent.hasExtra("export") -> launchOpmlExporter()
-        }
         setContent {
             navController = rememberNavController()
             TransparentSystemBars()

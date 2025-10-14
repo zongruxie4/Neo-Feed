@@ -25,6 +25,9 @@ import com.saulhdev.feeder.R
 import com.saulhdev.feeder.data.entity.SORT_CHRONOLOGICAL
 import com.saulhdev.feeder.data.entity.SORT_SOURCE
 import com.saulhdev.feeder.data.entity.SORT_TITLE
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.format.char
 import java.net.MalformedURLException
 import java.net.URL
 import java.net.URLDecoder
@@ -157,6 +160,11 @@ fun Context.unicodeWrap(text: String): String =
 
 fun Context.getLocale(): Locale =
     resources.configuration.locales[0]
+
+val FILE_DATETIME_FORMAT = LocalDateTime.Format {
+    date(LocalDate.Formats.ISO);
+    char('T'); hour(); char('_'); minute(); char('_'); second()
+}
 
 object Android {
     fun sdk(sdk: Int): Boolean {

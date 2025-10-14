@@ -38,10 +38,10 @@ import com.saulhdev.feeder.utils.naiveFindImageLink
 import com.saulhdev.feeder.utils.relativeLinkIntoAbsolute
 import com.saulhdev.feeder.utils.relativeLinkIntoAbsoluteOrNull
 import org.jsoup.parser.Parser.unescapeEntities
-import org.threeten.bp.Instant
-import org.threeten.bp.ZoneOffset
-import org.threeten.bp.ZonedDateTime
 import java.net.URL
+import java.time.Instant
+import java.time.ZoneOffset
+import java.time.ZonedDateTime
 
 suspend fun SyndFeed.asFeed(baseUrl: URL, feedIconFinder: suspend (URL) -> String?): JsonFeed {
     val feedAuthor: Author? = this.authors?.firstOrNull()?.asAuthor()

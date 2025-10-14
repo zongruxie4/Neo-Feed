@@ -69,8 +69,12 @@ import com.saulhdev.feeder.ui.icons.phosphor.Plus
 import com.saulhdev.feeder.ui.navigation.LocalNavController
 import com.saulhdev.feeder.ui.navigation.NavRoute
 import com.saulhdev.feeder.utils.ApplicationCoroutineScope
+import com.saulhdev.feeder.utils.FILE_DATETIME_FORMAT
 import com.saulhdev.feeder.viewmodels.SourceViewModel
 import kotlinx.coroutines.launch
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.format
+import kotlinx.datetime.toLocalDateTime
 import okhttp3.internal.toLongOrDefault
 import org.koin.java.KoinJavaComponent.inject
 import kotlin.time.Clock
@@ -83,7 +87,8 @@ fun SourceListPage(
     val context = LocalContext.current
     val navController = LocalNavController.current
     val scope = rememberCoroutineScope()
-    val localTime = LocalDateTime.now().toString().replace(":", "_").substring(0, 19)
+    val localTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+        .format(FILE_DATETIME_FORMAT)
     // TODO reconsider
     val coroutineScope: ApplicationCoroutineScope by inject(ApplicationCoroutineScope::class.java)
     val showDialog = remember { mutableStateOf(false) }

@@ -122,6 +122,7 @@ class NeoApp : MultiDexApplication(), KoinStartup {
 
     companion object {
         private const val TAG = "NeoFeed"
+
         @JvmStatic
         var instance: NeoApp? = null
             private set

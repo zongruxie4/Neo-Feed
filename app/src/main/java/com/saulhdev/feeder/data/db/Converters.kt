@@ -23,11 +23,10 @@ import androidx.room.TypeConverter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.saulhdev.feeder.utils.sloppyLinkToStrictURLNoThrows
-import org.threeten.bp.Instant
-import org.threeten.bp.ZonedDateTime
 import java.lang.reflect.Type
 import java.net.URL
 import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 
 class Converters {
     @TypeConverter
@@ -43,22 +42,6 @@ class Converters {
     }
 
     @TypeConverter
-    fun dateTimeFromString(value: String?): ZonedDateTime? {
-        var dt: ZonedDateTime? = null
-        if (value != null) {
-            try {
-                dt = ZonedDateTime.parse(value)
-            } catch (_: Throwable) {
-            }
-        }
-        return dt
-    }
-
-    @TypeConverter
-    fun stringFromDateTime(value: ZonedDateTime?): String? =
-        value?.toString()
-
-    @TypeConverter
     fun stringFromURL(value: URL?): String? =
         value?.toString()
 
@@ -66,30 +49,18 @@ class Converters {
     fun urlFromString(value: String?): URL? =
         value?.let { sloppyLinkToStrictURLNoThrows(it) }
 
-    @TypeConverter
-    fun instantFromLong(value: Long?): Instant? =
-        try {
-            value?.let { Instant.ofEpochMilli(it) }
-        } catch (t: Throwable) {
-            null
-        }
-
-    @TypeConverter
-    fun longFromInstant(value: Instant?): Long? =
-        value?.toEpochMilli()
-
     @OptIn(ExperimentalTime::class)
     @TypeConverter
-    fun kInstantFromLong(value: Long?): kotlin.time.Instant? =
+    fun kInstantFromLong(value: Long?): Instant? =
         try {
-            value?.let { kotlin.time.Instant.fromEpochMilliseconds(it) }
+            value?.let { Instant.fromEpochMilliseconds(it) }
         } catch (t: Throwable) {
             null
         }
 
     @OptIn(ExperimentalTime::class)
     @TypeConverter
-    fun longFromKInstant(value: kotlin.time.Instant?): Long? =
+    fun longFromKInstant(value: Instant?): Long? =
         value?.toEpochMilliseconds()
 
 }
