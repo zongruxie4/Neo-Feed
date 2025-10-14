@@ -36,7 +36,7 @@ import org.koin.dsl.module
 import org.koin.java.KoinJavaComponent.inject
 
 @OptIn(KoinExperimentalAPI::class)
-class NeoApp: MultiDexApplication(), KoinStartup {
+class NeoApp : MultiDexApplication(), KoinStartup {
     val activityHandler = ActivityHandler()
     private val applicationCoroutineScope = ApplicationCoroutineScope()
     private val wm: WorkManager by inject(WorkManager::class.java)
@@ -57,6 +57,8 @@ class NeoApp: MultiDexApplication(), KoinStartup {
     // TODO Move to its class
     private val dataModule = module {
         single<NeoFeedDb> { NeoFeedDb.getInstance(this@NeoApp) }
+        single { get<NeoFeedDb>().feedArticleDao() }
+        single { get<NeoFeedDb>().feedSourceDao() }
         singleOf(::ArticleRepository)
         singleOf(::SourcesRepository)
         singleOf(::SyncRestClient)

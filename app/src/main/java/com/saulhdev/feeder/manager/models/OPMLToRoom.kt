@@ -1,12 +1,13 @@
 package com.saulhdev.feeder.manager.models
 
-import com.saulhdev.feeder.data.db.NeoFeedDb
+import com.saulhdev.feeder.data.db.dao.FeedSourceDao
 import com.saulhdev.feeder.data.db.models.Feed
 import com.saulhdev.feeder.utils.sloppyLinkToStrictURLNoThrows
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
-class OPMLToRoom(db: NeoFeedDb) : OPMLParserToDatabase {
-
-    private val dao = db.feedSourceDao()
+class OPMLToRoom() : OPMLParserToDatabase, KoinComponent {
+    private val dao: FeedSourceDao by inject()
 
     override suspend fun getFeed(url: String): Feed? =
         dao.getFeedByURL(sloppyLinkToStrictURLNoThrows(url))

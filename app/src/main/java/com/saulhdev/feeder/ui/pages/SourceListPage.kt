@@ -42,11 +42,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -71,13 +73,14 @@ import com.saulhdev.feeder.viewmodels.SourceViewModel
 import kotlinx.coroutines.launch
 import okhttp3.internal.toLongOrDefault
 import org.koin.java.KoinJavaComponent.inject
-import java.time.LocalDateTime
+import kotlin.time.Clock
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
 fun SourceListPage(
     viewModel: SourceViewModel = koinNeoViewModel(),
 ) {
+    val context = LocalContext.current
     val navController = LocalNavController.current
     val scope = rememberCoroutineScope()
     val localTime = LocalDateTime.now().toString().replace(":", "_").substring(0, 19)
@@ -85,17 +88,21 @@ fun SourceListPage(
     val coroutineScope: ApplicationCoroutineScope by inject(ApplicationCoroutineScope::class.java)
     val showDialog = remember { mutableStateOf(false) }
     val list: State<List<Feed>> = viewModel.allFeeds.collectAsState()
+    val tagsFeedMap by viewModel.tagsFeedsMap.collectAsState()
     val removeItem: MutableState<Feed?> =
         remember { mutableStateOf(list.value.firstOrNull()) }
     val paneNavigator = rememberListDetailPaneScaffoldNavigator<Any>()
     val sourceId = remember { mutableLongStateOf(-1L) }
 
     val opmlExporter = rememberLauncherForActivityResult(
-        ActivityResultContracts.CreateDocument("application/xml")
+        ActivityResultContracts.CreateDocument("application/opml")
     ) { uri ->
         if (uri != null) {
             coroutineScope.launch {
-                exportOpml(uri)
+                context.contentResolver.exportOpml(
+                    uri,
+                    tagsFeedMap
+                )
             }
         }
     }
@@ -105,7 +112,7 @@ fun SourceListPage(
     ) { uri ->
         if (uri != null) {
             coroutineScope.launch {
-                importOpml(uri)
+                context.contentResolver.importOpml(uri)
             }
         }
     }

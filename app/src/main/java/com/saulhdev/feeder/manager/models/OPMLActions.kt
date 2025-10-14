@@ -19,11 +19,11 @@
 package com.saulhdev.feeder.manager.models
 
 import android.content.ContentResolver
+import android.content.Intent
 import android.net.Uri
 import android.util.Log
 import com.saulhdev.feeder.R
-import com.saulhdev.feeder.data.db.NeoFeedDb
-import com.saulhdev.feeder.data.repository.SourcesRepository
+import com.saulhdev.feeder.data.db.models.Feed
 import com.saulhdev.feeder.extensions.ToastMaker
 import com.saulhdev.feeder.manager.sync.requestFeedSync
 import kotlinx.coroutines.Dispatchers
@@ -34,41 +34,41 @@ import kotlin.system.measureTimeMillis
 /**
  * Exports OPML on a background thread
  */
-suspend fun exportOpml(uri: Uri) = withContext(Dispatchers.IO) {
-    try {
-        val time = measureTimeMillis {
-            val contentResolver: ContentResolver by inject(ContentResolver::class.java)
-            val sourceRepository: SourcesRepository by inject(SourcesRepository::class.java)
-            contentResolver.openOutputStream(uri)?.let {
-                writeOutputStream(
-                    it,
-                    sourceRepository.getAllTags()
-                ) { tag ->
-                    sourceRepository.loadFeedsByTag(tag = tag)
+suspend fun ContentResolver.exportOpml(uri: Uri, tagsFeedMap: Map<String, List<Feed>>) =
+    withContext(Dispatchers.IO) {
+        try {
+            val time = measureTimeMillis {
+                takePersistableUriPermission(
+                    uri,
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                )
+                openOutputStream(uri)?.let {
+                    writeOutputStream(
+                        it,
+                        tagsFeedMap
+                    )
                 }
             }
-        }
-        Log.d("OPML", "Exported OPML in $time ms on ${Thread.currentThread().name}")
-    } catch (e: Throwable) {
-        Log.e("OPML", "Failed to export OPML", e)
-        val toastMaker: ToastMaker by inject(ToastMaker::class.java)
-        toastMaker.makeToast(R.string.failed_to_export_OPML)
-        (e.localizedMessage ?: e.message)?.let { message ->
-            toastMaker.makeToast(message)
+            Log.d("OPML", "Exported OPML in $time ms on ${Thread.currentThread().name}")
+        } catch (e: Throwable) {
+            Log.e("OPML", "Failed to export OPML", e)
+            val toastMaker: ToastMaker by inject(ToastMaker::class.java)
+            toastMaker.makeToast(R.string.failed_to_export_OPML)
+            (e.localizedMessage ?: e.message)?.let { message ->
+                toastMaker.makeToast(message)
+            }
         }
     }
-}
 
 /**
  * Imports OPML on a background thread
  */
-suspend fun importOpml(uri: Uri) = withContext(Dispatchers.IO) {
-    val db: NeoFeedDb by inject(NeoFeedDb::class.java)
+suspend fun ContentResolver.importOpml(uri: Uri) = withContext(Dispatchers.IO) {
     try {
         val time = measureTimeMillis {
-            val parser = OPMLParser(OPMLToRoom(db))
-            val contentResolver: ContentResolver by inject(ContentResolver::class.java)
-            contentResolver.openInputStream(uri).use {
+            val parser = OPMLParser(OPMLToRoom())
+
+            openInputStream(uri).use {
                 it?.let { stream ->
                     parser.parseInputStream(stream)
                 }

@@ -22,10 +22,10 @@ import android.util.Log
 import com.saulhdev.feeder.data.db.models.Feed
 import java.io.IOException
 import java.io.OutputStream
+
 suspend fun writeOutputStream(
     os: OutputStream,
-    tags: Iterable<String>,
-    feedsWithTag: suspend (String) -> Iterable<Feed>
+    map: Map<String, List<Feed>>,
 ) {
     try {
         os.bufferedWriter().use {
@@ -36,9 +36,9 @@ suspend fun writeOutputStream(
                         title { +"Neo Feeder" }
                     }
                     body {
-                        tags.forEach { tag ->
+                        map.forEach { (tag, feeds) ->
                             if (tag.isEmpty()) {
-                                feedsWithTag(tag).forEach { feed ->
+                                feeds.forEach { feed ->
                                     outline(
                                         title = escape(feed.title),
                                         type = "rss",
@@ -47,7 +47,7 @@ suspend fun writeOutputStream(
                                 }
                             } else {
                                 outline(title = escape(tag)) {
-                                    feedsWithTag(tag).forEach { feed ->
+                                    feeds.forEach { feed ->
                                         outline(
                                             title = escape(feed.title),
                                             type = "rss",
