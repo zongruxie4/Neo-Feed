@@ -35,7 +35,7 @@ import com.saulhdev.feeder.ui.views.DialogMenu
 import com.saulhdev.feeder.ui.views.FilterBottomSheet
 import com.saulhdev.feeder.utils.Android
 import com.saulhdev.feeder.utils.LinearLayoutManagerWrapper
-import com.saulhdev.feeder.viewmodels.ArticleViewModel
+import com.saulhdev.feeder.viewmodels.ArticleListViewModel
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -51,7 +51,7 @@ class OverlayView(val context: Context) :
     private lateinit var themeHolder: OverlayThemeHolder
     private val syncScope = CoroutineScope(Dispatchers.IO) + CoroutineName("NeoFeedSync")
     private val mainScope = CoroutineScope(Dispatchers.Main)
-    private val viewModel: ArticleViewModel by inject(ArticleViewModel::class.java)
+    private val viewModel: ArticleListViewModel by inject(ArticleListViewModel::class.java)
     private val articles: SyncRestClient by inject(SyncRestClient::class.java)
     val prefs: FeedPreferences by inject()
 

@@ -88,7 +88,7 @@ import com.saulhdev.feeder.ui.icons.phosphor.Filter
 import com.saulhdev.feeder.ui.icons.phosphor.Filtered
 import com.saulhdev.feeder.ui.icons.phosphor.Power
 import com.saulhdev.feeder.utils.openLinkInCustomTab
-import com.saulhdev.feeder.viewmodels.ArticleViewModel
+import com.saulhdev.feeder.viewmodels.ArticleListViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
@@ -102,7 +102,7 @@ import org.koin.compose.koinInject
 fun ArticleListPage(
     prefs: FeedPreferences = koinInject(),
     syncClient: SyncRestClient = koinInject(),
-    viewModel: ArticleViewModel = koinNeoViewModel(),
+    viewModel: ArticleListViewModel = koinNeoViewModel(),
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()

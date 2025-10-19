@@ -17,6 +17,7 @@ import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -70,15 +71,21 @@ fun ArticlePage(
 ) {
     val context = LocalContext.current
     val activity = LocalActivity.current
-    val article by viewModel.articleById(articleId).collectAsState(initial = null)
-    val feed by sourceViewModel.getFeedById(article?.feedId ?: 0).collectAsState(initial = null)
+
+    val state by viewModel.articleState.collectAsState(initial = null)
+    val feed by sourceViewModel.getFeedById(state?.article?.feedId ?: 0)
+        .collectAsState(initial = null)
+
+    LaunchedEffect(articleId) {
+        viewModel.setArticleId(articleId)
+    }
 
     val showFullArticle by remember {
         derivedStateOf { feed?.fullTextByDefault ?: false }
     }
 
-    val title by remember { derivedStateOf { article?.title ?: "Neo Feed" } }
-    val currentUrl by remember { derivedStateOf { article?.link ?: "Neo Feed" } }
+    val title by remember { derivedStateOf { state?.article?.title ?: "Neo Feed" } }
+    val currentUrl by remember { derivedStateOf { state?.article?.link ?: "Neo Feed" } }
     val subTitle by remember {
         derivedStateOf {
             (if (currentUrl != "Neo Feed") Uri.parse(currentUrl).host else null)
@@ -102,28 +109,29 @@ fun ArticlePage(
             .withLocale(Locale.getDefault())
 
     val authorDate = when {
-        article?.author == null && article?.pubDate != null && (article?.pubDate ?: 0L) > 0L ->
+        state?.article?.author == null && state?.article?.pubDate != null && (state?.article?.pubDate
+            ?: 0L) > 0L ->
             stringResource(
                 R.string.on_date,
-                Instant.fromEpochMilliseconds(article?.pubDate ?: 0L)
+                Instant.fromEpochMilliseconds(state?.article?.pubDate ?: 0L)
                     .toLocalDateTime(TimeZone.currentSystemDefault())
                     .toJavaLocalDateTime()
                     .format(dateTimeFormat)
             )
 
-        article?.author != null && (article?.pubDate ?: 0L) > 0L                             ->
+        state?.article?.author != null && (state?.article?.pubDate ?: 0L) > 0L ->
             stringResource(
                 R.string.by_author_on_date,
                 // Must wrap author in unicode marks to ensure it formats
                 // correctly in RTL
-                context.unicodeWrap(article?.author ?: ""),
-                Instant.fromEpochMilliseconds(article?.pubDate ?: 0L)
+                context.unicodeWrap(state?.article?.author ?: ""),
+                Instant.fromEpochMilliseconds(state?.article?.pubDate ?: 0L)
                     .toLocalDateTime(TimeZone.currentSystemDefault())
                     .toJavaLocalDateTime()
                     .format(dateTimeFormat)
             )
 
-        else                                                                                 -> null
+        else -> null
     }
 
     ViewWithActionBar(
@@ -181,7 +189,7 @@ fun ArticlePage(
                                 .clickable {
                                     MainActivity.navigateIntent(
                                         context,
-                                        "${Routes.WEB_VIEW}/${article?.link?.urlEncode()}"
+                                        "${Routes.WEB_VIEW}/${state?.article?.link?.urlEncode()}"
                                     )
                                 }
                         )
@@ -206,7 +214,7 @@ fun ArticlePage(
                         blobFullInputStream(articleId, context.filesDir).use {
                             htmlFormattedText(
                                 inputStream = it,
-                                baseUrl = article?.link ?: "",
+                                baseUrl = state?.article?.link ?: "",
                                 imagePlaceholder = R.drawable.placeholder_image_article_day,
                                 onLinkClick = context::launchView
                             )
@@ -221,7 +229,7 @@ fun ArticlePage(
                         blobInputStream(articleId, context.filesDir).use {
                             htmlFormattedText(
                                 inputStream = it,
-                                baseUrl = article?.link ?: "",
+                                baseUrl = state?.article?.link ?: "",
                                 imagePlaceholder = R.drawable.placeholder_image_article_day,
                                 onLinkClick = context::launchView
                             )
