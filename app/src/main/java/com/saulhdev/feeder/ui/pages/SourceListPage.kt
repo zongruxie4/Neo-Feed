@@ -70,7 +70,7 @@ import com.saulhdev.feeder.ui.navigation.LocalNavController
 import com.saulhdev.feeder.ui.navigation.NavRoute
 import com.saulhdev.feeder.utils.ApplicationCoroutineScope
 import com.saulhdev.feeder.utils.FILE_DATETIME_FORMAT
-import com.saulhdev.feeder.viewmodels.SourceViewModel
+import com.saulhdev.feeder.viewmodels.SourceListViewModel
 import kotlinx.coroutines.launch
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.format
@@ -82,7 +82,7 @@ import kotlin.time.Clock
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
 fun SourceListPage(
-    viewModel: SourceViewModel = koinNeoViewModel(),
+    viewModel: SourceListViewModel = koinNeoViewModel(),
 ) {
     val context = LocalContext.current
     val navController = LocalNavController.current

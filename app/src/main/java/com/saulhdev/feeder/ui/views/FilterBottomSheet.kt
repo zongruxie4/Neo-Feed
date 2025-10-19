@@ -33,7 +33,7 @@ import com.saulhdev.feeder.databinding.ContentSortingBinding
 import com.saulhdev.feeder.databinding.ContentSourcesBinding
 import com.saulhdev.feeder.databinding.ContentTagsBinding
 import com.saulhdev.feeder.databinding.SortFilterSheetBinding
-import com.saulhdev.feeder.viewmodels.SourceViewModel
+import com.saulhdev.feeder.viewmodels.SourceListViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -47,7 +47,7 @@ class FilterBottomSheet(
 ) : FrameLayout(context), View.OnClickListener {
 
     private val mainScope = CoroutineScope(Dispatchers.Main + Job())
-    private val viewModel: SourceViewModel by inject(SourceViewModel::class.java)
+    private val viewModel: SourceListViewModel by inject(SourceListViewModel::class.java)
     private val prefs: FeedPreferences by inject(FeedPreferences::class.java)
     private var _binding: SortFilterSheetBinding? = null
     private val binding get() = _binding!!

@@ -43,7 +43,7 @@ import com.saulhdev.feeder.ui.icons.phosphor.Check
 import com.saulhdev.feeder.ui.icons.phosphor.SortAscending
 import com.saulhdev.feeder.ui.icons.phosphor.SortDescending
 import com.saulhdev.feeder.viewmodels.SortFilterViewModel
-import com.saulhdev.feeder.viewmodels.SourceViewModel
+import com.saulhdev.feeder.viewmodels.SourceListViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.koin.compose.koinInject
 
@@ -54,7 +54,7 @@ import org.koin.compose.koinInject
 @Composable
 fun SortFilterSheet(
     viewModel: SortFilterViewModel = koinNeoViewModel(),
-    sourcesViewModel: SourceViewModel = koinNeoViewModel(),
+    sourcesViewModel: SourceListViewModel = koinNeoViewModel(),
     prefs: FeedPreferences = koinInject(),
     onDismiss: () -> Unit,
 ) {
