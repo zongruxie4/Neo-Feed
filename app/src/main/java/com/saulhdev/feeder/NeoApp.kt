@@ -23,7 +23,7 @@ import com.saulhdev.feeder.viewmodels.ArticleViewModel
 import com.saulhdev.feeder.viewmodels.SearchFeedViewModel
 import com.saulhdev.feeder.viewmodels.SortFilterViewModel
 import com.saulhdev.feeder.viewmodels.SourceEditViewModel
-import com.saulhdev.feeder.viewmodels.SourceViewModel
+import com.saulhdev.feeder.viewmodels.SourceListViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.koin.android.ext.koin.androidContext
@@ -52,7 +52,7 @@ class NeoApp : MultiDexApplication(), KoinStartup {
         viewModelOf(::SourceEditViewModel)
         viewModelOf(::SearchFeedViewModel)
         viewModelOf(::ArticleListViewModel)
-        viewModelOf(::SourceViewModel)
+        viewModelOf(::SourceListViewModel)
         viewModelOf(::ArticleViewModel)
         viewModelOf(::SortFilterViewModel)
     }

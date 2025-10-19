@@ -51,7 +51,6 @@ import com.saulhdev.feeder.utils.htmlFormattedText
 import com.saulhdev.feeder.utils.unicodeWrap
 import com.saulhdev.feeder.utils.urlEncode
 import com.saulhdev.feeder.viewmodels.ArticleViewModel
-import com.saulhdev.feeder.viewmodels.SourceViewModel
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toJavaLocalDateTime
 import kotlinx.datetime.toLocalDateTime
@@ -66,22 +65,19 @@ import kotlin.time.Instant
 fun ArticlePage(
     articleId: String,
     viewModel: ArticleViewModel = koinNeoViewModel(),
-    sourceViewModel: SourceViewModel = koinNeoViewModel(),
     onDismiss: (() -> Unit)? = null,
 ) {
     val context = LocalContext.current
     val activity = LocalActivity.current
 
     val state by viewModel.articleState.collectAsState(initial = null)
-    val feed by sourceViewModel.getFeedById(state?.article?.feedId ?: 0)
-        .collectAsState(initial = null)
 
     LaunchedEffect(articleId) {
         viewModel.setArticleId(articleId)
     }
 
     val showFullArticle by remember {
-        derivedStateOf { feed?.fullTextByDefault ?: false }
+        derivedStateOf { state?.source?.fullTextByDefault ?: false }
     }
 
     val title by remember { derivedStateOf { state?.article?.title ?: "Neo Feed" } }
@@ -89,11 +85,11 @@ fun ArticlePage(
     val subTitle by remember {
         derivedStateOf {
             (if (currentUrl != "Neo Feed") Uri.parse(currentUrl).host else null)
-                ?: feed?.title
+                ?: state?.source?.title
                 ?: "Neo Feed"
         }
     }
-    val feedTitle by remember { derivedStateOf { feed?.title ?: "Neo Feed" } }
+    val feedTitle by remember { derivedStateOf { state?.source?.title ?: "Neo Feed" } }
 
     val navController = rememberNavController()
     BackHandler(onDismiss == null) {

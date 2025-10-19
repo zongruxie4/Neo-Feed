@@ -20,7 +20,9 @@ package com.saulhdev.feeder.viewmodels
 
 import androidx.lifecycle.viewModelScope
 import com.saulhdev.feeder.data.db.models.Article
+import com.saulhdev.feeder.data.db.models.Feed
 import com.saulhdev.feeder.data.repository.ArticleRepository
+import com.saulhdev.feeder.data.repository.SourcesRepository
 import com.saulhdev.feeder.extensions.NeoViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -35,6 +37,7 @@ import kotlinx.coroutines.plus
 
 class ArticleViewModel(
     private val articleRepo: ArticleRepository,
+    private val sourcesRepo: SourcesRepository,
 ) : NeoViewModel() {
     private val ioScope = viewModelScope.plus(Dispatchers.IO)
 
@@ -48,10 +51,13 @@ class ArticleViewModel(
     val articleState = articleId.flatMapLatest {
         articleRepo.getArticleById(it)
     }.mapLatest {
-        ArticlePageState(
-            it,
-            it?.bookmarked ?: false
-        )
+        it?.let {
+            ArticlePageState(
+                article = it,
+                source = sourcesRepo.loadFeedById(it.feedId),
+                isBookmarked = it.bookmarked
+            )
+        } ?: ArticlePageState()
     }
         .stateIn(
             ioScope,
@@ -74,5 +80,6 @@ class ArticleViewModel(
 
 data class ArticlePageState(
     val article: Article? = null,
+    val source: Feed? = null,
     val isBookmarked: Boolean = false,
 )
