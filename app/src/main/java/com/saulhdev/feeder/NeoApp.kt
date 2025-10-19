@@ -13,10 +13,10 @@ import com.saulhdev.feeder.data.content.FeedPreferences.Companion.prefsModule
 import com.saulhdev.feeder.data.db.NeoFeedDb
 import com.saulhdev.feeder.data.repository.ArticleRepository
 import com.saulhdev.feeder.data.repository.SourcesRepository
-import com.saulhdev.feeder.extensions.ToastMaker
-import com.saulhdev.feeder.extensions.restartApp
+import com.saulhdev.feeder.utils.extensions.ToastMaker
+import com.saulhdev.feeder.utils.extensions.restartApp
 import com.saulhdev.feeder.manager.sync.SyncRestClient
-import com.saulhdev.feeder.service.OverlayBridge
+import com.saulhdev.feeder.manager.service.OverlayBridge
 import com.saulhdev.feeder.utils.ApplicationCoroutineScope
 import com.saulhdev.feeder.viewmodels.ArticleListViewModel
 import com.saulhdev.feeder.viewmodels.ArticleViewModel

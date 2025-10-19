@@ -57,7 +57,7 @@
         </activity>
 
         <service
-            android:name=".service.OverlayService"
+            android:name=".manager.service.OverlayService"
             android:enabled="true"
             android:exported="true"
             android:foregroundServiceType="shortService">

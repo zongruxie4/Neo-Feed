@@ -57,8 +57,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.data.entity.SourceEditViewState
-import com.saulhdev.feeder.extensions.interceptKey
-import com.saulhdev.feeder.extensions.koinNeoViewModel
+import com.saulhdev.feeder.utils.extensions.interceptKey
+import com.saulhdev.feeder.utils.extensions.koinNeoViewModel
 import com.saulhdev.feeder.ui.components.ComposeSwitchView
 import com.saulhdev.feeder.ui.components.ViewWithActionBar
 import com.saulhdev.feeder.viewmodels.SourceEditViewModel

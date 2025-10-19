@@ -1,4 +1,4 @@
-package com.saulhdev.feeder.service
+package com.saulhdev.feeder.manager.service
 
 import android.content.Context
 import android.content.res.ColorStateList
@@ -23,8 +23,8 @@ import com.saulhdev.feeder.NeoApp
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.data.content.FeedPreferences
 import com.saulhdev.feeder.data.entity.MenuItem
-import com.saulhdev.feeder.extensions.isDark
-import com.saulhdev.feeder.extensions.setCustomTheme
+import com.saulhdev.feeder.utils.extensions.isDark
+import com.saulhdev.feeder.utils.extensions.setCustomTheme
 import com.saulhdev.feeder.manager.sync.SyncRestClient
 import com.saulhdev.feeder.ui.feed.FeedAdapter
 import com.saulhdev.feeder.ui.navigation.Routes

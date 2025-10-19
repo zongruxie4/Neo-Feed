@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.saulhdev.feeder.extensions
+package com.saulhdev.feeder.utils.extensions
 
 import android.util.Log
 import com.rometools.modules.mediarss.MediaEntryModule
@@ -376,6 +376,7 @@ private fun pointsToImage(url: String): Boolean {
     }
 }
 
+// TODO replace with Kotlin alternative
 fun SyndEntry.publishedRFC3339ZonedDateTime(): ZonedDateTime? =
     when (publishedDate != null) {
         true -> ZonedDateTime.ofInstant(
@@ -386,6 +387,7 @@ fun SyndEntry.publishedRFC3339ZonedDateTime(): ZonedDateTime? =
         else -> modifiedRFC3339ZonedDateTime()
     }
 
+// TODO replace with Kotlin alternative
 fun SyndEntry.modifiedRFC3339ZonedDateTime(): ZonedDateTime? =
     when (updatedDate != null) {
         true -> ZonedDateTime.ofInstant(

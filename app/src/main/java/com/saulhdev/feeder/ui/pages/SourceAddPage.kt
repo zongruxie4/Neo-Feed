@@ -59,10 +59,10 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.saulhdev.feeder.R
-import com.saulhdev.feeder.extensions.StableHolder
-import com.saulhdev.feeder.extensions.interceptKey
-import com.saulhdev.feeder.extensions.koinNeoViewModel
-import com.saulhdev.feeder.extensions.safeSemantics
+import com.saulhdev.feeder.utils.extensions.StableHolder
+import com.saulhdev.feeder.utils.extensions.interceptKey
+import com.saulhdev.feeder.utils.extensions.koinNeoViewModel
+import com.saulhdev.feeder.utils.extensions.safeSemantics
 import com.saulhdev.feeder.ui.components.ViewWithActionBar
 import com.saulhdev.feeder.ui.navigation.LocalNavController
 import com.saulhdev.feeder.utils.sloppyLinkToStrictURLNoThrows

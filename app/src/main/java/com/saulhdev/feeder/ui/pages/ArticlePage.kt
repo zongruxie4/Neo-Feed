@@ -32,9 +32,9 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.rememberNavController
 import com.saulhdev.feeder.MainActivity
 import com.saulhdev.feeder.R
-import com.saulhdev.feeder.extensions.koinNeoViewModel
-import com.saulhdev.feeder.extensions.launchView
-import com.saulhdev.feeder.extensions.shareIntent
+import com.saulhdev.feeder.utils.extensions.koinNeoViewModel
+import com.saulhdev.feeder.utils.extensions.launchView
+import com.saulhdev.feeder.utils.extensions.shareIntent
 import com.saulhdev.feeder.ui.components.RoundButton
 import com.saulhdev.feeder.ui.components.ViewWithActionBar
 import com.saulhdev.feeder.ui.components.WithBidiDeterminedLayoutDirection

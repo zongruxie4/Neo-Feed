@@ -55,7 +55,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.data.db.models.Feed
-import com.saulhdev.feeder.extensions.koinNeoViewModel
+import com.saulhdev.feeder.utils.extensions.koinNeoViewModel
 import com.saulhdev.feeder.manager.models.exportOpml
 import com.saulhdev.feeder.manager.models.importOpml
 import com.saulhdev.feeder.ui.components.FeedItem
