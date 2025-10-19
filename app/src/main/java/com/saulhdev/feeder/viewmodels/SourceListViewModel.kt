@@ -17,35 +17,23 @@ class SourceListViewModel(
 ) : NeoViewModel() {
     private val ioScope = viewModelScope.plus(Dispatchers.IO)
 
-    val allFeeds = feedsRepo.getAllSourcesFlow()
-        .stateIn(
-            ioScope,
-            SharingStarted.Eagerly,
-            emptyList()
+    val state = combine(
+        feedsRepo.getAllSourcesFlow(),
+        feedsRepo.getEnabledSources(),
+        feedsRepo.getAllTagsFlow()
+    ) { allFeeds, enabledFeeds, allTags ->
+        SourceListState(
+            allSources = allFeeds,
+            enabledSources = enabledFeeds,
+            tagsSourcesMap = allTags.plus("").associateWith { tag ->
+                allFeeds.filter { it.tag.contains(tag) }
+            }
         )
-
-    val allEnabledFeeds = feedsRepo.getEnabledSources()
-        .stateIn(
-            ioScope,
-            SharingStarted.Eagerly,
-            emptyList()
-        )
-
-    val allTags = feedsRepo.getAllTagsFlow()
-        .stateIn(
-            viewModelScope,
-            SharingStarted.Eagerly,
-            emptyList()
-        )
-
-    val tagsFeedsMap = combine(allTags, allFeeds) { tags, feeds ->
-        tags.plus("").associateWith { tag -> feeds.filter { it.tag.contains(tag) } }
-    }
-        .stateIn(
-            viewModelScope,
-            SharingStarted.Eagerly,
-            emptyMap()
-        )
+    }.stateIn(
+        ioScope,
+        SharingStarted.Eagerly,
+        SourceListState()
+    )
 
     fun insertFeed(feed: Feed) {
         viewModelScope.launch {
@@ -75,3 +63,9 @@ class SourceListViewModel(
         }
     }
 }
+
+data class SourceListState(
+    val allSources: List<Feed> = emptyList(),
+    val enabledSources: List<Feed> = emptyList(),
+    val tagsSourcesMap: Map<String, List<Feed>> = emptyMap(),
+)
