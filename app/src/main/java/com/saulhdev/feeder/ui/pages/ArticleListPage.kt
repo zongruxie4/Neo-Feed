@@ -110,10 +110,8 @@ fun ArticleListPage(
     val paneNavigator = rememberListDetailPaneScaffoldNavigator<Any>()
     val articleId = remember { mutableStateOf("") }
 
-    val feedList by viewModel.articlesList.collectAsState()
-    val bookmarked by viewModel.bookmarkedArticlesList.collectAsState()
-    val isSyncing by viewModel.isSyncing.collectAsState(false)
-    val filtered by viewModel.notModifiedFilter.collectAsState()
+    val state by viewModel.articleListState.collectAsState()
+    val bookmarked by viewModel.bookmarksState.collectAsState()
 
     var showBookmarks by remember { mutableStateOf(false) }
     val listState = rememberLazyListState()
@@ -169,7 +167,7 @@ fun ArticleListPage(
                                         }
                                     ) {
                                         Icon(
-                                            imageVector = if (filtered) Phosphor.Filter else Phosphor.Filtered,
+                                            imageVector = if (state.isFilterModified) Phosphor.Filter else Phosphor.Filtered,
                                             contentDescription = stringResource(id = R.string.sorting_order),
                                             tint = MaterialTheme.colorScheme.primary
                                         )
@@ -264,7 +262,7 @@ fun ArticleListPage(
                                     verticalArrangement = Arrangement.spacedBy(8.dp),
                                     contentPadding = PaddingValues(8.dp)
                                 ) {
-                                    items(bookmarked, key = { it.id }) { item ->
+                                    items(bookmarked.bookmarkedArticles, key = { it.id }) { item ->
                                         BookmarkItem(
                                             article = item.article,
                                             feed = item.feed,
@@ -302,11 +300,11 @@ fun ArticleListPage(
                                 }
 
                                 else          -> PullToRefreshLazyColumn(
-                                    isRefreshing = isSyncing,
+                                    isRefreshing = state.isSyncing,
                                     onRefresh = syncClient::syncAllFeeds,
                                     listState = listState,
                                     content = {
-                                        items(feedList, key = { it.id }) { item ->
+                                        items(state.articles, key = { it.id }) { item ->
                                             ArticleItem(
                                                 article = item,
                                                 onBookmark = {

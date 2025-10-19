@@ -58,29 +58,27 @@ fun SortFilterSheet(
     prefs: FeedPreferences = koinInject(),
     onDismiss: () -> Unit,
 ) {
-    val articlesViewModel = koinNeoViewModel<ArticleViewModel>()
     val nestedScrollConnection = rememberNestedScrollInteropConnection()
-    val activeSources by viewModel.activeFeeds.collectAsState()
+    val state by viewModel.sheetState.collectAsState()
     val activeTags by sourcesViewModel.allTags.collectAsState()
-    val sortFilterModel by articlesViewModel.prefSortFilter.collectAsState()
 
     var sortPrefVar by prefs.sortingFilter
     var sortAscPrefVar by prefs.sortingAsc
     var sourcesPrefVar by prefs.sourcesFilter
     var tagsPrefVar by prefs.tagsFilter
 
-    var sortOption by remember(sortFilterModel.sort) {
-        mutableStateOf(sortFilterModel.sort)
+    var sortOption by remember(state.sortFilter.sort) {
+        mutableStateOf(state.sortFilter.sort)
     }
-    var sortAscOption by remember(sortFilterModel.sortAsc) {
-        mutableStateOf(sortFilterModel.sortAsc)
+    var sortAscOption by remember(state.sortFilter.sortAsc) {
+        mutableStateOf(state.sortFilter.sortAsc)
     }
-    val sourcesOption = remember(sortFilterModel.sourcesFilter) {
-        mutableStateListOf(*sortFilterModel.sourcesFilter.toTypedArray())
+    val sourcesOption = remember(state.sortFilter.sourcesFilter) {
+        mutableStateListOf(*state.sortFilter.sourcesFilter.toTypedArray())
     }
 
-    val tagsOption = remember(sortFilterModel.tagsFilter) {
-        mutableStateListOf(*sortFilterModel.tagsFilter.toTypedArray())
+    val tagsOption = remember(state.sortFilter.tagsFilter) {
+        mutableStateListOf(*state.sortFilter.tagsFilter.toTypedArray())
     }
 
     Scaffold(
@@ -175,12 +173,12 @@ fun SortFilterSheet(
                     heading = stringResource(id = R.string.title_sources),
                     preExpanded = sourcesOption.isNotEmpty(),
                 ) {
-                    DeSelectAll(activeSources.map { it.id.toString() }, sourcesOption)
+                    DeSelectAll(state.activeFeeds.map { it.id.toString() }, sourcesOption)
                     FlowRow(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
-                        activeSources.sortedBy { it.title.lowercase() }.forEach {
+                        state.activeFeeds.sortedBy { it.title.lowercase() }.forEach {
                             val checked by remember(sourcesOption.toString()) {
                                 mutableStateOf(!sourcesOption.contains(it.id.toString()))
                             }
@@ -197,7 +195,7 @@ fun SortFilterSheet(
                 }
             }
 
-            item{
+            item {
                 ExpandableItemsBlock(
                     heading = stringResource(id = R.string.source_tags),
                     preExpanded = tagsOption.isNotEmpty(),

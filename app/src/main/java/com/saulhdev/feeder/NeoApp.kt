@@ -51,7 +51,6 @@ class NeoApp : MultiDexApplication(), KoinStartup {
         viewModelOf(::SearchFeedViewModel)
         viewModelOf(::ArticleViewModel)
         viewModelOf(::SourceViewModel)
-        viewModelOf(::ArticleViewModel)
     }
 
     // TODO Move to its class

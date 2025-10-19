@@ -45,8 +45,9 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import org.koin.java.KoinJavaComponent.inject
 
-class OverlayView(val context: Context): OverlayController(context, R.style.AppTheme, R.style.WindowTheme),
-    KoinComponent,OverlayBridge.OverlayBridgeCallback {
+class OverlayView(val context: Context) :
+    OverlayController(context, R.style.AppTheme, R.style.WindowTheme),
+    KoinComponent, OverlayBridge.OverlayBridgeCallback {
     private lateinit var themeHolder: OverlayThemeHolder
     private val syncScope = CoroutineScope(Dispatchers.IO) + CoroutineName("NeoFeedSync")
     private val mainScope = CoroutineScope(Dispatchers.Main)
@@ -78,20 +79,15 @@ class OverlayView(val context: Context): OverlayController(context, R.style.AppT
         refreshNotifications()
 
         syncScope.launch {
-            viewModel.articlesList.collect {
+            viewModel.articleListState.collect {
                 mainScope.launch {
-                    adapter.replace(it)
-                }
-            }
-        }
-        syncScope.launch {
-            viewModel.isSyncing
-                .collect {
+                    adapter.replace(it.articles)
                     mainScope.launch {
                         rootView.findViewById<SwipeRefreshLayout>(R.id.swipe_to_refresh).isRefreshing =
-                            it
+                            it.isSyncing
                     }
                 }
+            }
         }
         syncScope.launch {
             prefs.overlayTheme.get().collect {
@@ -108,12 +104,11 @@ class OverlayView(val context: Context): OverlayController(context, R.style.AppT
         AbstractFloatingView.closeAllOpenViews(context)
     }
 
-    override fun onBackPressed(){
+    override fun onBackPressed() {
         if (AbstractFloatingView.isAnyOpen()) {
             AbstractFloatingView.closeAllOpenViews(context)
             return
-        }
-        else {
+        } else {
             super.onBackPressed()
         }
     }
@@ -206,7 +201,7 @@ class OverlayView(val context: Context): OverlayController(context, R.style.AppT
         })
     }
 
-    private  fun updateToggleColor(button: MaterialButton, isChecked: Boolean){
+    private fun updateToggleColor(button: MaterialButton, isChecked: Boolean) {
         val context = button.context
         val darkTheme = themeHolder.currentTheme.get(CardTheme.Colors.OVERLAY_BG.ordinal).isDark()
         val a14 = Android.sdk(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
@@ -244,21 +239,20 @@ class OverlayView(val context: Context): OverlayController(context, R.style.AppT
         updateToggleColor(toggleButton, bookmarkVisible)
         toggleButton.setOnClickListener {
             mainScope.launch {
-                if(bookmarkVisible) {
+                if (bookmarkVisible) {
                     bookmarkVisible = false
                     toggleButton.isChecked = bookmarkVisible
                     updateToggleColor(toggleButton, bookmarkVisible)
-                    viewModel.articlesList.collect {
-                        adapter.replace(it)
+                    viewModel.articleListState.collect {
+                        adapter.replace(it.articles)
                         adapter.notifyDataSetChanged()
-
                     }
                 } else {
                     bookmarkVisible = true
                     toggleButton.isChecked = bookmarkVisible
                     updateToggleColor(toggleButton, bookmarkVisible)
-                    viewModel.bookmarkedArticlesList.collect {
-                        adapter.replace(it)
+                    viewModel.bookmarksState.collect {
+                        adapter.replace(it.bookmarkedArticles)
                         adapter.notifyDataSetChanged()
                     }
                 }
@@ -289,7 +283,7 @@ class OverlayView(val context: Context): OverlayController(context, R.style.AppT
         popup.show(createMenuList()) {
             popup.dismiss()
             when (it.id) {
-                "config" -> {
+                "config"  -> {
                     mainScope.launch {
                         view.context.startActivity(
                             MainActivity.navigateIntent(
@@ -300,7 +294,7 @@ class OverlayView(val context: Context): OverlayController(context, R.style.AppT
                     }
                 }
 
-                "reload" -> {
+                "reload"  -> {
                     rootView.findViewById<RecyclerView>(R.id.recycler).recycledViewPool.clear()
                     refreshNotifications()
                 }
