@@ -31,7 +31,6 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.data.content.FeedPreferences
-import com.saulhdev.feeder.utils.extensions.koinNeoViewModel
 import com.saulhdev.feeder.ui.components.ActionButton
 import com.saulhdev.feeder.ui.components.ChipsSwitch
 import com.saulhdev.feeder.ui.components.DeSelectAll
@@ -42,8 +41,8 @@ import com.saulhdev.feeder.ui.icons.phosphor.ArrowUUpLeft
 import com.saulhdev.feeder.ui.icons.phosphor.Check
 import com.saulhdev.feeder.ui.icons.phosphor.SortAscending
 import com.saulhdev.feeder.ui.icons.phosphor.SortDescending
+import com.saulhdev.feeder.utils.extensions.koinNeoViewModel
 import com.saulhdev.feeder.viewmodels.SortFilterViewModel
-import com.saulhdev.feeder.viewmodels.SourceListViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.koin.compose.koinInject
 
@@ -54,13 +53,11 @@ import org.koin.compose.koinInject
 @Composable
 fun SortFilterSheet(
     viewModel: SortFilterViewModel = koinNeoViewModel(),
-    sourcesViewModel: SourceListViewModel = koinNeoViewModel(),
     prefs: FeedPreferences = koinInject(),
     onDismiss: () -> Unit,
 ) {
     val nestedScrollConnection = rememberNestedScrollInteropConnection()
     val state by viewModel.sheetState.collectAsState()
-    val activeTags by sourcesViewModel.allTags.collectAsState()
 
     var sortPrefVar by prefs.sortingFilter
     var sortAscPrefVar by prefs.sortingAsc
@@ -173,12 +170,12 @@ fun SortFilterSheet(
                     heading = stringResource(id = R.string.title_sources),
                     preExpanded = sourcesOption.isNotEmpty(),
                 ) {
-                    DeSelectAll(state.activeFeeds.map { it.id.toString() }, sourcesOption)
+                    DeSelectAll(state.activeSources.map { it.id.toString() }, sourcesOption)
                     FlowRow(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
-                        state.activeFeeds.sortedBy { it.title.lowercase() }.forEach {
+                        state.activeSources.sortedBy { it.title.lowercase() }.forEach {
                             val checked by remember(sourcesOption.toString()) {
                                 mutableStateOf(!sourcesOption.contains(it.id.toString()))
                             }
@@ -200,12 +197,12 @@ fun SortFilterSheet(
                     heading = stringResource(id = R.string.source_tags),
                     preExpanded = tagsOption.isNotEmpty(),
                 ) {
-                    DeSelectAll(activeTags.map { it }, tagsOption)
+                    DeSelectAll(state.activeTags.map { it }, tagsOption)
                     FlowRow(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
-                        activeTags.sortedBy { it.lowercase() }.forEach {
+                        state.activeTags.sortedBy { it.lowercase() }.forEach {
                             val checked by remember(tagsOption.toString()) {
                                 mutableStateOf(!tagsOption.contains(it))
                             }

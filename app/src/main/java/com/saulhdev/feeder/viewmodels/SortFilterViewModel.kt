@@ -53,11 +53,13 @@ class SortFilterViewModel(
 
     val sheetState: StateFlow<SortFilterSheetState> = combine(
         sortFilterState,
-        feedsRepo.getEnabledSources()
-    ) { sortFilter, activeFeeds ->
+        feedsRepo.getEnabledSources(),
+        feedsRepo.getAllTagsFlow(),
+    ) { sortFilter, activeSources, activeTags ->
         SortFilterSheetState(
             sortFilter = sortFilter,
-            activeFeeds = activeFeeds
+            activeSources = activeSources,
+            activeTags = activeTags,
         )
     }.stateIn(
         viewModelScope,
@@ -68,5 +70,6 @@ class SortFilterViewModel(
 
 data class SortFilterSheetState(
     val sortFilter: SortFilterModel = SortFilterModel(),
-    val activeFeeds: List<Feed> = emptyList(),
+    val activeSources: List<Feed> = emptyList(),
+    val activeTags: List<String> = emptyList(),
 )
