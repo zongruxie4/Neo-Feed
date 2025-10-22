@@ -43,7 +43,7 @@ class SourceEditViewModel : NeoViewModel() {
         _feedId.update { value }
     }
 
-    val feed = _feedId.mapLatest {
+    private val feed = _feedId.mapLatest {
         repository.loadFeedById(it) ?: Feed()
     }.stateIn(
         viewModelScope,

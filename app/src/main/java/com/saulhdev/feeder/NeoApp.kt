@@ -99,6 +99,7 @@ class NeoApp : MultiDexApplication(), KoinStartup {
     override fun onCreate() {
         super.onCreate()
         instance = this
+        // TODO remove on future release
         AndroidThreeTen.init(this)
         DynamicColors.applyToActivitiesIfAvailable(
             this,
