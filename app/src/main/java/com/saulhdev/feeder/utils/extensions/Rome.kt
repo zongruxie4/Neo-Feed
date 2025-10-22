@@ -39,9 +39,7 @@ import com.saulhdev.feeder.utils.relativeLinkIntoAbsolute
 import com.saulhdev.feeder.utils.relativeLinkIntoAbsoluteOrNull
 import org.jsoup.parser.Parser.unescapeEntities
 import java.net.URL
-import java.time.Instant
-import java.time.ZoneOffset
-import java.time.ZonedDateTime
+import kotlin.time.Instant
 
 suspend fun SyndFeed.asFeed(baseUrl: URL, feedIconFinder: suspend (URL) -> String?): JsonFeed {
     val feedAuthor: Author? = this.authors?.firstOrNull()?.asAuthor()
@@ -356,9 +354,9 @@ private fun MediaContent.findThumbnailCandidates(): Sequence<ThumbnailCandidate>
 
 private fun MediaContent.isImage(): Boolean {
     return when {
-        medium == "image" -> true
+        medium == "image"                   -> true
         pointsToImage(reference.toString()) -> true
-        else -> false
+        else                                -> false
     }
 }
 
@@ -376,27 +374,14 @@ private fun pointsToImage(url: String): Boolean {
     }
 }
 
-// TODO replace with Kotlin alternative
-fun SyndEntry.publishedRFC3339ZonedDateTime(): ZonedDateTime? =
-    when (publishedDate != null) {
-        true -> ZonedDateTime.ofInstant(
-            Instant.ofEpochMilli(publishedDate.time),
-            ZoneOffset.systemDefault()
-        )
-        // This is the required element in atom feeds so it is a good fallback
-        else -> modifiedRFC3339ZonedDateTime()
-    }
+fun SyndEntry.publishedRFC3339ZonedDateTime(): Instant? = publishedDate?.let {
+    Instant.fromEpochMilliseconds(it.time)
+} ?: modifiedRFC3339ZonedDateTime()
 
-// TODO replace with Kotlin alternative
-fun SyndEntry.modifiedRFC3339ZonedDateTime(): ZonedDateTime? =
-    when (updatedDate != null) {
-        true -> ZonedDateTime.ofInstant(
-            Instant.ofEpochMilli(updatedDate.time),
-            ZoneOffset.systemDefault()
-        )
-
-        else -> null
-    }
+// This is the required element in atom feeds so it is a good fallback
+fun SyndEntry.modifiedRFC3339ZonedDateTime(): Instant? = updatedDate?.let {
+    Instant.fromEpochMilliseconds(it.time)
+}
 
 fun SyndEntry.publishedRFC3339Date(): String? =
     publishedRFC3339ZonedDateTime()?.toString()
