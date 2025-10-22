@@ -37,6 +37,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -57,10 +58,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.data.entity.SourceEditViewState
-import com.saulhdev.feeder.utils.extensions.interceptKey
-import com.saulhdev.feeder.utils.extensions.koinNeoViewModel
 import com.saulhdev.feeder.ui.components.ComposeSwitchView
 import com.saulhdev.feeder.ui.components.ViewWithActionBar
+import com.saulhdev.feeder.utils.extensions.interceptKey
+import com.saulhdev.feeder.utils.extensions.koinNeoViewModel
 import com.saulhdev.feeder.viewmodels.SourceEditViewModel
 
 @Composable
@@ -71,6 +72,9 @@ fun SourceEditPage(
 ) {
     val title = stringResource(id = R.string.edit_rss)
     val viewState by sourceEditViewModel.viewState.collectAsState()
+    val editState = remember(viewState) {
+        mutableStateOf(viewState)
+    }
 
     LaunchedEffect(feedId) {
         sourceEditViewModel.setFeedId(feedId)
@@ -109,7 +113,7 @@ fun SourceEditPage(
                             contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
                         ),
                         onClick = {
-                            sourceEditViewModel.updateFeed(viewState)
+                            sourceEditViewModel.updateFeed(editState.value)
                             onDismiss()
                         }
                     ) {
@@ -131,7 +135,7 @@ fun SourceEditPage(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             SourceEditView(
-                viewState = viewState
+                editState = editState
             )
         }
     }
@@ -139,12 +143,9 @@ fun SourceEditPage(
 
 @Composable
 fun SourceEditView(
-    viewState: SourceEditViewState,
+    editState: MutableState<SourceEditViewState>,
 ) {
     val (focusTitle, focusTag) = createRefs()
-    val feedState = remember(viewState) {
-        mutableStateOf(viewState)
-    }
     val focusManager = LocalFocusManager.current
 
     LazyColumn(
@@ -152,9 +153,9 @@ fun SourceEditView(
     ) {
         item {
             OutlinedTextField(
-                value = feedState.value.url,
+                value = editState.value.url,
                 onValueChange = {
-                    feedState.value = feedState.value.copy(url = it)
+                    editState.value = editState.value.copy(url = it)
                 },
                 label = {
                     Text(stringResource(id = R.string.add_input_hint))
@@ -185,9 +186,9 @@ fun SourceEditView(
         }
         item {
             OutlinedTextField(
-                value = feedState.value.title,
+                value = editState.value.title,
                 onValueChange = {
-                    feedState.value = feedState.value.copy(title = it)
+                    editState.value = editState.value.copy(title = it)
                 },
                 label = {
                     Text(stringResource(id = R.string.title))
@@ -219,9 +220,9 @@ fun SourceEditView(
         }
         item {
             OutlinedTextField(
-                value = feedState.value.tag,
+                value = editState.value.tag,
                 onValueChange = {
-                    feedState.value = feedState.value.copy(tag = it)
+                    editState.value = editState.value.copy(tag = it)
                 },
                 label = {
                     Text(stringResource(id = R.string.source_tags))
@@ -255,9 +256,9 @@ fun SourceEditView(
         item {
             ComposeSwitchView(
                 titleId = R.string.fetch_full_articles_by_default,
-                isChecked = feedState.value.fullTextByDefault,
+                isChecked = editState.value.fullTextByDefault,
                 onCheckedChange = {
-                    feedState.value = feedState.value.copy(fullTextByDefault = it)
+                    editState.value = editState.value.copy(fullTextByDefault = it)
                 },
                 index = 0,
                 groupSize = 2
@@ -265,9 +266,9 @@ fun SourceEditView(
             Spacer(modifier = Modifier.height(4.dp))
             ComposeSwitchView(
                 titleId = R.string.source_enabled,
-                isChecked = feedState.value.isEnabled,
+                isChecked = editState.value.isEnabled,
                 onCheckedChange = {
-                    feedState.value = feedState.value.copy(isEnabled = it)
+                    editState.value = editState.value.copy(isEnabled = it)
                 },
                 index = 1,
                 groupSize = 2
@@ -279,12 +280,16 @@ fun SourceEditView(
 @Composable
 @Preview
 fun SourceEditPagePreview() {
-    SourceEditView(
-        viewState = SourceEditViewState(
-            url = "https://example.com/feed",
-            title = "Example Feed",
-            fullTextByDefault = true,
-            isEnabled = true
+    val state = remember {
+        mutableStateOf(
+            SourceEditViewState(
+                url = "https://example.com/feed",
+                title = "Example Feed",
+                fullTextByDefault = true,
+                isEnabled = true
+            )
         )
-    )
+    }
+
+    SourceEditView(editState = state)
 }
