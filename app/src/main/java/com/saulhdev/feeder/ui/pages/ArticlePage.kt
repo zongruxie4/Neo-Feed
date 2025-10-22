@@ -32,14 +32,13 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.rememberNavController
 import com.saulhdev.feeder.MainActivity
 import com.saulhdev.feeder.R
-import com.saulhdev.feeder.utils.extensions.koinNeoViewModel
-import com.saulhdev.feeder.utils.extensions.launchView
-import com.saulhdev.feeder.utils.extensions.shareIntent
 import com.saulhdev.feeder.ui.components.RoundButton
 import com.saulhdev.feeder.ui.components.ViewWithActionBar
 import com.saulhdev.feeder.ui.components.WithBidiDeterminedLayoutDirection
 import com.saulhdev.feeder.ui.icons.Phosphor
 import com.saulhdev.feeder.ui.icons.phosphor.ArrowSquareOut
+import com.saulhdev.feeder.ui.icons.phosphor.HeartStraight
+import com.saulhdev.feeder.ui.icons.phosphor.HeartStraightFill
 import com.saulhdev.feeder.ui.icons.phosphor.ShareNetwork
 import com.saulhdev.feeder.ui.navigation.Routes
 import com.saulhdev.feeder.ui.theme.LinkTextStyle
@@ -47,6 +46,9 @@ import com.saulhdev.feeder.utils.blobFile
 import com.saulhdev.feeder.utils.blobFullFile
 import com.saulhdev.feeder.utils.blobFullInputStream
 import com.saulhdev.feeder.utils.blobInputStream
+import com.saulhdev.feeder.utils.extensions.koinNeoViewModel
+import com.saulhdev.feeder.utils.extensions.launchView
+import com.saulhdev.feeder.utils.extensions.shareIntent
 import com.saulhdev.feeder.utils.htmlFormattedText
 import com.saulhdev.feeder.utils.unicodeWrap
 import com.saulhdev.feeder.utils.urlEncode
@@ -142,6 +144,13 @@ fun ArticlePage(
                 description = stringResource(id = R.string.pref_browser_theme),
             ) {
                 context.launchView(currentUrl)
+            }
+            RoundButton(
+                icon = if (state?.article?.bookmarked ?: false) Phosphor.HeartStraightFill
+                else Phosphor.HeartStraight,
+                description = stringResource(id = R.string.share),
+            ) {
+                viewModel.bookmarkArticle(articleId, !(state?.article?.bookmarked ?: false))
             }
             RoundButton(
                 icon = Phosphor.ShareNetwork,
