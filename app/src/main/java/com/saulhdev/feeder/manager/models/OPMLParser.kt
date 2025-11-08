@@ -14,7 +14,7 @@ import java.io.IOException
 import java.io.InputStream
 import java.util.Stack
 
-class OPMLParser(private val opmlToDb: OPMLParserToDatabase) : ContentHandler {
+class OPMLParser(private val opmlToDb: ParserToDatabase<Feed>) : ContentHandler {
 
     private val parser: Parser = Parser()
     private val tagStack: Stack<String> = Stack()
@@ -36,7 +36,7 @@ class OPMLParser(private val opmlToDb: OPMLParserToDatabase) : ContentHandler {
         parser.parse(InputSource(inputStream))
 
         for (feed in feeds) {
-            opmlToDb.saveFeed(feed)
+            opmlToDb.saveItem(feed)
         }
     }
 

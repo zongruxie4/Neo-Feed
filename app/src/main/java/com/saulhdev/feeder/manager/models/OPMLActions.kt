@@ -66,7 +66,7 @@ suspend fun ContentResolver.exportOpml(uri: Uri, tagsFeedMap: Map<String, List<F
 suspend fun ContentResolver.importOpml(uri: Uri) = withContext(Dispatchers.IO) {
     try {
         val time = measureTimeMillis {
-            val parser = OPMLParser(OPMLToRoom())
+            val parser = OPMLParser(SourceToRoom())
 
             openInputStream(uri).use {
                 it?.let { stream ->

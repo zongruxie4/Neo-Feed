@@ -6,20 +6,20 @@ import com.saulhdev.feeder.utils.sloppyLinkToStrictURLNoThrows
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-class OPMLToRoom() : OPMLParserToDatabase, KoinComponent {
+class SourceToRoom() : ParserToDatabase<Feed>, KoinComponent {
     private val dao: FeedSourceDao by inject()
 
-    override suspend fun getFeed(url: String): Feed? =
-        dao.getFeedByURL(sloppyLinkToStrictURLNoThrows(url))
+    override suspend fun getItem(id: String): Feed? =
+        dao.getFeedByURL(sloppyLinkToStrictURLNoThrows(id))
 
-    override suspend fun saveFeed(feed: Feed) {
-        val existing = dao.getFeedByURL(feed.url)
+    override suspend fun saveItem(item: Feed) {
+        val existing = dao.getFeedByURL(item.url)
 
         // Don't want to remove existing feed on OPML imports
         if (existing != null) {
-            dao.update(feed)
+            dao.update(item)
         } else {
-            dao.insert(feed)
+            dao.insert(item)
         }
     }
 }
