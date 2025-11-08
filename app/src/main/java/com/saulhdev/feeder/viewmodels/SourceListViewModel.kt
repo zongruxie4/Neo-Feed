@@ -24,6 +24,7 @@ class SourceListViewModel(
         feedsRepo.getAllSourcesFlow(),
         feedsRepo.getEnabledSources(),
         feedsRepo.getAllTagsFlow(),
+        // TODO move the getter eventually to SourcesRepository
         articleRepo.getBookmarkedFeedItems()
     ) { allFeeds, enabledFeeds, allTags, bookmarked ->
         SourceListState(

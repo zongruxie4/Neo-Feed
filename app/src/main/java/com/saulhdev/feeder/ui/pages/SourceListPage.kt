@@ -54,13 +54,17 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.data.db.models.Feed
+import com.saulhdev.feeder.manager.models.exportBookmarks
 import com.saulhdev.feeder.manager.models.exportOpml
+import com.saulhdev.feeder.manager.models.importBookmarks
 import com.saulhdev.feeder.manager.models.importOpml
 import com.saulhdev.feeder.ui.components.FeedItem
 import com.saulhdev.feeder.ui.components.OverflowMenu
 import com.saulhdev.feeder.ui.components.ViewWithActionBar
 import com.saulhdev.feeder.ui.components.dialog.ActionsDialogUI
 import com.saulhdev.feeder.ui.icons.Phosphor
+import com.saulhdev.feeder.ui.icons.phosphor.BookBookmark
+import com.saulhdev.feeder.ui.icons.phosphor.Bookmarks
 import com.saulhdev.feeder.ui.icons.phosphor.CloudArrowDown
 import com.saulhdev.feeder.ui.icons.phosphor.CloudArrowUp
 import com.saulhdev.feeder.ui.icons.phosphor.Plus
@@ -121,6 +125,33 @@ fun SourceListPage(
         }
     }
 
+    val bookmarksExporter = rememberLauncherForActivityResult(
+        ActivityResultContracts.CreateDocument("application/opml")
+    ) { uri ->
+        if (uri != null) {
+            coroutineScope.launch {
+                context.contentResolver.exportBookmarks(
+                    context,
+                    uri,
+                    state.bookmarked
+                )
+            }
+        }
+    }
+
+    val bookmarksImporter = rememberLauncherForActivityResult(
+        ActivityResultContracts.OpenDocument()
+    ) { uri ->
+        if (uri != null) {
+            coroutineScope.launch {
+                context.contentResolver.importBookmarks(
+                    context,
+                    uri,
+                )
+            }
+        }
+    }
+
     NavigableListDetailPaneScaffold(
         navigator = paneNavigator,
         listPane = {
@@ -176,6 +207,39 @@ fun SourceListPage(
                                     opmlExporter.launch("NF-${localTime}.opml")
                                 },
                                 text = { Text(text = stringResource(id = R.string.sources_export_opml)) }
+                            )
+                            DropdownMenuItem(
+                                leadingIcon = {
+                                    Icon(
+                                        Phosphor.Bookmarks,
+                                        contentDescription = stringResource(id = R.string.sources_import_bookmarks),
+                                    )
+                                },
+                                onClick = {
+                                    hideMenu()
+                                    bookmarksImporter.launch(
+                                        arrayOf(
+                                            "text/plain",
+                                            "text/xml",
+                                            "text/bkm",
+                                            "*/*"
+                                        )
+                                    )
+                                },
+                                text = { Text(text = stringResource(id = R.string.sources_import_bookmarks)) }
+                            )
+                            DropdownMenuItem(
+                                leadingIcon = {
+                                    Icon(
+                                        Phosphor.BookBookmark,
+                                        contentDescription = stringResource(id = R.string.sources_export_bookmarks),
+                                    )
+                                },
+                                onClick = {
+                                    hideMenu()
+                                    bookmarksExporter.launch("NF-${localTime}.bkm")
+                                },
+                                text = { Text(text = stringResource(id = R.string.sources_export_bookmarks)) }
                             )
                         }
                     }

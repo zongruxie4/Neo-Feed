@@ -26,6 +26,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
+import androidx.room.Upsert
 import com.saulhdev.feeder.data.db.models.Article
 import com.saulhdev.feeder.data.db.models.ArticleIdWithLink
 import com.saulhdev.feeder.data.db.models.Feed
@@ -35,6 +36,9 @@ import java.util.UUID
 
 @Dao
 interface FeedArticleDao {
+    @Upsert
+    suspend fun upsert(vararg item: Article)
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertFeedArticle(item: Article): Long
 
