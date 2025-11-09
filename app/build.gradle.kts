@@ -177,6 +177,7 @@ dependencies {
     implementation(libs.threetenabp)
     implementation(libs.rome) { exclude(module = "rome-utils") }
     implementation(libs.rome.modules)
+    implementation(libs.simple.storage)
     implementation(libs.readability4j)
     implementation(libs.tagsoup)
     implementation(libs.jsoup)
