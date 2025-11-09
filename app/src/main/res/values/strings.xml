@@ -152,4 +152,6 @@
     <string name="file_share_text">File from Neo Feed</string>
     <string name="sources_import_bookmarks">Import bookmarks</string>
     <string name="sources_export_bookmarks">Export bookmarks</string>
+    <string name="enabled">Enabled</string>
+    <string name="disabled">Disabled</string>
 </resources>

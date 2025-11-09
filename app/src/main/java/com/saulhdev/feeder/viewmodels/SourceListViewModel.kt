@@ -22,16 +22,17 @@ class SourceListViewModel(
 
     val state = combine(
         feedsRepo.getAllSourcesFlow(),
-        feedsRepo.getEnabledSources(),
         feedsRepo.getAllTagsFlow(),
         // TODO move the getter eventually to SourcesRepository
         articleRepo.getBookmarkedFeedItems()
-    ) { allFeeds, enabledFeeds, allTags, bookmarked ->
+    ) { allSources, allTags, bookmarked ->
+        val (enabledSources, disabledSources) = allSources.partition { it.isEnabled }
         SourceListState(
-            allSources = allFeeds,
-            enabledSources = enabledFeeds,
+            allSources = allSources,
+            enabledSources = enabledSources,
+            disabledSources = disabledSources,
             tagsSourcesMap = allTags.plus("").associateWith { tag ->
-                allFeeds.filter { it.tag.contains(tag) }
+                allSources.filter { it.tag.contains(tag) }
             },
             bookmarked = bookmarked,
         )
@@ -73,6 +74,7 @@ class SourceListViewModel(
 data class SourceListState(
     val allSources: List<Feed> = emptyList(),
     val enabledSources: List<Feed> = emptyList(),
+    val disabledSources: List<Feed> = emptyList(),
     val tagsSourcesMap: Map<String, List<Feed>> = emptyMap(),
     val bookmarked: List<FeedItem> = emptyList(),
 )

@@ -60,6 +60,7 @@ import com.saulhdev.feeder.manager.models.importBookmarks
 import com.saulhdev.feeder.manager.models.importOpml
 import com.saulhdev.feeder.ui.components.FeedItem
 import com.saulhdev.feeder.ui.components.OverflowMenu
+import com.saulhdev.feeder.ui.components.PreferenceGroupHeading
 import com.saulhdev.feeder.ui.components.ViewWithActionBar
 import com.saulhdev.feeder.ui.components.dialog.ActionsDialogUI
 import com.saulhdev.feeder.ui.icons.Phosphor
@@ -254,7 +255,30 @@ fun SourceListPage(
                         ),
                         verticalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
-                        items(state.allSources, key = { it.id }) { item ->
+                        item {
+                            PreferenceGroupHeading(heading = stringResource(id = R.string.enabled))
+                        }
+                        items(state.enabledSources, key = { it.id }) { item ->
+                            FeedItem(
+                                feed = item,
+                                onClickAction = {
+                                    scope.launch {
+                                        paneNavigator.navigateTo(
+                                            ListDetailPaneScaffoldRole.Detail,
+                                            item.id
+                                        )
+                                    }
+                                },
+                                onRemoveAction = {
+                                    removeItem.value = item
+                                    showDialog.value = true
+                                }
+                            )
+                        }
+                        item {
+                            PreferenceGroupHeading(heading = stringResource(id = R.string.disabled))
+                        }
+                        items(state.disabledSources, key = { it.id }) { item ->
                             FeedItem(
                                 feed = item,
                                 onClickAction = {
