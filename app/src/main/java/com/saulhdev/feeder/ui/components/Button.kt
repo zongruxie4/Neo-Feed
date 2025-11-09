@@ -1,30 +1,33 @@
 package com.saulhdev.feeder.ui.components
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ElevatedButton
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 
 @Composable
 fun ActionButton(
     modifier: Modifier = Modifier,
     text: String,
+    // TODO add neutral using ENUM
     positive: Boolean = true,
     icon: ImageVector? = null,
     enabled: Boolean = true,
     onClick: () -> Unit,
 ) {
-    ElevatedButton(
+    FilledTonalButton(
         modifier = modifier,
-        colors = ButtonDefaults.elevatedButtonColors(
+        colors = ButtonDefaults.filledTonalButtonColors(
             contentColor = when {
                 positive -> MaterialTheme.colorScheme.onPrimaryContainer
                 else     -> MaterialTheme.colorScheme.onTertiaryContainer
@@ -35,14 +38,52 @@ fun ActionButton(
             }
         ),
         enabled = enabled,
-        onClick = onClick
+        onClick = onClick,
     ) {
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            if (icon != null) Icon(imageVector = icon, contentDescription = null)
-            Text(text = text)
-        }
+        if (icon != null) Icon(imageVector = icon, contentDescription = text)
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(
+            text = text,
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.titleSmall,
+        )
+    }
+}
+
+@Composable
+fun OutlinedActionButton(
+    modifier: Modifier = Modifier,
+    text: String,
+    // TODO add neutral using ENUM
+    positive: Boolean = true,
+    icon: ImageVector? = null,
+    enabled: Boolean = true,
+    onClick: () -> Unit,
+) {
+    OutlinedButton(
+        modifier = modifier,
+        colors = ButtonDefaults.outlinedButtonColors(
+            contentColor = when {
+                positive -> MaterialTheme.colorScheme.primary
+                else     -> MaterialTheme.colorScheme.tertiary
+            },
+        ),
+        border = BorderStroke(
+            width = 1.dp,
+            color = when {
+                positive -> MaterialTheme.colorScheme.primary
+                else     -> MaterialTheme.colorScheme.tertiary
+            },
+        ),
+        enabled = enabled,
+        onClick = onClick,
+    ) {
+        if (icon != null) Icon(imageVector = icon, contentDescription = text)
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(
+            text = text,
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.titleSmall,
+        )
     }
 }
