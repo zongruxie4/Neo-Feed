@@ -53,9 +53,9 @@ import com.saulhdev.feeder.manager.models.exportBookmarks
 import com.saulhdev.feeder.manager.models.exportOpml
 import com.saulhdev.feeder.manager.models.importBookmarks
 import com.saulhdev.feeder.manager.models.importOpml
-import com.saulhdev.feeder.ui.components.FeedItem
 import com.saulhdev.feeder.ui.components.OverflowMenu
 import com.saulhdev.feeder.ui.components.PreferenceGroupHeading
+import com.saulhdev.feeder.ui.components.SourceItem
 import com.saulhdev.feeder.ui.components.ViewWithActionBar
 import com.saulhdev.feeder.ui.icons.Phosphor
 import com.saulhdev.feeder.ui.icons.phosphor.BookBookmark
@@ -249,9 +249,10 @@ fun SourceListPage(
                             PreferenceGroupHeading(heading = stringResource(id = R.string.enabled))
                         }
                         items(state.enabledSources, key = { it.id }) { item ->
-                            FeedItem(
-                                feed = item,
-                                onClickAction = {
+                            SourceItem(
+                                modifier = Modifier.animateItem(),
+                                source = item,
+                                onClick = {
                                     scope.launch {
                                         paneNavigator.navigateTo(
                                             ListDetailPaneScaffoldRole.Detail,
@@ -259,8 +260,11 @@ fun SourceListPage(
                                         )
                                     }
                                 },
-                                onRemoveAction = {
-                                    // TODO replace with enable switch
+                                onSwitch = {
+                                    viewModel.updateFeed(
+                                        it.copy(isEnabled = false),
+                                        false
+                                    )
                                 }
                             )
                         }
@@ -268,9 +272,10 @@ fun SourceListPage(
                             PreferenceGroupHeading(heading = stringResource(id = R.string.disabled))
                         }
                         items(state.disabledSources, key = { it.id }) { item ->
-                            FeedItem(
-                                feed = item,
-                                onClickAction = {
+                            SourceItem(
+                                modifier = Modifier.animateItem(),
+                                source = item,
+                                onClick = {
                                     scope.launch {
                                         paneNavigator.navigateTo(
                                             ListDetailPaneScaffoldRole.Detail,
@@ -278,8 +283,11 @@ fun SourceListPage(
                                         )
                                     }
                                 },
-                                onRemoveAction = {
-                                    // TODO replace with enable switch
+                                onSwitch = {
+                                    viewModel.updateFeed(
+                                        it.copy(isEnabled = true),
+                                        true,
+                                    )
                                 }
                             )
                         }

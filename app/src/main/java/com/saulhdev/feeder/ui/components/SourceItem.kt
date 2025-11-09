@@ -21,12 +21,11 @@ package com.saulhdev.feeder.ui.components
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -34,65 +33,49 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
-import com.saulhdev.feeder.R
+import androidx.compose.ui.graphics.Color
 import com.saulhdev.feeder.data.db.models.Feed
-import com.saulhdev.feeder.ui.icons.Phosphor
-import com.saulhdev.feeder.ui.icons.phosphor.TrashSimple
 
 @Composable
-fun FeedItem(
+fun SourceItem(
+    source: Feed,
     modifier: Modifier = Modifier,
-    feed: Feed,
-    onClickAction: (Feed) -> Unit = {},
-    onRemoveAction: (Feed) -> Unit = {}
+    onSwitch: (Feed) -> Unit = {},
+    onClick: (Feed) -> Unit = {},
 ) {
-    val (isEnabled, enable) = remember(feed.isEnabled) {
-        mutableStateOf(feed.isEnabled)
+    val (isEnabled, enable) = remember(source.isEnabled) {
+        mutableStateOf(source.isEnabled)
     }
     val backgroundColor by animateColorAsState(
         targetValue = if (isEnabled) MaterialTheme.colorScheme.surfaceContainerHighest
-        else MaterialTheme.colorScheme.surfaceContainerLowest, label = ""
+        else MaterialTheme.colorScheme.surfaceContainerLowest, label = "backgroundColor"
     )
 
     ListItem(
         modifier = modifier
             .fillMaxWidth()
             .clip(MaterialTheme.shapes.large)
-            .clickable(enabled = true, onClick = { onClickAction(feed) }),
+            .clickable { onClick(source) },
         colors = ListItemDefaults.colors(
             containerColor = backgroundColor,
         ),
         overlineContent = {
             Text(
-                text = feed.url.toString(),
+                text = source.url.toString(),
             )
         },
         headlineContent = {
-            Text(text = feed.title)
-        },
-        supportingContent = feed.description.takeIf { it.isNotEmpty() }?.let {
-            {
-                Text(
-                    text = it,
-                    overflow = TextOverflow.Ellipsis,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    maxLines = 2
-                )
-            }
+            Text(text = source.title)
         },
         trailingContent = {
-            IconButton(
-                modifier = Modifier.size(36.dp),
-                onClick = { onRemoveAction(feed) }
-            ) {
-                Icon(
-                    imageVector = Phosphor.TrashSimple,
-                    contentDescription = stringResource(id = R.string.delete_feed),
-                )
-            }
+            Switch(
+                checked = isEnabled,
+                colors = SwitchDefaults.colors(uncheckedBorderColor = Color.Transparent),
+                onCheckedChange = {
+                    enable(!isEnabled)
+                    onSwitch(source)
+                }
+            )
         }
     )
 }

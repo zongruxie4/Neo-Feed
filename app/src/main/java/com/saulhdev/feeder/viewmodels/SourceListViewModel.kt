@@ -48,6 +48,12 @@ class SourceListViewModel(
         }
     }
 
+    fun updateFeed(source: Feed, enable: Boolean) {
+        viewModelScope.launch {
+            feedsRepo.updateSource(source, enable)
+        }
+    }
+
     fun saveFeed(results: List<SearchResult>) {
         results.forEach { result ->
             if (result.isError) {
