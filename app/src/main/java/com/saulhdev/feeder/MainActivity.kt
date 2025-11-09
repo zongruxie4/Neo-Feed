@@ -13,8 +13,10 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResult
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.ui.Modifier
 import androidx.core.net.toUri
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.asLiveData
@@ -53,7 +55,10 @@ class MainActivity : ComponentActivity() {
                 },
                 dynamicColor = prefs.dynamicColor.getValue(),
             ) {
-                NavigationManager(navController = navController)
+                NavigationManager(
+                    modifier = Modifier.imePadding(),
+                    navController = navController,
+                )
             }
         }
 

@@ -25,6 +25,7 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
@@ -56,11 +57,15 @@ val LocalNavController = staticCompositionLocalOf<NavController> {
 const val NAV_BASE = "nf-navigation://androidx.navigation/"
 
 @Composable
-fun NavigationManager(navController: NavHostController) {
+fun NavigationManager(
+    navController: NavHostController,
+    modifier: Modifier = Modifier,
+) {
     CompositionLocalProvider(
         LocalNavController provides navController
     ) {
         NavHost(
+            modifier = modifier,
             navController = navController,
             startDestination = NavRoute.Main(),
             enterTransition = { fadeIn() + slideInHorizontally { it } },
