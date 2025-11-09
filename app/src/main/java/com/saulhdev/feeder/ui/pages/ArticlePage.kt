@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.selection.SelectionContainer
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,11 +34,13 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.rememberNavController
 import com.saulhdev.feeder.MainActivity
 import com.saulhdev.feeder.R
+import com.saulhdev.feeder.ui.components.OverflowMenu
 import com.saulhdev.feeder.ui.components.RoundButton
 import com.saulhdev.feeder.ui.components.ViewWithActionBar
 import com.saulhdev.feeder.ui.components.WithBidiDeterminedLayoutDirection
 import com.saulhdev.feeder.ui.icons.Phosphor
 import com.saulhdev.feeder.ui.icons.phosphor.ArrowSquareOut
+import com.saulhdev.feeder.ui.icons.phosphor.BookOpenUser
 import com.saulhdev.feeder.ui.icons.phosphor.HeartStraight
 import com.saulhdev.feeder.ui.icons.phosphor.HeartStraightFill
 import com.saulhdev.feeder.ui.icons.phosphor.ShareNetwork
@@ -152,11 +156,33 @@ fun ArticlePage(
             ) {
                 viewModel.bookmarkArticle(articleId, !(state?.article?.bookmarked ?: false))
             }
-            RoundButton(
-                icon = Phosphor.ShareNetwork,
-                description = stringResource(id = R.string.share),
-            ) {
-                context.shareIntent(currentUrl, title)
+            OverflowMenu {
+                DropdownMenuItem(
+                    leadingIcon = {
+                        Icon(
+                            Phosphor.ShareNetwork,
+                            contentDescription = stringResource(id = R.string.share),
+                        )
+                    },
+                    onClick = {
+                        hideMenu()
+                        context.shareIntent(currentUrl, title)
+                    },
+                    text = { Text(text = stringResource(id = R.string.share)) }
+                )
+                DropdownMenuItem(
+                    leadingIcon = {
+                        Icon(
+                            Phosphor.BookOpenUser,
+                            contentDescription = stringResource(id = R.string.action_open_smry),
+                        )
+                    },
+                    onClick = {
+                        hideMenu()
+                        context.launchView("https://www.smry.ai/$currentUrl")
+                    },
+                    text = { Text(text = stringResource(id = R.string.action_open_smry)) }
+                )
             }
         }
     ) { paddingValues ->

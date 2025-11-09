@@ -156,4 +156,5 @@
     <string name="disabled">Disabled</string>
     <string name="action_delete">Delete</string>
     <string name="action_save">Save</string>
+    <string name="action_open_smry">Open in SMRY</string>
 </resources>
