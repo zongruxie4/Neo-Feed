@@ -65,7 +65,7 @@ fun BookmarkItem(
     val backgroundColor by animateColorAsState(
         targetValue = if (isPinned) MaterialTheme.colorScheme.surfaceContainerHighest
         else MaterialTheme.colorScheme.surfaceContainer,
-        label = ""
+        label = "backgroundColor"
     )
 
     Card(

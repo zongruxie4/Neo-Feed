@@ -10,10 +10,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import com.saulhdev.feeder.ui.navigation.NavItem
-import com.saulhdev.feeder.ui.navigation.NavigationSuiteScaffold
 import com.saulhdev.feeder.ui.components.SlidePager
 import com.saulhdev.feeder.ui.components.dialog.DrawPermissionRequestDialog
+import com.saulhdev.feeder.ui.navigation.NavItem
+import com.saulhdev.feeder.ui.navigation.NavigationSuiteScaffold
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
 

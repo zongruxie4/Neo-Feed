@@ -49,7 +49,7 @@ class ArticleListViewModel(
         prefs.sortingFilter.get(),
         prefs.sortingAsc.get(),
         prefs.sourcesFilter.get(),
-        prefs.tagsFilter.get()
+        prefs.tagsFilter.get(),
     ) { sort, sortAsc, sources, tags ->
         SortFilterModel(sort, sortAsc, sources, tags)
     }
@@ -125,26 +125,26 @@ class ArticleListViewModel(
                 else list.filterNot { it.feedTag in sfm.tagsFilter }
             }
             .let { list ->
-                when {
-                    sfm.sort == SORT_CHRONOLOGICAL && !sfm.sortAsc ->
+                when (sfm.sort) {
+                    SORT_CHRONOLOGICAL if !sfm.sortAsc ->
                         list.sortedByDescending(FeedItem::timeMillis)
 
-                    sfm.sort == SORT_CHRONOLOGICAL && sfm.sortAsc  ->
+                    SORT_CHRONOLOGICAL if sfm.sortAsc  ->
                         list.sortedBy(FeedItem::timeMillis)
 
-                    sfm.sort == SORT_TITLE && sfm.sortAsc          ->
+                    SORT_TITLE if sfm.sortAsc          ->
                         list.sortedBy(FeedItem::contentTitle)
 
-                    sfm.sort == SORT_TITLE && !sfm.sortAsc         ->
+                    SORT_TITLE if !sfm.sortAsc         ->
                         list.sortedByDescending(FeedItem::contentTitle)
 
-                    sfm.sort == SORT_SOURCE && sfm.sortAsc         ->
+                    SORT_SOURCE if sfm.sortAsc         ->
                         list.sortedBy(FeedItem::displayTitle)
 
-                    sfm.sort == SORT_SOURCE && !sfm.sortAsc        ->
+                    SORT_SOURCE if !sfm.sortAsc        ->
                         list.sortedByDescending(FeedItem::displayTitle)
 
-                    else                                           -> list.sortedByDescending(
+                    else                               -> list.sortedByDescending(
                         FeedItem::timeMillis
                     )
                 }

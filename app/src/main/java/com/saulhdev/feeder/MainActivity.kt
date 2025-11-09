@@ -28,11 +28,11 @@ import androidx.work.NetworkType
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.saulhdev.feeder.data.content.FeedPreferences
-import com.saulhdev.feeder.utils.extensions.isDarkTheme
 import com.saulhdev.feeder.manager.sync.FeedSyncer
 import com.saulhdev.feeder.ui.navigation.NAV_BASE
 import com.saulhdev.feeder.ui.navigation.NavigationManager
 import com.saulhdev.feeder.ui.theme.AppTheme
+import com.saulhdev.feeder.utils.extensions.isDarkTheme
 import kotlinx.coroutines.suspendCancellableCoroutine
 import org.koin.java.KoinJavaComponent.inject
 import java.util.concurrent.TimeUnit

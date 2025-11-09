@@ -23,8 +23,6 @@ import com.saulhdev.feeder.NeoApp
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.data.content.FeedPreferences
 import com.saulhdev.feeder.data.entity.MenuItem
-import com.saulhdev.feeder.utils.extensions.isDark
-import com.saulhdev.feeder.utils.extensions.setCustomTheme
 import com.saulhdev.feeder.manager.sync.SyncRestClient
 import com.saulhdev.feeder.ui.feed.FeedAdapter
 import com.saulhdev.feeder.ui.navigation.Routes
@@ -35,6 +33,8 @@ import com.saulhdev.feeder.ui.views.DialogMenu
 import com.saulhdev.feeder.ui.views.FilterBottomSheet
 import com.saulhdev.feeder.utils.Android
 import com.saulhdev.feeder.utils.LinearLayoutManagerWrapper
+import com.saulhdev.feeder.utils.extensions.isDark
+import com.saulhdev.feeder.utils.extensions.setCustomTheme
 import com.saulhdev.feeder.viewmodels.ArticleListViewModel
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
@@ -211,12 +211,12 @@ class OverlayView(val context: Context) :
 
             a14 && darkTheme -> ContextCompat.getColor(
                 context,
-                android.R.color.system_primary_dark
+                android.R.color.system_on_primary_container_dark
             )
 
             a14              -> ContextCompat.getColor(
                 context,
-                android.R.color.system_primary_light
+                android.R.color.system_primary_container_light
             )
 
             a12              -> ContextCompat.getColor(
