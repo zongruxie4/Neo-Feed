@@ -31,6 +31,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import org.koin.java.KoinJavaComponent.inject
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -63,6 +64,12 @@ class SourceEditViewModel : NeoViewModel() {
             resync = feed.value.fullTextByDefault != state.fullTextByDefault
                     || feed.value.isEnabled != state.isEnabled
         )
+    }
+
+    fun deleteFeed(feedId: Long) {
+        viewModelScope.launch {
+            repository.deleteFeed(feedId)
+        }
     }
 
     val viewState = feed.map { feed: Feed ->

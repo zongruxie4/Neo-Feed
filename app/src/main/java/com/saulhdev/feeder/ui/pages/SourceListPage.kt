@@ -39,21 +39,16 @@ import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
 import androidx.compose.material3.adaptive.navigation.NavigableListDetailPaneScaffold
 import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaffoldNavigator
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import com.saulhdev.feeder.R
-import com.saulhdev.feeder.data.db.models.Feed
 import com.saulhdev.feeder.manager.models.exportBookmarks
 import com.saulhdev.feeder.manager.models.exportOpml
 import com.saulhdev.feeder.manager.models.importBookmarks
@@ -62,7 +57,6 @@ import com.saulhdev.feeder.ui.components.FeedItem
 import com.saulhdev.feeder.ui.components.OverflowMenu
 import com.saulhdev.feeder.ui.components.PreferenceGroupHeading
 import com.saulhdev.feeder.ui.components.ViewWithActionBar
-import com.saulhdev.feeder.ui.components.dialog.ActionsDialogUI
 import com.saulhdev.feeder.ui.icons.Phosphor
 import com.saulhdev.feeder.ui.icons.phosphor.BookBookmark
 import com.saulhdev.feeder.ui.icons.phosphor.Bookmarks
@@ -95,11 +89,7 @@ fun SourceListPage(
         .format(FILE_DATETIME_FORMAT)
     // TODO reconsider
     val coroutineScope: ApplicationCoroutineScope by inject(ApplicationCoroutineScope::class.java)
-    val showDialog = remember { mutableStateOf(false) }
     val state by viewModel.state.collectAsState()
-    val removeItem: MutableState<Feed?> = remember {
-        mutableStateOf(state.allSources.firstOrNull())
-    }
     val paneNavigator = rememberListDetailPaneScaffoldNavigator<Any>()
     val sourceId = remember { mutableLongStateOf(-1L) }
 
@@ -270,8 +260,7 @@ fun SourceListPage(
                                     }
                                 },
                                 onRemoveAction = {
-                                    removeItem.value = item
-                                    showDialog.value = true
+                                    // TODO replace with enable switch
                                 }
                             )
                         }
@@ -290,36 +279,12 @@ fun SourceListPage(
                                     }
                                 },
                                 onRemoveAction = {
-                                    removeItem.value = item
-                                    showDialog.value = true
+                                    // TODO replace with enable switch
                                 }
                             )
                         }
                         item {
                             Spacer(modifier = Modifier.height(64.dp))
-                        }
-                    }
-
-                    if (showDialog.value) {
-                        Dialog(
-                            onDismissRequest = { showDialog.value = false },
-                            DialogProperties(
-                                dismissOnBackPress = true,
-                                dismissOnClickOutside = true
-                            )
-                        ) {
-                            ActionsDialogUI(
-                                titleText = stringResource(id = R.string.remove_title),
-                                messageText = stringResource(
-                                    id = R.string.remove_desc,
-                                    removeItem.value!!.title
-                                ),
-                                openDialogCustom = showDialog,
-                                primaryText = stringResource(id = android.R.string.ok),
-                                primaryAction = {
-                                    viewModel.deleteFeed(removeItem.value!!)
-                                }
-                            )
                         }
                     }
                 }

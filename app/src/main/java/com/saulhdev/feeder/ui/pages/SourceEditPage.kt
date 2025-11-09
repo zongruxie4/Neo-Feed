@@ -29,8 +29,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -56,10 +54,18 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.data.entity.SourceEditViewState
+import com.saulhdev.feeder.ui.components.ActionButton
 import com.saulhdev.feeder.ui.components.ComposeSwitchView
+import com.saulhdev.feeder.ui.components.OutlinedActionButton
 import com.saulhdev.feeder.ui.components.ViewWithActionBar
+import com.saulhdev.feeder.ui.components.dialog.ActionsDialogUI
+import com.saulhdev.feeder.ui.icons.Phosphor
+import com.saulhdev.feeder.ui.icons.phosphor.Check
+import com.saulhdev.feeder.ui.icons.phosphor.TrashSimple
 import com.saulhdev.feeder.utils.extensions.interceptKey
 import com.saulhdev.feeder.utils.extensions.koinNeoViewModel
 import com.saulhdev.feeder.viewmodels.SourceEditViewModel
@@ -67,17 +73,18 @@ import com.saulhdev.feeder.viewmodels.SourceEditViewModel
 @Composable
 fun SourceEditPage(
     feedId: Long = -1,
-    sourceEditViewModel: SourceEditViewModel = koinNeoViewModel(),
+    viewModel: SourceEditViewModel = koinNeoViewModel(),
     onDismiss: (() -> Unit),
 ) {
     val title = stringResource(id = R.string.edit_rss)
-    val viewState by sourceEditViewModel.viewState.collectAsState()
+    val viewState by viewModel.viewState.collectAsState()
     val editState = remember(viewState) {
         mutableStateOf(viewState)
     }
+    val showDialog = remember { mutableStateOf(false) }
 
     LaunchedEffect(feedId) {
-        sourceEditViewModel.setFeedId(feedId)
+        viewModel.setFeedId(feedId)
     }
 
     ViewWithActionBar(
@@ -93,33 +100,21 @@ fun SourceEditPage(
                         .fillMaxWidth()
                         .padding(horizontal = 8.dp)
                 ) {
-                    // TODO abstract into ActionButton
-                    ElevatedButton(
-                        modifier = Modifier.weight(1f),
-                        onClick = onDismiss,
-                        colors = ButtonDefaults.elevatedButtonColors(
-                            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                            contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
-                        )
+                    OutlinedActionButton(
+                        text = stringResource(id = R.string.action_delete),
+                        icon = Phosphor.TrashSimple,
+                        positive = false,
                     ) {
-                        Text(
-                            text = stringResource(id = android.R.string.cancel)
-                        )
+                        showDialog.value = true
                     }
-                    ElevatedButton(
+                    ActionButton(
+                        text = stringResource(R.string.action_save),
+                        icon = Phosphor.Check,
                         modifier = Modifier.weight(1f),
-                        colors = ButtonDefaults.elevatedButtonColors(
-                            containerColor = MaterialTheme.colorScheme.primaryContainer,
-                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                        ),
-                        onClick = {
-                            sourceEditViewModel.updateFeed(editState.value)
-                            onDismiss()
-                        }
+                        positive = true,
                     ) {
-                        Text(
-                            text = stringResource(id = android.R.string.ok)
-                        )
+                        viewModel.updateFeed(editState.value)
+                        onDismiss()
                     }
                 }
             }
@@ -136,6 +131,30 @@ fun SourceEditPage(
         ) {
             SourceEditView(
                 editState = editState
+            )
+        }
+    }
+
+    if (showDialog.value) {
+        Dialog(
+            onDismissRequest = { showDialog.value = false },
+            DialogProperties(
+                dismissOnBackPress = true,
+                dismissOnClickOutside = true
+            )
+        ) {
+            ActionsDialogUI(
+                titleText = stringResource(id = R.string.remove_title),
+                messageText = stringResource(
+                    id = R.string.remove_desc,
+                    viewState.title,
+                ),
+                openDialogCustom = showDialog,
+                primaryText = stringResource(id = android.R.string.ok),
+                primaryAction = {
+                    onDismiss()
+                    viewModel.deleteFeed(feedId)
+                }
             )
         }
     }

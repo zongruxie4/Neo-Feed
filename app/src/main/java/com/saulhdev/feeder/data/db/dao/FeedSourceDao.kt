@@ -75,6 +75,9 @@ interface FeedSourceDao {
     @Query("SELECT * FROM feeds WHERE ',' || tag || ',' LIKE :pattern")
     suspend fun loadFeedsByTag(pattern: String): List<Feed>
 
+    @Query("DELETE FROM Feeds WHERE id = :id")
+    suspend fun deleteFeedById(id: Long)
+
     fun getFeedByTags(tags: Set<String>): Flow<List<Feed>> = flow {
         val allFeeds = tags.flatMap { tag ->
             loadFeedsByTag("%,$tag,%")

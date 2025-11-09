@@ -154,4 +154,6 @@
     <string name="sources_export_bookmarks">Export bookmarks</string>
     <string name="enabled">Enabled</string>
     <string name="disabled">Disabled</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_save">Save</string>
 </resources>

@@ -48,12 +48,6 @@ class SourceListViewModel(
         }
     }
 
-    fun deleteFeed(feed: Feed) {
-        viewModelScope.launch {
-            feedsRepo.deleteFeed(feed)
-        }
-    }
-
     fun saveFeed(results: List<SearchResult>) {
         results.forEach { result ->
             if (result.isError) {

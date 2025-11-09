@@ -136,9 +136,9 @@ class SourcesRepository(db: NeoFeedDb) {
         }
     }
 
-    fun deleteFeed(value: Feed) {
+    fun deleteFeed(feedId: Long) {
         scope.launch {
-            feedsDao.delete(value)
+            feedsDao.deleteFeedById(feedId)
         }
     }
 }
