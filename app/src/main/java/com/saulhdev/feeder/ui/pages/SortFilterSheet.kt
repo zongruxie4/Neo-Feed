@@ -35,6 +35,7 @@ import com.saulhdev.feeder.ui.components.ActionButton
 import com.saulhdev.feeder.ui.components.ChipsSwitch
 import com.saulhdev.feeder.ui.components.DeSelectAll
 import com.saulhdev.feeder.ui.components.ExpandableItemsBlock
+import com.saulhdev.feeder.ui.components.OutlinedActionButton
 import com.saulhdev.feeder.ui.components.SelectChip
 import com.saulhdev.feeder.ui.icons.Phosphor
 import com.saulhdev.feeder.ui.icons.phosphor.ArrowUUpLeft
@@ -92,11 +93,11 @@ fun SortFilterSheet(
                         .padding(12.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    ActionButton(
+                    OutlinedActionButton(
                         modifier = Modifier.weight(1f),
                         text = stringResource(id = R.string.action_reset),
                         icon = Phosphor.ArrowUUpLeft,
-                        positive = false
+                        positive = false,
                     ) {
                         sortPrefVar = prefs.sortingFilter.defaultValue
                         sortAscPrefVar = prefs.sortingAsc.defaultValue

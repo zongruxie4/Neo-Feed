@@ -19,8 +19,7 @@
 package com.saulhdev.feeder.ui.components
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.animateDp
-import androidx.compose.animation.core.updateTransition
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -29,9 +28,7 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -44,28 +41,24 @@ import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SelectableChipColors
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.saulhdev.feeder.R
-import com.saulhdev.feeder.utils.extensions.addIf
 import com.saulhdev.feeder.ui.icons.Phosphor
-import com.saulhdev.feeder.ui.icons.phosphor.Asterisk
-import com.saulhdev.feeder.ui.icons.phosphor.Circle
 import com.saulhdev.feeder.ui.icons.phosphor.CheckCircle
-import com.saulhdev.feeder.ui.icons.phosphor.SortDescending
+import com.saulhdev.feeder.ui.icons.phosphor.Circle
+import com.saulhdev.feeder.utils.extensions.addIf
 
 @Composable
 fun SelectChip(
@@ -83,7 +76,12 @@ fun SelectChip(
     alwaysShowIcon: Boolean = true,
     onSelected: () -> Unit = {},
 ) {
-    val categoryChipTransitionState = selectableChipTransition(selected = checked)
+    val selectionCornerRadius by animateDpAsState(
+        when {
+            checked -> 4.dp
+            else    -> 16.dp
+        }
+    )
     val icon by remember(checked) {
         mutableStateOf(
             if (checked) Phosphor.CheckCircle
@@ -94,7 +92,7 @@ fun SelectChip(
     FilterChip(
         modifier = modifier,
         colors = colors,
-        shape = RoundedCornerShape(categoryChipTransitionState.cornerRadius),
+        shape = RoundedCornerShape(selectionCornerRadius),
         border = null,
         selected = checked,
         leadingIcon = {
@@ -165,110 +163,41 @@ fun ActionChip(
 }
 
 @Composable
-fun SortFilterChip(
-    notModified: Boolean,
-    fullWidth: Boolean = false,
-    onClick: () -> Unit,
-) {
-    Box(
-        contentAlignment = Alignment.TopStart,
-    ) {
-        ActionChip(
-            text = stringResource(id = R.string.sort_filter),
-            icon = Phosphor.SortDescending,
-            fullWidth = fullWidth,
-            onClick = onClick
-        )
-
-        if (!notModified) {
-            Icon(
-                modifier = Modifier.align(Alignment.TopEnd),
-                imageVector = Phosphor.Asterisk,
-                contentDescription = stringResource(id = R.string.state_modified),
-            )
-        }
-    }
-}
-
-@Composable
 fun ChipsSwitch(
     firstTextId: Int,
     firstIcon: ImageVector,
     secondTextId: Int,
     secondIcon: ImageVector,
     firstSelected: Boolean = true,
-    colors: SelectableChipColors = FilterChipDefaults.filterChipColors(
-        containerColor = Color.Transparent,
-        labelColor = MaterialTheme.colorScheme.onSurface,
-        iconColor = MaterialTheme.colorScheme.onSurface,
-        selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-        selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer,
-        selectedLeadingIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
-    ),
     onCheckedChange: (Boolean) -> Unit,
 ) {
-    Row(
-        modifier = Modifier
-            .background(
-                MaterialTheme.colorScheme.surfaceContainerLowest,
-                MaterialTheme.shapes.medium
-            )
-            .padding(horizontal = 6.dp)
-            .fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        val (firstSelected, selectFirst) = remember { mutableStateOf(firstSelected) }
+    val (firstSelected, selectFirst) = remember { mutableStateOf(firstSelected) }
 
-        FilterChip(
-            modifier = Modifier.weight(1f),
-            shape = MaterialTheme.shapes.small,
-            border = null,
-            selected = firstSelected,
-            colors = colors,
+    SingleChoiceSegmentedButtonRow(
+        modifier = Modifier
+            .fillMaxWidth(),
+        space = 24.dp,
+    ) {
+        SegmentedTabButton(
+            text = stringResource(id = firstTextId),
+            icon = firstIcon,
+            selected = { firstSelected },
+            index = 0,
+            count = 2,
             onClick = {
                 onCheckedChange(true)
                 selectFirst(true)
-            },
-            leadingIcon = {
-                Icon(
-                    imageVector = firstIcon,
-                    contentDescription = stringResource(id = firstTextId)
-                )
-            },
-            label = {
-                Text(
-                    text = stringResource(id = firstTextId),
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(vertical = 8.dp),
-                )
             }
         )
-        FilterChip(
-            modifier = Modifier.weight(1f),
-            shape = MaterialTheme.shapes.small,
-            border = null,
-            selected = !firstSelected,
-            colors = colors,
+        SegmentedTabButton(
+            text = stringResource(id = secondTextId),
+            icon = secondIcon,
+            selected = { !firstSelected },
+            index = 1,
+            count = 2,
             onClick = {
                 onCheckedChange(false)
                 selectFirst(false)
-            },
-            label = {
-                Text(
-                    text = stringResource(id = secondTextId),
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(vertical = 8.dp),
-                )
-            },
-            trailingIcon = {
-                Icon(
-                    imageVector = secondIcon,
-                    contentDescription = stringResource(id = secondTextId)
-                )
             }
         )
     }
@@ -309,30 +238,5 @@ fun DeSelectAll(
                 Text(text = stringResource(id = R.string.deselect_all))
             }
         }
-    }
-}
-
-private enum class SelectionState { Unselected, Selected }
-
-class SelectableChipTransition constructor(
-    cornerRadius: State<Dp>,
-) {
-    val cornerRadius by cornerRadius
-}
-
-@Composable
-fun selectableChipTransition(selected: Boolean): SelectableChipTransition {
-    val transition = updateTransition(
-        targetState = if (selected) SelectionState.Selected else SelectionState.Unselected,
-        label = "chip_transition"
-    )
-    val corerRadius = transition.animateDp(label = "chip_corner") { state ->
-        when (state) {
-            SelectionState.Unselected -> 8.dp
-            SelectionState.Selected   -> 16.dp
-        }
-    }
-    return remember(transition) {
-        SelectableChipTransition(corerRadius)
     }
 }
