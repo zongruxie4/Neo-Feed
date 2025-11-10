@@ -132,7 +132,7 @@
     <string name="expand_section_description">セクションを展開</string>
     <string name="collapse_section_description">セクションを折りたたむ</string>
     <string name="date_at_time_FORMAT">%1$s において %2$s</string>
-    <string name="draw_permission_required">このアプリは他のアプリの上に表示する権限が必要です。この権限がないと、フィードの項目をクリックしても開かれません</string>
+    <string name="draw_permission_required">このアプリは他のアプリの上に表示する権限がないと、フィードの項目をクリックしても開かれません</string>
     <string name="go_to_settings">設定に移動</string>
     <string name="date_at">：</string>
 </resources>
