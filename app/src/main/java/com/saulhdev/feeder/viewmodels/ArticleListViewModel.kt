@@ -102,6 +102,12 @@ class ArticleListViewModel(
         }
     }
 
+    fun registerOpenedArticle(id: String) {
+        viewModelScope.launch {
+            articleRepo.registerOpenedArticle(id)
+        }
+    }
+
     fun bookmarkArticle(id: String, boolean: Boolean) {
         viewModelScope.launch {
             articleRepo.bookmarkArticle(id, boolean)

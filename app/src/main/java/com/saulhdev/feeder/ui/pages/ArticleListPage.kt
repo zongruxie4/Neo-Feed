@@ -288,6 +288,7 @@ fun ArticleListPage(
                                                 }
                                                 scope.launch {
                                                     viewModel.unpinArticle(article.uuid)
+                                                    viewModel.registerOpenedArticle(item.article.uuid)
                                                 }
                                             },
                                             onRemoveAction = {
@@ -337,6 +338,9 @@ fun ArticleListPage(
                                                             item.link
                                                         )
                                                     }
+                                                }
+                                                scope.launch {
+                                                    viewModel.registerOpenedArticle(item.article.uuid)
                                                 }
                                             }
                                         }
