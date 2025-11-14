@@ -2,6 +2,8 @@ package com.saulhdev.feeder.ui.components
 
 import android.content.Intent
 import android.text.Html
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -9,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Badge
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -24,11 +27,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.saulhdev.feeder.R
 import com.saulhdev.feeder.data.db.models.FeedItem
 import com.saulhdev.feeder.utils.RelativeTimeHelper
 import kotlinx.coroutines.launch
@@ -43,12 +48,26 @@ fun ArticleItem(
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
+    val isRead by remember(article.article.isRead) {
+        mutableStateOf(article.article.isRead)
+    }
+    val backgroundColor by animateColorAsState(
+        targetValue = if (isRead) MaterialTheme.colorScheme.surfaceContainer
+        else MaterialTheme.colorScheme.surfaceContainerHighest,
+        label = "backgroundColor"
+    )
+    val contentColor by animateColorAsState(
+        targetValue = if (isRead) MaterialTheme.colorScheme.onSurfaceVariant
+        else MaterialTheme.colorScheme.onSurface,
+        label = "contentColor"
+    )
+
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = MaterialTheme.shapes.large,
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainer,
-            contentColor = MaterialTheme.colorScheme.onSurface,
+            containerColor = backgroundColor,
+            contentColor = contentColor,
         ),
         onClick = {
             onClick()
@@ -76,13 +95,26 @@ fun ArticleItem(
                 )
             }
 
-            Text(
-                text = content.title,
-                modifier = Modifier.padding(top = 8.dp),
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold,
-                maxLines = 5,
-            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                Text(
+                    text = content.title,
+                    modifier = Modifier
+                        .weight(1f, false),
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 5,
+                )
+                if (!isRead) Badge(
+                    modifier = Modifier.padding(top = 6.dp),
+                ) {
+                    Text(text = stringResource(R.string.label_new))
+                }
+            }
 
             if (content.text.isNotEmpty()) {
                 Text(
