@@ -49,7 +49,7 @@ const val ID_ALL: Long = -1L
         Article::class,
         SyncActionEntity::class,
     ],
-    version = 12,
+    version = 1901,
     exportSchema = true,
     autoMigrations = [
         AutoMigration(
@@ -71,6 +71,10 @@ const val ID_ALL: Long = -1L
             from = 6,
             to = 7,
             spec = NeoFeedDb.RemoveLegacyPubDate::class
+        ),
+        AutoMigration(
+            from = 12,
+            to = 1901,
         ),
     ],
     views = [
