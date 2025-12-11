@@ -133,4 +133,15 @@
     <string name="expand_section_description">Espandi sezione</string>
     <string name="collapse_section_description">Comprimi sezione</string>
     <string name="collapse_handle_description">Trascina per comprimere il pannello inferiore</string>
+    <string name="draw_permission_required">Questa applicazione richiede l\'autorizzazione per essere mostrata sopra le altre app, senza la quale gli elementi del feed non vengono aperti al click</string>
+    <string name="go_to_settings">Vai alle impostazioni</string>
+    <string name="file_share_text">File da Neo Feed</string>
+    <string name="sources_import_bookmarks">Importa segnalibri</string>
+    <string name="sources_export_bookmarks">Esporta segnalibri</string>
+    <string name="enabled">Abilitato</string>
+    <string name="disabled">Disabilitato</string>
+    <string name="action_delete">Elimina</string>
+    <string name="action_save">Salva</string>
+    <string name="action_open_smry">Apri in SMRY</string>
+    <string name="date_at_time_FORMAT">%1$s alle %2$s</string>
 </resources>
