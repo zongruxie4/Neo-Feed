@@ -167,7 +167,7 @@ fun ArticleListPage(
                                         }
                                     ) {
                                         Icon(
-                                            imageVector = if (state.isFilterModified) Phosphor.Filter else Phosphor.Filtered,
+                                            imageVector = if (state.isFilterModified) Phosphor.Filtered else Phosphor.Filter,
                                             contentDescription = stringResource(id = R.string.sorting_order),
                                             tint = MaterialTheme.colorScheme.primary
                                         )
@@ -301,7 +301,7 @@ fun ArticleListPage(
 
                                 else          -> PullToRefreshLazyColumn(
                                     isRefreshing = state.isSyncing,
-                                    onRefresh = syncClient::syncAllFeeds,
+                                    onRefresh = { syncClient.syncAllFeeds() },
                                     listState = listState,
                                     content = {
                                         items(state.articles, key = { it.id }) { item ->

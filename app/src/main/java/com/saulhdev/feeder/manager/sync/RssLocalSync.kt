@@ -271,9 +271,9 @@ internal suspend fun feedsToSync(
 
         feedId == ID_ALL -> repository.loadFeedIds().mapNotNull {
             if (staleTime > 0) repository.loadFeedIfStale(
-                feedId = feedId,
+                feedId = it,
                 staleTime = staleTime
-            ) else repository.loadFeedById(feedId)
+            ) else repository.loadFeedById(it)
         }
 
         else -> repository.getAllSources()

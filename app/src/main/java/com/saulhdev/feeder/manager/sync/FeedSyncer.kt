@@ -8,15 +8,18 @@ import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.work.Constraints
 import androidx.work.CoroutineWorker
 import androidx.work.ExistingWorkPolicy
 import androidx.work.ForegroundInfo
+import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.OutOfQuotaPolicy
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import com.saulhdev.feeder.R
+import com.saulhdev.feeder.data.content.FeedPreferences
 import com.saulhdev.feeder.data.db.ID_UNSET
 import org.koin.java.KoinJavaComponent.inject
 import java.util.concurrent.TimeUnit
@@ -103,23 +106,32 @@ fun createForegroundInfo(
     )
 }
 
-// TODO fix manually running sync
 fun requestFeedSync(
     feedId: Long = ID_UNSET,
     feedTag: String = "",
     forceNetwork: Boolean = false,
 ) {
     val workManager: WorkManager by inject(WorkManager::class.java)
+    val prefs: FeedPreferences by inject(FeedPreferences::class.java)
+    
     val data = workDataOf(
         "feed_id" to feedId,
         "feed_tag" to feedTag,
         "force_network" to forceNetwork,
     )
 
+    val constraints = Constraints.Builder()
+    if (prefs.syncOnlyOnWifi.getValue()) {
+        constraints.setRequiredNetworkType(NetworkType.UNMETERED)
+    } else {
+        constraints.setRequiredNetworkType(NetworkType.CONNECTED)
+    }
+
     val workRequest = OneTimeWorkRequestBuilder<FeedSyncer>()
         .addTag("FeedSyncer")
         .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
         .keepResultsForAtLeast(1, TimeUnit.MINUTES)
+        .setConstraints(constraints.build())
         .setInputData(data)
         .build()
 
