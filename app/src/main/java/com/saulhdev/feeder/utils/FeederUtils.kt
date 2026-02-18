@@ -64,6 +64,7 @@ fun getSyncFrequency(context: Context): Map<String, String> {
 
 fun getItemsPerFeed(): Map<String, String> {
     return mapOf(
+        "5" to "5",
         "25" to "25",
         "50" to "50",
         "100" to "100",
