@@ -51,7 +51,6 @@ import org.koin.java.KoinJavaComponent.inject
 import java.io.File
 import java.io.IOException
 import java.util.concurrent.Executors
-import kotlin.math.max
 import kotlin.system.measureTimeMillis
 import kotlin.time.Clock
 import kotlin.time.Instant
@@ -230,7 +229,7 @@ private suspend fun syncFeed(
 
     val ids = articleRepo.getItemsToBeCleanedFromFeed(
         feedId = syncedFeed.id,
-        keepCount = max(maxFeedItemCount, items?.size ?: 0)
+        keepCount = maxFeedItemCount
     )
 
     for (id in ids) {
