@@ -68,8 +68,7 @@ fun getItemsPerFeed(): Map<String, String> {
         "25" to "25",
         "50" to "50",
         "100" to "100",
-        "200" to "200",
-        "500" to "500"
+        "200" to "200"
     )
 }
 
