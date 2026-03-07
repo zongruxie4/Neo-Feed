@@ -27,6 +27,7 @@ import java.util.concurrent.TimeUnit
 class FeedSyncer(val context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
 
+    private val TAG = "FeedSyncer"
     private val notificationManager: NotificationManagerCompat =
         NotificationManagerCompat.from(context)
 
@@ -40,7 +41,7 @@ class FeedSyncer(val context: Context, workerParams: WorkerParameters) :
         try {
             val feedId = inputData.getLong("feed_id", ID_UNSET)
             val feedTag = inputData.getString("feed_tag") ?: ""
-            val forceNetwork = inputData.getBoolean("force_network", false)
+            val forceNetwork = inputData.getBoolean("force_network", true)
             val minFeedAgeMinutes = inputData.getInt("min_feed_age_minutes", 5)
 
             success = syncFeeds(
@@ -52,7 +53,7 @@ class FeedSyncer(val context: Context, workerParams: WorkerParameters) :
             )
         } catch (e: Exception) {
             success = false
-            Log.e("FeederFeedSyncer", "Failure during sync", e)
+            Log.e(TAG, "Failure during sync", e)
         }
 
         return when (success) {
@@ -119,9 +120,9 @@ fun requestFeedSync(
         "feed_tag" to feedTag,
         "force_network" to forceNetwork,
     )
-
+    Log.d(TAG, "requestFeedSync: $data")
     val constraints = Constraints.Builder()
-    if (prefs.syncOnlyOnWifi.getValue()) {
+    if (prefs.syncOnlyOnWifi.getValue() && !forceNetwork) {
         constraints.setRequiredNetworkType(NetworkType.UNMETERED)
     } else {
         constraints.setRequiredNetworkType(NetworkType.CONNECTED)
