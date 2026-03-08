@@ -34,7 +34,6 @@ class ArticleRepository(db: NeoFeedDb) {
     private val cc = Dispatchers.IO
     private val jcc = Dispatchers.IO + SupervisorJob()
     private val articlesDao = db.feedArticleDao()
-    private val feedsDao = db.feedSourceDao()
 
     suspend fun deleteArticles(ids: List<String>) = withContext(jcc) {
         articlesDao.deleteArticles(ids)
@@ -48,10 +47,6 @@ class ArticleRepository(db: NeoFeedDb) {
 
     fun getArticleById(articleId: String): Flow<Article?> =
         articlesDao.loadArticleById(id = articleId)
-            .flowOn(cc)
-
-    fun getFeedItemsById(feedId: Long): Flow<List<FeedItem>> =
-        articlesDao.getFeedItemsForFeed(feedId)
             .flowOn(cc)
 
     fun getEnabledFeedItems(): Flow<List<FeedItem>> = articlesDao.getAllEnabledFeedItems()
