@@ -2,7 +2,6 @@ package com.google.android.libraries.gsa.d.a;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.FrameLayout;
 
@@ -44,6 +43,7 @@ public class OverlayController extends DialogOverlayController {
 
     final LauncherOverlayCallback closeOverlay() {
         updateActivityState(0);
+        unregisterBackCallbackIfNeeded();
         try {
             windowManager.removeView(windowView);
         } catch (Throwable ignored) {

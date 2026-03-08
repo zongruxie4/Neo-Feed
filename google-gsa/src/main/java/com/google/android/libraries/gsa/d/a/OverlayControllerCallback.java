@@ -176,6 +176,7 @@ abstract class OverlayControllerCallback extends BaseCallback {
 
         controller.windowView = controller.window.getDecorView();
         controller.windowManager.addView(controller.windowView, controller.window.getAttributes());
+        controller.registerBackCallbackIfNeeded();
 
         controller.slidingPanelLayout.setSystemUiVisibility(1792);
         controller.setVisible(false);

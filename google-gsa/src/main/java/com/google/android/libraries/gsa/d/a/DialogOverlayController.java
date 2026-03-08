@@ -4,9 +4,21 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
-import android.view.*;
+import android.view.ActionMode;
+import android.view.ContextThemeWrapper;
+import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.SearchEvent;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.accessibility.AccessibilityEvent;
+import android.window.OnBackInvokedCallback;
+import android.window.OnBackInvokedDispatcher;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -18,6 +30,8 @@ class DialogOverlayController extends ContextThemeWrapper implements Window.Call
     public Window window;
     private final Set<DialogInterface> dialogs = Collections.synchronizedSet(new HashSet<>());
     public View windowView;
+    private OnBackInvokedCallback onBackInvokedCallback;
+    private boolean backCallbackRegistered = false;
 
     DialogOverlayController(Context context, int theme, int dialogTheme) {
         super(context, theme);
@@ -33,6 +47,41 @@ class DialogOverlayController extends ContextThemeWrapper implements Window.Call
     }
 
     void onBackPressed() {
+    }
+
+    void registerBackCallbackIfNeeded() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            return;
+        }
+        if (window == null || backCallbackRegistered) {
+            return;
+        }
+        OnBackInvokedDispatcher dispatcher = window.getOnBackInvokedDispatcher();
+        if (dispatcher == null) {
+            return;
+        }
+        if (onBackInvokedCallback == null) {
+            onBackInvokedCallback = this::onBackPressed;
+        }
+        dispatcher.registerOnBackInvokedCallback(
+                OnBackInvokedDispatcher.PRIORITY_DEFAULT,
+                onBackInvokedCallback
+        );
+        backCallbackRegistered = true;
+    }
+
+    void unregisterBackCallbackIfNeeded() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            return;
+        }
+        if (window == null || !backCallbackRegistered || onBackInvokedCallback == null) {
+            return;
+        }
+        OnBackInvokedDispatcher dispatcher = window.getOnBackInvokedDispatcher();
+        if (dispatcher != null) {
+            dispatcher.unregisterOnBackInvokedCallback(onBackInvokedCallback);
+        }
+        backCallbackRegistered = false;
     }
 
     @Override

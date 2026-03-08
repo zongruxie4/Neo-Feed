@@ -102,8 +102,11 @@ class OverlayView(val context: Context) :
     }
 
     override fun closePanelIfNeeded(flags: Int) {
+        if (AbstractFloatingView.isAnyOpen()) {
+            AbstractFloatingView.closeAllOpenViews(context)
+            return
+        }
         super.closePanelIfNeeded(flags)
-        AbstractFloatingView.closeAllOpenViews(context)
     }
 
     override fun onBackPressed() {
