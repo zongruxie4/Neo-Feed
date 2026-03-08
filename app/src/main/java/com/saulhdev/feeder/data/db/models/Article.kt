@@ -86,6 +86,7 @@ data class Article @OptIn(ExperimentalTime::class) constructor(
         val converter = HtmlToPlainTextConverter()
         // Be careful about nulls.
         val text = entry.content_html ?: entry.content_text ?: ""
+        val description = (entry.summary ?: entry.content_text ?: converter.convert(text)).trim()
         val summary: String = (
                 entry.summary ?: entry.content_text
                 ?: converter.convert(text)
@@ -112,6 +113,7 @@ data class Article @OptIn(ExperimentalTime::class) constructor(
             plainTitle = plainTitle,
             title = plainTitle,
             plainSnippet = summary,
+            description = description.ifEmpty { this.description },
             imageUrl = absoluteImage,
             enclosureLink = entry.attachments?.firstOrNull()?.url,
             author = entry.author?.name ?: feed.author?.name,
