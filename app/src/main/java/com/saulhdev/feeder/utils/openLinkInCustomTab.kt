@@ -27,6 +27,7 @@ import androidx.browser.customtabs.CustomTabColorSchemeParams
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.ContextCompat
 import com.saulhdev.feeder.R
+import com.saulhdev.feeder.utils.extensions.safeStartActivity
 
 fun openLinkInCustomTab(
     context: Context,
@@ -37,7 +38,7 @@ fun openLinkInCustomTab(
     @ColorInt val colorPrimaryDark =
         ContextCompat.getColor(context, R.color.md_theme_primary)
     try {
-        val intent = CustomTabsIntent.Builder()
+        val customTabsIntent = CustomTabsIntent.Builder()
             .setShareState(CustomTabsIntent.SHARE_STATE_ON)
             .setDefaultColorSchemeParams(
                 CustomTabColorSchemeParams.Builder()
@@ -50,9 +51,16 @@ fun openLinkInCustomTab(
                     .build()
             )
             .build()
-        intent.launchUrl(context, Uri.parse(link))
+
+        val targetIntent = customTabsIntent.intent.apply {
+            data = Uri.parse(link)
+        }
+        context.safeStartActivity(targetIntent)
     } catch (e: ActivityNotFoundException) {
         Toast.makeText(context, R.string.app_name, Toast.LENGTH_SHORT).show()
+        return false
+    } catch (e: Exception) {
+        android.util.Log.e("openLinkInCustomTab", "Failed to open link: ${e.message}")
         return false
     }
     return true

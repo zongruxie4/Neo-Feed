@@ -13,11 +13,11 @@ import com.saulhdev.feeder.data.content.FeedPreferences.Companion.prefsModule
 import com.saulhdev.feeder.data.db.NeoFeedDb
 import com.saulhdev.feeder.data.repository.ArticleRepository
 import com.saulhdev.feeder.data.repository.SourcesRepository
+import com.saulhdev.feeder.manager.service.OverlayBridge
+import com.saulhdev.feeder.manager.sync.SyncRestClient
+import com.saulhdev.feeder.utils.ApplicationCoroutineScope
 import com.saulhdev.feeder.utils.extensions.ToastMaker
 import com.saulhdev.feeder.utils.extensions.restartApp
-import com.saulhdev.feeder.manager.sync.SyncRestClient
-import com.saulhdev.feeder.manager.service.OverlayBridge
-import com.saulhdev.feeder.utils.ApplicationCoroutineScope
 import com.saulhdev.feeder.viewmodels.ArticleListViewModel
 import com.saulhdev.feeder.viewmodels.ArticleViewModel
 import com.saulhdev.feeder.viewmodels.SearchFeedViewModel
@@ -138,12 +138,17 @@ class NeoApp : MultiDexApplication(), KoinStartup {
 class ActivityHandler : ActivityLifecycleCallbacks {
     val activities = HashSet<Activity>()
     var foregroundActivity: Activity? = null
+    private var startedActivities = 0
+
 
     fun finishAll(recreateApp: Boolean = true) {
         HashSet(activities).forEach { if (recreateApp) it.recreate() else it.finish() }
     }
 
     override fun onActivityPaused(activity: Activity) {
+        if (activity == foregroundActivity) {
+            foregroundActivity = null
+        }
     }
 
     override fun onActivityResumed(activity: Activity) {
@@ -151,6 +156,7 @@ class ActivityHandler : ActivityLifecycleCallbacks {
     }
 
     override fun onActivityStarted(activity: Activity) {
+        startedActivities += 1
     }
 
     override fun onActivityDestroyed(activity: Activity) {
@@ -163,6 +169,7 @@ class ActivityHandler : ActivityLifecycleCallbacks {
     }
 
     override fun onActivityStopped(activity: Activity) {
+        startedActivities = (startedActivities - 1).coerceAtLeast(0)
     }
 
     override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {

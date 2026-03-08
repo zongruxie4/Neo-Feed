@@ -1,6 +1,5 @@
 package com.saulhdev.feeder.ui.feed.binders
 
-import android.content.Intent
 import android.content.res.ColorStateList
 import android.text.Html
 import android.util.SparseIntArray
@@ -13,11 +12,13 @@ import com.saulhdev.feeder.data.content.FeedPreferences
 import com.saulhdev.feeder.data.db.models.FeedItem
 import com.saulhdev.feeder.data.repository.ArticleRepository
 import com.saulhdev.feeder.databinding.FeedCardStoryLargeBinding
-import com.saulhdev.feeder.utils.extensions.isDark
-import com.saulhdev.feeder.utils.extensions.launchView
 import com.saulhdev.feeder.ui.navigation.Routes
 import com.saulhdev.feeder.ui.theme.CardTheme
 import com.saulhdev.feeder.utils.RelativeTimeHelper
+import com.saulhdev.feeder.utils.extensions.isDark
+import com.saulhdev.feeder.utils.extensions.launchView
+import com.saulhdev.feeder.utils.extensions.safeShareIntent
+import com.saulhdev.feeder.utils.extensions.safeStartActivity
 import com.saulhdev.feeder.utils.openLinkInCustomTab
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -71,15 +72,7 @@ object StoryCardBinder : FeedBinder {
         }
 
         binding.shareButton.setOnClickListener {
-            val intent = Intent.createChooser(
-                Intent(Intent.ACTION_SEND).apply {
-                    putExtra(Intent.EXTRA_TEXT, content.link)
-                    putExtra(Intent.EXTRA_TITLE, content.title)
-                    type = "text/plain"
-                },
-                null,
-            )
-            context.startActivity(intent)
+            context.safeShareIntent(content.link, content.title)
         }
 
         binding.root.setOnClickListener {
@@ -90,28 +83,17 @@ object StoryCardBinder : FeedBinder {
 
                 scope.launch {
                     if (prefs.offlineReader.getValue()) {
-                        view.context.startActivity(
+                        view.context.safeStartActivity(
                             MainActivity.navigateIntent(
                                 view.context,
                                 "${Routes.ARTICLE_VIEW}/${item.id}"
                             )
                         )
                     } else {
-                        scope.launch {
-                            if (prefs.offlineReader.getValue()) {
-                                view.context.startActivity(
-                                    MainActivity.navigateIntent(
-                                        context,
-                                        "${Routes.ARTICLE_VIEW}/${item.id}"
-                                    )
-                                )
-                            } else {
-                                openLinkInCustomTab(
-                                    context,
-                                    content.link
-                                )
-                            }
-                        }
+                        openLinkInCustomTab(
+                            context,
+                            content.link
+                        )
                     }
                 }
             }

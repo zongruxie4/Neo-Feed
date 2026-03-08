@@ -1,5 +1,7 @@
 package com.saulhdev.feeder.utils.extensions
 
+import android.app.Activity
+import android.app.ActivityOptions
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.ComponentName
@@ -7,6 +9,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
+import android.os.Build
+import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.annotation.StringRes
@@ -65,12 +69,111 @@ private fun Context.restartFeed() {
 }
 
 fun Context.launchView(url: String) {
-    startActivity(
-        Intent(
-            Intent.ACTION_VIEW,
-            url.toUri()
-        )
+    val intent = Intent(
+        Intent.ACTION_VIEW,
+        url.toUri()
     )
+    safeStartActivity(intent)
+}
+
+/**
+ * Safely start an activity from overlay context.
+ * Uses PendingIntent BAL opt-in for non-Activity contexts (overlay/service).
+ */
+fun Context.safeStartActivity(intent: Intent) {
+    try {
+        val canStartDirectly = this is Activity
+
+        if (canStartDirectly) {
+            startActivity(intent)
+        } else {
+            launchWithBalPendingIntent(intent)
+        }
+    } catch (e: Exception) {
+        Log.e("Context", "Failed to start activity: ${e.message}")
+    }
+}
+
+/**
+ * Safely start a share intent from overlay context.
+ */
+fun Context.safeShareIntent(url: String, title: String) {
+    try {
+        val shareIntent = Intent(Intent.ACTION_SEND).apply {
+            type = "text/plain"
+            putExtra(Intent.EXTRA_TITLE, title)
+            putExtra(Intent.EXTRA_SUBJECT, title)
+            putExtra(Intent.EXTRA_TEXT, url)
+        }
+        val chooserIntent = Intent.createChooser(shareIntent, "Where to Send?")
+
+        val canStartDirectly = this is Activity
+
+        if (canStartDirectly) {
+            startActivity(chooserIntent)
+        } else {
+            launchWithBalPendingIntent(chooserIntent)
+        }
+    } catch (e: Exception) {
+        Log.e("Context", "Failed to start share: ${e.message}")
+    }
+}
+
+private fun Context.launchWithBalPendingIntent(intent: Intent) {
+    val targetIntent = Intent(intent).apply {
+        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    }
+
+    val creatorOptions = buildBalCreatorOptions()
+    val flags = PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+    val pendingIntent = PendingIntent.getActivity(
+        this,
+        System.currentTimeMillis().toInt(),
+        targetIntent,
+        flags,
+        creatorOptions
+    )
+
+    val senderOptions = buildBalSenderOptions()
+    pendingIntent.send(
+        this,
+        0,
+        null,
+        null,
+        null,
+        null,
+        senderOptions
+    )
+}
+
+private fun buildBalCreatorOptions(): Bundle? {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.UPSIDE_DOWN_CAKE) return null
+    return runCatching {
+        val options = ActivityOptions.makeBasic()
+        val clazz = ActivityOptions::class.java
+        val method = clazz.getMethod(
+            "setPendingIntentCreatorBackgroundActivityStartMode",
+            Int::class.javaPrimitiveType
+        )
+        val modeField = clazz.getField("MODE_BACKGROUND_ACTIVITY_START_ALLOWED")
+        method.invoke(options, modeField.getInt(null))
+        options.toBundle()
+    }.getOrNull()
+}
+
+private fun buildBalSenderOptions(): Bundle? {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.UPSIDE_DOWN_CAKE) return null
+    return runCatching {
+        val options = ActivityOptions.makeBasic()
+        val clazz = ActivityOptions::class.java
+        val method = clazz.getMethod(
+            "setPendingIntentBackgroundActivityStartMode",
+            Int::class.javaPrimitiveType
+        )
+        val modeField = clazz.getField("MODE_BACKGROUND_ACTIVITY_START_ALLOWED")
+        method.invoke(options, modeField.getInt(null))
+        options.toBundle()
+    }.getOrNull()
 }
 
 fun Context.shareIntent(url: String, title: String) {

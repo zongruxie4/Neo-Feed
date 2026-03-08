@@ -34,6 +34,7 @@ import com.saulhdev.feeder.ui.views.FilterBottomSheet
 import com.saulhdev.feeder.utils.Android
 import com.saulhdev.feeder.utils.LinearLayoutManagerWrapper
 import com.saulhdev.feeder.utils.extensions.isDark
+import com.saulhdev.feeder.utils.extensions.safeStartActivity
 import com.saulhdev.feeder.utils.extensions.setCustomTheme
 import com.saulhdev.feeder.viewmodels.ArticleListViewModel
 import kotlinx.coroutines.CoroutineName
@@ -56,6 +57,7 @@ class OverlayView(val context: Context) :
     val prefs: FeedPreferences by inject()
 
     var bookmarkVisible = false
+    private var pendingCloseOnResume = false
 
     private lateinit var rootView: View
     private lateinit var adapter: FeedAdapter
@@ -110,6 +112,14 @@ class OverlayView(val context: Context) :
             return
         } else {
             super.onBackPressed()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (pendingCloseOnResume) {
+            pendingCloseOnResume = false
+            closePanelIfNeeded(1)
         }
     }
 
@@ -285,7 +295,7 @@ class OverlayView(val context: Context) :
             when (it.id) {
                 "config"  -> {
                     mainScope.launch {
-                        view.context.startActivity(
+                        view.context.safeStartActivity(
                             MainActivity.navigateIntent(
                                 view.context,
                                 "${Routes.MAIN}/1",
@@ -324,6 +334,9 @@ class OverlayView(val context: Context) :
     override fun onClientMessage(action: String) {
         if (prefs.debugging.getValue()) {
             Log.d("OverlayView", "New message by OverlayBridge: $action")
+        }
+        if (action == "openContentView") {
+            pendingCloseOnResume = true
         }
     }
 

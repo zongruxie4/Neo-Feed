@@ -1,6 +1,7 @@
 package com.saulhdev.feeder.ui.components.dialog
 
 import android.content.Intent
+import android.net.Uri
 import android.provider.Settings
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -22,14 +23,19 @@ import com.saulhdev.feeder.R
 fun DrawPermissionRequestDialog() {
     val context = LocalContext.current
 
-    val askForDrawPermission = remember { mutableStateOf(false) }
+    val askForDrawPermission = remember { mutableStateOf(true) }
 
     if (askForDrawPermission.value) BaseDialog(askForDrawPermission) {
         Card (Modifier.padding(30.dp)) { Column (horizontalAlignment = Alignment.CenterHorizontally) {
             Text(stringResource(R.string.draw_permission_required), textAlign = TextAlign.Center, modifier = Modifier.padding(20.dp))
             Button({
                 askForDrawPermission.value = false
-                context.startActivity(Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION))
+                context.startActivity(
+                    Intent(
+                        Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                        Uri.parse("package:${context.packageName}")
+                    )
+                )
             }, Modifier.padding(20.dp))
             {
                 Text(stringResource(R.string.go_to_settings))
