@@ -28,7 +28,6 @@ final class OverlayControllerStateChanger implements PanelController {
             overlayController.Hn();
         }
         updatePanelState(PanelState.DRAGGING);
-        overlayController.setVisible(false);
     }
 
     @Override
@@ -43,7 +42,6 @@ final class OverlayControllerStateChanger implements PanelController {
             try {
                 overlayController.overlayCallback.overlayScrollChanged(position);
                 overlayController.onScroll(position);
-                overlayController.setWindowAlpha(position);
             } catch (Throwable ignored) {
                 // Optionally log the exception if needed
             }
