@@ -91,7 +91,7 @@ class OverlayView(val context: Context) :
         AbstractFloatingView.closeAllOpenViews(context)
 
         themeHolder = OverlayThemeHolder(this)
-        setTheme(null)
+        setTheme(null as String?)
 
         getWindow().setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
         setPanelBackgroundEnabled(false)
