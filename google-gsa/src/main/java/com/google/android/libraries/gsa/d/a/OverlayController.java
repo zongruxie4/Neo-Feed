@@ -196,6 +196,8 @@ public class OverlayController extends DialogOverlayController {
 
     public void onScroll(float distance) {}
 
+    public void setPanelBackgroundEnabled(boolean enabled) {}
+
     public void applyByteBundle(ByteBundleHolder holder) {}
 
     public void configurePanel(boolean enable) {}

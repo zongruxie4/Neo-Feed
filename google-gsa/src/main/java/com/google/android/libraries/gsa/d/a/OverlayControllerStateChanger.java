@@ -13,19 +13,23 @@ final class OverlayControllerStateChanger implements PanelController {
     @Override
     public void onPanelDragged() {
         updatePanelState(PanelState.DRAGGING);
-        overlayController.setFocusable(true);
+        overlayController.setPanelBackgroundEnabled(true);
+        overlayController.setVisible(true);
     }
 
     @Override
     public void startPanelDrag() {
         updatePanelState(PanelState.DRAGGING);
-        overlayController.setFocusable(true);
+        overlayController.setPanelBackgroundEnabled(true);
+        overlayController.setVisible(true);
     }
 
     @Override
     public void setPanelEnabled(boolean enabled) {
         if (enabled) {
             overlayController.Hn();
+        } else {
+            overlayController.setVisible(false);
         }
         updatePanelState(PanelState.DRAGGING);
     }
