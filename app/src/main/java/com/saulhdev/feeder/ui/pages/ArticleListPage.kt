@@ -305,7 +305,6 @@ fun ArticleListPage(
                                     isRefreshing = state.isSyncing,
                                     onRefresh = {
                                         syncClient.syncAllFeeds()
-                                        weatherRepo.refreshWeather(force = true)
                                     },
                                     listState = listState,
                                     content = {

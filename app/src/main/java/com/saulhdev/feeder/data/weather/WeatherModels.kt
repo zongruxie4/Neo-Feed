@@ -18,6 +18,9 @@
 
 package com.saulhdev.feeder.data.weather
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class WeatherData(
     val cityName: String,
     val temperature: Double,
@@ -34,6 +37,7 @@ data class WeatherData(
     val lastUpdatedMillis: Long = System.currentTimeMillis()
 )
 
+@Serializable
 data class HourlyWeather(
     val time: String,
     val temperature: Double,

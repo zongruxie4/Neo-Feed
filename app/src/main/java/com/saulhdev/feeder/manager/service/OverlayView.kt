@@ -160,6 +160,14 @@ class OverlayView(val context: Context) :
             pendingCloseOnResume = false
             closePanelIfNeeded(1)
         }
+        weatherRepo.refreshWeather(force = false)
+    }
+
+    override fun onScroll(distance: Float) {
+        super.onScroll(distance)
+        if (distance > 0.1f) {
+            weatherRepo.refreshWeather(force = false)
+        }
     }
 
     private fun updateTheme(force: String? = null) {
@@ -308,7 +316,6 @@ class OverlayView(val context: Context) :
         rootView.findViewById<SwipeRefreshLayout>(R.id.swipe_to_refresh).setOnRefreshListener {
             rootView.findViewById<RecyclerView>(R.id.recycler).recycledViewPool.clear()
             refreshNotifications()
-            weatherRepo.refreshWeather(force = true)
         }
 
         adapter = FeedAdapter()

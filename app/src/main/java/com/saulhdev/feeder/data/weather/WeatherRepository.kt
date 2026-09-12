@@ -18,6 +18,7 @@
 
 package com.saulhdev.feeder.data.weather
 
+import android.content.Context
 import android.util.Log
 import com.saulhdev.feeder.data.content.FeedPreferences
 import com.saulhdev.feeder.utils.LocationHelper
@@ -31,6 +32,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.serialization.json.Json
 
 class WeatherRepository(
     private val prefs: FeedPreferences,
@@ -44,7 +46,11 @@ class WeatherRepository(
 
     private val mutex = Mutex()
     private var lastFetchTime = 0L
-    private val cacheDurationMillis = 30 * 60 * 1000L // 30 minutes
+    private val cacheDurationMillis = 60 * 60 * 1000L // 1 hour
+
+    private val sharedPrefs =
+        prefs.context.getSharedPreferences("weather_cache", Context.MODE_PRIVATE)
+    private val jsonSerializer = Json { ignoreUnknownKeys = true }
 
     fun getActiveProvider(): WeatherProvider {
         val selected = prefs.weatherProvider.getValue2()
@@ -55,7 +61,11 @@ class WeatherRepository(
         }
     }
 
+    private var isInitialEmission = true
+
     init {
+        loadCachedWeather()
+
         scope.launch {
             combine(
                 prefs.weatherProvider.get(),
@@ -68,12 +78,45 @@ class WeatherRepository(
             }
                 .distinctUntilChanged()
                 .collect { config ->
-                    if (config.enabled) {
-                        refreshWeather(force = true)
+                    if (isInitialEmission) {
+                        isInitialEmission = false
+                        if (!config.enabled) {
+                            _weatherState.value = WeatherState.Idle
+                        }
                     } else {
-                        _weatherState.value = WeatherState.Idle
+                        if (config.enabled) {
+                            refreshWeather(force = true)
+                        } else {
+                            _weatherState.value = WeatherState.Idle
+                        }
                     }
                 }
+        }
+    }
+
+    private fun loadCachedWeather() {
+        if (!prefs.weatherProvider.getValue()) return
+        try {
+            lastFetchTime = sharedPrefs.getLong("last_fetch_time", 0L)
+            val json = sharedPrefs.getString("cached_weather", null)
+            if (!json.isNullOrEmpty()) {
+                val cached = jsonSerializer.decodeFromString<WeatherData>(json)
+                _weatherState.value = WeatherState.Success(cached)
+            }
+        } catch (e: Exception) {
+            Log.e("WeatherRepository", "Failed to restore cached weather", e)
+        }
+    }
+
+    private fun saveCachedWeather(weatherData: WeatherData, fetchTime: Long) {
+        try {
+            val json = jsonSerializer.encodeToString(weatherData)
+            sharedPrefs.edit()
+                .putLong("last_fetch_time", fetchTime)
+                .putString("cached_weather", json)
+                .apply()
+        } catch (e: Exception) {
+            Log.e("WeatherRepository", "Failed to save cached weather", e)
         }
     }
 
@@ -98,6 +141,11 @@ class WeatherRepository(
 
         scope.launch {
             mutex.withLock {
+                val currentNow = System.currentTimeMillis()
+                if (!force && _weatherState.value is WeatherState.Success && (currentNow - lastFetchTime < cacheDurationMillis)) {
+                    return@launch
+                }
+
                 if (force || _weatherState.value !is WeatherState.Success) {
                     _weatherState.value = WeatherState.Loading
                 }
@@ -143,6 +191,7 @@ class WeatherRepository(
 
                     lastFetchTime = System.currentTimeMillis()
                     _weatherState.value = WeatherState.Success(weatherData)
+                    saveCachedWeather(weatherData, lastFetchTime)
                 } catch (e: Exception) {
                     Log.e("WeatherRepository", "Failed to fetch weather", e)
                     _weatherState.value = WeatherState.Error(e.localizedMessage ?: "Unknown error")
