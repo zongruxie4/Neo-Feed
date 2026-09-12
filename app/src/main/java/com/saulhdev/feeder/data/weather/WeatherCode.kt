@@ -50,8 +50,9 @@ object WeatherCode {
                 2 -> R.drawable.weather_03
                 3 -> R.drawable.weather_04
                 45, 48 -> R.drawable.weather_50
-                51, 53, 55, 56, 57 -> R.drawable.weather_09
-                61, 63, 65, 66, 67, 80, 81, 82 -> R.drawable.weather_09
+                51, 53, 55, 56, 57 -> R.drawable.weather_13
+                61, 63, 66, 67, 80, 81 -> R.drawable.weather_09
+                65, 82 -> R.drawable.weather_08
                 71, 73, 75, 77, 85, 86 -> R.drawable.weather_13
                 95, 96, 99 -> R.drawable.weather_11
                 else -> R.drawable.weather_03
@@ -63,8 +64,9 @@ object WeatherCode {
                 2 -> R.drawable.weather_03n
                 3 -> R.drawable.weather_04n
                 45, 48 -> R.drawable.weather_50
-                51, 53, 55, 56, 57 -> R.drawable.weather_09
-                61, 63, 65, 66, 67, 80, 81, 82 -> R.drawable.weather_09
+                51, 53, 55, 56, 57 -> R.drawable.weather_13n
+                61, 63, 66, 67, 80, 81 -> R.drawable.weather_09
+                65, 82 -> R.drawable.weather_08
                 71, 73, 75, 77, 85, 86 -> R.drawable.weather_13n
                 95, 96, 99 -> R.drawable.weather_11
                 else -> R.drawable.weather_03n
