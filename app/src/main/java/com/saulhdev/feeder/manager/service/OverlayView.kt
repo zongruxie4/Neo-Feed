@@ -65,6 +65,7 @@ class OverlayView(val context: Context) :
 
     var bookmarkVisible = false
     private var pendingCloseOnResume = false
+    private var drawerPanelBackgroundEnabled = false
 
     private lateinit var rootView: View
     private lateinit var adapter: FeedAdapter
@@ -90,9 +91,10 @@ class OverlayView(val context: Context) :
         AbstractFloatingView.closeAllOpenViews(context)
 
         themeHolder = OverlayThemeHolder(this)
+        setTheme(null as String?)
 
-        val bgColor = themeHolder.currentTheme.get(CardTheme.Colors.OVERLAY_BG.ordinal)
-        getWindow().setBackgroundDrawable((bgColor and 0x00ffffff).toDrawable())
+        getWindow().setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
+        setPanelBackgroundEnabled(false)
 
         initInsets()
         initRecyclerView()
@@ -153,8 +155,25 @@ class OverlayView(val context: Context) :
 
     private fun updateTheme(force: String? = null) {
         setTheme(force)
+        applyPanelBackground()
         updateStubUi()
         adapter.setTheme(themeHolder.currentTheme)
+    }
+
+    private fun applyPanelBackground(opacity: Float = prefs.overlayTransparency.getValue()) {
+        val color = if (drawerPanelBackgroundEnabled) {
+            val bgColor = themeHolder.currentTheme.get(CardTheme.Colors.OVERLAY_BG.ordinal)
+            val alpha = opacity.coerceIn(0f, 1f)
+            ((alpha * 255.0f).toInt() shl 24) or (bgColor and 0x00ffffff)
+        } else {
+            Color.TRANSPARENT
+        }
+        rootView.findViewById<View>(R.id.overlay_root).setBackgroundColor(color)
+    }
+
+    override fun setPanelBackgroundEnabled(enabled: Boolean) {
+        drawerPanelBackgroundEnabled = enabled
+        applyPanelBackground()
     }
 
     private fun setTheme(force: String?) {
@@ -406,15 +425,6 @@ class OverlayView(val context: Context) :
         NeoApp.bridge.setCallback(null)
     }
 
-    override fun onScroll(f: Float) {
-        super.onScroll(f)
-
-        val bgColor = themeHolder.currentTheme.get(CardTheme.Colors.OVERLAY_BG.ordinal)
-        val alpha = if (f <= 0f) 0f else prefs.overlayTransparency.getValue()
-        val color = (alpha * 255.0f).toInt() shl 24 or (bgColor and 0x00ffffff)
-        getWindow().setBackgroundDrawable(color.toDrawable())
-    }
-
     override fun onClientMessage(action: String) {
         if (prefs.debugging.getValue()) {
             Log.d("OverlayView", "New message by OverlayBridge: $action")
@@ -430,6 +440,7 @@ class OverlayView(val context: Context) :
 
     override fun applyNewTransparency(value: Float) {
         themeHolder.prefs.overlayTransparency.setValue(value)
+        applyPanelBackground(value)
     }
 
     override fun applyCompactCard(value: Boolean) {

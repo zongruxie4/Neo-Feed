@@ -10,11 +10,12 @@ final class TransparentOverlayController implements PanelController {
 
     @Override
     public void onPanelDragged() {
-
+        this.overlayController.setPanelBackgroundEnabled(false);
     }
 
     @Override
     public void startPanelDrag() {
+        this.overlayController.setPanelBackgroundEnabled(false);
     }
 
     @Override
@@ -23,6 +24,7 @@ final class TransparentOverlayController implements PanelController {
 
     @Override
     public void openPanel() {
+        this.overlayController.setPanelBackgroundEnabled(false);
         this.overlayController.setFocusable(true);
         this.overlayController.setWindowAlpha(1.0f);
         OverlayController overlayControllerVar = this.overlayController;
