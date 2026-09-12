@@ -15,35 +15,37 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.saulhdev.feeder.ui.components
 
-import androidx.annotation.StringRes
+package com.saulhdev.feeder.ui.components.preferences
+
+import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Switch
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import com.saulhdev.feeder.data.content.StringPref
-import com.saulhdev.feeder.ui.navigation.LocalNavController
-import com.saulhdev.feeder.ui.navigation.NavRoute
+import androidx.compose.ui.unit.dp
+import com.saulhdev.feeder.data.content.BooleanPref
 
 @Composable
-fun ActionPreference(
+fun SwitchPreference(
     modifier: Modifier = Modifier,
-    pref: StringPref,
+    pref: BooleanPref,
     index: Int = 1,
     groupSize: Int = 1,
     isEnabled: Boolean = true,
+    onCheckedChange: ((Boolean) -> Unit) = {},
 ) {
-    val navController = LocalNavController.current
+    val (checked, check) = remember(pref) { mutableStateOf(pref.getValue()) }
     BasePreference(
         modifier = modifier,
         titleId = pref.titleId,
         summaryId = pref.summaryId,
         index = index,
         groupSize = groupSize,
-        isEnabled = isEnabled,
         startWidget = {
             Icon(
                 imageVector = pref.icon,
@@ -51,34 +53,25 @@ fun ActionPreference(
                 tint = MaterialTheme.colorScheme.onSurface,
             )
         },
+        isEnabled = isEnabled,
         onClick = {
-            if (pref.route != null) {
-                navController.navigate(pref.route)
-            } else {
-                pref.onClick?.invoke()
-            }
-        }
-    )
-}
-
-@Composable
-fun PagePreference(
-    modifier: Modifier = Modifier,
-    @StringRes titleId: Int,
-    icon: ImageVector,
-    index: Int = 1,
-    groupSize: Int = 1,
-    route: NavRoute,
-) {
-    val navController = LocalNavController.current
-    BasePreference(
-        modifier = modifier,
-        titleId = titleId,
-        startWidget = icon?.let {
-            { Icon(imageVector = icon, contentDescription = stringResource(id = titleId)) }
+            onCheckedChange(!checked)
+            pref.setValue(!checked)
+            check(!checked)
         },
-        index = index,
-        groupSize = groupSize,
-        onClick = { navController.navigate(route) }
-    )
+        endWidget = {
+            Switch(
+                modifier = Modifier
+                    .height(24.dp),
+                checked = checked,
+                onCheckedChange = {
+                    onCheckedChange(it)
+                    pref.setValue(it)
+                    check(it)
+                },
+                enabled = isEnabled,
+            )
+        },
+
+        )
 }

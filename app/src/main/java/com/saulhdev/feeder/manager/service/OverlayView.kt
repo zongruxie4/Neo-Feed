@@ -11,6 +11,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.core.content.ContextCompat
@@ -24,12 +25,16 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.libraries.gsa.d.a.OverlayController
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.card.MaterialCardView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.saulhdev.feeder.MainActivity
 import com.saulhdev.feeder.NeoApp
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.data.content.FeedPreferences
 import com.saulhdev.feeder.data.entity.MenuItem
+import com.saulhdev.feeder.data.weather.WeatherCode
+import com.saulhdev.feeder.data.weather.WeatherRepository
+import com.saulhdev.feeder.data.weather.WeatherState
 import com.saulhdev.feeder.manager.sync.SyncRestClient
 import com.saulhdev.feeder.ui.feed.FeedAdapter
 import com.saulhdev.feeder.ui.navigation.Routes
@@ -38,6 +43,7 @@ import com.saulhdev.feeder.ui.theme.OverlayThemeHolder
 import com.saulhdev.feeder.ui.views.AbstractFloatingView
 import com.saulhdev.feeder.ui.views.DialogMenu
 import com.saulhdev.feeder.ui.views.FilterBottomSheet
+import com.saulhdev.feeder.ui.weather.WeatherDialogHelper
 import com.saulhdev.feeder.utils.Android
 import com.saulhdev.feeder.utils.LinearLayoutManagerWrapper
 import com.saulhdev.feeder.utils.extensions.isDark
@@ -52,6 +58,7 @@ import kotlinx.coroutines.plus
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import org.koin.java.KoinJavaComponent.inject
+import kotlin.math.roundToInt
 
 class OverlayView(val context: Context) :
     OverlayController(context, R.style.AppTheme, R.style.WindowTheme),
@@ -61,6 +68,7 @@ class OverlayView(val context: Context) :
     private val mainScope = CoroutineScope(Dispatchers.Main)
     private val viewModel: ArticleListViewModel by inject(ArticleListViewModel::class.java)
     private val articles: SyncRestClient by inject(SyncRestClient::class.java)
+    private val weatherRepo: WeatherRepository by inject(WeatherRepository::class.java)
     val prefs: FeedPreferences by inject()
 
     var bookmarkVisible = false
@@ -99,6 +107,7 @@ class OverlayView(val context: Context) :
         initInsets()
         initRecyclerView()
         initHeader()
+        initWeather()
         refreshNotifications()
 
         syncScope.launch {
@@ -216,6 +225,19 @@ class OverlayView(val context: Context) :
 
         rootView.findViewById<TextView>(R.id.header_title)
             .setTextColor(theme.get(CardTheme.Colors.TEXT_COLOR_PRIMARY.ordinal))
+
+        val cardBg = themeHolder.currentTheme.get(CardTheme.Colors.CARD_BG.ordinal)
+        val textPrimary = theme.get(CardTheme.Colors.TEXT_COLOR_PRIMARY.ordinal)
+        val textSecondary = theme.get(CardTheme.Colors.TEXT_COLOR_SECONDARY.ordinal)
+        rootView.findViewById<MaterialCardView>(R.id.weather_card)?.let { card ->
+            card.setCardBackgroundColor(cardBg)
+            card.findViewById<TextView>(R.id.weather_city_text)?.setTextColor(textPrimary)
+            card.findViewById<TextView>(R.id.weather_temp_text)?.setTextColor(textPrimary)
+            card.findViewById<TextView>(R.id.weather_desc_text)?.setTextColor(textSecondary)
+            card.findViewById<TextView>(R.id.weather_range_text)?.setTextColor(textSecondary)
+            card.findViewById<TextView>(R.id.weather_humidity_text)?.setTextColor(textSecondary)
+            card.findViewById<TextView>(R.id.weather_wind_text)?.setTextColor(textSecondary)
+        }
     }
 
     private fun getStatusBarHeight(): Int {
@@ -286,6 +308,7 @@ class OverlayView(val context: Context) :
         rootView.findViewById<SwipeRefreshLayout>(R.id.swipe_to_refresh).setOnRefreshListener {
             rootView.findViewById<RecyclerView>(R.id.recycler).recycledViewPool.clear()
             refreshNotifications()
+            weatherRepo.refreshWeather(force = true)
         }
 
         adapter = FeedAdapter()
@@ -453,6 +476,84 @@ class OverlayView(val context: Context) :
     private fun refreshNotifications() {
         syncScope.launch {
             articles.syncAllFeeds()
+        }
+    }
+
+    private fun initWeather() {
+        val weatherView = rootView.findViewById<View>(R.id.overlay_weather_widget) ?: return
+
+        syncScope.launch {
+            prefs.weatherProvider.get().collect { enabled ->
+                mainScope.launch {
+                    weatherView.visibility = if (enabled) View.VISIBLE else View.GONE
+                }
+            }
+        }
+
+        syncScope.launch {
+            weatherRepo.weatherState.collect { state ->
+                mainScope.launch {
+                    if (!prefs.weatherProvider.getValue()) {
+                        weatherView.visibility = View.GONE
+                        return@launch
+                    }
+
+                    when (state) {
+                        is WeatherState.Success -> {
+                            weatherView.visibility = View.VISIBLE
+                            val weather = state.weather
+                            weatherView.findViewById<TextView>(R.id.weather_city_text)?.text =
+                                weather.cityName
+                            weatherView.findViewById<TextView>(R.id.weather_range_text)?.text =
+                                context.getString(
+                                    R.string.weather_max_min,
+                                    "${weather.maxTemp.roundToInt()}${weather.unit}",
+                                    "${weather.minTemp.roundToInt()}${weather.unit}"
+                                )
+                            weatherView.findViewById<ImageView>(R.id.weather_condition_icon)
+                                ?.setImageResource(
+                                    WeatherCode.getIconRes(weather.weatherCode, weather.isDay)
+                                )
+                            weatherView.findViewById<TextView>(R.id.weather_temp_text)?.text =
+                                "${weather.temperature.roundToInt()}${weather.unit}"
+                            weatherView.findViewById<TextView>(R.id.weather_desc_text)?.setText(
+                                WeatherCode.getDescriptionRes(weather.weatherCode)
+                            )
+                            weatherView.findViewById<TextView>(R.id.weather_humidity_text)?.text =
+                                "${weather.humidity}%"
+                            weatherView.findViewById<TextView>(R.id.weather_wind_text)?.text =
+                                "${weather.windSpeed.roundToInt()} km/h"
+                            weatherView.findViewById<View>(R.id.weather_progress)?.visibility =
+                                View.GONE
+
+                            weatherView.findViewById<View>(R.id.weather_card)?.setOnClickListener {
+                                WeatherDialogHelper.showDetails(context, weather)
+                            }
+                        }
+
+                        is WeatherState.Loading -> {
+                            if (weatherView.visibility == View.VISIBLE) {
+                                weatherView.findViewById<View>(R.id.weather_progress)?.visibility =
+                                    View.VISIBLE
+                            }
+                        }
+
+                        is WeatherState.Error -> {
+                            weatherView.findViewById<View>(R.id.weather_progress)?.visibility =
+                                View.GONE
+                            weatherView.findViewById<View>(R.id.weather_card)?.setOnClickListener {
+                                weatherRepo.refreshWeather(force = true)
+                            }
+                        }
+
+                        is WeatherState.Idle -> {
+                            weatherRepo.refreshWeather(false)
+                        }
+
+                        else -> Unit
+                    }
+                }
+            }
         }
     }
 

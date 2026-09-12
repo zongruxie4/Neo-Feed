@@ -63,19 +63,19 @@ import androidx.core.content.res.ResourcesCompat
 import coil.annotation.ExperimentalCoilApi
 import com.saulhdev.feeder.BuildConfig
 import com.saulhdev.feeder.R
-import com.saulhdev.feeder.utils.extensions.launchView
-import com.saulhdev.feeder.ui.navigation.PageItem
 import com.saulhdev.feeder.ui.components.ContributorRow
 import com.saulhdev.feeder.ui.components.LinkItem
-import com.saulhdev.feeder.ui.components.PagePreference
-import com.saulhdev.feeder.ui.components.PreferenceGroupHeading
 import com.saulhdev.feeder.ui.components.ViewWithActionBar
+import com.saulhdev.feeder.ui.components.preferences.PagePreference
+import com.saulhdev.feeder.ui.components.preferences.PreferenceGroupHeading
 import com.saulhdev.feeder.ui.icons.Phosphor
 import com.saulhdev.feeder.ui.icons.phosphor.BracketsSquare
 import com.saulhdev.feeder.ui.icons.phosphor.GithubLogo
 import com.saulhdev.feeder.ui.icons.phosphor.Megaphone
 import com.saulhdev.feeder.ui.icons.phosphor.TelegramLogo
+import com.saulhdev.feeder.ui.navigation.PageItem
 import com.saulhdev.feeder.ui.theme.kingthingsPrintingkit
+import com.saulhdev.feeder.utils.extensions.launchView
 import com.saulhdev.feeder.utils.urlDecode
 import java.io.InputStream
 

@@ -13,12 +13,16 @@ import com.saulhdev.feeder.data.content.FeedPreferences.Companion.prefsModule
 import com.saulhdev.feeder.data.db.NeoFeedDb
 import com.saulhdev.feeder.data.repository.ArticleRepository
 import com.saulhdev.feeder.data.repository.SourcesRepository
+import com.saulhdev.feeder.data.weather.OWMWeatherProvider
+import com.saulhdev.feeder.data.weather.OpenMeteoProvider
+import com.saulhdev.feeder.data.weather.WeatherRepository
 import com.saulhdev.feeder.manager.mastodon.MastodonApi
 import com.saulhdev.feeder.manager.mastodon.MastodonAuth
 import com.saulhdev.feeder.manager.mastodon.MastodonStorage
 import com.saulhdev.feeder.manager.service.OverlayBridge
 import com.saulhdev.feeder.manager.sync.SyncRestClient
 import com.saulhdev.feeder.utils.ApplicationCoroutineScope
+import com.saulhdev.feeder.utils.LocationHelper
 import com.saulhdev.feeder.utils.extensions.ToastMaker
 import com.saulhdev.feeder.utils.extensions.restartApp
 import com.saulhdev.feeder.viewmodels.ArticleListViewModel
@@ -73,6 +77,10 @@ class NeoApp : MultiDexApplication(), KoinStartup {
         singleOf(::MastodonStorage)
         singleOf(::MastodonAuth)
         singleOf(::MastodonApi)
+        single { OpenMeteoProvider() }
+        single { OWMWeatherProvider() }
+        single { LocationHelper(this@NeoApp) }
+        singleOf(::WeatherRepository)
     }
 
     private val coreModule = module {

@@ -181,5 +181,37 @@
     <string name="blocked_words_hint">Add a word</string>
     <string name="blocked_words_add">Add</string>
     <string name="blocked_words_empty">No blocked words</string>
-    <string name="mastodon_no_token">No Mastodon token found for this account</string>
+    <string name="pref_cat_weather">Weather</string>
+    <string name="pref_show_weather">Weather source</string>
+    <string name="pref_show_weather_summary">Tap to choose the weather source</string>
+    <string name="pref_weather_unit">Temperature unit</string>
+    <string name="pref_weather_unit_celsius">Celsius (°C)</string>
+    <string name="pref_weather_unit_fahrenheit">Fahrenheit (°F)</string>
+    <string name="pref_weather_city">Custom city</string>
+    <string name="pref_weather_city_summary">Set city name or leave blank for automatic location</string>
+    <string name="weather_api_key">OWM API Key</string>
+    <string name="owm_get_your_own_key">Get an API key at api.openweathermap.org.</string>
+    <string name="weather_loading">Loading weather…</string>
+    <string name="weather_error">Could not load weather</string>
+    <string name="weather_tap_to_retry">Tap to retry</string>
+    <string name="weather_feels_like">Feels like %1$s</string>
+    <string name="weather_humidity">Humidity: %1$d%%</string>
+    <string name="weather_wind">Wind: %1$s km/h</string>
+    <string name="weather_precipitation">Precipitation: %1$s mm</string>
+    <string name="weather_max_min">H: %1$s  L: %2$s</string>
+    <string name="weather_enable_location">Grant location permission</string>
+    <string name="weather_forecast_hourly">Hourly forecast</string>
+    <string name="weather_details_title">Weather Details</string>
+    <string name="weather_code_clear">Clear sky</string>
+    <string name="weather_code_mainly_clear">Mainly clear</string>
+    <string name="weather_code_partly_cloudy">Partly cloudy</string>
+    <string name="weather_code_overcast">Overcast</string>
+    <string name="weather_code_fog">Fog</string>
+    <string name="weather_code_drizzle">Drizzle</string>
+    <string name="weather_code_rain">Rain</string>
+    <string name="weather_code_heavy_rain">Heavy rain</string>
+    <string name="weather_code_snow">Snow</string>
+    <string name="weather_code_thunderstorm">Thunderstorm</string>
+    <string name="weather_provider_owm" translatable="true">OpenWeatherMap</string>
+    <string name="weather_provider_open_meteo" translatable="true">Open Meteo</string>
 </resources>

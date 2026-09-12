@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.saulhdev.feeder.ui.components
+package com.saulhdev.feeder.ui.components.preferences
 
 import androidx.compose.runtime.Composable
 import com.saulhdev.feeder.data.content.BooleanPref
@@ -24,7 +24,8 @@ import com.saulhdev.feeder.data.content.FloatPref
 import com.saulhdev.feeder.data.content.StringPref
 import com.saulhdev.feeder.data.content.StringSelectionPref
 import com.saulhdev.feeder.data.content.StringSetPref
-import com.saulhdev.feeder.ui.components.SeekBarPreference
+import com.saulhdev.feeder.data.content.StringTextPref
+import com.saulhdev.feeder.data.content.TwoStatePref
 
 val PreferenceBuilder =
     @Composable { pref: Any, onDialogPref: (Any) -> Unit, index: Int, size: Int ->
@@ -40,9 +41,18 @@ val PreferenceBuilder =
 
             is FloatPref ->
                 SeekBarPreference(pref = pref, index = index, groupSize = size)
+            is TwoStatePref ->
+                TwoStatePreference(pref = pref, index = index, groupSize = size)
 
             is StringSelectionPref ->
                 StringSelectionPreference(
+                    pref = pref,
+                    index = index,
+                    groupSize = size
+                ) { onDialogPref(pref) }
+
+            is StringTextPref ->
+                StringTextPreference(
                     pref = pref,
                     index = index,
                     groupSize = size

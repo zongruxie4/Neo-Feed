@@ -73,8 +73,7 @@ import androidx.compose.ui.unit.dp
 import com.saulhdev.feeder.NeoApp
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.data.content.FeedPreferences
-import com.saulhdev.feeder.utils.extensions.koinNeoViewModel
-import com.saulhdev.feeder.utils.extensions.launchView
+import com.saulhdev.feeder.data.weather.WeatherRepository
 import com.saulhdev.feeder.manager.sync.SyncRestClient
 import com.saulhdev.feeder.ui.components.ArticleItem
 import com.saulhdev.feeder.ui.components.BookmarkItem
@@ -87,6 +86,8 @@ import com.saulhdev.feeder.ui.icons.phosphor.CaretUp
 import com.saulhdev.feeder.ui.icons.phosphor.Filter
 import com.saulhdev.feeder.ui.icons.phosphor.Filtered
 import com.saulhdev.feeder.ui.icons.phosphor.Power
+import com.saulhdev.feeder.utils.extensions.koinNeoViewModel
+import com.saulhdev.feeder.utils.extensions.launchView
 import com.saulhdev.feeder.utils.openLinkInCustomTab
 import com.saulhdev.feeder.viewmodels.ArticleListViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -102,6 +103,7 @@ import org.koin.compose.koinInject
 fun ArticleListPage(
     prefs: FeedPreferences = koinInject(),
     syncClient: SyncRestClient = koinInject(),
+    weatherRepo: WeatherRepository = koinInject(),
     viewModel: ArticleListViewModel = koinNeoViewModel(),
 ) {
     val context = LocalContext.current
@@ -301,9 +303,20 @@ fun ArticleListPage(
 
                                 else          -> PullToRefreshLazyColumn(
                                     isRefreshing = state.isSyncing,
-                                    onRefresh = { syncClient.syncAllFeeds() },
+                                    onRefresh = {
+                                        syncClient.syncAllFeeds()
+                                        weatherRepo.refreshWeather(force = true)
+                                    },
                                     listState = listState,
                                     content = {
+                                        item(key = "header_weather_widget") {
+                                            com.saulhdev.feeder.ui.weather.WeatherWidget(
+                                                modifier = Modifier.padding(
+                                                    horizontal = 4.dp,
+                                                    vertical = 4.dp
+                                                )
+                                            )
+                                        }
                                         items(state.articles, key = { it.id }) { item ->
                                             ArticleItem(
                                                 article = item,

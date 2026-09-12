@@ -18,6 +18,9 @@
 package com.saulhdev.feeder.data.content
 
 import androidx.annotation.StringRes
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
@@ -38,8 +41,51 @@ class StringPref(
     val key: Preferences.Key<String>,
     val dataStore: DataStore<Preferences>,
     val defaultValue: String = "",
-    val onClick: (() -> Unit)? = null,
+    var onClick: (() -> Unit)? = null,
     val route: NavRoute? = null,
+) : PrefDelegate<String>(titleId, summaryId, dataStore, key, defaultValue)
+
+
+class TwoStatePref(
+    @StringRes titleId: Int,
+    @StringRes summaryId: Int = -1,
+    private val dataStore: DataStore<Preferences>,
+    val icon: ImageVector,
+    key1: Preferences.Key<Boolean>,
+    val key2: Preferences.Key<String>,
+    val defaultValue1: Boolean = false,
+    val defaultValue2: String = "",
+    val entries: Map<String, String>
+) : PrefDelegate<Boolean>(titleId, summaryId, dataStore, key1, defaultValue1) {
+
+    fun getValue2(): String {
+        return runBlocking(Dispatchers.IO) {
+            get2().firstOrNull() ?: defaultValue2
+        }
+    }
+
+    suspend fun setValue2(value: String) {
+        dataStore.edit { it[key2] = value }
+    }
+
+    fun get2(): Flow<String> {
+        return dataStore.data.map { it[key2] ?: defaultValue2 }
+    }
+
+    @Composable
+    fun getState2(): State<String> {
+        return get2().collectAsState(initial = defaultValue2)
+    }
+}
+
+open class StringTextPref(
+    @StringRes titleId: Int,
+    @StringRes summaryId: Int = -1,
+    dataStore: DataStore<Preferences>,
+    key: Preferences.Key<String>,
+    val defaultValue: String = "",
+    val icon: ImageVector,
+    onChange: (String) -> Unit = {}
 ) : PrefDelegate<String>(titleId, summaryId, dataStore, key, defaultValue)
 
 class StringSelectionPref(
@@ -114,6 +160,11 @@ abstract class PrefDelegate<T>(
         return runBlocking(Dispatchers.IO) {
             set(value)
         }
+    }
+
+    @Composable
+    fun getState(): State<T> {
+        return get().collectAsState(initial = defaultValue)
     }
 
     fun get(): Flow<T> {

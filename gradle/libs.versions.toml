@@ -21,6 +21,7 @@ moshi = "1.15.2"
 multidex = "2.0.1"
 navigation = "2.10.0"
 okhttp = "5.5.0"
+owm = "2.1.0"
 readability4j = "1.0.8"
 retrofit = "3.0.0"
 rome = "2.1.0"
@@ -103,6 +104,8 @@ tagsoup = { group = "org.ccil.cowan.tagsoup", name = "tagsoup", version.ref = "t
 threetenabp = { group = "com.jakewharton.threetenabp", name = "threetenabp", version.ref = "threetenabp" }
 
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+
+owm = { module = "com.github.KwabenBerko:OpenWeatherMap-Android-Library", version.ref = "owm" }
 
 okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
 retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }

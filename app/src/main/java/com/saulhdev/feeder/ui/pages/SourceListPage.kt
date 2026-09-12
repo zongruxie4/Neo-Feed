@@ -54,9 +54,9 @@ import com.saulhdev.feeder.manager.models.exportOpml
 import com.saulhdev.feeder.manager.models.importBookmarks
 import com.saulhdev.feeder.manager.models.importOpml
 import com.saulhdev.feeder.ui.components.OverflowMenu
-import com.saulhdev.feeder.ui.components.PreferenceGroupHeading
 import com.saulhdev.feeder.ui.components.SourceItem
 import com.saulhdev.feeder.ui.components.ViewWithActionBar
+import com.saulhdev.feeder.ui.components.preferences.PreferenceGroupHeading
 import com.saulhdev.feeder.ui.icons.Phosphor
 import com.saulhdev.feeder.ui.icons.phosphor.BookBookmark
 import com.saulhdev.feeder.ui.icons.phosphor.Bookmarks

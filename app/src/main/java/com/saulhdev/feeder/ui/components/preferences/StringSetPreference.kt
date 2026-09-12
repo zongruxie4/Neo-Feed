@@ -1,6 +1,6 @@
 /*
- * This file is part of Neo Feed
- * Copyright (c) 2022   Neo Feed Team
+ * This file is part of Neo Feeder
+ * Copyright (c) 2022   Neo Feeder Team
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -16,61 +16,41 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.saulhdev.feeder.ui.components
+package com.saulhdev.feeder.ui.components.preferences
 
-import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Switch
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
-import com.saulhdev.feeder.data.content.BooleanPref
+import com.saulhdev.feeder.data.content.StringSetPref
+import com.saulhdev.feeder.ui.navigation.LocalNavController
 
 @Composable
-fun SwitchPreference(
+fun StringSetPreference(
     modifier: Modifier = Modifier,
-    pref: BooleanPref,
+    pref: StringSetPref,
     index: Int = 1,
     groupSize: Int = 1,
     isEnabled: Boolean = true,
-    onCheckedChange: ((Boolean) -> Unit) = {},
 ) {
-    val (checked, check) = remember(pref) { mutableStateOf(pref.getValue()) }
+    val navController = LocalNavController.current
     BasePreference(
         modifier = modifier,
         titleId = pref.titleId,
         summaryId = pref.summaryId,
         index = index,
         groupSize = groupSize,
+        isEnabled = isEnabled,
         startWidget = {
             Icon(
                 imageVector = pref.icon,
-                contentDescription = stringResource(id = pref.titleId),
+                contentDescription = null,
                 tint = MaterialTheme.colorScheme.onSurface,
             )
         },
-        isEnabled = isEnabled,
         onClick = {
-            onCheckedChange(!checked)
-            pref.setValue(!checked)
-            check(!checked)
-        },
-        endWidget = {
-            Switch(
-                modifier = Modifier
-                    .height(24.dp),
-                checked = checked,
-                onCheckedChange = {
-                    onCheckedChange(it)
-                    pref.setValue(it)
-                    check(it)
-                },
-                enabled = isEnabled,
-            )
+            pref.route?.let { navController.navigate(it) }
+                ?: pref.onClick?.invoke()
         }
     )
 }

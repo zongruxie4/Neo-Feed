@@ -6,6 +6,9 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.Resources
 import android.view.View
+import com.saulhdev.feeder.R
+import com.saulhdev.feeder.data.weather.OWMWeatherProvider
+import com.saulhdev.feeder.data.weather.OpenMeteoProvider
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.system.exitProcess
@@ -90,6 +93,11 @@ class Utilities {
             }
             return scale
         }
+        fun weatherProviders(context: Context) = mapOf(
+            OWMWeatherProvider::class.java.name to context.resources.getString(R.string.weather_provider_owm),
+            OpenMeteoProvider::class.java.name to context.resources.getString(R.string.weather_provider_open_meteo),
+
+            )
 
 
         fun offsetPoints(points: FloatArray, offsetX: Float, offsetY: Float) {

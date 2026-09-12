@@ -1,4 +1,4 @@
-package com.saulhdev.feeder.ui.components
+package com.saulhdev.feeder.ui.components.preferences
 
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -9,6 +9,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.saulhdev.feeder.data.content.StringSelectionPref
+import com.saulhdev.feeder.data.content.StringTextPref
 
 @Composable
 fun StringSelectionPreference(
@@ -35,6 +36,35 @@ fun StringSelectionPreference(
             )
         },
         isEnabled = isEnabled,
+        onClick = onClick
+    )
+}
+
+
+@Composable
+fun StringTextPreference(
+    modifier: Modifier = Modifier,
+    pref: StringTextPref,
+    index: Int = 1,
+    groupSize: Int = 1,
+    isEnabled: Boolean = true,
+    onClick: (() -> Unit) = {},
+) {
+    BasePreference(
+        modifier = modifier,
+        titleId = pref.titleId,
+        summaryId = pref.summaryId,
+        summary = pref.getValue(),
+        index = index,
+        groupSize = groupSize,
+        isEnabled = isEnabled,
+        startWidget = {
+            Icon(
+                imageVector = pref.icon,
+                contentDescription = stringResource(id = pref.titleId),
+                tint = MaterialTheme.colorScheme.onSurface,
+            )
+        },
         onClick = onClick
     )
 }

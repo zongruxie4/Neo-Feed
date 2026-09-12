@@ -24,11 +24,13 @@ import android.provider.Settings
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.runtime.Composable
@@ -43,10 +45,13 @@ import androidx.compose.ui.unit.dp
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.data.content.FeedPreferences
 import com.saulhdev.feeder.data.content.StringSelectionPref
-import com.saulhdev.feeder.ui.components.PreferenceGroup
+import com.saulhdev.feeder.data.content.StringTextPref
+import com.saulhdev.feeder.data.weather.OWMWeatherProvider
 import com.saulhdev.feeder.ui.components.ViewWithActionBar
 import com.saulhdev.feeder.ui.components.dialog.BaseDialog
 import com.saulhdev.feeder.ui.components.dialog.StringSelectionPrefDialogUI
+import com.saulhdev.feeder.ui.components.dialog.StringTextPrefDialogUI
+import com.saulhdev.feeder.ui.components.preferences.PreferenceGroup
 import org.koin.compose.koinInject
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
@@ -73,6 +78,17 @@ fun PreferencesPage(
         prefs.dynamicColor,
         prefs.overlayTheme,
         prefs.overlayTransparency,
+    )
+    val isWeatherEnabled by prefs.weatherProvider.getState()
+    val selectedWeatherProvider by prefs.weatherProvider.getState2()
+
+    val weatherPrefs = listOfNotNull(
+        prefs.weatherProvider,
+        if (isWeatherEnabled && selectedWeatherProvider == OWMWeatherProvider::class.java.name) {
+            prefs.owmWeatherApiKey
+        } else null,
+        prefs.weatherUnit,
+        prefs.weatherCity,
     )
     val debugPrefs = listOf(
         prefs.about,
@@ -141,6 +157,13 @@ fun PreferencesPage(
                     }
                 }
             }
+            item(key = R.string.pref_cat_weather) {
+                PreferenceGroup(
+                    stringResource(id = R.string.pref_cat_weather),
+                    prefs = weatherPrefs,
+                    onPrefDialog = onPrefDialog
+                )
+            }
             item(key = R.string.title_other) {
                 PreferenceGroup(
                     stringResource(id = R.string.title_other),
@@ -150,16 +173,76 @@ fun PreferencesPage(
                 Spacer(modifier = Modifier.height(8.dp))
             }
         }
+    }
 
-        if (openDialog.value) {
-            BaseDialog(openDialogCustom = openDialog) {
-                when (dialogPref) {
-                    is StringSelectionPref -> StringSelectionPrefDialogUI(
-                        pref = dialogPref as StringSelectionPref,
-                        openDialogCustom = openDialog
-                    )
-                }
+    var showCityDialog by remember { mutableStateOf(false) }
+    prefs.weatherCity.onClick = {
+        showCityDialog = true
+    }
+
+    if (showCityDialog) {
+        CityInputDialog(pref = prefs.weatherCity, onDismiss = { showCityDialog = false })
+    }
+
+    if (openDialog.value) {
+        BaseDialog(openDialogCustom = openDialog) {
+            when (dialogPref) {
+                is StringSelectionPref -> StringSelectionPrefDialogUI(
+                    pref = dialogPref as StringSelectionPref,
+                    openDialogCustom = openDialog
+                )
+
+                is StringTextPref -> StringTextPrefDialogUI(
+                    pref = dialogPref as StringTextPref,
+                    openDialogCustom = openDialog
+                )
             }
         }
     }
+}
+
+@Composable
+private fun CityInputDialog(
+    pref: com.saulhdev.feeder.data.content.StringPref,
+    onDismiss: () -> Unit
+) {
+    var textValue by remember { mutableStateOf(pref.getValue()) }
+    androidx.compose.material3.AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(text = stringResource(id = pref.titleId))
+        },
+        text = {
+            Column {
+                Text(
+                    text = stringResource(id = R.string.pref_weather_city_summary),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+                androidx.compose.material3.OutlinedTextField(
+                    value = textValue,
+                    onValueChange = { textValue = it },
+                    label = { Text(stringResource(id = R.string.pref_weather_city)) },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        },
+        confirmButton = {
+            androidx.compose.material3.TextButton(
+                onClick = {
+                    pref.setValue(textValue.trim())
+                    onDismiss()
+                }
+            ) {
+                Text(stringResource(id = R.string.action_save))
+            }
+        },
+        dismissButton = {
+            androidx.compose.material3.TextButton(onClick = onDismiss) {
+                Text(stringResource(id = android.R.string.cancel))
+            }
+        }
+    )
 }

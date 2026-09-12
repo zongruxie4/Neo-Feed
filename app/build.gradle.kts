@@ -173,10 +173,9 @@ dependencies {
     implementation(libs.koin.android)
     implementation(libs.koin.compose)
     implementation(libs.koin.startup)
-    implementation(libs.koin.annotations)
-    ksp(libs.koin.compiler)
 
     //Libs
+    implementation(libs.owm)
     implementation(libs.threetenabp)
     implementation(libs.rome) { exclude(module = "rome-utils") }
     implementation(libs.rome.modules)

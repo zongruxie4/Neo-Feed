@@ -1,4 +1,4 @@
-package com.saulhdev.feeder.ui.components
+package com.saulhdev.feeder.ui.components.preferences
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.requiredHeight

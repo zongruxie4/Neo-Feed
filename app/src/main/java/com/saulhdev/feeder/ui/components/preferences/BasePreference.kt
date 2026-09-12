@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.saulhdev.feeder.ui.components
+package com.saulhdev.feeder.ui.components.preferences
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
@@ -60,7 +60,9 @@ fun BasePreference(
                 clickable(enabled = isEnabled, onClick = onClick!!)
             },
         colors = ListItemDefaults.colors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+            containerColor = if (isEnabled) {
+                MaterialTheme.colorScheme.primary.copy(alpha = 0.12f)
+            } else MaterialTheme.colorScheme.primary.copy(alpha = 0.08f)
         ),
         leadingContent = startWidget,
         headlineContent = {

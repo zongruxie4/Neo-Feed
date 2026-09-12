@@ -29,22 +29,27 @@ import androidx.datastore.preferences.core.stringSetPreferencesKey
 import androidx.datastore.preferences.preferencesDataStoreFile
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.data.entity.SORT_CHRONOLOGICAL
+import com.saulhdev.feeder.data.weather.OWMWeatherProvider
 import com.saulhdev.feeder.ui.icons.Phosphor
+import com.saulhdev.feeder.ui.icons.phosphor.Asterisk
 import com.saulhdev.feeder.ui.icons.phosphor.BookBookmark
+import com.saulhdev.feeder.ui.icons.phosphor.BracketsSquare
 import com.saulhdev.feeder.ui.icons.phosphor.Browser
 import com.saulhdev.feeder.ui.icons.phosphor.Bug
 import com.saulhdev.feeder.ui.icons.phosphor.CaretUp
 import com.saulhdev.feeder.ui.icons.phosphor.Clock
+import com.saulhdev.feeder.ui.icons.phosphor.CloudArrowDown
 import com.saulhdev.feeder.ui.icons.phosphor.FunnelSimple
 import com.saulhdev.feeder.ui.icons.phosphor.Hash
 import com.saulhdev.feeder.ui.icons.phosphor.Info
+import com.saulhdev.feeder.ui.icons.phosphor.Nut
 import com.saulhdev.feeder.ui.icons.phosphor.PaintRoller
 import com.saulhdev.feeder.ui.icons.phosphor.SubtractSquare
 import com.saulhdev.feeder.ui.icons.phosphor.Swatches
 import com.saulhdev.feeder.ui.icons.phosphor.WifiHigh
 import com.saulhdev.feeder.ui.navigation.NavRoute
+import com.saulhdev.feeder.utils.Utilities
 import com.saulhdev.feeder.utils.getItemsPerFeed
-import com.saulhdev.feeder.utils.getMastodonItemsPerFeed
 import com.saulhdev.feeder.utils.getSortingOptions
 import com.saulhdev.feeder.utils.getSyncFrequency
 import com.saulhdev.feeder.utils.getSyncRange
@@ -157,15 +162,6 @@ class FeedPreferences private constructor(val context: Context) : KoinComponent 
         entries = getItemsPerFeed()
     )
 
-    var mastodonItemsPerFeed = StringSelectionPref(
-        titleId = R.string.pref_mastodon_items_per_feed,
-        icon = Phosphor.Hash,
-        key = MASTODON_ITEMS_PER_FEED,
-        dataStore = dataStore,
-        defaultValue = "20",
-        entries = getMastodonItemsPerFeed()
-    )
-
     var blockedWords = StringSetPref(
         titleId = R.string.pref_blocked_words,
         summaryId = R.string.pref_blocked_words_summary,
@@ -176,15 +172,48 @@ class FeedPreferences private constructor(val context: Context) : KoinComponent 
         route = NavRoute.BlockedWords,
     )
 
-    /* Others */
-    var enabledPlugins = StringSetPref(
-        titleId = R.string.title_plugin_list,
-        icon = Phosphor.Hash,
-        key = PLUGINS,
+    /* Weather */
+    var weatherProvider = TwoStatePref(
         dataStore = dataStore,
-        defaultValue = setOf()
+        key1 = WEATHER_ENABLED,
+        key2 = WEATHER_PROVIDER,
+        icon = Phosphor.CloudArrowDown,
+        titleId = R.string.pref_show_weather,
+        summaryId = R.string.pref_show_weather_summary,
+        defaultValue1 = true,
+        defaultValue2 = OWMWeatherProvider::class.java.name,
+        entries = Utilities.weatherProviders(context)
     )
 
+    var owmWeatherApiKey = StringTextPref(
+        dataStore = dataStore,
+        key = WEATHER_OWM_API_KEY,
+        icon = Phosphor.Nut,
+        titleId = R.string.weather_api_key,
+        defaultValue = context.getString(R.string.default_owm_key),
+    )
+    var weatherUnit = StringSelectionPref(
+        titleId = R.string.pref_weather_unit,
+        icon = Phosphor.Asterisk,
+        key = WEATHER_UNIT,
+        dataStore = dataStore,
+        defaultValue = "celsius",
+        entries = mapOf(
+            "celsius" to context.getString(R.string.pref_weather_unit_celsius),
+            "fahrenheit" to context.getString(R.string.pref_weather_unit_fahrenheit)
+        )
+    )
+
+    var weatherCity = StringPref(
+        titleId = R.string.pref_weather_city,
+        summaryId = R.string.pref_weather_city_summary,
+        icon = Phosphor.BracketsSquare,
+        key = WEATHER_CITY,
+        dataStore = dataStore,
+        defaultValue = ""
+    )
+
+    /* Others */
     var about = StringPref(
         titleId = R.string.title_about,
         icon = Phosphor.Info,
@@ -266,11 +295,14 @@ class FeedPreferences private constructor(val context: Context) : KoinComponent 
         val SYNC_FREQUENCY = stringPreferencesKey("pref_sync_frequency")
         val SYNC_RANGE = stringPreferencesKey("pref_sync_range")
         val ITEMS_PER_FEED = stringPreferencesKey("pref_items_per_feed")
-        val MASTODON_ITEMS_PER_FEED = stringPreferencesKey("pref_mastodon_items_per_feed")
         val BLOCKED_WORDS = stringSetPreferencesKey("pref_blocked_words")
-        val PLUGINS = stringSetPreferencesKey("pref_enabled_plugins")
         val ABOUT = stringPreferencesKey("pref_about")
         val DEBUG = booleanPreferencesKey("pref_debugging")
+        val WEATHER_ENABLED = booleanPreferencesKey("pref_weather_enabled")
+        val WEATHER_PROVIDER = stringPreferencesKey("pref_weather_provider")
+        val WEATHER_OWM_API_KEY = stringPreferencesKey("pref_weather_owm_api")
+        val WEATHER_UNIT = stringPreferencesKey("pref_weather_unit")
+        val WEATHER_CITY = stringPreferencesKey("pref_weather_city")
 
         // Filter & Sort
         val FILTER_SOURCES = stringSetPreferencesKey("filter_sources")
