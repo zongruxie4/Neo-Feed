@@ -18,9 +18,13 @@
 
 package com.saulhdev.feeder.ui.weather
 
+import android.Manifest
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -29,6 +33,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -68,6 +73,16 @@ fun WeatherWidget(
     val showWeather by prefs.weatherProvider.get().collectAsState(initial = false)
     if (!showWeather) return
 
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        val granted = permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true ||
+                permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true
+        if (granted) {
+            weatherRepo.refreshWeather(force = true)
+        }
+    }
+
     LaunchedEffect(Unit) {
         weatherRepo.refreshWeather(false)
     }
@@ -101,12 +116,24 @@ fun WeatherWidget(
             )
         }
 
+        is WeatherState.LocationPermissionRequired -> {
+            WeatherPermissionCard(
+                modifier = modifier,
+                onGrantClick = {
+                    permissionLauncher.launch(
+                        arrayOf(
+                            Manifest.permission.ACCESS_COARSE_LOCATION,
+                            Manifest.permission.ACCESS_FINE_LOCATION
+                        )
+                    )
+                }
+            )
+        }
+
         is WeatherState.Idle -> {
             // Trigger initial load if needed
             weatherRepo.refreshWeather(false)
         }
-
-        else -> Unit
     }
 }
 
@@ -297,3 +324,58 @@ private fun WeatherErrorCard(
         }
     }
 }
+
+@Composable
+private fun WeatherPermissionCard(
+    modifier: Modifier = Modifier,
+    onGrantClick: () -> Unit
+) {
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(20.dp))
+            .clickable(onClick = onGrantClick),
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
+        )
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(14.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Row(
+                modifier = Modifier.weight(1f),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_weather_location),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(20.dp)
+                )
+                Spacer(modifier = Modifier.width(10.dp))
+                Text(
+                    text = stringResource(id = R.string.weather_location_permission_required),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            }
+            Spacer(modifier = Modifier.width(8.dp))
+            Button(
+                onClick = onGrantClick,
+                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp),
+                modifier = Modifier.height(36.dp)
+            ) {
+                Text(
+                    text = stringResource(id = R.string.weather_enable_location),
+                    style = MaterialTheme.typography.labelMedium
+                )
+            }
+        }
+    }
+}
+

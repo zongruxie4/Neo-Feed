@@ -553,11 +553,30 @@ class OverlayView(val context: Context) :
                             }
                         }
 
+                        is WeatherState.LocationPermissionRequired -> {
+                            weatherView.visibility = View.VISIBLE
+                            weatherView.findViewById<TextView>(R.id.weather_city_text)
+                                ?.setText(R.string.weather_location_permission_required)
+                            weatherView.findViewById<TextView>(R.id.weather_temp_text)?.text = "--"
+                            weatherView.findViewById<TextView>(R.id.weather_desc_text)
+                                ?.setText(R.string.weather_enable_location)
+                            weatherView.findViewById<TextView>(R.id.weather_range_text)?.text = ""
+                            weatherView.findViewById<TextView>(R.id.weather_humidity_text)?.text =
+                                "--"
+                            weatherView.findViewById<TextView>(R.id.weather_wind_text)?.text = "--"
+                            weatherView.findViewById<View>(R.id.weather_progress)?.visibility =
+                                View.GONE
+                            weatherView.findViewById<View>(R.id.weather_card)?.setOnClickListener {
+                                val intent = Intent(context, MainActivity::class.java).apply {
+                                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                                }
+                                context.startActivity(intent)
+                            }
+                        }
+
                         is WeatherState.Idle -> {
                             weatherRepo.refreshWeather(false)
                         }
-
-                        else -> Unit
                     }
                 }
             }

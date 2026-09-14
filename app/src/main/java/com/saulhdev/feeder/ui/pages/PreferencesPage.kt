@@ -18,9 +18,12 @@
 
 package com.saulhdev.feeder.ui.pages
 
+import android.Manifest
 import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -31,7 +34,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -44,23 +49,40 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.data.content.FeedPreferences
+import com.saulhdev.feeder.data.content.StringPref
 import com.saulhdev.feeder.data.content.StringSelectionPref
 import com.saulhdev.feeder.data.content.StringTextPref
 import com.saulhdev.feeder.data.weather.OWMWeatherProvider
+import com.saulhdev.feeder.data.weather.WeatherRepository
 import com.saulhdev.feeder.ui.components.ViewWithActionBar
 import com.saulhdev.feeder.ui.components.dialog.BaseDialog
 import com.saulhdev.feeder.ui.components.dialog.StringSelectionPrefDialogUI
 import com.saulhdev.feeder.ui.components.dialog.StringTextPrefDialogUI
 import com.saulhdev.feeder.ui.components.preferences.PreferenceGroup
+import com.saulhdev.feeder.utils.LocationHelper
 import org.koin.compose.koinInject
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
 fun PreferencesPage(
     prefs: FeedPreferences = koinInject(),
+    locationHelper: LocationHelper = koinInject(),
+    weatherRepo: WeatherRepository = koinInject()
 ) {
     val context = LocalContext.current
     val title = stringResource(id = R.string.title_settings)
+
+    var hasLocationPermission by remember { mutableStateOf(locationHelper.hasLocationPermission()) }
+    val locationPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        val granted = permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true ||
+                permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true
+        hasLocationPermission = granted
+        if (granted) {
+            weatherRepo.refreshWeather(force = true)
+        }
+    }
 
     val servicePrefs = listOf(
         prefs.itemsPerFeed,
@@ -163,6 +185,30 @@ fun PreferencesPage(
                     prefs = weatherPrefs,
                     onPrefDialog = onPrefDialog
                 )
+
+                if (isWeatherEnabled && prefs.weatherCity.getValue()
+                        .isBlank() && !hasLocationPermission
+                ) {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Card(modifier = Modifier.padding(horizontal = 8.dp)) {
+                        Column(modifier = Modifier.padding(16.dp)) {
+                            Text(text = stringResource(R.string.weather_location_permission_required))
+                            Spacer(modifier = Modifier.height(12.dp))
+                            Button(
+                                onClick = {
+                                    locationPermissionLauncher.launch(
+                                        arrayOf(
+                                            Manifest.permission.ACCESS_COARSE_LOCATION,
+                                            Manifest.permission.ACCESS_FINE_LOCATION
+                                        )
+                                    )
+                                }
+                            ) {
+                                Text(text = stringResource(R.string.weather_enable_location))
+                            }
+                        }
+                    }
+                }
             }
             item(key = R.string.title_other) {
                 PreferenceGroup(
@@ -181,7 +227,18 @@ fun PreferencesPage(
     }
 
     if (showCityDialog) {
-        CityInputDialog(pref = prefs.weatherCity, onDismiss = { showCityDialog = false })
+        CityInputDialog(
+            pref = prefs.weatherCity,
+            onRequestLocationPermission = {
+                locationPermissionLauncher.launch(
+                    arrayOf(
+                        Manifest.permission.ACCESS_COARSE_LOCATION,
+                        Manifest.permission.ACCESS_FINE_LOCATION
+                    )
+                )
+            },
+            onDismiss = { showCityDialog = false }
+        )
     }
 
     if (openDialog.value) {
@@ -203,7 +260,8 @@ fun PreferencesPage(
 
 @Composable
 private fun CityInputDialog(
-    pref: com.saulhdev.feeder.data.content.StringPref,
+    pref: StringPref,
+    onRequestLocationPermission: () -> Unit,
     onDismiss: () -> Unit
 ) {
     var textValue by remember { mutableStateOf(pref.getValue()) }
@@ -220,7 +278,7 @@ private fun CityInputDialog(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Spacer(modifier = Modifier.height(12.dp))
-                androidx.compose.material3.OutlinedTextField(
+                OutlinedTextField(
                     value = textValue,
                     onValueChange = { textValue = it },
                     label = { Text(stringResource(id = R.string.pref_weather_city)) },
@@ -230,9 +288,13 @@ private fun CityInputDialog(
             }
         },
         confirmButton = {
-            androidx.compose.material3.TextButton(
+            TextButton(
                 onClick = {
-                    pref.setValue(textValue.trim())
+                    val trimmed = textValue.trim()
+                    pref.setValue(trimmed)
+                    if (trimmed.isEmpty()) {
+                        onRequestLocationPermission()
+                    }
                     onDismiss()
                 }
             ) {
@@ -240,7 +302,7 @@ private fun CityInputDialog(
             }
         },
         dismissButton = {
-            androidx.compose.material3.TextButton(onClick = onDismiss) {
+            TextButton(onClick = onDismiss) {
                 Text(stringResource(id = android.R.string.cancel))
             }
         }

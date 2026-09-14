@@ -20,6 +20,7 @@ package com.saulhdev.feeder.data.weather
 
 import android.content.Context
 import android.util.Log
+import com.saulhdev.feeder.R
 import com.saulhdev.feeder.data.content.FeedPreferences
 import com.saulhdev.feeder.utils.LocationHelper
 import kotlinx.coroutines.CoroutineScope
@@ -96,7 +97,18 @@ class WeatherRepository(
 
     private fun loadCachedWeather() {
         if (!prefs.weatherProvider.getValue()) return
+        val currentCity = prefs.weatherCity.getValue().trim()
+        if (currentCity.isEmpty() && !locationHelper.hasLocationPermission()) {
+            _weatherState.value = WeatherState.LocationPermissionRequired
+            return
+        }
+
         try {
+            val cachedCity = sharedPrefs.getString("cached_city", null)
+            if (cachedCity != currentCity) {
+                return
+            }
+
             lastFetchTime = sharedPrefs.getLong("last_fetch_time", 0L)
             val json = sharedPrefs.getString("cached_weather", null)
             if (!json.isNullOrEmpty()) {
@@ -108,12 +120,13 @@ class WeatherRepository(
         }
     }
 
-    private fun saveCachedWeather(weatherData: WeatherData, fetchTime: Long) {
+    private fun saveCachedWeather(weatherData: WeatherData, fetchTime: Long, cityKey: String) {
         try {
             val json = jsonSerializer.encodeToString(weatherData)
             sharedPrefs.edit()
                 .putLong("last_fetch_time", fetchTime)
                 .putString("cached_weather", json)
+                .putString("cached_city", cityKey)
                 .apply()
         } catch (e: Exception) {
             Log.e("WeatherRepository", "Failed to save cached weather", e)
@@ -131,6 +144,12 @@ class WeatherRepository(
     fun refreshWeather(force: Boolean = false) {
         if (!prefs.weatherProvider.getValue()) {
             _weatherState.value = WeatherState.Idle
+            return
+        }
+
+        val customCity = prefs.weatherCity.getValue().trim()
+        if (customCity.isEmpty() && !locationHelper.hasLocationPermission()) {
+            _weatherState.value = WeatherState.LocationPermissionRequired
             return
         }
 
@@ -152,11 +171,10 @@ class WeatherRepository(
 
                 try {
                     val activeProvider = getActiveProvider()
-                    val customCity = prefs.weatherCity.getValue().trim()
 
-                    var lat: Double
-                    var lon: Double
-                    var resolvedCityName: String
+                    val lat: Double
+                    val lon: Double
+                    val resolvedCityName: String
 
                     if (customCity.isNotEmpty()) {
                         val geo = activeProvider.getCoordinatesForCity(customCity)
@@ -165,21 +183,34 @@ class WeatherRepository(
                             lon = geo.longitude
                             resolvedCityName = geo.name
                         } else {
-                            lat = 13.6989
-                            lon = -89.1910
-                            resolvedCityName = customCity
+                            _weatherState.value = WeatherState.Error(
+                                prefs.context.getString(R.string.weather_error)
+                            )
+                            return@withLock
                         }
                     } else {
+                        if (!locationHelper.hasLocationPermission()) {
+                            _weatherState.value = WeatherState.LocationPermissionRequired
+                            return@withLock
+                        }
+
+                        if (!locationHelper.isLocationEnabled()) {
+                            _weatherState.value = WeatherState.Error(
+                                prefs.context.getString(R.string.weather_location_disabled)
+                            )
+                            return@withLock
+                        }
+
                         val resolvedLoc = locationHelper.getCurrentOrLastLocation()
                         if (resolvedLoc != null) {
                             lat = resolvedLoc.latitude
                             lon = resolvedLoc.longitude
                             resolvedCityName = resolvedLoc.cityName
                         } else {
-                            // Default location if location permission is not yet granted or available
-                            lat = 13.6989
-                            lon = -89.1910
-                            resolvedCityName = "San Salvador"
+                            _weatherState.value = WeatherState.Error(
+                                prefs.context.getString(R.string.weather_error)
+                            )
+                            return@withLock
                         }
                     }
 
@@ -191,7 +222,7 @@ class WeatherRepository(
 
                     lastFetchTime = System.currentTimeMillis()
                     _weatherState.value = WeatherState.Success(weatherData)
-                    saveCachedWeather(weatherData, lastFetchTime)
+                    saveCachedWeather(weatherData, lastFetchTime, customCity)
                 } catch (e: Exception) {
                     Log.e("WeatherRepository", "Failed to fetch weather", e)
                     _weatherState.value = WeatherState.Error(e.localizedMessage ?: "Unknown error")

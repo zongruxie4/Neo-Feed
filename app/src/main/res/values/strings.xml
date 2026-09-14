@@ -200,6 +200,8 @@
     <string name="weather_precipitation">Precipitation: %1$s mm</string>
     <string name="weather_max_min">H: %1$s  L: %2$s</string>
     <string name="weather_enable_location">Grant location permission</string>
+    <string name="weather_location_permission_required">Location permission is required for automatic local weather</string>
+    <string name="weather_location_disabled">Location service is disabled</string>
     <string name="weather_forecast_hourly">Hourly forecast</string>
     <string name="weather_details_title">Weather Details</string>
     <string name="weather_code_clear">Clear sky</string>

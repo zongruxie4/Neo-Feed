@@ -151,6 +151,8 @@
     <string name="weather_precipitation">Precipitación: %1$s mm</string>
     <string name="weather_max_min">Máx: %1$s  Mín: %2$s</string>
     <string name="weather_enable_location">Permitir ubicación</string>
+    <string name="weather_location_permission_required">Se requiere permiso de ubicación para el clima local automático</string>
+    <string name="weather_location_disabled">El servicio de ubicación está desactivado</string>
     <string name="weather_forecast_hourly">Pronóstico por horas</string>
     <string name="weather_details_title">Detalles del clima</string>
     <string name="weather_code_clear">Despejado</string>
