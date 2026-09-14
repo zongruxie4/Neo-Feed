@@ -237,7 +237,8 @@ class OverlayView(val context: Context) :
         val cardBg = themeHolder.currentTheme.get(CardTheme.Colors.CARD_BG.ordinal)
         val textPrimary = theme.get(CardTheme.Colors.TEXT_COLOR_PRIMARY.ordinal)
         val textSecondary = theme.get(CardTheme.Colors.TEXT_COLOR_SECONDARY.ordinal)
-        rootView.findViewById<MaterialCardView>(R.id.weather_card)?.let { card ->
+        val weatherCard = rootView.findViewById<MaterialCardView>(R.id.weather_card)
+        weatherCard?.let { card ->
             card.setCardBackgroundColor(cardBg)
             card.findViewById<TextView>(R.id.weather_city_text)?.setTextColor(textPrimary)
             card.findViewById<TextView>(R.id.weather_temp_text)?.setTextColor(textPrimary)
@@ -487,7 +488,7 @@ class OverlayView(val context: Context) :
     }
 
     private fun initWeather() {
-        val weatherView = rootView.findViewById<View>(R.id.overlay_weather_widget) ?: return
+        val weatherView = rootView.findViewById<View>(R.id.weather_card) ?: return
 
         syncScope.launch {
             prefs.weatherProvider.get().collect { enabled ->
@@ -533,8 +534,12 @@ class OverlayView(val context: Context) :
                             weatherView.findViewById<View>(R.id.weather_progress)?.visibility =
                                 View.GONE
 
-                            weatherView.findViewById<View>(R.id.weather_card)?.setOnClickListener {
-                                WeatherDialogHelper.showDetails(context, weather)
+                            weatherView.setOnClickListener {
+                                WeatherDialogHelper.showDetails(
+                                    this@OverlayView,
+                                    weather,
+                                    weatherView
+                                )
                             }
                         }
 
@@ -548,7 +553,7 @@ class OverlayView(val context: Context) :
                         is WeatherState.Error -> {
                             weatherView.findViewById<View>(R.id.weather_progress)?.visibility =
                                 View.GONE
-                            weatherView.findViewById<View>(R.id.weather_card)?.setOnClickListener {
+                            weatherView.setOnClickListener {
                                 weatherRepo.refreshWeather(force = true)
                             }
                         }
@@ -566,7 +571,7 @@ class OverlayView(val context: Context) :
                             weatherView.findViewById<TextView>(R.id.weather_wind_text)?.text = "--"
                             weatherView.findViewById<View>(R.id.weather_progress)?.visibility =
                                 View.GONE
-                            weatherView.findViewById<View>(R.id.weather_card)?.setOnClickListener {
+                            weatherView.setOnClickListener {
                                 val intent = Intent(context, MainActivity::class.java).apply {
                                     flags = Intent.FLAG_ACTIVITY_NEW_TASK
                                 }

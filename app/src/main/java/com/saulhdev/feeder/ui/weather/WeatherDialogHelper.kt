@@ -19,20 +19,25 @@
 package com.saulhdev.feeder.ui.weather
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
+import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.view.ContextThemeWrapper
+import com.google.android.libraries.gsa.d.a.DialogListeners
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.data.weather.WeatherCode
 import com.saulhdev.feeder.data.weather.WeatherData
+import com.saulhdev.feeder.manager.service.OverlayView
 import kotlin.math.roundToInt
 
 object WeatherDialogHelper {
 
-    fun showDetails(context: Context, weather: WeatherData) {
+    fun showDetails(context: Context, weather: WeatherData, anchorView: View? = null) {
         val themedContext = ContextThemeWrapper(context, R.style.AppTheme)
         val view = LayoutInflater.from(themedContext).inflate(R.layout.dialog_weather_details, null)
 
@@ -70,9 +75,34 @@ object WeatherDialogHelper {
             hourlyContainer.addView(itemLayout)
         }
 
-        MaterialAlertDialogBuilder(themedContext)
-            .setView(view)
-            .setPositiveButton(android.R.string.ok, null)
-            .show()
+        try {
+            val dialog = MaterialAlertDialogBuilder(themedContext)
+                .setView(view)
+                .setPositiveButton(android.R.string.ok, null)
+                .create()
+
+            val overlay = context as? OverlayView
+            val token = anchorView?.windowToken
+                ?: overlay?.window?.attributes?.token
+                ?: overlay?.windowView?.windowToken
+
+            dialog.window?.let { window ->
+                if (token != null) {
+                    val lp = window.attributes
+                    lp.token = token
+                    lp.type = WindowManager.LayoutParams.TYPE_APPLICATION_PANEL
+                    window.attributes = lp
+                }
+            }
+
+            if (context is DialogListeners) {
+                dialog.setOnShowListener(context)
+                dialog.setOnDismissListener(context)
+            }
+
+            dialog.show()
+        } catch (e: Exception) {
+            Log.e("WeatherDialogHelper", "Error showing weather details dialog", e)
+        }
     }
 }

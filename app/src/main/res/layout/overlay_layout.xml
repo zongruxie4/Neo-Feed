@@ -46,7 +46,7 @@
                 <include layout="@layout/overlay_header" />
 
                 <include
-                    android:id="@+id/overlay_weather_widget"
+                    android:id="@+id/weather_card"
                     layout="@layout/widget_weather_header" />
             </LinearLayout>
         </com.google.android.material.appbar.CollapsingToolbarLayout>
