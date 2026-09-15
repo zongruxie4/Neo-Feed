@@ -133,6 +133,9 @@ class WeatherRepository(
         }
     }
 
+    private var lastFetchAttemptTime = 0L
+    private val minFetchIntervalMillis = 30 * 1000L // 30 seconds retry cooldown
+
     private data class WeatherConfig(
         val enabled: Boolean,
         val provider: String,
@@ -154,16 +157,32 @@ class WeatherRepository(
         }
 
         val now = System.currentTimeMillis()
-        if (!force && _weatherState.value is WeatherState.Success && (now - lastFetchTime < cacheDurationMillis)) {
+        if (_weatherState.value is WeatherState.Loading) {
             return
+        }
+
+        if (!force) {
+            if (_weatherState.value is WeatherState.Success && (now - lastFetchTime < cacheDurationMillis)) {
+                return
+            }
+            if (now - lastFetchAttemptTime < minFetchIntervalMillis) {
+                return
+            }
         }
 
         scope.launch {
             mutex.withLock {
                 val currentNow = System.currentTimeMillis()
-                if (!force && _weatherState.value is WeatherState.Success && (currentNow - lastFetchTime < cacheDurationMillis)) {
-                    return@launch
+                if (!force) {
+                    if (_weatherState.value is WeatherState.Success && (currentNow - lastFetchTime < cacheDurationMillis)) {
+                        return@launch
+                    }
+                    if (currentNow - lastFetchAttemptTime < minFetchIntervalMillis) {
+                        return@launch
+                    }
                 }
+
+                lastFetchAttemptTime = currentNow
 
                 if (force || _weatherState.value !is WeatherState.Success) {
                     _weatherState.value = WeatherState.Loading

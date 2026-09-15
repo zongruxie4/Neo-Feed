@@ -163,13 +163,6 @@ class OverlayView(val context: Context) :
         weatherRepo.refreshWeather(force = false)
     }
 
-    override fun onScroll(distance: Float) {
-        super.onScroll(distance)
-        if (distance > 0.1f) {
-            weatherRepo.refreshWeather(force = false)
-        }
-    }
-
     private fun updateTheme(force: String? = null) {
         setTheme(force)
         applyPanelBackground()

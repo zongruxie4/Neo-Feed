@@ -65,11 +65,16 @@ class LocationHelper(private val context: Context) {
         val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as? LocationManager
             ?: return@withContext null
 
-        val providers = listOf(
+        val providers = mutableListOf(
             LocationManager.NETWORK_PROVIDER,
             LocationManager.GPS_PROVIDER,
             LocationManager.PASSIVE_PROVIDER
         )
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
+            locationManager.isProviderEnabled(LocationManager.FUSED_PROVIDER)
+        ) {
+            providers.add(0, LocationManager.FUSED_PROVIDER)
+        }
 
         var bestLocation: Location? = null
         for (provider in providers) {
@@ -87,12 +92,11 @@ class LocationHelper(private val context: Context) {
             }
         }
 
-        val twentyMinutesAgo = System.currentTimeMillis() - 20 * 60 * 1000L
-        if (bestLocation != null && bestLocation.time > twentyMinutesAgo) {
+        if (bestLocation != null) {
             return@withContext resolveLocation(bestLocation)
         }
 
-        val freshLocation = requestFreshLocation(locationManager) ?: bestLocation
+        val freshLocation = requestFreshLocation(locationManager)
         if (freshLocation != null) {
             return@withContext resolveLocation(freshLocation)
         }
@@ -129,22 +133,27 @@ class LocationHelper(private val context: Context) {
         provider: String
     ): Location? {
         return try {
-            withTimeoutOrNull(6000L.milliseconds) {
+            withTimeoutOrNull(3000L.milliseconds) {
                 suspendCancellableCoroutine { continuation ->
                     val cancellationSignal = CancellationSignal()
                     continuation.invokeOnCancellation {
                         cancellationSignal.cancel()
                     }
 
-                    LocationManagerCompat.getCurrentLocation(
-                        locationManager,
-                        provider,
-                        cancellationSignal,
-                        ContextCompat.getMainExecutor(context)
-                    ) { location ->
-                        if (continuation.isActive) {
-                            continuation.resume(location)
+                    try {
+                        LocationManagerCompat.getCurrentLocation(
+                            locationManager,
+                            provider,
+                            cancellationSignal,
+                            ContextCompat.getMainExecutor(context)
+                        ) { location ->
+                            if (continuation.isActive) {
+                                continuation.resume(location)
+                            }
                         }
+                    } catch (e: Exception) {
+                        Log.e("LocationHelper", "getCurrentLocation exception for $provider", e)
+                        if (continuation.isActive) continuation.resume(null)
                     }
                 }
             }
