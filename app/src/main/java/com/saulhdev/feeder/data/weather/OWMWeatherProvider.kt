@@ -18,6 +18,7 @@
 
 package com.saulhdev.feeder.data.weather
 
+import com.saulhdev.feeder.utils.Utilities
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.Request
@@ -32,7 +33,7 @@ class OWMWeatherProvider : WeatherProvider() {
         longitude: Double,
         cityName: String
     ): WeatherData = withContext(Dispatchers.IO) {
-        val apiKey = prefs.owmWeatherApiKey.getValue().trim()
+        val apiKey = Utilities.getOWMApiKey(prefs)
         val isFahrenheit = prefs.weatherUnit.getValue() == "fahrenheit"
         val units = if (isFahrenheit) "imperial" else "metric"
         val unitSymbol = if (isFahrenheit) "°F" else "°C"

@@ -6,7 +6,9 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.Resources
 import android.view.View
+import com.saulhdev.feeder.BuildConfig
 import com.saulhdev.feeder.R
+import com.saulhdev.feeder.data.content.FeedPreferences
 import com.saulhdev.feeder.data.weather.OWMWeatherProvider
 import com.saulhdev.feeder.data.weather.OpenMeteoProvider
 import kotlin.math.max
@@ -108,5 +110,14 @@ class Utilities {
                 i += 2
             }
         }
+
+        fun getOWMApiKey(prefs: FeedPreferences): String {
+            return if (BuildConfig.APPLICATION_ID.contains("dev")) {
+                BuildConfig.API_KEY
+            } else {
+                prefs.owmWeatherApiKey.getValue()
+            }
+        }
+
     }
 }

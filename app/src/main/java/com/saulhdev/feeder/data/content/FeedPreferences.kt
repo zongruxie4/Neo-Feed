@@ -190,7 +190,7 @@ class FeedPreferences private constructor(val context: Context) : KoinComponent 
         key = WEATHER_OWM_API_KEY,
         icon = Phosphor.Nut,
         titleId = R.string.weather_api_key,
-        defaultValue = context.getString(R.string.default_owm_key),
+        defaultValue = "",
     )
     var weatherUnit = StringSelectionPref(
         titleId = R.string.pref_weather_unit,

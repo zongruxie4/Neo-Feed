@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
@@ -35,6 +37,9 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled = true
+
+
+        buildConfigField("String", "API_KEY", getEnvProperty("OWM_API_KEY"))
     }
 
     buildTypes {
@@ -92,6 +97,17 @@ android {
         disable += listOf("MissingTranslation", "ExtraTranslation")
     }
 }
+
+fun getEnvProperty(key: String): String {
+    val envFile = File(rootProject.projectDir, ".env")
+    if (envFile.exists()) {
+        val properties = Properties()
+        properties.load(envFile.inputStream())
+        return properties.getProperty(key) ?: "\"\""
+    }
+    return "\"\""
+}
+
 
 androidComponents {
     onVariants { variant ->
