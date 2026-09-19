@@ -20,8 +20,8 @@ import kotlinx.coroutines.withTimeoutOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.json.JSONObject
+import org.koin.java.KoinJavaComponent.inject
 import java.util.Locale
-import java.util.concurrent.TimeUnit
 import kotlin.coroutines.resume
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -33,12 +33,7 @@ class LocationHelper(private val context: Context) {
         val cityName: String
     )
 
-    private val httpClient by lazy {
-        OkHttpClient.Builder()
-            .connectTimeout(5, TimeUnit.SECONDS)
-            .readTimeout(5, TimeUnit.SECONDS)
-            .build()
-    }
+    private val httpClient: OkHttpClient by inject(OkHttpClient::class.java)
 
     fun hasLocationPermission(): Boolean {
         val coarse = ContextCompat.checkSelfPermission(
@@ -115,9 +110,6 @@ class LocationHelper(private val context: Context) {
             }
             if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
                 candidateProviders.add(LocationManager.NETWORK_PROVIDER)
-            }
-            if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                candidateProviders.add(LocationManager.GPS_PROVIDER)
             }
 
             for (provider in candidateProviders) {
