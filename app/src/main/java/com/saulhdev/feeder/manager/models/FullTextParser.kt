@@ -2,11 +2,14 @@ package com.saulhdev.feeder.manager.models
 
 import android.content.Context
 import android.util.Log
+import androidx.work.Constraints
 import androidx.work.CoroutineWorker
 import androidx.work.ExistingWorkPolicy
+import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
+import com.saulhdev.feeder.data.content.FeedPreferences
 import com.saulhdev.feeder.data.db.models.ArticleIdWithLink
 import com.saulhdev.feeder.data.repository.ArticleRepository
 import com.saulhdev.feeder.utils.blobFullFile
@@ -23,8 +26,17 @@ import java.util.concurrent.TimeUnit
 
 fun scheduleFullTextParse() {
     Log.i("FeederFullText", "Scheduling a full text parse work")
+    val prefs: FeedPreferences by inject(FeedPreferences::class.java)
+    val constraints = Constraints.Builder()
+        .setRequiresBatteryNotLow(true)
+        .setRequiredNetworkType(
+            if (prefs.syncOnlyOnWifi.getValue()) NetworkType.UNMETERED else NetworkType.CONNECTED
+        )
+        .build()
+
     val workRequest = OneTimeWorkRequestBuilder<FullTextWorker>()
         .addTag("FullTextWorker")
+        .setConstraints(constraints)
         .keepResultsForAtLeast(1, TimeUnit.MINUTES)
     val workManager: WorkManager by inject(WorkManager::class.java)
     workManager.enqueueUniqueWork(
@@ -39,7 +51,7 @@ class FullTextWorker(
     workerParams: WorkerParameters
 ) : CoroutineWorker(context, workerParams) {
 
-    private val okHttpClient: OkHttpClient = OkHttpClient.Builder().build()
+    private val okHttpClient: OkHttpClient by inject(OkHttpClient::class.java)
     val repository: ArticleRepository by inject(ArticleRepository::class.java)
 
     override suspend fun doWork(): Result {
