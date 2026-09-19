@@ -24,16 +24,12 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.json.JSONObject
 import org.koin.java.KoinJavaComponent.inject
-import java.util.concurrent.TimeUnit
 
 abstract class WeatherProvider {
     open val isEnabled: Boolean = true
     val prefs: FeedPreferences by inject(FeedPreferences::class.java)
 
-    val client: OkHttpClient = OkHttpClient.Builder()
-        .connectTimeout(10, TimeUnit.SECONDS)
-        .readTimeout(10, TimeUnit.SECONDS)
-        .build()
+    val client: OkHttpClient by inject(OkHttpClient::class.java)
 
     abstract suspend fun fetchWeather(
         latitude: Double,
