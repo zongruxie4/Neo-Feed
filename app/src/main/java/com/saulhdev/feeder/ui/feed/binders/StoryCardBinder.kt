@@ -14,19 +14,20 @@ import com.saulhdev.feeder.data.repository.ArticleRepository
 import com.saulhdev.feeder.databinding.FeedCardStoryLargeBinding
 import com.saulhdev.feeder.ui.navigation.Routes
 import com.saulhdev.feeder.ui.theme.CardTheme
+import com.saulhdev.feeder.utils.ApplicationCoroutineScope
 import com.saulhdev.feeder.utils.RelativeTimeHelper
 import com.saulhdev.feeder.utils.extensions.isDark
 import com.saulhdev.feeder.utils.extensions.launchView
 import com.saulhdev.feeder.utils.extensions.safeShareIntent
 import com.saulhdev.feeder.utils.extensions.safeStartActivity
 import com.saulhdev.feeder.utils.openLinkInCustomTab
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.koin.java.KoinJavaComponent.get
 import org.koin.java.KoinJavaComponent.inject
 
 object StoryCardBinder : FeedBinder {
+    private val appScope: ApplicationCoroutineScope by inject(ApplicationCoroutineScope::class.java)
+
     override fun bind(theme: SparseIntArray?, item: FeedItem, view: View) {
         val context = view.context
         val content = item.toStoryCardContent()
@@ -42,10 +43,21 @@ object StoryCardBinder : FeedBinder {
                 (item.timeMillis / 1000) - 1000
             )
 
-        if (content.text.isEmpty()) {
+        val summaryText = if (item.article.plainSnippet.isNotBlank()) {
+            item.article.plainSnippet
+        } else if (content.text.isEmpty()) {
+            ""
+        } else if (content.text.contains('<') && content.text.contains('>')) {
+            Html.fromHtml(content.text, 0).toString()
+        } else {
+            content.text
+        }
+
+        if (summaryText.isEmpty()) {
             binding.storySummary.visibility = View.GONE
         } else {
-            binding.storySummary.text = Html.fromHtml(content.text, 0).toString()
+            binding.storySummary.visibility = View.VISIBLE
+            binding.storySummary.text = summaryText
         }
 
         if (
@@ -64,7 +76,7 @@ object StoryCardBinder : FeedBinder {
 
         updateSaveIcon(binding.saveButton, bookmarked)
         binding.saveButton.setOnClickListener {
-            CoroutineScope(Dispatchers.Main).launch {
+            appScope.launch {
                 repository.bookmarkArticle(item.id, !bookmarked)
                 bookmarked = !bookmarked
                 updateSaveIcon(binding.saveButton, bookmarked)
@@ -79,9 +91,7 @@ object StoryCardBinder : FeedBinder {
             if (prefs.openInBrowser.getValue()) {
                 view.context.launchView(content.link)
             } else {
-                val scope = CoroutineScope(Dispatchers.Main)
-
-                scope.launch {
+                appScope.launch {
                     if (prefs.offlineReader.getValue()) {
                         view.context.safeStartActivity(
                             MainActivity.navigateIntent(

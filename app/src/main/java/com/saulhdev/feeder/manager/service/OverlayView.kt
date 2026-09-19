@@ -53,6 +53,8 @@ import com.saulhdev.feeder.viewmodels.ArticleListViewModel
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 import org.koin.core.component.KoinComponent
@@ -72,6 +74,7 @@ class OverlayView(val context: Context) :
     val prefs: FeedPreferences by inject()
 
     var bookmarkVisible = false
+    private var bookmarkCollectJob: Job? = null
     private var pendingCloseOnResume = false
     private var drawerPanelBackgroundEnabled = false
 
@@ -108,15 +111,14 @@ class OverlayView(val context: Context) :
         initRecyclerView()
         initHeader()
         initWeather()
-        refreshNotifications()
 
         syncScope.launch {
-            viewModel.articleListState.collect {
-                mainScope.launch {
-                    adapter.replace(it.articles)
+            viewModel.articleListState.collect { state ->
+                if (!bookmarkVisible) {
                     mainScope.launch {
+                        adapter.replace(state.articles)
                         rootView.findViewById<SwipeRefreshLayout>(R.id.swipe_to_refresh).isRefreshing =
-                            it.isSyncing
+                            state.isSyncing
                     }
                 }
             }
@@ -160,7 +162,9 @@ class OverlayView(val context: Context) :
             pendingCloseOnResume = false
             closePanelIfNeeded(1)
         }
-        weatherRepo.refreshWeather(force = false)
+        if (prefs.weatherProvider.getValue()) {
+            weatherRepo.refreshWeather(force = false)
+        }
     }
 
     private fun updateTheme(force: String? = null) {
@@ -371,22 +375,18 @@ class OverlayView(val context: Context) :
 
         updateToggleColor(toggleButton, bookmarkVisible)
         toggleButton.setOnClickListener {
-            mainScope.launch {
+            bookmarkCollectJob?.cancel()
+            bookmarkVisible = !bookmarkVisible
+            toggleButton.isChecked = bookmarkVisible
+            updateToggleColor(toggleButton, bookmarkVisible)
+            bookmarkCollectJob = mainScope.launch {
                 if (bookmarkVisible) {
-                    bookmarkVisible = false
-                    toggleButton.isChecked = bookmarkVisible
-                    updateToggleColor(toggleButton, bookmarkVisible)
-                    viewModel.articleListState.collect {
-                        adapter.replace(it.articles)
-                        adapter.notifyDataSetChanged()
-                    }
-                } else {
-                    bookmarkVisible = true
-                    toggleButton.isChecked = bookmarkVisible
-                    updateToggleColor(toggleButton, bookmarkVisible)
                     viewModel.bookmarksState.collect {
                         adapter.replace(it.bookmarkedArticles)
-                        adapter.notifyDataSetChanged()
+                    }
+                } else {
+                    viewModel.articleListState.collect {
+                        adapter.replace(it.articles)
                     }
                 }
             }
@@ -441,6 +441,9 @@ class OverlayView(val context: Context) :
     }
 
     override fun onDestroy() {
+        bookmarkCollectJob?.cancel()
+        syncScope.cancel()
+        mainScope.cancel()
         try {
             context.unregisterReceiver(closeSystemDialogsReceiver)
         } catch (_: Exception) {

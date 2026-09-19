@@ -134,7 +134,7 @@ class WeatherRepository(
     }
 
     private var lastFetchAttemptTime = 0L
-    private val minFetchIntervalMillis = 30 * 1000L // 30 seconds retry cooldown
+    private val minFetchIntervalMillis = 5 * 60 * 1000L // 5 minutes retry cooldown
 
     private data class WeatherConfig(
         val enabled: Boolean,

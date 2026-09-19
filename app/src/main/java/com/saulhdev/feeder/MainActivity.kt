@@ -128,17 +128,19 @@ class MainActivity : ComponentActivity() {
 
     private fun configurePeriodicSync() {
         val workManager = WorkManager.getInstance(this)
-        val shouldSync = (prefs.syncFrequency.getValue().toDouble()) > 0
+        val freqHours = prefs.syncFrequency.getValue().toDoubleOrNull() ?: 1.0
+        val shouldSync = freqHours > 0
         val replace = true
         if (shouldSync) {
             val constraints = Constraints.Builder()
+                .setRequiresBatteryNotLow(true)
 
             if (prefs.syncOnlyOnWifi.getValue()) {
                 constraints.setRequiredNetworkType(NetworkType.UNMETERED)
             } else {
                 constraints.setRequiredNetworkType(NetworkType.CONNECTED)
             }
-            val timeInterval = (prefs.syncFrequency.getValue().toDouble() * 60).toLong()
+            val timeInterval = maxOf(15L, (freqHours * 60).toLong())
 
             val workRequestBuilder = PeriodicWorkRequestBuilder<FeedSyncer>(
                 timeInterval,
