@@ -61,6 +61,7 @@ import kotlin.time.Instant
 
 val syncMutex = Mutex()
 val prefs: FeedPreferences by inject(FeedPreferences::class.java)
+val okHttpClient: OkHttpClient by inject(OkHttpClient::class.java)
 val singleThreadedSync = Executors.newSingleThreadExecutor().asCoroutineDispatcher()
 const val TAG = "RssLocalSync"
 
@@ -195,8 +196,6 @@ private suspend fun syncFeed(
         return
     }
 
-    val okHttpClient = OkHttpClient.Builder()
-        .build()
     val response: Response =
         okHttpClient.getResponse(url = feedSql.url, forceNetwork = forceNetwork)
     val feedParser = FeedParser()
