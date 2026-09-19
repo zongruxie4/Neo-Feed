@@ -25,7 +25,7 @@ import kotlinx.serialization.json.Json
 import okhttp3.FormBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import java.util.concurrent.TimeUnit
+import org.koin.java.KoinJavaComponent.inject
 
 const val MASTODON_REDIRECT_URI = "nf-mastodon://callback"
 const val MASTODON_SCOPES = "read"
@@ -34,11 +34,7 @@ const val MASTODON_WEBSITE = "https://github.com/NeoApplications/Neo-Feed"
 
 class MastodonAuth {
 
-    private val client = OkHttpClient.Builder()
-        .connectTimeout(15, TimeUnit.SECONDS)
-        .writeTimeout(15, TimeUnit.SECONDS)
-        .readTimeout(30, TimeUnit.SECONDS)
-        .build()
+    private val client: OkHttpClient by inject(OkHttpClient::class.java)
 
     private val json = Json { ignoreUnknownKeys = true }
 
