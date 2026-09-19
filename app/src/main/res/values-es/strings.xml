@@ -72,6 +72,7 @@
     <string name="pref_sync_frequency">Frecuencia de la sincronización</string>
     <string name="pref_offline_reader">Lector sin conexión</string>
     <string name="action_restart">Reiniciar aplicación</string>
+    <string name="sync_manual_only">Solo manual (Desactivado)</string>
     <string name="sync_half_hour_minutes">30 minutos</string>
     <string name="sync_two_hours">Dos horas</string>
     <string name="pref_items_per_feed">Elementos máximos por suministro</string>
