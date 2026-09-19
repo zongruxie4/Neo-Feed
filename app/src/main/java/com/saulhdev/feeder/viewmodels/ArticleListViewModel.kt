@@ -55,7 +55,7 @@ class ArticleListViewModel(
     }
         .stateIn(
             ioScope,
-            SharingStarted.Eagerly,
+            SharingStarted.WhileSubscribed(5000),
             SortFilterModel()
         )
 
@@ -76,7 +76,7 @@ class ArticleListViewModel(
         )
     }.stateIn(
         ioScope,
-        SharingStarted.Eagerly,
+        SharingStarted.WhileSubscribed(5000),
         ArticleListState()
     )
 
@@ -92,7 +92,7 @@ class ArticleListViewModel(
         )
     }.stateIn(
         ioScope,
-        SharingStarted.Eagerly,
+        SharingStarted.WhileSubscribed(5000),
         BookmarksState()
     )
 
