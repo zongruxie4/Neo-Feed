@@ -125,9 +125,15 @@ public class OverlayController extends DialogOverlayController {
     }
 
     public void onCreate(Bundle savedInstanceState) {}
-    private void onPause() {}
-    private void onStop() {}
-    private void onStart() {}
+
+    public void onPause() {
+    }
+
+    public void onStop() {
+    }
+
+    public void onStart() {
+    }
     public void onResume() {}
     public void onDestroy() {}
 
