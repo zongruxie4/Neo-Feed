@@ -34,6 +34,9 @@ import com.saulhdev.feeder.viewmodels.SourceEditViewModel
 import com.saulhdev.feeder.viewmodels.SourceListViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import okhttp3.Cache
+import okhttp3.ConnectionPool
+import okhttp3.OkHttpClient
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.androix.startup.KoinStartup
@@ -44,6 +47,7 @@ import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.koinConfiguration
 import org.koin.dsl.module
 import org.koin.java.KoinJavaComponent.inject
+import java.util.concurrent.TimeUnit
 
 @OptIn(KoinExperimentalAPI::class)
 class NeoApp : MultiDexApplication(), KoinStartup {
@@ -99,6 +103,16 @@ class NeoApp : MultiDexApplication(), KoinStartup {
         }
         single { applicationCoroutineScope }
         single<NeoApp> { this@NeoApp }
+        single<OkHttpClient> {
+            val cacheDir = java.io.File(cacheDir, "http_cache")
+            val cacheSize = 20L * 1024L * 1024L
+            OkHttpClient.Builder()
+                .cache(Cache(cacheDir, cacheSize))
+                .connectTimeout(15, TimeUnit.SECONDS)
+                .readTimeout(20, TimeUnit.SECONDS)
+                .connectionPool(ConnectionPool(5, 5, TimeUnit.MINUTES))
+                .build()
+        }
     }
 
     fun onAppStarted() {
