@@ -257,7 +257,7 @@ fun SourceListPage(
                             end = 8.dp,
                             top = paddingValues.calculateTopPadding()
                         ),
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(4.dp),
                     ) {
                         item {
                             PreferenceGroupHeading(heading = stringResource(id = R.string.enabled))
