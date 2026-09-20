@@ -73,7 +73,6 @@ import androidx.compose.ui.unit.dp
 import com.saulhdev.feeder.NeoApp
 import com.saulhdev.feeder.R
 import com.saulhdev.feeder.data.content.FeedPreferences
-import com.saulhdev.feeder.data.weather.WeatherRepository
 import com.saulhdev.feeder.manager.sync.SyncRestClient
 import com.saulhdev.feeder.ui.components.ArticleItem
 import com.saulhdev.feeder.ui.components.BookmarkItem
@@ -103,7 +102,6 @@ import org.koin.compose.koinInject
 fun ArticleListPage(
     prefs: FeedPreferences = koinInject(),
     syncClient: SyncRestClient = koinInject(),
-    weatherRepo: WeatherRepository = koinInject(),
     viewModel: ArticleListViewModel = koinNeoViewModel(),
 ) {
     val context = LocalContext.current
