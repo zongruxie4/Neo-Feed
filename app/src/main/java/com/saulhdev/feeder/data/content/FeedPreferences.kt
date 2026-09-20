@@ -44,6 +44,7 @@ import com.saulhdev.feeder.ui.icons.phosphor.Hash
 import com.saulhdev.feeder.ui.icons.phosphor.Info
 import com.saulhdev.feeder.ui.icons.phosphor.Nut
 import com.saulhdev.feeder.ui.icons.phosphor.PaintRoller
+import com.saulhdev.feeder.ui.icons.phosphor.Puzzle
 import com.saulhdev.feeder.ui.icons.phosphor.SubtractSquare
 import com.saulhdev.feeder.ui.icons.phosphor.Swatches
 import com.saulhdev.feeder.ui.icons.phosphor.WifiHigh
@@ -205,6 +206,14 @@ class FeedPreferences private constructor(val context: Context) : KoinComponent 
     )
 
     /* Others */
+    val plugins = StringPref(
+        titleId = R.string.plugins_and_accounts,
+        icon = Phosphor.Puzzle,
+        key = PLUGINS,
+        dataStore = get(),
+        route = NavRoute.Plugins
+    )
+
     val about = StringPref(
         titleId = R.string.title_about,
         icon = Phosphor.Info,
@@ -286,6 +295,7 @@ class FeedPreferences private constructor(val context: Context) : KoinComponent 
         val SYNC_RANGE = stringPreferencesKey("pref_sync_range")
         val ITEMS_PER_FEED = stringPreferencesKey("pref_items_per_feed")
         val BLOCKED_WORDS = stringSetPreferencesKey("pref_blocked_words")
+        val PLUGINS = stringPreferencesKey("pref_plugins")
         val ABOUT = stringPreferencesKey("pref_about")
         val DEBUG = booleanPreferencesKey("pref_debugging")
         val WEATHER_ENABLED = booleanPreferencesKey("pref_weather_enabled")
