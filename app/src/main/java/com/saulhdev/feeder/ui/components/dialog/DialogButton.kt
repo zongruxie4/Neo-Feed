@@ -15,11 +15,13 @@ import androidx.compose.ui.unit.dp
 fun DialogPositiveButton(
     modifier: Modifier = Modifier,
     text: String = stringResource(id = android.R.string.ok),
+    enabled: Boolean = true,
     onClick: () -> Unit = {}
 ) {
     TextButton(
         shape = MaterialTheme.shapes.large,
         onClick = onClick,
+        enabled = enabled,
         modifier = modifier,
         colors = ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.primary,
