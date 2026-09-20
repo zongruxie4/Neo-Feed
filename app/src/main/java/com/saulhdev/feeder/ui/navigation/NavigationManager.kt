@@ -41,12 +41,13 @@ import com.saulhdev.feeder.ui.icons.phosphor.Info
 import com.saulhdev.feeder.ui.pages.AboutPage
 import com.saulhdev.feeder.ui.pages.ArticleListPage
 import com.saulhdev.feeder.ui.pages.ArticlePage
-import com.saulhdev.feeder.ui.pages.ChangelogPage
 import com.saulhdev.feeder.ui.pages.BlockedWordsPage
+import com.saulhdev.feeder.ui.pages.ChangelogPage
 import com.saulhdev.feeder.ui.pages.LicensePage
 import com.saulhdev.feeder.ui.pages.MainPage
 import com.saulhdev.feeder.ui.pages.MastodonAddPage
 import com.saulhdev.feeder.ui.pages.MastodonCallbackPage
+import com.saulhdev.feeder.ui.pages.PluginsPage
 import com.saulhdev.feeder.ui.pages.PreferencesPage
 import com.saulhdev.feeder.ui.pages.SourceAddPage
 import com.saulhdev.feeder.ui.pages.SourceListPage
@@ -88,6 +89,7 @@ fun NavigationManager(
             composable<NavRoute.Changelog> { ChangelogPage() }
             composable<NavRoute.SourceAdd> { SourceAddPage() }
             composable<NavRoute.BlockedWords> { BlockedWordsPage() }
+            composable<NavRoute.Plugins> { PluginsPage() }
             composable<NavRoute.MastodonAdd> { MastodonAddPage() }
             composable<NavRoute.MastodonCallback>(
                 deepLinks = listOf(
@@ -155,6 +157,9 @@ open class NavRoute {
 
     @Serializable
     data object BlockedWords : NavRoute()
+
+    @Serializable
+    data object Plugins : NavRoute()
 
     @Serializable
     data object MastodonAdd : NavRoute()
