@@ -61,7 +61,7 @@ import com.saulhdev.feeder.data.content.TwoStatePref
 import com.saulhdev.feeder.ui.components.dialog.BaseDialog
 import com.saulhdev.feeder.ui.components.dialog.DialogNegativeButton
 import com.saulhdev.feeder.ui.components.dialog.DialogPositiveButton
-import com.saulhdev.feeder.ui.components.dialog.SingleSelectionListItem
+import com.saulhdev.feeder.ui.components.dialog.ListItemWithRadioButton
 import com.saulhdev.feeder.ui.theme.GroupItemShape
 import com.saulhdev.feeder.utils.extensions.addIf
 import com.saulhdev.feeder.utils.extensions.blockShadow
@@ -174,12 +174,17 @@ fun TwoStatePrefDialogUI(
                     .blockShadow(),
             ) {
                 items(items = entryPairs, key = { it.first }) { item ->
-                    SingleSelectionListItem(
-                        text = item.second,
-                        isSelected = selected == item.first
-                    ) {
-                        selected = item.first
-                    }
+                    ListItemWithRadioButton(
+                        title = item.second,
+                        selected = selected == item.first,
+                        radioButton = true,
+                        index = entryPairs.indexOf(item),
+                        groupSize = entryPairs.size,
+                        enabled = true,
+                        onClick = {
+                            selected = item.first
+                        }
+                    )
                 }
             }
 

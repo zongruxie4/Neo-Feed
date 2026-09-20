@@ -18,19 +18,20 @@
 
 package com.saulhdev.feeder.ui.components.dialog
 
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
@@ -44,11 +45,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.saulhdev.feeder.data.content.StringSelectionPref
+import com.saulhdev.feeder.ui.theme.GroupItemShape
 import com.saulhdev.feeder.utils.extensions.blockShadow
 import kotlinx.coroutines.launch
 
@@ -75,17 +78,23 @@ fun StringSelectionPrefDialogUI(
             Text(text = stringResource(pref.titleId), style = MaterialTheme.typography.titleLarge)
             LazyColumn(
                 modifier = Modifier
-                    .padding(top = 16.dp, bottom = 8.dp)
-                    .weight(1f, false)
-                    .blockShadow(),
+                    .blockShadow()
+                    .padding(all = 8.dp)
+                    .weight(1f, false),
+                verticalArrangement = Arrangement.spacedBy(2.dp)
             ) {
                 items(items = entryPairs, key = { it.first }) {
-                    SingleSelectionListItem(
-                        text = it.second,
-                        isSelected = selected == it.first
-                    ) {
-                        selected = it.first
-                    }
+                    ListItemWithRadioButton(
+                        title = it.second,
+                        selected = selected == it.first,
+                        radioButton = true,
+                        index = entryPairs.indexOf(it),
+                        groupSize = entryPairs.size,
+                        enabled = true,
+                        onClick = {
+                            selected = it.first
+                        }
+                    )
                 }
             }
 
@@ -113,41 +122,91 @@ fun StringSelectionPrefDialogUI(
 }
 
 @Composable
-fun SingleSelectionListItem(
+fun ListItemWithRadioButton(
     modifier: Modifier = Modifier,
-    text: String,
-    isSelected: Boolean,
-    isEnabled: Boolean = true,
-    endWidget: (@Composable () -> Unit)? = null,
-    onClick: () -> Unit = {}
+    title: String,
+    summary: String = "",
+    index: Int = 0,
+    groupSize: Int = 1,
+    radioButton: Boolean = true,
+    selected: Boolean = false,
+    enabled: Boolean = true,
+    onClick: (() -> Unit)? = null,
+    containerColor: Color = MaterialTheme.colorScheme.surfaceContainer,
+    startIcon: (@Composable () -> Unit)? = null,
 ) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(48.dp)
-            .clickable(onClick = onClick, enabled = isEnabled),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        RadioButton(
-            selected = isSelected,
-            enabled = isEnabled,
-            onClick = onClick,
-            modifier = Modifier.padding(start = 8.dp, end = 8.dp),
-            colors = RadioButtonDefaults.colors(
-                selectedColor = MaterialTheme.colorScheme.primary,
-                unselectedColor = MaterialTheme.colorScheme.onSurface
+    val actualContainerColor by animateColorAsState(
+        targetValue = if (selected) {
+            MaterialTheme.colorScheme.secondaryContainer
+        } else {
+            containerColor
+        },
+        label = "containerColor"
+    )
+
+    val itemModifier = modifier
+        .clip(GroupItemShape(index, groupSize - 1))
+        .then(
+            if (onClick != null) {
+                Modifier.clickable(
+                    enabled = enabled,
+                    role = Role.RadioButton,
+                    onClick = onClick
+                )
+            } else {
+                Modifier
+            }
+        )
+
+    ListItem(
+        modifier = itemModifier,
+        leadingContent = startIcon,
+        headlineContent = {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleMedium,
+                color = if (!enabled) {
+                    MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+                } else {
+                    MaterialTheme.colorScheme.onSurface
+                }
             )
+        },
+        supportingContent = if (summary.isNotEmpty()) {
+            {
+                Text(
+                    text = summary,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = if (!enabled) {
+                        MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+                    } else {
+                        MaterialTheme.colorScheme.onSurfaceVariant
+                    }
+                )
+            }
+        } else null,
+        trailingContent = if (radioButton) {
+            {
+                RadioButton(
+                    selected = selected,
+                    enabled = enabled,
+                    onClick = null,
+                    modifier = Modifier.size(24.dp),
+                    colors = RadioButtonDefaults.colors(
+                        selectedColor = MaterialTheme.colorScheme.primary,
+                        unselectedColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                        disabledSelectedColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f),
+                        disabledUnselectedColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f),
+                    ),
+                )
+            }
+        } else null,
+        colors = ListItemDefaults.colors(
+            containerColor = actualContainerColor,
+            headlineColor = MaterialTheme.colorScheme.onSurface,
+            leadingIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            supportingColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            trailingIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
         )
-        Text(
-            modifier = Modifier
-                .weight(1f),
-            text = text,
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Bold
-        )
-        if (endWidget != null) {
-            Spacer(modifier = Modifier.width(8.dp))
-            endWidget()
-        }
-    }
+    )
 }
