@@ -119,5 +119,7 @@ class Utilities {
             }
         }
 
+        val userAgent = "Mozilla/5.0 (Linux; Android) Mobile Neo-Feed/${BuildConfig.VERSION_NAME})"
+
     }
 }

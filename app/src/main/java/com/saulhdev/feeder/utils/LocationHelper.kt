@@ -217,10 +217,6 @@ class LocationHelper(private val context: Context) {
                     "https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=$latitude&longitude=$longitude&localityLanguage=$lang"
                 val request = Request.Builder()
                     .url(url)
-                    .header(
-                        "User-Agent",
-                        "NeoFeed/1.9.0 (Android; https://github.com/NeoApplications/Neo-Feed)"
-                    )
                     .build()
 
                 httpClient.newCall(request).execute().use { response ->

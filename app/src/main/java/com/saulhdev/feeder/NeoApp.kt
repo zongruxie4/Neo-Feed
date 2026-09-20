@@ -23,6 +23,7 @@ import com.saulhdev.feeder.manager.service.OverlayBridge
 import com.saulhdev.feeder.manager.sync.SyncRestClient
 import com.saulhdev.feeder.utils.ApplicationCoroutineScope
 import com.saulhdev.feeder.utils.LocationHelper
+import com.saulhdev.feeder.utils.Utilities.Companion.userAgent
 import com.saulhdev.feeder.utils.extensions.ToastMaker
 import com.saulhdev.feeder.utils.extensions.restartApp
 import com.saulhdev.feeder.viewmodels.ArticleListViewModel
@@ -111,6 +112,12 @@ class NeoApp : MultiDexApplication(), KoinStartup {
                 .connectTimeout(15, TimeUnit.SECONDS)
                 .readTimeout(20, TimeUnit.SECONDS)
                 .connectionPool(ConnectionPool(5, 5, TimeUnit.MINUTES))
+                .addInterceptor { chain ->
+                    val request = chain.request().newBuilder()
+                        .header("User-Agent", userAgent)
+                        .build()
+                    chain.proceed(request)
+                }
                 .build()
         }
     }

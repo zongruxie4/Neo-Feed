@@ -44,10 +44,6 @@ class OWMWeatherProvider : WeatherProvider() {
 
         val request = Request.Builder()
             .url(weatherUrl)
-            .header(
-                "User-Agent",
-                "NeoFeed/1.9.0 (Android; https://github.com/NeoApplications/Neo-Feed)"
-            )
             .build()
 
         client.newCall(request).execute().use { response ->

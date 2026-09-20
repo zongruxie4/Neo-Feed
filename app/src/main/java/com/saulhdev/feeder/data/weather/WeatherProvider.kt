@@ -44,10 +44,6 @@ abstract class WeatherProvider {
             "https://geocoding-api.open-meteo.com/v1/search?name=$encodedCity&count=1&language=$lang&format=json"
         val request = Request.Builder()
             .url(url)
-            .header(
-                "User-Agent",
-                "NeoFeed/1.9.0 (Android; https://github.com/NeoApplications/Neo-Feed)"
-            )
             .build()
 
         try {
