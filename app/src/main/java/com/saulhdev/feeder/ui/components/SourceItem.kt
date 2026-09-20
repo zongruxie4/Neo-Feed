@@ -47,6 +47,7 @@ import com.saulhdev.feeder.data.db.models.Feed
 fun SourceItem(
     source: Feed,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     onSwitch: (Feed) -> Unit = {},
     onClick: (Feed) -> Unit = {},
 ) {
@@ -89,6 +90,7 @@ fun SourceItem(
                 Spacer(modifier = Modifier.width(12.dp))
             Switch(
                 checked = isEnabled,
+                enabled = enabled,
                 colors = SwitchDefaults.colors(uncheckedBorderColor = Color.Transparent),
                 onCheckedChange = {
                     enable(!isEnabled)
