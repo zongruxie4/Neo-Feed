@@ -21,7 +21,9 @@ import com.saulhdev.feeder.utils.extensions.launchView
 import com.saulhdev.feeder.utils.extensions.safeShareIntent
 import com.saulhdev.feeder.utils.extensions.safeStartActivity
 import com.saulhdev.feeder.utils.openLinkInCustomTab
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.koin.java.KoinJavaComponent.get
 import org.koin.java.KoinJavaComponent.inject
 
@@ -79,7 +81,9 @@ object StoryCardBinder : FeedBinder {
             appScope.launch {
                 repository.bookmarkArticle(item.id, !bookmarked)
                 bookmarked = !bookmarked
-                updateSaveIcon(binding.saveButton, bookmarked)
+                withContext(Dispatchers.Main) {
+                    updateSaveIcon(binding.saveButton, bookmarked)
+                }
             }
         }
 
@@ -92,18 +96,21 @@ object StoryCardBinder : FeedBinder {
                 view.context.launchView(content.link)
             } else {
                 appScope.launch {
-                    if (prefs.offlineReader.getValue()) {
-                        view.context.safeStartActivity(
-                            MainActivity.navigateIntent(
-                                view.context,
-                                "${Routes.ARTICLE_VIEW}/${item.id}"
+                    val isOffline = prefs.offlineReader.getValue()
+                    withContext(Dispatchers.Main) {
+                        if (isOffline) {
+                            view.context.safeStartActivity(
+                                MainActivity.navigateIntent(
+                                    view.context,
+                                    "${Routes.ARTICLE_VIEW}/${item.id}"
+                                )
                             )
-                        )
-                    } else {
-                        openLinkInCustomTab(
-                            context,
-                            content.link
-                        )
+                        } else {
+                            openLinkInCustomTab(
+                                context,
+                                content.link
+                            )
+                        }
                     }
                 }
             }
