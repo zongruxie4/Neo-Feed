@@ -45,7 +45,6 @@ import com.saulhdev.feeder.ui.pages.BlockedWordsPage
 import com.saulhdev.feeder.ui.pages.ChangelogPage
 import com.saulhdev.feeder.ui.pages.LicensePage
 import com.saulhdev.feeder.ui.pages.MainPage
-import com.saulhdev.feeder.ui.pages.MastodonAddPage
 import com.saulhdev.feeder.ui.pages.MastodonCallbackPage
 import com.saulhdev.feeder.ui.pages.PluginsPage
 import com.saulhdev.feeder.ui.pages.PreferencesPage
@@ -90,7 +89,6 @@ fun NavigationManager(
             composable<NavRoute.SourceAdd> { SourceAddPage() }
             composable<NavRoute.BlockedWords> { BlockedWordsPage() }
             composable<NavRoute.Plugins> { PluginsPage() }
-            composable<NavRoute.MastodonAdd> { MastodonAddPage() }
             composable<NavRoute.MastodonCallback>(
                 deepLinks = listOf(
                     navDeepLink {
