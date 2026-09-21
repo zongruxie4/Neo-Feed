@@ -102,9 +102,11 @@ class OverlayView(val context: Context) :
         AbstractFloatingView.closeAllOpenViews(context)
 
         themeHolder = OverlayThemeHolder(this)
-        setTheme(null as String?)
-
-        getWindow().setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
+        setTheme(force = null)
+        val bgColor = themeHolder.currentTheme.get(CardTheme.Colors.OVERLAY_BG.ordinal)
+        val color =
+            (prefs.overlayTransparency.getValue() * 255.0f).toInt() shl 24 or (bgColor and 0x00ffffff)
+        getWindow().setBackgroundDrawable(color.toDrawable())
         setPanelBackgroundEnabled(false)
 
         initInsets()

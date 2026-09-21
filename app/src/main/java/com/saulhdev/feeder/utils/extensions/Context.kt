@@ -215,11 +215,3 @@ val Context.isDarkTheme: Boolean
 
         else -> resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES // "auto_system"
     }
-
-val Context.isBlackTheme: Boolean
-    get() = when (get<FeedPreferences>(FeedPreferences::class.java).overlayTheme.getValue()) {
-        "black", "auto_system_black"
-            -> true
-
-        else -> false
-    }

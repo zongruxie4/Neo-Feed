@@ -107,7 +107,7 @@ object CardTheme {
                 Colors.CARD_BG.ordinal,
                 ContextCompat.getColor(
                     NeoApp.instance!!,
-                    com.google.android.material.R.color.m3_sys_color_dynamic_dark_surface_container
+                    android.R.color.black
                 )
             )
             put(

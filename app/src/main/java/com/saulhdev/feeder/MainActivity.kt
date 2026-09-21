@@ -57,7 +57,8 @@ class MainActivity : ComponentActivity() {
             navController = rememberNavController()
             TransparentSystemBars()
             AppTheme(
-                darkTheme = when (com.saulhdev.feeder.manager.localrss.prefs.overlayTheme.getValue()) {
+                themeColor = prefs.overlayTheme.getValue(),
+                darkTheme = when (prefs.overlayTheme.getValue()) {
                     "auto_system" -> isSystemInDarkTheme()
                     else          -> isDarkTheme
                 },
