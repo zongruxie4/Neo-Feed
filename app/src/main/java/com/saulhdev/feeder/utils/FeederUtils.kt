@@ -29,6 +29,8 @@ import com.saulhdev.feeder.data.entity.SORT_TITLE
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.format.char
+import org.jsoup.Jsoup
+import org.jsoup.parser.Parser
 import java.net.MalformedURLException
 import java.net.URL
 import java.net.URLDecoder
@@ -92,26 +94,6 @@ fun getItemsPerFeed(): Map<String, String> {
         "50" to "50",
         "100" to "100",
         "200" to "200"
-    )
-}
-
-fun getMastodonItemsPerFeed(): Map<String, String> {
-    return mapOf(
-        "5" to "5",
-        "10" to "10",
-        "20" to "20",
-        "40" to "40",
-        "60" to "60",
-        "80" to "80",
-        "100" to "100"
-    )
-}
-
-fun getBackgroundOptions(context: Context): Map<String, String> {
-    return mapOf(
-        "theme" to context.resources.getString(R.string.background_theme_option),
-        "light" to context.resources.getString(R.string.theme_light),
-        "dark" to context.resources.getString(R.string.theme_dark)
     )
 }
 
@@ -183,6 +165,79 @@ fun naiveFindImageLink(text: String?): String? =
     } else {
         null
     }
+
+fun extractArticleImageFromHtml(html: String?, articleUrl: String?): String? {
+    if (html.isNullOrBlank()) return null
+    return try {
+        val doc =
+            if (!articleUrl.isNullOrBlank()) Jsoup.parse(html, articleUrl) else Jsoup.parse(html)
+
+        val ogImage =
+            doc.selectFirst("meta[property=og:image], meta[name=twitter:image]")?.attr("content")
+        if (!ogImage.isNullOrBlank() && isValidArticleImageUrl(ogImage)) {
+            return resolveRelativeImageUrl(ogImage, articleUrl)
+        }
+
+        val images = doc.select("img")
+        for (img in images) {
+            val width = img.attr("width").toIntOrNull()
+            val height = img.attr("height").toIntOrNull()
+            if (width != null && width in 1..20) continue
+            if (height != null && height in 1..20) continue
+
+            val src = img.attr("abs:src").ifBlank {
+                img.attr("src").ifBlank {
+                    img.attr("data-src").ifBlank {
+                        img.attr("data-original").ifBlank {
+                            img.attr("data-lazy-src").ifBlank {
+                                img.attr("srcset").split(",").firstOrNull()?.trim()
+                                    ?.substringBefore(" ") ?: ""
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (src.isNotBlank() && isValidArticleImageUrl(src)) {
+                return resolveRelativeImageUrl(src, articleUrl)
+            }
+        }
+        null
+    } catch (_: Throwable) {
+        val naive = naiveFindImageLink(html)?.let { Parser.unescapeEntities(it, true) }
+        if (!naive.isNullOrBlank() && isValidArticleImageUrl(naive)) {
+            resolveRelativeImageUrl(naive, articleUrl)
+        } else null
+    }
+}
+
+private fun isValidArticleImageUrl(url: String): Boolean {
+    val lower = url.lowercase().trim()
+    if (lower.startsWith("data:")) return false
+    if (lower.contains("twitter_icon")) return false
+    if (lower.contains("feedburner.com")) return false
+    if (lower.contains("doubleclick.net")) return false
+    if (lower.contains("/1x1.") || lower.contains("/pixel.")) return false
+    return true
+}
+
+private fun resolveRelativeImageUrl(url: String, baseUrl: String?): String {
+    if (url.startsWith("http://", ignoreCase = true) || url.startsWith(
+            "https://",
+            ignoreCase = true
+        )
+    ) {
+        return url
+    }
+    if (!baseUrl.isNullOrBlank()) {
+        try {
+            return relativeLinkIntoAbsolute(URL(baseUrl), url)
+        } catch (_: Throwable) {
+            // fallback to original
+        }
+    }
+    return url
+}
 
 fun String.urlEncode(): String =
     URLEncoder.encode(this, "UTF-8")

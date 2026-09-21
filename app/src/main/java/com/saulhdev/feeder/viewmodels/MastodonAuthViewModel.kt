@@ -19,6 +19,8 @@
 package com.saulhdev.feeder.viewmodels
 
 import androidx.lifecycle.viewModelScope
+import com.saulhdev.feeder.data.account.AccountConfig
+import com.saulhdev.feeder.data.account.AccountStorage
 import com.saulhdev.feeder.data.db.models.Feed
 import com.saulhdev.feeder.data.repository.SourcesRepository
 import com.saulhdev.feeder.manager.mastodon.MASTODON_REDIRECT_URI
@@ -41,6 +43,7 @@ class MastodonAuthViewModel(
     private val auth: MastodonAuth,
     private val api: MastodonApi,
     private val sourcesRepo: SourcesRepository,
+    private val accountStorage: AccountStorage,
 ) : NeoViewModel() {
 
     data class UiState(
@@ -61,6 +64,11 @@ class MastodonAuthViewModel(
 
     fun dismissError() {
         _uiState.update { it.copy(error = null) }
+    }
+
+    fun reset() {
+        _uiState.value = UiState()
+        _completed.value = false
     }
 
     fun startAuth(instanceInput: String) {
@@ -131,6 +139,22 @@ class MastodonAuthViewModel(
                                 excludeReplies = true,
                             )
                             sourcesRepo.insertSource(feed)
+
+                            val accountId = "mastodon_${instance}_$username"
+                            val mastodonAccount = AccountConfig.MastodonAccount(
+                                id = accountId,
+                                displayName = "$username@$instance",
+                                instance = instance,
+                                username = username,
+                                token = token,
+                                isEnabled = true,
+                                backgroundSyncEnabled = true,
+                                requireLink = true,
+                                requireImage = true,
+                                excludeReplies = true,
+                            )
+                            accountStorage.saveAccount(mastodonAccount)
+
                             _uiState.update { it.copy(isLoading = false) }
                             _completed.value = true
                         }

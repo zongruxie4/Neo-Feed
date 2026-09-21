@@ -61,8 +61,13 @@ fun MastodonCallbackPage(
 
     LaunchedEffect(completed) {
         if (completed) {
-            navController.navigate(NavRoute.Main(page = 2)) {
-                launchSingleTop = true
+            viewModel.reset()
+            val popped = navController.popBackStack<NavRoute.Plugins>(inclusive = false)
+            if (!popped) {
+                navController.navigate(NavRoute.Plugins) {
+                    popUpTo<NavRoute.MastodonCallback> { inclusive = true }
+                    launchSingleTop = true
+                }
             }
         }
     }

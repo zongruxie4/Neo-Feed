@@ -37,7 +37,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -62,7 +61,6 @@ import com.saulhdev.feeder.ui.components.preferences.PreferenceGroup
 import com.saulhdev.feeder.utils.LocationHelper
 import org.koin.compose.koinInject
 
-@OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
 fun PreferencesPage(
     prefs: FeedPreferences = koinInject(),
@@ -92,6 +90,7 @@ fun PreferencesPage(
         prefs.openInBrowser,
         prefs.offlineReader,
         prefs.removeDuplicates,
+        prefs.plugins,
     )
     val filterPrefs = listOf(
         prefs.blockedWords,

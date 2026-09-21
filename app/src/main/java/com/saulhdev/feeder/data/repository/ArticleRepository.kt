@@ -18,10 +18,15 @@
 
 package com.saulhdev.feeder.data.repository
 
+import com.saulhdev.feeder.data.account.AccountConfig
+import com.saulhdev.feeder.data.account.AccountStorage
 import com.saulhdev.feeder.data.db.NeoFeedDb
 import com.saulhdev.feeder.data.db.models.Article
 import com.saulhdev.feeder.data.db.models.ArticleIdWithLink
+import com.saulhdev.feeder.data.db.models.Feed
 import com.saulhdev.feeder.data.db.models.FeedItem
+import com.saulhdev.feeder.data.db.models.SyncActionEntity
+import com.saulhdev.feeder.data.db.models.SyncActionType
 import com.saulhdev.feeder.utils.blobInputStream
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -32,10 +37,15 @@ import kotlinx.coroutines.withContext
 import java.io.File
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class ArticleRepository(db: NeoFeedDb) {
+class ArticleRepository(
+    db: NeoFeedDb,
+    private val accountStorage: AccountStorage,
+) {
     private val cc = Dispatchers.IO
     private val jcc = Dispatchers.IO + SupervisorJob()
     private val articlesDao = db.feedArticleDao()
+    private val feedSourceDao = db.feedSourceDao()
+    private val syncQueueDao = db.syncQueueDao()
 
     suspend fun deleteArticles(ids: List<String>) = withContext(jcc) {
         articlesDao.deleteArticles(ids)
@@ -97,9 +107,67 @@ class ArticleRepository(db: NeoFeedDb) {
         articleId: String,
         bookmark: Boolean,
     ) = withContext(jcc) {
-        articlesDao.getArticleById(articleId)?.let {
-            articlesDao.updateFeedArticle(it.copy(bookmarked = bookmark, pinned = bookmark))
+        articlesDao.getArticleById(articleId)?.let { article ->
+            articlesDao.updateFeedArticle(article.copy(bookmarked = bookmark, pinned = bookmark))
+            val feed = feedSourceDao.loadFeedById(article.feedId)
+            if (feed?.sourceType == "nextcloud_news" || feed?.sourceType == "miniflux") {
+                val remoteId = article.guid.toLongOrNull()
+                if (remoteId != null) {
+                    val accountId = resolveAccountId(feed)
+                    syncQueueDao.insertAction(
+                        SyncActionEntity(
+                            accountId = accountId,
+                            remoteItemId = remoteId,
+                            actionType = if (bookmark) SyncActionType.STAR else SyncActionType.UNSTAR
+                        )
+                    )
+                }
+            }
         }
+    }
+
+    suspend fun markArticleAsRead(
+        articleId: String,
+        isRead: Boolean,
+    ) = withContext(jcc) {
+        articlesDao.getArticleById(articleId)?.let { article ->
+            articlesDao.updateFeedArticle(article.copy(isRead = isRead))
+            val feed = feedSourceDao.loadFeedById(article.feedId)
+            if (feed?.sourceType == "nextcloud_news" || feed?.sourceType == "miniflux") {
+                val remoteId = article.guid.toLongOrNull()
+                if (remoteId != null) {
+                    val accountId = resolveAccountId(feed)
+                    syncQueueDao.insertAction(
+                        SyncActionEntity(
+                            accountId = accountId,
+                            remoteItemId = remoteId,
+                            actionType = if (isRead) SyncActionType.MARK_READ else SyncActionType.MARK_UNREAD
+                        )
+                    )
+                }
+            }
+        }
+    }
+
+    private fun resolveAccountId(feed: Feed): String {
+        val accounts = accountStorage.loadAccounts()
+        val feedHost = feed.url.host ?: ""
+        val matching = when (feed.sourceType) {
+            "nextcloud_news" -> {
+                accounts.filterIsInstance<AccountConfig.NextcloudNewsAccount>().firstOrNull {
+                    feedHost.isNotBlank() && it.serverUrl.contains(feedHost)
+                } ?: accounts.filterIsInstance<AccountConfig.NextcloudNewsAccount>().firstOrNull()
+            }
+
+            "miniflux" -> {
+                accounts.filterIsInstance<AccountConfig.MinifluxAccount>().firstOrNull {
+                    feedHost.isNotBlank() && it.serverUrl.contains(feedHost)
+                } ?: accounts.filterIsInstance<AccountConfig.MinifluxAccount>().firstOrNull()
+            }
+
+            else -> null
+        }
+        return matching?.id ?: feed.url.host ?: "account"
     }
 
     suspend fun unpinArticle(

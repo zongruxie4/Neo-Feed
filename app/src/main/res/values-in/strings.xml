@@ -10,7 +10,6 @@
     <string name="pref_transparency">Opasitas overlay latar belakang</string>
     <string name="pref_offline_reader">Pembaca luring</string>
     <string name="pref_sync_wifi">Sinkron hanya saat tersambung Wi-Fi</string>
-    <string name="pref_sync_frequency">Frekuensi Sinkronisasi</string>
     <string name="pref_items_per_feed">Item maksimum per feed</string>
     <string name="pref_compact">Tata letak ringkas</string>
     <string name="allow_notify_to_settings">Buka setelan</string>

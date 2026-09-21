@@ -78,7 +78,6 @@
     <string name="sync_half_hour_minutes">30 de minute</string>
     <string name="pref_sync_wifi">Sincronizare numai prin Wi-Fi</string>
     <string name="pref_items_per_feed">Maximum de articole per flux</string>
-    <string name="pref_sync_frequency">Frecvența de sincronizare</string>
     <string name="syncing">Sincronizare</string>
     <string name="sync_two_hours">Două ore</string>
     <string name="by_author_on_date">%1$s, %2$s</string>

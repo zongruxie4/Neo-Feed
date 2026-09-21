@@ -30,7 +30,6 @@
     <string name="pref_sync_wifi">المزامنة على شبكة Wi-Fi فقط</string>
     <string name="about_source_code">التعليمات البرمجية المصدرية</string>
     <string name="pref_cat_overlay">المظهر</string>
-    <string name="pref_sync_frequency">تكرار المزامنة</string>
     <string name="pref_items_per_feed">الحد الأقصى للعناصر في كل موجز</string>
     <string name="syncing">جارٍ المزامنة</string>
     <string name="sync_status">حالة المزامنة</string>

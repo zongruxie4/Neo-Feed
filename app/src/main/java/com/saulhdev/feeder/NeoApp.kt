@@ -9,26 +9,33 @@ import androidx.multidex.MultiDexApplication
 import androidx.work.WorkManager
 import com.google.android.material.color.DynamicColors
 import com.jakewharton.threetenabp.AndroidThreeTen
+import com.saulhdev.feeder.data.account.AccountStorage
 import com.saulhdev.feeder.data.content.FeedPreferences.Companion.prefsModule
 import com.saulhdev.feeder.data.db.NeoFeedDb
 import com.saulhdev.feeder.data.repository.ArticleRepository
 import com.saulhdev.feeder.data.repository.SourcesRepository
+import com.saulhdev.feeder.data.source.NewsSourceRegistry
 import com.saulhdev.feeder.data.weather.OWMWeatherProvider
 import com.saulhdev.feeder.data.weather.OpenMeteoProvider
 import com.saulhdev.feeder.data.weather.WeatherRepository
+import com.saulhdev.feeder.manager.localrss.SyncRestClient
 import com.saulhdev.feeder.manager.mastodon.MastodonApi
 import com.saulhdev.feeder.manager.mastodon.MastodonAuth
 import com.saulhdev.feeder.manager.mastodon.MastodonStorage
+import com.saulhdev.feeder.manager.miniflux.MinifluxClient
+import com.saulhdev.feeder.manager.nextcloud.NextcloudNewsClient
 import com.saulhdev.feeder.manager.service.OverlayBridge
-import com.saulhdev.feeder.manager.sync.SyncRestClient
+import com.saulhdev.feeder.utils.AndroidResourceProvider
 import com.saulhdev.feeder.utils.ApplicationCoroutineScope
 import com.saulhdev.feeder.utils.LocationHelper
+import com.saulhdev.feeder.utils.ResourceProvider
 import com.saulhdev.feeder.utils.Utilities.Companion.userAgent
 import com.saulhdev.feeder.utils.extensions.ToastMaker
 import com.saulhdev.feeder.utils.extensions.restartApp
 import com.saulhdev.feeder.viewmodels.ArticleListViewModel
 import com.saulhdev.feeder.viewmodels.ArticleViewModel
 import com.saulhdev.feeder.viewmodels.MastodonAuthViewModel
+import com.saulhdev.feeder.viewmodels.PluginsViewModel
 import com.saulhdev.feeder.viewmodels.SearchFeedViewModel
 import com.saulhdev.feeder.viewmodels.SortFilterViewModel
 import com.saulhdev.feeder.viewmodels.SourceEditViewModel
@@ -69,6 +76,7 @@ class NeoApp : MultiDexApplication(), KoinStartup {
         viewModelOf(::ArticleViewModel)
         viewModelOf(::SortFilterViewModel)
         viewModelOf(::MastodonAuthViewModel)
+        viewModelOf(::PluginsViewModel)
     }
 
     // TODO Move to its class
@@ -76,12 +84,17 @@ class NeoApp : MultiDexApplication(), KoinStartup {
         single<NeoFeedDb> { NeoFeedDb.getInstance(this@NeoApp) }
         single { get<NeoFeedDb>().feedArticleDao() }
         single { get<NeoFeedDb>().feedSourceDao() }
+        single { get<NeoFeedDb>().syncQueueDao() }
         singleOf(::ArticleRepository)
         singleOf(::SourcesRepository)
         singleOf(::SyncRestClient)
         singleOf(::MastodonStorage)
         singleOf(::MastodonAuth)
         singleOf(::MastodonApi)
+        singleOf(::AccountStorage)
+        singleOf(::NextcloudNewsClient)
+        singleOf(::MinifluxClient)
+        singleOf(::NewsSourceRegistry)
         single { OpenMeteoProvider() }
         single { OWMWeatherProvider() }
         single { LocationHelper(this@NeoApp) }
@@ -91,6 +104,7 @@ class NeoApp : MultiDexApplication(), KoinStartup {
     private val coreModule = module {
         single { contentResolver }
         single { WorkManager.getInstance(this@NeoApp) }
+        single<ResourceProvider> { AndroidResourceProvider(androidContext()) }
         single<ToastMaker> {
             object : ToastMaker {
                 override suspend fun makeToast(text: String) = withContext(Dispatchers.Main) {

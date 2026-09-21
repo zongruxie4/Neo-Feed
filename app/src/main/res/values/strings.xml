@@ -32,20 +32,10 @@
     <string name="about_open_source">Open Source Libraries</string>
     <string name="pref_tg">Telegram channel</string>
     <string name="about_source_code">Source code</string>
-    <string name="pref_cat_overlay">Appearance</string>
     <string name="pref_cat_debug">Debug</string>
-    <string name="pref_transparency">Overlay background opacity</string>
-    <string name="pref_dynamic_color">Dynamic Color</string>
-    <string name="pref_ovr_theme">Overlay theme</string>
     <string name="pref_browser_theme">Open in Browser</string>
     <string name="pref_offline_reader">Offline reader</string>
-    <string name="pref_sync_wifi">Sync on Wifi Only</string>
-    <string name="pref_sync_frequency">Sync Frequency</string>
-    <string name="pref_sync_range">Sync Range</string>
     <string name="pref_items_per_feed">Max items per feed</string>
-    <string name="pref_mastodon_items_per_feed">Max Mastodon items per feed</string>
-    <string name="syncing">Syncing</string>
-    <string name="sync_status">Sync status</string>
     <string name="pref_compact">Compact item layout</string>
     <string name="pref_card_bg">Card background</string>
     <string name="pref_bg_color">Overlay background</string>
@@ -54,9 +44,6 @@
     <string name="overlay_reload">Click here to reload</string>
     <string name="overlay_no_permission_desc">HomeFeeder needs \"Notification access\" to show notifications atop other apps.</string>
     <string name="overlay_no_permission_snackbar">Please verify you have allowed \"Notification access\" permission and try again.</string>
-    <string name="pref_syscolors">Use system wallpaper colors</string>
-    <string name="pref_syscolors_desc">instead of \"Launcher:\" options</string>
-    <string name="pref_syscolors_disabled">Requires Android 8.1 or newer</string>
     <string name="action_reload">Reload</string>
     <string name="action_restart">Restart app</string>
     <string name="pm_empty">No sources installed</string>
@@ -76,32 +63,6 @@
     <string name="remove_action_yes">Yes</string>
     <string name="news_image_text">news story image</string>
     <string name="title_feed_list">Feed List</string>
-    <string name="theme_auto_launcher">Automatically (from launcher)</string>
-    <string name="theme_auto_system">Automatically (from system)</string>
-    <string name="theme_light">Light</string>
-    <string name="theme_dark">Dark</string>
-    <string name="sync_manual_only">Manual only (Disabled)</string>
-    <string name="sync_half_hour_minutes">30 minutes</string>
-    <string name="sync_range_one_day">1 day</string>
-    <string name="sync_range_two_days">2 days</string>
-    <string name="sync_range_three_days">3 days</string>
-    <string name="sync_range_one_week">1 week</string>
-    <string name="sync_range_one_month">1 month</string>
-    <string name="sync_one_hour">One Hour</string>
-    <string name="sync_two_hours">Two Hours</string>
-    <string name="sync_three_hours">Three Hours</string>
-    <string name="sync_six_hours">Six Hours</string>
-    <string name="transparency_non_transparent">Non Transparent</string>
-    <string name="transparency_low_transparency">75% transparent</string>
-    <string name="transparency_mid_transparency">50% transparent</string>
-    <string name="transparency_high_transparency">25% transparent</string>
-    <string name="transparency_transparent">Transparent</string>
-    <string name="background_theme_option">Theme based</string>
-    <string name="background_white">White</string>
-    <string name="background_amoled">Black</string>
-    <string name="background_primary_color">Launcher: Primary color</string>
-    <string name="background_secondary_color">Launcher: Secondary color</string>
-    <string name="background_tertiary_color">Launcher: Tertiary color</string>
     <string name="debug_logcat_printing">Extensive logcat printing</string>
     <string name="debug_content_printing">Log notification content</string>
     <string name="summary_feed_list">Add or remove RSS sources</string>
@@ -114,6 +75,31 @@
     <string name="no_articles_found">No articles found</string>
     <string name="on_date" translatable="false">%1$s</string>
     <string name="by_author_on_date">%1$s, %2$s</string>
+
+    <!-- Themes -->
+    <string name="pref_cat_overlay">Appearance</string>
+    <string name="pref_syscolors">Use system wallpaper colors</string>
+    <string name="pref_syscolors_desc">instead of \"Launcher:\" options</string>
+    <string name="pref_syscolors_disabled">Requires Android 8.1 or newer</string>
+    <string name="pref_transparency">Overlay background opacity</string>
+    <string name="pref_dynamic_color">Dynamic Color</string>
+    <string name="pref_ovr_theme">Overlay theme</string>
+    <string name="background_theme_option">Theme based</string>
+    <string name="theme_auto_system_black">Automatically (from system; black)</string>
+    <string name="theme_black">Black</string>
+    <string name="background_white">White</string>
+    <string name="background_primary_color">Launcher: Primary color</string>
+    <string name="background_secondary_color">Launcher: Secondary color</string>
+    <string name="background_tertiary_color">Launcher: Tertiary color</string>
+    <string name="transparency_non_transparent">Non Transparent</string>
+    <string name="transparency_low_transparency">75% transparent</string>
+    <string name="transparency_mid_transparency">50% transparent</string>
+    <string name="transparency_high_transparency">25% transparent</string>
+    <string name="transparency_transparent">Transparent</string>
+    <string name="theme_auto_launcher">Automatically (from launcher)</string>
+    <string name="theme_auto_system">Automatically (from system)</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
 
     <string name="source_enabled">Is Enabled</string>
     <string name="sources_import_opml">Import feeds from OPML</string>
@@ -134,8 +120,6 @@
     <string name="title_overlay">Overlay</string>
     <string name="add_feed">Add feed</string>
     <string name="pref_remove_duplicates">Remove duplicate article from different sources</string>
-    <string name="theme_auto_system_black">Automatically (from system; black)</string>
-    <string name="theme_black">Black</string>
     <string name="sort_filter">Sort and filter</string>
     <string name="state_modified">Modified</string>
     <string name="action_apply">Apply</string>
@@ -166,15 +150,6 @@
     <string name="action_save">Save</string>
     <string name="action_open_smry">Open in SMRY</string>
 
-    <string name="add_mastodon_account">Add Mastodon account</string>
-    <string name="mastodon_instance_hint">Instance (e.g. mastodon.social)</string>
-    <string name="mastodon_connect">Connect account</string>
-    <string name="mastodon_auth_loading">Opening Mastodon authorization…</string>
-    <string name="mastodon_auth_error">Mastodon authorization failed: %1$s</string>
-    <string name="mastodon_account_added">Mastodon account added</string>
-    <string name="mastodon_require_link">Must contain a link</string>
-    <string name="mastodon_require_image">Must contain a picture</string>
-    <string name="mastodon_exclude_replies">Hide replies</string>
     <string name="pref_cat_filters">Filters</string>
     <string name="pref_blocked_words">Blocked words</string>
     <string name="pref_blocked_words_summary">Hide articles containing these words</string>
@@ -182,6 +157,8 @@
     <string name="blocked_words_hint">Add a word</string>
     <string name="blocked_words_add">Add</string>
     <string name="blocked_words_empty">No blocked words</string>
+
+    <!-- Weather -->
     <string name="pref_cat_weather">Weather</string>
     <string name="pref_show_weather">Weather source</string>
     <string name="pref_show_weather_summary">Tap to choose the weather source</string>
@@ -217,4 +194,68 @@
     <string name="weather_code_thunderstorm">Thunderstorm</string>
     <string name="weather_provider_owm" translatable="true">OpenWeatherMap</string>
     <string name="weather_provider_open_meteo" translatable="true">Open Meteo</string>
+
+    <!-- Plugins & Accounts -->
+    <string name="plugins_and_accounts">Plugins &amp; Accounts</string>
+    <string name="plugins_summary">Manage accounts, API keys and external feed services</string>
+    <string name="select_service">Select a service</string>
+    <string name="excluded_folders">Excluded folders</string>
+    <string name="excluded_folders_hint">Folder1, Folder2</string>
+    <string name="add_account">Add Account</string>
+    <string name="connect_account">Connect account</string>
+    <string name="account_saved">Account saved</string>
+    <string name="delete_account">Delete account</string>
+    <string name="delete_account_confirm">Delete account?</string>
+    <string name="delete_account_confirm_message">Are you sure you want to remove this account?</string>
+    <string name="no_accounts_configured">No external accounts configured yet</string>
+
+    <string name="service_nextcloud_news">Nextcloud News</string>
+    <string name="service_nextcloud_news_desc">Sync with Nextcloud News (folders, feeds and bidirectional read/star sync)</string>
+    <string name="nextcloud_server_url">Server URL</string>
+    <string name="nextcloud_server_url_hint">https://cloud.example.com</string>
+    <string name="nextcloud_username">Username</string>
+    <string name="nextcloud_password_token">App Password / Token</string>
+    <string name="nextcloud_test_connection">Test connection</string>
+    <string name="nextcloud_testing_connection">Testing connection…</string>
+
+    <string name="service_miniflux">Miniflux / FreshRSS</string>
+    <string name="service_miniflux_desc">Sync feeds and articles with Miniflux REST API</string>
+
+    <string name="sync_background_workmanager">Background sync (WorkManager)</string>
+    <string name="pref_sync_wifi">Sync on Wifi Only</string>
+    <string name="pref_sync_range">Sync Range</string>
+    <string name="sync_range_one_day">1 day</string>
+    <string name="sync_range_two_days">2 days</string>
+    <string name="sync_range_three_days">3 days</string>
+    <string name="sync_range_one_week">1 week</string>
+    <string name="sync_range_one_month">1 month</string>
+    <string name="sync_one_hour">One Hour</string>
+    <string name="sync_two_hours">Two Hours</string>
+    <string name="sync_three_hours">Three Hours</string>
+    <string name="sync_six_hours">Six Hours</string>
+    <string name="sync_error">Sync error</string>
+    <string name="sync_completed">Sync completed</string>
+    <string name="sync_status">Sync status</string>
+    <string name="sync_now">Sync now</string>
+    <string name="sync_interval">Sync frequency</string>
+    <string name="syncing">Syncing</string>
+    <string name="sync_manual_only">Manual only (Disabled)</string>
+    <string name="sync_half_hour_minutes">30 minutes</string>
+
+    <string name="connection_success">Connection successful</string>
+    <string name="connection_failed">Connection failed</string>
+    <string name="connection_unknown">Unknown error connecting</string>
+
+    <string name="service_mastodon">Mastodon</string>
+    <string name="service_mastodon_desc">Mastodon home timeline, lists and hashtags</string>
+    <string name="add_mastodon_account">Add Mastodon account</string>
+    <string name="mastodon_instance">Instance: %1$s</string>
+    <string name="mastodon_username">Username: %1$s</string>
+    <string name="mastodon_instance_hint">Instance (e.g. mastodon.social)</string>
+    <string name="mastodon_auth_loading">Opening Mastodon authorization…</string>
+    <string name="mastodon_auth_error">Mastodon authorization failed: %1$s</string>
+    <string name="mastodon_account_added">Mastodon account added</string>
+    <string name="mastodon_require_link">Must contain a link</string>
+    <string name="mastodon_require_image">Must contain a picture</string>
+    <string name="mastodon_exclude_replies">Hide replies</string>
 </resources>

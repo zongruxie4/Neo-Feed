@@ -50,7 +50,6 @@
     <string name="title_settings">Mga Setting</string>
     <string name="by_author_on_date">%1$s, %2$s</string>
     <string name="date_at">sa</string>
-    <string name="pref_sync_frequency">Dalas ng Pag-sync</string>
     <string name="pref_sync_wifi">Mag-sync sa Wifi Lang</string>
     <string name="about_changelog">Talaan ng mga pagbabago</string>
     <string name="pref_cat_overlay">Hitsura</string>

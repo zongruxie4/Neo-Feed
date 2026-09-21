@@ -64,7 +64,6 @@
     <string name="add_rss">Новый канал RSS</string>
     <string name="theme_auto_launcher">Автоматически (из лаунчера)</string>
     <string name="pref_items_per_feed">Макс. статей в ленте</string>
-    <string name="pref_sync_frequency">Частота обновления</string>
     <string name="about_licenses">Лицензия</string>
     <string name="transparency_non_transparent">Непрозрачно</string>
     <string name="add_feed_search_hint">URL-адрес ленты</string>

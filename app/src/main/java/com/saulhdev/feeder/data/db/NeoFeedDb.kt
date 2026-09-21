@@ -32,9 +32,11 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.saulhdev.feeder.data.db.dao.FeedArticleDao
 import com.saulhdev.feeder.data.db.dao.FeedSourceDao
+import com.saulhdev.feeder.data.db.dao.SyncQueueDao
 import com.saulhdev.feeder.data.db.models.Article
 import com.saulhdev.feeder.data.db.models.ArticleIdWithLink
 import com.saulhdev.feeder.data.db.models.Feed
+import com.saulhdev.feeder.data.db.models.SyncActionEntity
 import org.threeten.bp.ZonedDateTime
 import java.util.UUID
 
@@ -45,8 +47,9 @@ const val ID_ALL: Long = -1L
     entities = [
         Feed::class,
         Article::class,
+        SyncActionEntity::class,
     ],
-    version = 11,
+    version = 12,
     exportSchema = true,
     autoMigrations = [
         AutoMigration(
@@ -78,6 +81,7 @@ const val ID_ALL: Long = -1L
 abstract class NeoFeedDb : RoomDatabase() {
     abstract fun feedSourceDao(): FeedSourceDao
     abstract fun feedArticleDao(): FeedArticleDao
+    abstract fun syncQueueDao(): SyncQueueDao
 
     companion object {
         @Volatile
@@ -220,7 +224,35 @@ abstract class NeoFeedDb : RoomDatabase() {
     class RemoveLegacyPubDate : AutoMigrationSpec
 }
 
-val allMigrations = arrayOf(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_7_8, MIGRATION_8_9, MIGRATION_9_10, MIGRATION_10_11)
+val allMigrations = arrayOf(
+    MIGRATION_1_2,
+    MIGRATION_2_3,
+    MIGRATION_7_8,
+    MIGRATION_8_9,
+    MIGRATION_9_10,
+    MIGRATION_10_11,
+    MIGRATION_11_12
+)
+
+@Suppress("ClassName")
+object MIGRATION_11_12 : Migration(11, 12) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL(
+            """
+            CREATE TABLE IF NOT EXISTS `SyncActionQueue` (
+                `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                `accountId` TEXT NOT NULL,
+                `remoteItemId` INTEGER NOT NULL,
+                `actionType` TEXT NOT NULL,
+                `createdAt` INTEGER NOT NULL
+            )
+            """.trimIndent()
+        )
+        db.execSQL("CREATE INDEX IF NOT EXISTS `index_SyncActionQueue_accountId` ON `SyncActionQueue` (`accountId`)")
+        db.execSQL("CREATE INDEX IF NOT EXISTS `index_SyncActionQueue_remoteItemId` ON `SyncActionQueue` (`remoteItemId`)")
+        db.execSQL("ALTER TABLE `Article` ADD COLUMN `isRead` INTEGER NOT NULL DEFAULT 0")
+    }
+}
 
 @Suppress("ClassName")
 object MIGRATION_10_11 : Migration(10, 11) {

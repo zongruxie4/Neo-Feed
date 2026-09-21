@@ -71,7 +71,6 @@
     <string name="pref_items_per_feed">Nombre maximal d\'éléments par flux</string>
     <string name="pref_offline_reader">Lecteur hors-ligne</string>
     <string name="pref_sync_wifi">Synchronisation sur Wifi uniquement</string>
-    <string name="pref_sync_frequency">Fréquence de synchronisation</string>
     <string name="syncing">En train de synchroniser</string>
     <string name="sync_status">État de la synchronisation</string>
     <string name="action_restart">Redémarrer l\'application</string>
@@ -108,10 +107,9 @@
     <string name="title_bookmarks">Marque-pages</string>
     <string name="add_mastodon_account">Ajouter un compte Mastodon</string>
     <string name="mastodon_instance_hint">Instance (p. ex. mastodon.social)</string>
-    <string name="mastodon_connect">Connecter le compte</string>
+    <string name="connect_account">Connecter le compte</string>
     <string name="mastodon_auth_loading">Ouverture de l’autorisation Mastodon…</string>
     <string name="mastodon_auth_error">Échec de l’autorisation Mastodon : %1$s</string>
     <string name="mastodon_account_added">Compte Mastodon ajouté</string>
     <string name="mastodon_no_token">Aucun jeton Mastodon trouvé pour ce compte</string>
-    <string name="pref_mastodon_items_per_feed">Nombre maximal d’éléments Mastodon par flux</string>
 </resources>

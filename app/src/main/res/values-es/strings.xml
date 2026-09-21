@@ -69,7 +69,6 @@
     <string name="pref_browser_theme">Abrir en el navegador</string>
     <string name="sync_six_hours">Seis horas</string>
     <string name="pref_sync_wifi">Sincronizar solo con el Wifi</string>
-    <string name="pref_sync_frequency">Frecuencia de la sincronización</string>
     <string name="pref_offline_reader">Lector sin conexión</string>
     <string name="action_restart">Reiniciar aplicación</string>
     <string name="sync_manual_only">Solo manual (Desactivado)</string>

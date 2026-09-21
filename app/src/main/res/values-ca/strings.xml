@@ -29,7 +29,6 @@
     <string name="pref_browser_theme">Obre al navegador</string>
     <string name="pref_offline_reader">Lector sense connexió</string>
     <string name="pref_sync_wifi">Sincronitza només amb wifi</string>
-    <string name="pref_sync_frequency">Freqüència de sincronització</string>
     <string name="pref_items_per_feed">Nombre màxim d’elements per canal</string>
     <string name="syncing">S’està sincronitzant</string>
     <string name="sync_status">Estat de la sincronització</string>

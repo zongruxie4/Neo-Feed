@@ -31,7 +31,6 @@
     <string name="pref_browser_theme">ブラウザで開く</string>
     <string name="pref_offline_reader">オフラインリーダー</string>
     <string name="pref_sync_wifi">Wi-Fiでのみ同期</string>
-    <string name="pref_sync_frequency">同期周波数</string>
     <string name="pref_items_per_feed">フィードごとの最大アイテム数</string>
     <string name="syncing">同期</string>
     <string name="sync_status">同期状態</string>

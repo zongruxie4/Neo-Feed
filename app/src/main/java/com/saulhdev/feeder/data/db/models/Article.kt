@@ -75,6 +75,8 @@ data class Article constructor(
     val categories: ArrayList<String> = arrayListOf(),
     val pinned: Boolean = false,
     val bookmarked: Boolean = false,
+    @ColumnInfo(defaultValue = "0")
+    val isRead: Boolean = false,
 ) {
     fun updateFromParsedEntry(
         entry: Item,

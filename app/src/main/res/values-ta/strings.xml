@@ -17,7 +17,6 @@
     <string name="pref_browser_theme">உலாவியில் திற</string>
     <string name="pref_offline_reader">இணைப்பில்லாத வாசகர்</string>
     <string name="pref_sync_wifi">வைஃபை மட்டும் ஒத்திசைக்கவும்</string>
-    <string name="pref_sync_frequency">ஒத்திசைவு அதிர்வெண்</string>
     <string name="pref_items_per_feed">ஒரு ஊட்டத்திற்கு அதிகபட்ச உருப்படிகள்</string>
     <string name="about_community_telegram">தந்தி மீது சமூகம்</string>
     <string name="about_community_matrix">மேட்ரிக்சில் சமூகம்</string>

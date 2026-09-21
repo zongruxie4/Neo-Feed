@@ -43,7 +43,6 @@
     <string name="fetch_full_articles_by_default">Obtener articulos complete per predefinition</string>
     <string name="sync_half_hour_minutes">30 minutas</string>
     <string name="syncing">Synchronisante</string>
-    <string name="pref_sync_frequency">Frequentia de syncronisation</string>
     <string name="transparency_mid_transparency">50% transparente</string>
     <string name="transparency_non_transparent">Non transparente</string>
     <string name="sync_one_hour">Un hora</string>

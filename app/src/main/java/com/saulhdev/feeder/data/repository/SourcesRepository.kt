@@ -23,9 +23,9 @@ import androidx.work.WorkManager
 import com.saulhdev.feeder.data.db.ID_ALL
 import com.saulhdev.feeder.data.db.NeoFeedDb
 import com.saulhdev.feeder.data.db.models.Feed
+import com.saulhdev.feeder.manager.localrss.FeedSyncer
+import com.saulhdev.feeder.manager.localrss.requestFeedSync
 import com.saulhdev.feeder.manager.models.scheduleFullTextParse
-import com.saulhdev.feeder.manager.sync.FeedSyncer
-import com.saulhdev.feeder.manager.sync.requestFeedSync
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -67,7 +67,13 @@ class SourcesRepository(db: NeoFeedDb) {
     fun getAllSourcesFlow(): Flow<List<Feed>> = feedsDao.getAllFeeds()
         .flowOn(cc)
 
-    suspend fun getAllSources(): List<Feed> = feedsDao.loadFeeds()
+    suspend fun getAllSources(): List<Feed> = withContext(jcc) {
+        feedsDao.loadAllFeeds()
+    }
+
+    suspend fun getEnabledSourcesList(): List<Feed> = withContext(jcc) {
+        feedsDao.loadFeeds()
+    }
 
     fun getEnabledSources(): Flow<List<Feed>> = feedsDao.getEnabledFeeds()
         .flowOn(cc)

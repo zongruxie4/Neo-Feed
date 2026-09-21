@@ -73,7 +73,6 @@
     <string name="article_not_found">Lokaler Artikel nicht gefunden</string>
     <string name="by_author_on_date">%1$s, %2$s</string>
     <string name="pref_sync_wifi">Synchronisierung nur bei WLAN-Verbindungen</string>
-    <string name="pref_sync_frequency">Häufigkeit der Synchronisierung</string>
     <string name="pref_items_per_feed">Maximale Anzahl der Beiträge im Feed</string>
     <string name="syncing">synchronisierend</string>
     <string name="sync_status">Synchronisationsstatus</string>

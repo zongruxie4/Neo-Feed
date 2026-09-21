@@ -32,7 +32,6 @@
     <string name="pref_browser_theme">ব্রাউজারে খুলো</string>
     <string name="pref_offline_reader">অফলাইন রিডার</string>
     <string name="pref_sync_wifi">শুধু ওয়াই-ফাই এ সিঙ্ক করো</string>
-    <string name="pref_sync_frequency">সিঙ্ক করার হার</string>
     <string name="pref_items_per_feed">প্রত্যেক ফিডে সর্বোচ্চ ভুক্তি সংখ্যা</string>
     <string name="syncing">সিঙ্ককরণ</string>
     <string name="sync_status">সিঙ্ক অবস্থা</string>
