@@ -61,6 +61,9 @@ import com.saulhdev.feeder.data.weather.WeatherCode
 import com.saulhdev.feeder.data.weather.WeatherData
 import com.saulhdev.feeder.data.weather.WeatherRepository
 import com.saulhdev.feeder.data.weather.WeatherState
+import com.saulhdev.feeder.ui.components.RoundButton
+import com.saulhdev.feeder.ui.icons.Phosphor
+import com.saulhdev.feeder.ui.icons.phosphor.X
 import org.koin.compose.koinInject
 import kotlin.math.roundToInt
 
@@ -70,9 +73,10 @@ fun WeatherWidget(
     prefs: FeedPreferences = koinInject(),
     weatherRepo: WeatherRepository = koinInject()
 ) {
-    // TODO Add dismiss button
     val showWeather by prefs.weatherProvider.get().collectAsState(initial = false)
     if (!showWeather) return
+    val permissionDismissed by prefs.weatherPermissionDismissed.get()
+        .collectAsState(initial = true)
 
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions()
@@ -118,17 +122,22 @@ fun WeatherWidget(
         }
 
         is WeatherState.LocationPermissionRequired -> {
-            WeatherPermissionCard(
-                modifier = modifier,
-                onGrantClick = {
-                    permissionLauncher.launch(
-                        arrayOf(
-                            Manifest.permission.ACCESS_COARSE_LOCATION,
-                            Manifest.permission.ACCESS_FINE_LOCATION
+            if (!permissionDismissed) {
+                WeatherPermissionCard(
+                    modifier = modifier,
+                    onGrantClick = {
+                        permissionLauncher.launch(
+                            arrayOf(
+                                Manifest.permission.ACCESS_COARSE_LOCATION,
+                                Manifest.permission.ACCESS_FINE_LOCATION
+                            )
                         )
-                    )
-                }
-            )
+                    },
+                    onDismiss = {
+                        prefs.weatherPermissionDismissed.setValue(true)
+                    }
+                )
+            }
         }
 
         is WeatherState.Idle -> {
@@ -329,7 +338,8 @@ private fun WeatherErrorCard(
 @Composable
 private fun WeatherPermissionCard(
     modifier: Modifier = Modifier,
-    onGrantClick: () -> Unit
+    onGrantClick: () -> Unit,
+    onDismiss: () -> Unit,
 ) {
     Card(
         modifier = modifier
@@ -376,6 +386,12 @@ private fun WeatherPermissionCard(
                     style = MaterialTheme.typography.labelMedium
                 )
             }
+            RoundButton(
+                icon = Phosphor.X,
+                description = stringResource(id = R.string.weather_dismiss_permission),
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                onClick = onDismiss
+            )
         }
     }
 }

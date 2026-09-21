@@ -205,6 +205,14 @@ class FeedPreferences private constructor(val context: Context) : KoinComponent 
         defaultValue = ""
     )
 
+    val weatherPermissionDismissed = BooleanPref(
+        titleId = R.string.weather_dismiss_permission,
+        icon = Phosphor.CloudArrowDown,
+        key = WEATHER_PERMISSION_DISMISSED,
+        dataStore = dataStore,
+        defaultValue = false
+    )
+
     /* Others */
     val plugins = StringPref(
         titleId = R.string.plugins_and_accounts,
@@ -300,6 +308,7 @@ class FeedPreferences private constructor(val context: Context) : KoinComponent 
         val DEBUG = booleanPreferencesKey("pref_debugging")
         val WEATHER_ENABLED = booleanPreferencesKey("pref_weather_enabled")
         val WEATHER_PROVIDER = stringPreferencesKey("pref_weather_provider")
+        val WEATHER_PERMISSION_DISMISSED = booleanPreferencesKey("pref_weather_permission_dismissed")
         val WEATHER_OWM_API_KEY = stringPreferencesKey("pref_weather_owm_api")
         val WEATHER_UNIT = stringPreferencesKey("pref_weather_unit")
         val WEATHER_CITY = stringPreferencesKey("pref_weather_city")
