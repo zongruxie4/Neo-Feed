@@ -23,7 +23,7 @@ import com.saulhdev.feeder.data.db.models.Feed
 import com.saulhdev.feeder.data.entity.SourceEditViewState
 import com.saulhdev.feeder.data.repository.ArticleRepository
 import com.saulhdev.feeder.data.repository.SourcesRepository
-import com.saulhdev.feeder.manager.sync.requestFeedSync
+import com.saulhdev.feeder.manager.localrss.requestFeedSync
 import com.saulhdev.feeder.utils.extensions.NeoViewModel
 import com.saulhdev.feeder.utils.sloppyLinkToStrictURL
 import kotlinx.coroutines.ExperimentalCoroutinesApi

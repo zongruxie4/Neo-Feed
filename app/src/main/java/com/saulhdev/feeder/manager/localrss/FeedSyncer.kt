@@ -1,4 +1,4 @@
-package com.saulhdev.feeder.manager.sync
+package com.saulhdev.feeder.manager.localrss
 
 import android.app.NotificationChannel
 import android.app.NotificationManager

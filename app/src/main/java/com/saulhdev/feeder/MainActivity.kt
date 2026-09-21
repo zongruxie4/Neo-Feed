@@ -29,8 +29,9 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.saulhdev.feeder.data.content.FeedPreferences
 import com.saulhdev.feeder.data.weather.WeatherRepository
-import com.saulhdev.feeder.manager.sync.FeedSyncer
+import com.saulhdev.feeder.manager.localrss.FeedSyncer
 import com.saulhdev.feeder.ui.navigation.NAV_BASE
+import com.saulhdev.feeder.ui.navigation.NavRoute
 import com.saulhdev.feeder.ui.navigation.NavigationManager
 import com.saulhdev.feeder.ui.theme.AppTheme
 import com.saulhdev.feeder.utils.extensions.isDarkTheme
@@ -56,7 +57,7 @@ class MainActivity : ComponentActivity() {
             navController = rememberNavController()
             TransparentSystemBars()
             AppTheme(
-                darkTheme = when (com.saulhdev.feeder.manager.sync.prefs.overlayTheme.getValue()) {
+                darkTheme = when (com.saulhdev.feeder.manager.localrss.prefs.overlayTheme.getValue()) {
                     "auto_system" -> isSystemInDarkTheme()
                     else          -> isDarkTheme
                 },
@@ -83,7 +84,14 @@ class MainActivity : ComponentActivity() {
     private fun handleDeepLink(intent: Intent?) {
         if (intent == null) return
         if (::navController.isInitialized) {
-            navController.handleDeepLink(intent)
+            val data = intent.data
+            if (data?.scheme == "nf-mastodon" && data.host == "callback") {
+                val code = data.getQueryParameter("code").orEmpty()
+                val state = data.getQueryParameter("state").orEmpty()
+                navController.navigate(NavRoute.MastodonCallback(code = code, state = state))
+            } else {
+                navController.handleDeepLink(intent)
+            }
         }
     }
 

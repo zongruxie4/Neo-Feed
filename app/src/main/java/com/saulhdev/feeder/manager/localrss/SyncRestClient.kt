@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.saulhdev.feeder.manager.sync
+package com.saulhdev.feeder.manager.localrss
 
 import com.saulhdev.feeder.data.db.ID_ALL
 import kotlinx.coroutines.Dispatchers

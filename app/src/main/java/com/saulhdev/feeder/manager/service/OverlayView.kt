@@ -35,7 +35,7 @@ import com.saulhdev.feeder.data.entity.MenuItem
 import com.saulhdev.feeder.data.weather.WeatherCode
 import com.saulhdev.feeder.data.weather.WeatherRepository
 import com.saulhdev.feeder.data.weather.WeatherState
-import com.saulhdev.feeder.manager.sync.SyncRestClient
+import com.saulhdev.feeder.manager.localrss.SyncRestClient
 import com.saulhdev.feeder.ui.feed.FeedAdapter
 import com.saulhdev.feeder.ui.navigation.Routes
 import com.saulhdev.feeder.ui.theme.CardTheme

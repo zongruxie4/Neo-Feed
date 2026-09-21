@@ -23,8 +23,8 @@ import android.util.Log
 import com.saulhdev.feeder.data.content.FeedPreferences
 import com.saulhdev.feeder.data.db.models.Feed
 import com.saulhdev.feeder.data.repository.ArticleRepository
-import com.saulhdev.feeder.manager.sync.ResponseFailure
-import com.saulhdev.feeder.manager.sync.filterBlockedWords
+import com.saulhdev.feeder.manager.localrss.ResponseFailure
+import com.saulhdev.feeder.manager.localrss.filterBlockedWords
 import com.saulhdev.feeder.utils.blobFile
 import com.saulhdev.feeder.utils.blobOutputStream
 import com.saulhdev.feeder.utils.getSyncDays

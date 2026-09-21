@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.saulhdev.feeder.manager.sync
+package com.saulhdev.feeder.manager.localrss
 
 import android.content.Context
 import android.util.Log
@@ -28,6 +28,7 @@ import com.saulhdev.feeder.data.db.models.Feed
 import com.saulhdev.feeder.data.entity.JsonFeed
 import com.saulhdev.feeder.data.repository.ArticleRepository
 import com.saulhdev.feeder.data.repository.SourcesRepository
+import com.saulhdev.feeder.data.source.NewsSourceRegistry
 import com.saulhdev.feeder.manager.mastodon.MastodonFeedSync
 import com.saulhdev.feeder.manager.models.FeedParser
 import com.saulhdev.feeder.manager.models.getResponse
@@ -185,6 +186,12 @@ private suspend fun syncFeed(
 ) {
     Log.d(TAG, "Fetching ${feedSql.title}")
 
+    if (feedSql.sourceType == "nextcloud_news" || feedSql.sourceType == "miniflux") {
+        val registry: NewsSourceRegistry by inject(NewsSourceRegistry::class.java)
+        registry.getSourceForFeed(feedSql)?.sync(context = context, forceNetwork = forceNetwork)
+        return
+    }
+
     if (feedSql.sourceType == "mastodon") {
         MastodonFeedSync.sync(
             context = context,
@@ -318,16 +325,18 @@ internal suspend fun feedsToSync(
     val sources = when {
         feedId > 0 -> {
             if (forceNetwork) {
-                repository.loadFeedById(feedId)?.let { listOf(it) } ?: emptyList()
+                repository.loadFeedById(feedId)?.takeIf { it.isEnabled }?.let { listOf(it) }
+                    ?: emptyList()
             } else {
                 repository.loadFeedIfStale(feedId = feedId, staleTime = staleTime)
+                    .filter { it.isEnabled }
             }
         }
 
         feedId == ID_ALL -> {
             Log.d(TAG, "Checking all feeds  = $forceNetwork")
             if (forceNetwork) {
-                repository.getAllSources()
+                repository.getEnabledSourcesList()
 
             } else {
                 repository.loadFeedIfStale(ID_ALL, staleTime)
@@ -335,10 +344,10 @@ internal suspend fun feedsToSync(
         }
 
         tag.isNotEmpty() -> {
-            repository.loadFeedsByTag(tag)
+            repository.loadFeedsByTag(tag).filter { it.isEnabled }
         }
 
-        else -> repository.getAllSources()
+        else -> repository.getEnabledSourcesList()
     }
 
     return if (tag.isNotEmpty() && feedId == ID_ALL) {

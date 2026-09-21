@@ -30,7 +30,7 @@ import com.saulhdev.feeder.data.db.models.FeedItem
 import com.saulhdev.feeder.data.entity.BookmarksExportContainer
 import com.saulhdev.feeder.data.entity.toArticle
 import com.saulhdev.feeder.data.entity.toBookmarkedExport
-import com.saulhdev.feeder.manager.sync.requestFeedSync
+import com.saulhdev.feeder.manager.localrss.requestFeedSync
 import com.saulhdev.feeder.utils.extensions.ToastMaker
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
