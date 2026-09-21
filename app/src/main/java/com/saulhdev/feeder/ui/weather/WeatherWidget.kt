@@ -70,6 +70,7 @@ fun WeatherWidget(
     prefs: FeedPreferences = koinInject(),
     weatherRepo: WeatherRepository = koinInject()
 ) {
+    // TODO Add dismiss button
     val showWeather by prefs.weatherProvider.get().collectAsState(initial = false)
     if (!showWeather) return
 

@@ -85,6 +85,7 @@ import com.saulhdev.feeder.ui.icons.phosphor.CaretUp
 import com.saulhdev.feeder.ui.icons.phosphor.Filter
 import com.saulhdev.feeder.ui.icons.phosphor.Filtered
 import com.saulhdev.feeder.ui.icons.phosphor.Power
+import com.saulhdev.feeder.ui.weather.WeatherWidget
 import com.saulhdev.feeder.utils.extensions.koinNeoViewModel
 import com.saulhdev.feeder.utils.extensions.launchView
 import com.saulhdev.feeder.utils.openLinkInCustomTab
@@ -308,7 +309,7 @@ fun ArticleListPage(
                                     listState = listState,
                                     content = {
                                         item(key = "header_weather_widget") {
-                                            com.saulhdev.feeder.ui.weather.WeatherWidget(
+                                            WeatherWidget(
                                                 modifier = Modifier.padding(
                                                     horizontal = 4.dp,
                                                     vertical = 4.dp

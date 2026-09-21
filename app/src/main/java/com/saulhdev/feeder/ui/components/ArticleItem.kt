@@ -1,7 +1,6 @@
 package com.saulhdev.feeder.ui.components
 
 import android.content.Intent
-import android.text.Html
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -114,15 +113,6 @@ fun ArticleItem(
                 ) {
                     Text(text = stringResource(R.string.label_new))
                 }
-            }
-
-            if (content.text.isNotEmpty()) {
-                Text(
-                    text = Html.fromHtml(content.text, 0).toString(),
-                    modifier = Modifier.padding(top = 8.dp),
-                    style = MaterialTheme.typography.bodySmall,
-                    maxLines = 5,
-                )
             }
 
             Row(
