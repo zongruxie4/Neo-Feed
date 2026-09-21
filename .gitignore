@@ -19,3 +19,4 @@ app/build/
 release/
 neo/
 .env
+local.properties
