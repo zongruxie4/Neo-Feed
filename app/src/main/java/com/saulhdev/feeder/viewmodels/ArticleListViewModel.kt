@@ -104,7 +104,7 @@ class ArticleListViewModel(
 
     fun registerOpenedArticle(id: String) {
         viewModelScope.launch {
-            articleRepo.registerOpenedArticle(id)
+            articleRepo.markArticleAsRead(id,true)
         }
     }
 

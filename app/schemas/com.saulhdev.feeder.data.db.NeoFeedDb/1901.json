@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1901,
-    "identityHash": "cc9b35278972905af8add232df0f6e30",
+    "identityHash": "c2b2cc23662c6ea94182a65142a33168",
     "entities": [
       {
         "tableName": "Feeds",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `title` TEXT NOT NULL, `description` TEXT NOT NULL, `url` TEXT NOT NULL, `feedImage` TEXT NOT NULL, `lastSync` INTEGER NOT NULL, `alternateId` INTEGER NOT NULL, `fullTextByDefault` INTEGER NOT NULL, `tag` TEXT NOT NULL, `currentlySyncing` INTEGER NOT NULL, `isEnabled` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `title` TEXT NOT NULL, `description` TEXT NOT NULL, `url` TEXT NOT NULL, `feedImage` TEXT NOT NULL, `lastSync` INTEGER NOT NULL, `alternateId` INTEGER NOT NULL, `fullTextByDefault` INTEGER NOT NULL, `tag` TEXT NOT NULL, `currentlySyncing` INTEGER NOT NULL, `isEnabled` INTEGER NOT NULL, `sourceType` TEXT NOT NULL DEFAULT 'rss', `requireLink` INTEGER NOT NULL DEFAULT 0, `requireImage` INTEGER NOT NULL DEFAULT 0, `excludeReplies` INTEGER NOT NULL DEFAULT 1)",
         "fields": [
           {
             "fieldPath": "id",
@@ -73,6 +73,34 @@
             "columnName": "isEnabled",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "sourceType",
+            "columnName": "sourceType",
+            "affinity": "TEXT",
+            "notNull": true,
+            "defaultValue": "'rss'"
+          },
+          {
+            "fieldPath": "requireLink",
+            "columnName": "requireLink",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "requireImage",
+            "columnName": "requireImage",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "excludeReplies",
+            "columnName": "excludeReplies",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "1"
           }
         ],
         "primaryKey": {
@@ -106,7 +134,7 @@
       },
       {
         "tableName": "Article",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `guid` TEXT NOT NULL, `title` TEXT NOT NULL, `plainTitle` TEXT NOT NULL, `imageUrl` TEXT, `enclosureLink` TEXT, `plainSnippet` TEXT NOT NULL, `description` TEXT NOT NULL, `author` TEXT, `pubDateV2` INTEGER NOT NULL DEFAULT 0, `link` TEXT, `feedId` INTEGER NOT NULL, `firstSyncedTime` INTEGER NOT NULL, `primarySortTime` INTEGER NOT NULL, `categories` TEXT NOT NULL, `pinned` INTEGER NOT NULL, `bookmarked` INTEGER NOT NULL, `wasOpened` INTEGER NOT NULL DEFAULT 0, PRIMARY KEY(`uuid`), FOREIGN KEY(`feedId`) REFERENCES `Feeds`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `guid` TEXT NOT NULL, `title` TEXT NOT NULL, `plainTitle` TEXT NOT NULL, `imageUrl` TEXT, `enclosureLink` TEXT, `plainSnippet` TEXT NOT NULL, `description` TEXT NOT NULL, `author` TEXT, `pubDateV2` INTEGER NOT NULL DEFAULT 0, `link` TEXT, `feedId` INTEGER NOT NULL, `firstSyncedTime` INTEGER NOT NULL, `primarySortTime` INTEGER NOT NULL, `categories` TEXT NOT NULL, `pinned` INTEGER NOT NULL, `bookmarked` INTEGER NOT NULL, `isRead` INTEGER NOT NULL DEFAULT 0, PRIMARY KEY(`uuid`), FOREIGN KEY(`feedId`) REFERENCES `Feeds`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "uuid",
@@ -208,8 +236,8 @@
             "notNull": true
           },
           {
-            "fieldPath": "wasOpened",
-            "columnName": "wasOpened",
+            "fieldPath": "isRead",
+            "columnName": "isRead",
             "affinity": "INTEGER",
             "notNull": true,
             "defaultValue": "0"
@@ -275,6 +303,68 @@
             ]
           }
         ]
+      },
+      {
+        "tableName": "SyncActionQueue",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `accountId` TEXT NOT NULL, `remoteItemId` INTEGER NOT NULL, `actionType` TEXT NOT NULL, `createdAt` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "accountId",
+            "columnName": "accountId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "remoteItemId",
+            "columnName": "remoteItemId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "actionType",
+            "columnName": "actionType",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "createdAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_SyncActionQueue_accountId",
+            "unique": false,
+            "columnNames": [
+              "accountId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_SyncActionQueue_accountId` ON `${TABLE_NAME}` (`accountId`)"
+          },
+          {
+            "name": "index_SyncActionQueue_remoteItemId",
+            "unique": false,
+            "columnNames": [
+              "remoteItemId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_SyncActionQueue_remoteItemId` ON `${TABLE_NAME}` (`remoteItemId`)"
+          }
+        ]
       }
     ],
     "views": [
@@ -285,7 +375,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'cc9b35278972905af8add232df0f6e30')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'c2b2cc23662c6ea94182a65142a33168')"
     ]
   }
 }
