@@ -8,7 +8,6 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -25,6 +24,7 @@ import kotlin.system.exitProcess
 
 interface ToastMaker {
     suspend fun makeToast(text: String)
+
     suspend fun makeToast(@StringRes resId: Int)
 }
 
@@ -55,12 +55,13 @@ private fun Context.restartFeed() {
 
     // Create a pending intent so the application is restarted after System.exit(0) was called.
     // We use an AlarmManager to call this intent in 100ms
-    val mPendingIntent: PendingIntent = PendingIntent.getActivity(
-        this,
-        0,
-        intent,
-        PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE
-    )
+    val mPendingIntent: PendingIntent =
+        PendingIntent.getActivity(
+            this,
+            0,
+            intent,
+            PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+        )
     val mgr: AlarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
     mgr[AlarmManager.RTC, System.currentTimeMillis() + 100] = mPendingIntent
 
@@ -69,16 +70,17 @@ private fun Context.restartFeed() {
 }
 
 fun Context.launchView(url: String) {
-    val intent = Intent(
-        Intent.ACTION_VIEW,
-        url.toUri()
-    )
+    val intent =
+        Intent(
+            Intent.ACTION_VIEW,
+            url.toUri(),
+        )
     safeStartActivity(intent)
 }
 
 /**
- * Safely start an activity from overlay context.
- * Uses PendingIntent BAL opt-in for non-Activity contexts (overlay/service).
+ * Safely start an activity from overlay context. Uses PendingIntent BAL opt-in for non-Activity
+ * contexts (overlay/service).
  */
 fun Context.safeStartActivity(intent: Intent) {
     try {
@@ -94,17 +96,16 @@ fun Context.safeStartActivity(intent: Intent) {
     }
 }
 
-/**
- * Safely start a share intent from overlay context.
- */
+/** Safely start a share intent from overlay context. */
 fun Context.safeShareIntent(url: String, title: String) {
     try {
-        val shareIntent = Intent(Intent.ACTION_SEND).apply {
-            type = "text/plain"
-            putExtra(Intent.EXTRA_TITLE, title)
-            putExtra(Intent.EXTRA_SUBJECT, title)
-            putExtra(Intent.EXTRA_TEXT, url)
-        }
+        val shareIntent =
+            Intent(Intent.ACTION_SEND).apply {
+                type = "text/plain"
+                putExtra(Intent.EXTRA_TITLE, title)
+                putExtra(Intent.EXTRA_SUBJECT, title)
+                putExtra(Intent.EXTRA_TEXT, url)
+            }
         val chooserIntent = Intent.createChooser(shareIntent, "Where to Send?")
 
         val canStartDirectly = this is Activity
@@ -120,19 +121,21 @@ fun Context.safeShareIntent(url: String, title: String) {
 }
 
 private fun Context.launchWithBalPendingIntent(intent: Intent) {
-    val targetIntent = Intent(intent).apply {
-        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-    }
+    val targetIntent =
+        Intent(intent).apply {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
 
     val creatorOptions = buildBalCreatorOptions()
     val flags = PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-    val pendingIntent = PendingIntent.getActivity(
-        this,
-        System.currentTimeMillis().toInt(),
-        targetIntent,
-        flags,
-        creatorOptions
-    )
+    val pendingIntent =
+        PendingIntent.getActivity(
+            this,
+            System.currentTimeMillis().toInt(),
+            targetIntent,
+            flags,
+            creatorOptions,
+        )
 
     val senderOptions = buildBalSenderOptions()
     pendingIntent.send(
@@ -142,7 +145,7 @@ private fun Context.launchWithBalPendingIntent(intent: Intent) {
         null,
         null,
         null,
-        senderOptions
+        senderOptions,
     )
 }
 
@@ -151,14 +154,16 @@ private fun buildBalCreatorOptions(): Bundle? {
     return runCatching {
         val options = ActivityOptions.makeBasic()
         val clazz = ActivityOptions::class.java
-        val method = clazz.getMethod(
-            "setPendingIntentCreatorBackgroundActivityStartMode",
-            Int::class.javaPrimitiveType
-        )
+        val method =
+            clazz.getMethod(
+                "setPendingIntentCreatorBackgroundActivityStartMode",
+                Int::class.javaPrimitiveType,
+            )
         val modeField = clazz.getField("MODE_BACKGROUND_ACTIVITY_START_ALLOWED")
         method.invoke(options, modeField.getInt(null))
         options.toBundle()
-    }.getOrNull()
+    }
+        .getOrNull()
 }
 
 private fun buildBalSenderOptions(): Bundle? {
@@ -166,14 +171,16 @@ private fun buildBalSenderOptions(): Bundle? {
     return runCatching {
         val options = ActivityOptions.makeBasic()
         val clazz = ActivityOptions::class.java
-        val method = clazz.getMethod(
-            "setPendingIntentBackgroundActivityStartMode",
-            Int::class.javaPrimitiveType
-        )
+        val method =
+            clazz.getMethod(
+                "setPendingIntentBackgroundActivityStartMode",
+                Int::class.javaPrimitiveType,
+            )
         val modeField = clazz.getField("MODE_BACKGROUND_ACTIVITY_START_ALLOWED")
         method.invoke(options, modeField.getInt(null))
         options.toBundle()
-    }.getOrNull()
+    }
+        .getOrNull()
 }
 
 fun Context.shareIntent(url: String, title: String) {
@@ -185,7 +192,6 @@ fun Context.shareIntent(url: String, title: String) {
 
     startActivity(Intent.createChooser(shareIntent, "Where to Send?"))
 }
-
 
 fun Context.setCustomTheme() {
     AppCompatDelegate.setDefaultNightMode(nightMode)

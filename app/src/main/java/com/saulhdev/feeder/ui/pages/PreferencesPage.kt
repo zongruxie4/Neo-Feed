@@ -47,6 +47,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.saulhdev.feeder.R
+import com.saulhdev.feeder.data.content.AppThemePref
 import com.saulhdev.feeder.data.content.FeedPreferences
 import com.saulhdev.feeder.data.content.StringPref
 import com.saulhdev.feeder.data.content.StringSelectionPref
@@ -57,6 +58,7 @@ import com.saulhdev.feeder.ui.components.ViewWithActionBar
 import com.saulhdev.feeder.ui.components.dialog.BaseDialog
 import com.saulhdev.feeder.ui.components.dialog.StringSelectionPrefDialogUI
 import com.saulhdev.feeder.ui.components.dialog.StringTextPrefDialogUI
+import com.saulhdev.feeder.ui.components.dialog.ThemePrefDialogUI
 import com.saulhdev.feeder.ui.components.preferences.PreferenceGroup
 import com.saulhdev.feeder.utils.LocationHelper
 import org.koin.compose.koinInject
@@ -65,51 +67,53 @@ import org.koin.compose.koinInject
 fun PreferencesPage(
     prefs: FeedPreferences = koinInject(),
     locationHelper: LocationHelper = koinInject(),
-    weatherRepo: WeatherRepository = koinInject()
+    weatherRepo: WeatherRepository = koinInject(),
 ) {
     val context = LocalContext.current
     val title = stringResource(id = R.string.title_settings)
 
     var hasLocationPermission by remember { mutableStateOf(locationHelper.hasLocationPermission()) }
-    val locationPermissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestMultiplePermissions()
-    ) { permissions ->
-        val granted = permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true ||
-                permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true
-        hasLocationPermission = granted
-        if (granted) {
-            weatherRepo.refreshWeather(force = true)
+    val locationPermissionLauncher =
+        rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.RequestMultiplePermissions()
+        ) { permissions ->
+            val granted =
+                permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true ||
+                    permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true
+            hasLocationPermission = granted
+            if (granted) {
+                weatherRepo.refreshWeather(force = true)
+            }
         }
-    }
 
-    val servicePrefs = listOf(
-        prefs.itemsPerFeed,
-        prefs.syncFrequency,
-        prefs.syncRange,
-        prefs.syncOnlyOnWifi,
-        prefs.openInBrowser,
-        prefs.offlineReader,
-        prefs.removeDuplicates,
-        prefs.plugins,
-    )
-    val filterPrefs = listOf(
-        prefs.blockedWords,
-    )
+    val servicePrefs =
+        listOf(
+            prefs.itemsPerFeed,
+            prefs.syncFrequency,
+            prefs.syncRange,
+            prefs.syncOnlyOnWifi,
+            prefs.openInBrowser,
+            prefs.offlineReader,
+            prefs.removeDuplicates,
+            prefs.plugins,
+        )
+    val filterPrefs = listOf(prefs.blockedWords)
     val themePrefs = listOf(prefs.appTheme)
     val isWeatherEnabled by prefs.weatherProvider.getState()
     val selectedWeatherProvider by prefs.weatherProvider.getState2()
 
-    val weatherPrefs = listOfNotNull(
-        prefs.weatherProvider,
-        if (isWeatherEnabled && selectedWeatherProvider == OWMWeatherProvider::class.java.name) {
-            prefs.owmWeatherApiKey
-        } else null,
-        prefs.weatherUnit,
-        prefs.weatherCity,
-    )
-    val debugPrefs = listOf(
-        prefs.about,
-    )
+    val weatherPrefs =
+        listOfNotNull(
+            prefs.weatherProvider,
+            if (
+                isWeatherEnabled && selectedWeatherProvider == OWMWeatherProvider::class.java.name
+            ) {
+                prefs.owmWeatherApiKey
+            } else null,
+            prefs.weatherUnit,
+            prefs.weatherCity,
+        )
+    val debugPrefs = listOf(prefs.about)
 
     val openDialog = remember { mutableStateOf(false) }
     var dialogPref by remember { mutableStateOf<Any?>(null) }
@@ -123,13 +127,13 @@ fun PreferencesPage(
         showBackButton = false,
     ) { paddingValues ->
         LazyColumn(
-            modifier = Modifier
-                .padding(
+            modifier =
+                Modifier.padding(
                     start = 8.dp,
                     end = 8.dp,
                     top = paddingValues.calculateTopPadding(),
                 ),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             item(key = R.string.pref_cat_overlay) {
                 PreferenceGroup(
@@ -142,7 +146,7 @@ fun PreferencesPage(
                 PreferenceGroup(
                     stringResource(id = R.string.title_service),
                     prefs = servicePrefs,
-                    onPrefDialog = onPrefDialog
+                    onPrefDialog = onPrefDialog,
                 )
             }
             item(key = R.string.pref_cat_filters) {
@@ -163,7 +167,7 @@ fun PreferencesPage(
                                     context.startActivity(
                                         Intent(
                                             Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                                            Uri.parse("package:${context.packageName}")
+                                            Uri.parse("package:${context.packageName}"),
                                         )
                                     )
                                 }
@@ -178,23 +182,27 @@ fun PreferencesPage(
                 PreferenceGroup(
                     stringResource(id = R.string.pref_cat_weather),
                     prefs = weatherPrefs,
-                    onPrefDialog = onPrefDialog
+                    onPrefDialog = onPrefDialog,
                 )
 
-                if (isWeatherEnabled && prefs.weatherCity.getValue()
-                        .isBlank() && !hasLocationPermission
+                if (
+                    isWeatherEnabled &&
+                        prefs.weatherCity.getValue().isBlank() &&
+                        !hasLocationPermission
                 ) {
                     Spacer(modifier = Modifier.height(8.dp))
                     Card(modifier = Modifier.padding(horizontal = 8.dp)) {
                         Column(modifier = Modifier.padding(16.dp)) {
-                            Text(text = stringResource(R.string.weather_location_permission_required))
+                            Text(
+                                text = stringResource(R.string.weather_location_permission_required)
+                            )
                             Spacer(modifier = Modifier.height(12.dp))
                             Button(
                                 onClick = {
                                     locationPermissionLauncher.launch(
                                         arrayOf(
                                             Manifest.permission.ACCESS_COARSE_LOCATION,
-                                            Manifest.permission.ACCESS_FINE_LOCATION
+                                            Manifest.permission.ACCESS_FINE_LOCATION,
                                         )
                                     )
                                 }
@@ -209,7 +217,7 @@ fun PreferencesPage(
                 PreferenceGroup(
                     stringResource(id = R.string.title_other),
                     prefs = debugPrefs,
-                    onPrefDialog = onPrefDialog
+                    onPrefDialog = onPrefDialog,
                 )
                 Spacer(modifier = Modifier.height(8.dp))
             }
@@ -228,26 +236,29 @@ fun PreferencesPage(
                 locationPermissionLauncher.launch(
                     arrayOf(
                         Manifest.permission.ACCESS_COARSE_LOCATION,
-                        Manifest.permission.ACCESS_FINE_LOCATION
+                        Manifest.permission.ACCESS_FINE_LOCATION,
                     )
                 )
             },
-            onDismiss = { showCityDialog = false }
+            onDismiss = { showCityDialog = false },
         )
     }
 
     if (openDialog.value) {
         BaseDialog(openDialogCustom = openDialog) {
             when (dialogPref) {
-                is StringSelectionPref -> StringSelectionPrefDialogUI(
-                    pref = dialogPref as StringSelectionPref,
-                    openDialogCustom = openDialog
-                )
+                is StringSelectionPref ->
+                    StringSelectionPrefDialogUI(
+                        pref = dialogPref as StringSelectionPref,
+                        openDialogCustom = openDialog,
+                    )
 
-                is StringTextPref -> StringTextPrefDialogUI(
-                    pref = dialogPref as StringTextPref,
-                    openDialogCustom = openDialog
-                )
+                is StringTextPref ->
+                    StringTextPrefDialogUI(
+                        pref = dialogPref as StringTextPref,
+                        openDialogCustom = openDialog,
+                    )
+
                 is AppThemePref ->
                     ThemePrefDialogUI(
                         pref = dialogPref as AppThemePref,
@@ -263,7 +274,7 @@ fun PreferencesPage(
 private fun CityInputDialog(
     pref: StringPref,
     onRequestLocationPermission: () -> Unit,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
 ) {
     var textValue by remember { mutableStateOf(pref.getValue()) }
     androidx.compose.material3.AlertDialog(
@@ -276,7 +287,7 @@ private fun CityInputDialog(
                 Text(
                     text = stringResource(id = R.string.pref_weather_city_summary),
                     style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 Spacer(modifier = Modifier.height(12.dp))
                 OutlinedTextField(
@@ -284,7 +295,7 @@ private fun CityInputDialog(
                     onValueChange = { textValue = it },
                     label = { Text(stringResource(id = R.string.pref_weather_city)) },
                     singleLine = true,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
                 )
             }
         },
@@ -306,6 +317,6 @@ private fun CityInputDialog(
             TextButton(onClick = onDismiss) {
                 Text(stringResource(id = android.R.string.cancel))
             }
-        }
+        },
     )
 }

@@ -65,7 +65,8 @@ import kotlin.math.roundToInt
 
 class OverlayView(val context: Context) :
     OverlayController(context, R.style.AppTheme, R.style.WindowTheme),
-    KoinComponent, OverlayBridge.OverlayBridgeCallback {
+    KoinComponent,
+    OverlayBridge.OverlayBridgeCallback {
     private lateinit var themeHolder: OverlayThemeHolder
     private val syncScope = CoroutineScope(Dispatchers.IO) + CoroutineName("NeoFeedSync")
     private val mainScope = CoroutineScope(Dispatchers.Main)
@@ -82,22 +83,24 @@ class OverlayView(val context: Context) :
     private lateinit var rootView: View
     private lateinit var adapter: FeedAdapter
 
-    private val closeSystemDialogsReceiver = object : BroadcastReceiver() {
-        override fun onReceive(c: Context?, intent: Intent?) {
-            if (intent?.action == Intent.ACTION_CLOSE_SYSTEM_DIALOGS) {
-                closePanelIfNeeded(1)
+    private val closeSystemDialogsReceiver =
+        object : BroadcastReceiver() {
+            override fun onReceive(c: Context?, intent: Intent?) {
+                if (intent?.action == Intent.ACTION_CLOSE_SYSTEM_DIALOGS) {
+                    closePanelIfNeeded(1)
+                }
             }
         }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        rootView = View.inflate(
-            ContextThemeWrapper(this, R.style.AppTheme),
-            R.layout.overlay_layout,
-            this.container
-        )
+        rootView =
+            View.inflate(
+                ContextThemeWrapper(this, R.style.AppTheme),
+                R.layout.overlay_layout,
+                this.container,
+            )
         val mainContainer = rootView.findViewById<ViewGroup>(R.id.overlay_root)
         AbstractFloatingView.container = mainContainer
         AbstractFloatingView.closeAllOpenViews(context)
@@ -106,7 +109,9 @@ class OverlayView(val context: Context) :
         setUpdatedTheme()
         val bgColor = themeHolder.currentTheme.get(CardTheme.Colors.OVERLAY_BG.ordinal)
         val color =
-            (prefs.overlayTransparency.getValue() * 255.0f).toInt() shl 24 or (bgColor and 0x00ffffff)
+            (prefs.overlayTransparency.getValue() * 255.0f).toInt() shl
+                24 or
+                (bgColor and 0x00ffffff)
         getWindow().setBackgroundDrawable(color.toDrawable())
         setPanelBackgroundEnabled(false)
 
@@ -120,8 +125,9 @@ class OverlayView(val context: Context) :
                 if (!bookmarkVisible) {
                     mainScope.launch {
                         adapter.replace(state.articles)
-                        rootView.findViewById<SwipeRefreshLayout>(R.id.swipe_to_refresh).isRefreshing =
-                            state.isSyncing
+                        rootView
+                            .findViewById<SwipeRefreshLayout>(R.id.swipe_to_refresh)
+                            .isRefreshing = state.isSyncing
                     }
                 }
             }
@@ -211,31 +217,21 @@ class OverlayView(val context: Context) :
     }
 
     private fun updateStubUi() {
-        val theme = if (themeHolder.currentTheme.get(CardTheme.Colors.OVERLAY_BG.ordinal)
-                .isDark()
-        ) CardTheme.defaultDarkThemeColors else CardTheme.defaultLightThemeColors
+        val theme =
+            if (themeHolder.currentTheme.get(CardTheme.Colors.OVERLAY_BG.ordinal).isDark())
+                CardTheme.defaultDarkThemeColors
+            else CardTheme.defaultLightThemeColors
         rootView.findViewById<MaterialButton>(R.id.header_settings).iconTint =
-            ColorStateList.valueOf(
-                theme.get(
-                    CardTheme.Colors.TEXT_COLOR_PRIMARY.ordinal
-                )
-            )
+            ColorStateList.valueOf(theme.get(CardTheme.Colors.TEXT_COLOR_PRIMARY.ordinal))
 
         rootView.findViewById<MaterialButton>(R.id.header_filter).iconTint =
-            ColorStateList.valueOf(
-                theme.get(
-                    CardTheme.Colors.TEXT_COLOR_PRIMARY.ordinal
-                )
-            )
+            ColorStateList.valueOf(theme.get(CardTheme.Colors.TEXT_COLOR_PRIMARY.ordinal))
 
         rootView.findViewById<MaterialButton>(R.id.header_bookmark).iconTint =
-            ColorStateList.valueOf(
-                theme.get(
-                    CardTheme.Colors.TEXT_COLOR_PRIMARY.ordinal
-                )
-            )
+            ColorStateList.valueOf(theme.get(CardTheme.Colors.TEXT_COLOR_PRIMARY.ordinal))
 
-        rootView.findViewById<TextView>(R.id.header_title)
+        rootView
+            .findViewById<TextView>(R.id.header_title)
             .setTextColor(theme.get(CardTheme.Colors.TEXT_COLOR_PRIMARY.ordinal))
 
         val cardBg = themeHolder.currentTheme.get(CardTheme.Colors.CARD_BG.ordinal)
@@ -271,11 +267,13 @@ class OverlayView(val context: Context) :
 
         rootView.findViewById<View>(R.id.app_bar)?.updatePadding(top = top)
 
-        rootView.findViewById<RecyclerView>(R.id.recycler)?.updatePadding(
-            left = left,
-            right = right,
-            bottom = bottom
-        )
+        rootView
+            .findViewById<RecyclerView>(R.id.recycler)
+            ?.updatePadding(
+                left = left,
+                right = right,
+                bottom = bottom,
+            )
 
         rootView.findViewById<FloatingActionButton>(R.id.button_return_to_top)?.let { fab ->
             fab.updateLayoutParams<ViewGroup.MarginLayoutParams> {
@@ -283,27 +281,29 @@ class OverlayView(val context: Context) :
                 rightMargin = (24 * density).toInt() + right
             }
         }
-
     }
 
     private fun initInsets() {
         applyInsets(getStatusBarHeight(), getNavigationBarHeight())
 
         ViewCompat.setOnApplyWindowInsetsListener(rootView) { _, windowInsets ->
-            val insets = windowInsets.getInsets(
-                WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
-            )
+            val insets =
+                windowInsets.getInsets(
+                    WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
+                )
             applyInsets(insets.top, insets.bottom, insets.left, insets.right)
             windowInsets
         }
 
-        rootView.addOnAttachStateChangeListener(object : View.OnAttachStateChangeListener {
-            override fun onViewAttachedToWindow(v: View) {
-                ViewCompat.requestApplyInsets(v)
-            }
+        rootView.addOnAttachStateChangeListener(
+            object : View.OnAttachStateChangeListener {
+                override fun onViewAttachedToWindow(v: View) {
+                    ViewCompat.requestApplyInsets(v)
+                }
 
-            override fun onViewDetachedFromWindow(v: View) {}
-        })
+                override fun onViewDetachedFromWindow(v: View) {}
+            }
+        )
     }
 
     private fun initRecyclerView() {
@@ -314,7 +314,6 @@ class OverlayView(val context: Context) :
                 setOnClickListener {
                     visibility = View.GONE
                     recyclerView.smoothScrollToPosition(0)
-
                 }
             }
 
@@ -329,20 +328,24 @@ class OverlayView(val context: Context) :
             adapter = this@OverlayView.adapter
         }
 
-        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-                if ((recyclerView.layoutManager as LinearLayoutManager)
-                        .findFirstCompletelyVisibleItemPosition() < 5
-                ) {
-                    buttonReturnToTop.visibility = View.GONE
-                } else if ((recyclerView.layoutManager as LinearLayoutManager)
-                        .findFirstCompletelyVisibleItemPosition() > 5
-                ) {
-                    buttonReturnToTop.visibility = View.VISIBLE
+        recyclerView.addOnScrollListener(
+            object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    super.onScrolled(recyclerView, dx, dy)
+                    if (
+                        (recyclerView.layoutManager as LinearLayoutManager)
+                            .findFirstCompletelyVisibleItemPosition() < 5
+                    ) {
+                        buttonReturnToTop.visibility = View.GONE
+                    } else if (
+                        (recyclerView.layoutManager as LinearLayoutManager)
+                            .findFirstCompletelyVisibleItemPosition() > 5
+                    ) {
+                        buttonReturnToTop.visibility = View.VISIBLE
+                    }
                 }
             }
-        })
+        )
     }
 
     private fun updateToggleColor(button: MaterialButton, isChecked: Boolean) {
@@ -350,31 +353,35 @@ class OverlayView(val context: Context) :
         val darkTheme = themeHolder.currentTheme.get(CardTheme.Colors.OVERLAY_BG.ordinal).isDark()
         val a14 = Android.sdk(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
         val a12 = Android.sdk(Build.VERSION_CODES.S)
-        val backgroundTint = when {
-            !isChecked       -> Color.TRANSPARENT
+        val backgroundTint =
+            when {
+                !isChecked -> Color.TRANSPARENT
 
-            a14 && darkTheme -> ContextCompat.getColor(
-                context,
-                android.R.color.system_on_primary_container_dark
-            )
+                a14 && darkTheme ->
+                    ContextCompat.getColor(
+                        context,
+                        android.R.color.system_on_primary_container_dark,
+                    )
 
-            a14              -> ContextCompat.getColor(
-                context,
-                android.R.color.system_primary_container_light
-            )
+                a14 ->
+                    ContextCompat.getColor(
+                        context,
+                        android.R.color.system_primary_container_light,
+                    )
 
-            a12              -> ContextCompat.getColor(
-                context,
-                android.R.color.system_accent1_400
-            )
+                a12 ->
+                    ContextCompat.getColor(
+                        context,
+                        android.R.color.system_accent1_400,
+                    )
 
-            else             -> ContextCompat.getColor(
-                context,
-                R.color.md_theme_primary
-            )
-        }
+                else ->
+                    ContextCompat.getColor(
+                        context,
+                        R.color.md_theme_primary,
+                    )
+            }
         button.backgroundTintList = ColorStateList.valueOf(backgroundTint)
-
     }
 
     private fun initHeader() {
@@ -410,7 +417,6 @@ class OverlayView(val context: Context) :
             }
         }
 
-
         rootView.findViewById<MaterialButton>(R.id.header_settings).apply {
             setOnClickListener {
                 openMenu(it)
@@ -423,7 +429,7 @@ class OverlayView(val context: Context) :
         popup.show(createMenuList()) {
             popup.dismiss()
             when (it.id) {
-                "config"  -> {
+                "config" -> {
                     mainScope.launch {
                         view.context.safeStartActivity(
                             MainActivity.navigateIntent(
@@ -434,7 +440,7 @@ class OverlayView(val context: Context) :
                     }
                 }
 
-                "reload"  -> {
+                "reload" -> {
                     rootView.findViewById<RecyclerView>(R.id.recycler).recycledViewPool.clear()
                     refreshNotifications()
                 }
@@ -453,8 +459,7 @@ class OverlayView(val context: Context) :
         mainScope.cancel()
         try {
             context.unregisterReceiver(closeSystemDialogsReceiver)
-        } catch (_: Exception) {
-        }
+        } catch (_: Exception) {}
         super.onDestroy()
         NeoApp.bridge.setCallback(null)
     }
@@ -519,17 +524,18 @@ class OverlayView(val context: Context) :
                                 context.getString(
                                     R.string.weather_max_min,
                                     "${weather.maxTemp.roundToInt()}${weather.unit}",
-                                    "${weather.minTemp.roundToInt()}${weather.unit}"
+                                    "${weather.minTemp.roundToInt()}${weather.unit}",
                                 )
-                            weatherView.findViewById<ImageView>(R.id.weather_condition_icon)
+                            weatherView
+                                .findViewById<ImageView>(R.id.weather_condition_icon)
                                 ?.setImageResource(
                                     WeatherCode.getIconRes(weather.weatherCode, weather.isDay)
                                 )
                             weatherView.findViewById<TextView>(R.id.weather_temp_text)?.text =
                                 "${weather.temperature.roundToInt()}${weather.unit}"
-                            weatherView.findViewById<TextView>(R.id.weather_desc_text)?.setText(
-                                WeatherCode.getDescriptionRes(weather.weatherCode)
-                            )
+                            weatherView
+                                .findViewById<TextView>(R.id.weather_desc_text)
+                                ?.setText(WeatherCode.getDescriptionRes(weather.weatherCode))
                             weatherView.findViewById<TextView>(R.id.weather_humidity_text)?.text =
                                 "${weather.humidity}%"
                             weatherView.findViewById<TextView>(R.id.weather_wind_text)?.text =
@@ -541,7 +547,7 @@ class OverlayView(val context: Context) :
                                 WeatherDialogHelper.showDetails(
                                     this@OverlayView,
                                     weather,
-                                    weatherView
+                                    weatherView,
                                 )
                             }
                         }
@@ -563,10 +569,12 @@ class OverlayView(val context: Context) :
 
                         is WeatherState.LocationPermissionRequired -> {
                             weatherView.visibility = View.VISIBLE
-                            weatherView.findViewById<TextView>(R.id.weather_city_text)
+                            weatherView
+                                .findViewById<TextView>(R.id.weather_city_text)
                                 ?.setText(R.string.weather_location_permission_required)
                             weatherView.findViewById<TextView>(R.id.weather_temp_text)?.text = "--"
-                            weatherView.findViewById<TextView>(R.id.weather_desc_text)
+                            weatherView
+                                .findViewById<TextView>(R.id.weather_desc_text)
                                 ?.setText(R.string.weather_enable_location)
                             weatherView.findViewById<TextView>(R.id.weather_range_text)?.text = ""
                             weatherView.findViewById<TextView>(R.id.weather_humidity_text)?.text =
@@ -575,9 +583,10 @@ class OverlayView(val context: Context) :
                             weatherView.findViewById<View>(R.id.weather_progress)?.visibility =
                                 View.GONE
                             weatherView.setOnClickListener {
-                                val intent = Intent(context, MainActivity::class.java).apply {
-                                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                                }
+                                val intent =
+                                    Intent(context, MainActivity::class.java).apply {
+                                        flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                                    }
                                 context.startActivity(intent)
                             }
                         }
@@ -595,7 +604,7 @@ class OverlayView(val context: Context) :
         return listOf(
             MenuItem(R.drawable.ic_arrow_clockwise, R.string.action_reload, 0, "reload"),
             MenuItem(R.drawable.ic_gear, R.string.title_settings, 2, "config"),
-            MenuItem(R.drawable.ic_power, R.string.action_restart, 2, "restart")
+            MenuItem(R.drawable.ic_power, R.string.action_restart, 2, "restart"),
         )
     }
 }
