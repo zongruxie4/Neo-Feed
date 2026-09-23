@@ -24,6 +24,7 @@ import com.saulhdev.feeder.data.content.FloatPref
 import com.saulhdev.feeder.data.content.StringPref
 import com.saulhdev.feeder.data.content.StringSelectionPref
 import com.saulhdev.feeder.data.content.StringSetPref
+import com.saulhdev.feeder.data.content.AppThemePref
 import com.saulhdev.feeder.data.content.StringTextPref
 import com.saulhdev.feeder.data.content.TwoStatePref
 
@@ -53,6 +54,13 @@ val PreferenceBuilder =
 
             is StringTextPref ->
                 StringTextPreference(
+                    pref = pref,
+                    index = index,
+                    groupSize = size
+                ) { onDialogPref(pref) }
+
+            is AppThemePref ->
+                ThemePreference(
                     pref = pref,
                     index = index,
                     groupSize = size

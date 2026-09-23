@@ -25,6 +25,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
+import com.saulhdev.feeder.data.entity.NeoTheme
 import com.saulhdev.feeder.ui.navigation.NavRoute
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -33,6 +34,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.runBlocking
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
+import kotlinx.serialization.json.Json
 
 class StringPref(
     @StringRes titleId: Int,
@@ -130,6 +132,47 @@ class FloatPref(
     val steps: Int,
     val specialOutputs: ((Float) -> String) = Float::toString,
 ) : PrefDelegate<Float>(titleId, summaryId, dataStore, key, defaultValue)
+
+class AppThemePref(
+    @StringRes val titleId: Int,
+    @StringRes val summaryId: Int = -1,
+    val icon: ImageVector,
+    val key: Preferences.Key<String>,
+    val dataStore: DataStore<Preferences>,
+    val defaultValue: NeoTheme = NeoTheme.DynamicSystem,
+) {
+    fun getValue(): NeoTheme {
+        return runBlocking(Dispatchers.IO) {
+            get().firstOrNull() ?: defaultValue
+        }
+    }
+
+    fun setValue(value: NeoTheme) {
+        return runBlocking(Dispatchers.IO) {
+            dataStore.edit { it[key] = Json.encodeToString(NeoTheme.serializer(), value) }
+        }
+    }
+
+    fun get(): Flow<NeoTheme> {
+        return dataStore.data.map {
+            val str = it[key]
+            if (str != null) {
+                try {
+                    Json.decodeFromString(NeoTheme.serializer(), str)
+                } catch (_: Exception) {
+                    defaultValue
+                }
+            } else {
+                defaultValue
+            }
+        }
+    }
+
+    @Composable
+    fun getState(): State<NeoTheme> {
+        return get().collectAsState(initial = defaultValue)
+    }
+}
 
 abstract class PrefDelegate<T>(
     @StringRes var titleId: Int,
