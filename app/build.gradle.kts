@@ -162,6 +162,7 @@ dependencies {
     implementation(libs.compose.ui.tooling)
     implementation(libs.compose.ui.tooling.preview)
     implementation(libs.navigation.compose)
+    implementation(libs.material.kolor)
 
     //Room
     implementation(libs.room.ktx)

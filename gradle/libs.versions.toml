@@ -20,6 +20,7 @@ kotlin = "2.4.20"
 ksp = "2.3.11"
 lifecycle = "2.11.0"
 material = "1.14.0"
+material-kolor = "5.0.1"
 moshi = "1.15.2"
 multidex = "2.0.1"
 navigation = "2.10.1"
@@ -70,6 +71,7 @@ navigation-compose = { module = "androidx.navigation:navigation-compose", versio
 compose-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "compose-libs" }
 compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "compose-libs" }
 compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview", version.ref = "compose-libs" }
+material-kolor = { module = "com.materialkolor:material-kolor", version.ref = "material-kolor" }
 
 room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 room-paging = { group = "androidx.room", name = "room-paging", version.ref = "room" }
