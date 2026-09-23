@@ -26,6 +26,7 @@ ksp {
 android {
     namespace = "com.saulhdev.feeder"
     compileSdk = 37
+    compileSdkMinor = 1
 
     defaultConfig {
         applicationId = "com.saulhdev.neofeed"
