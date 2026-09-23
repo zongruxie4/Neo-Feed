@@ -54,6 +54,7 @@ import com.saulhdev.feeder.utils.getItemsPerFeed
 import com.saulhdev.feeder.utils.getSortingOptions
 import com.saulhdev.feeder.utils.getSyncFrequency
 import com.saulhdev.feeder.utils.getSyncRange
+import com.saulhdev.feeder.data.entity.NeoTheme
 import com.saulhdev.feeder.utils.getThemes
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
@@ -65,21 +66,12 @@ import kotlin.math.roundToInt
 class FeedPreferences private constructor(val context: Context) : KoinComponent {
     private val dataStore: DataStore<Preferences> by inject()
     /* Theme */
-    val overlayTheme = StringSelectionPref(
-        titleId = R.string.pref_ovr_theme,
-        icon = Phosphor.PaintRoller,
-        key = OVERLAY_THEME,
-        dataStore = dataStore,
-        defaultValue = "auto_system",
-        entries = getThemes(context)
-    )
-
-    val dynamicColor = BooleanPref(
-        titleId = R.string.pref_dynamic_color,
+    val appTheme = AppThemePref(
+        titleId = R.string.theme,
         icon = Phosphor.Swatches,
-        key = OVERLAY_DYNAMIC_THEME,
+        key = APP_THEME,
         dataStore = dataStore,
-        defaultValue = true
+        defaultValue = NeoTheme.DynamicSystem,
     )
 
     val overlayTransparency = FloatPref(
@@ -292,8 +284,7 @@ class FeedPreferences private constructor(val context: Context) : KoinComponent 
             )
         }
 
-        val OVERLAY_THEME = stringPreferencesKey("pref_overlay_theme")
-        val OVERLAY_DYNAMIC_THEME = booleanPreferencesKey("pref_dynamic_theme")
+        val APP_THEME = stringPreferencesKey("pref_app_theme")
         val OVERLAY_OPACITY = floatPreferencesKey("pref_overlay_opacity")
         val OPEN_IN_BROWSER = booleanPreferencesKey("pref_open_browser")
         val REMOVE_DUPLICATES = booleanPreferencesKey("pref_remove_duplicates")

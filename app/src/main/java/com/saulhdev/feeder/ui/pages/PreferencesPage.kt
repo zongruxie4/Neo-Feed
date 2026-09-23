@@ -95,11 +95,7 @@ fun PreferencesPage(
     val filterPrefs = listOf(
         prefs.blockedWords,
     )
-    val themePrefs = listOf(
-        prefs.dynamicColor,
-        prefs.overlayTheme,
-        prefs.overlayTransparency,
-    )
+    val themePrefs = listOf(prefs.appTheme)
     val isWeatherEnabled by prefs.weatherProvider.getState()
     val selectedWeatherProvider by prefs.weatherProvider.getState2()
 
@@ -135,6 +131,13 @@ fun PreferencesPage(
                 ),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
+            item(key = R.string.pref_cat_overlay) {
+                PreferenceGroup(
+                    stringResource(id = R.string.pref_cat_overlay),
+                    prefs = themePrefs,
+                    onPrefDialog = onPrefDialog,
+                )
+            }
             item(key = R.string.title_service) {
                 PreferenceGroup(
                     stringResource(id = R.string.title_service),
@@ -146,14 +149,7 @@ fun PreferencesPage(
                 PreferenceGroup(
                     stringResource(id = R.string.pref_cat_filters),
                     prefs = filterPrefs,
-                    onPrefDialog = onPrefDialog
-                )
-            }
-            item(key = R.string.pref_cat_overlay) {
-                PreferenceGroup(
-                    stringResource(id = R.string.pref_cat_overlay),
-                    prefs = themePrefs,
-                    onPrefDialog = onPrefDialog
+                    onPrefDialog = onPrefDialog,
                 )
 
                 if (!Settings.canDrawOverlays(context)) {
@@ -252,6 +248,12 @@ fun PreferencesPage(
                     pref = dialogPref as StringTextPref,
                     openDialogCustom = openDialog
                 )
+                is AppThemePref ->
+                    ThemePrefDialogUI(
+                        pref = dialogPref as AppThemePref,
+                        transparencyPref = prefs.overlayTransparency,
+                        openDialogCustom = openDialog,
+                    )
             }
         }
     }

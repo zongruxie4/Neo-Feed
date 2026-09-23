@@ -195,23 +195,20 @@ fun Context.setCustomTheme() {
 }
 
 val Context.isDynamicTheme
-    get() = listOf("auto_system", "auto_system_black")
-        .contains(get<FeedPreferences>(FeedPreferences::class.java).overlayTheme.getValue())
+    get() = get<FeedPreferences>(FeedPreferences::class.java).appTheme.getValue().dynamicColor
 
 val Context.nightMode
-    get() = when (get<FeedPreferences>(FeedPreferences::class.java).overlayTheme.getValue()) {
-        "light"         -> AppCompatDelegate.MODE_NIGHT_NO
-        "dark", "black" -> AppCompatDelegate.MODE_NIGHT_YES
-        else            -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
-    }
+    get() = get<FeedPreferences>(FeedPreferences::class.java).appTheme.getValue().nightMode
 
 val Context.isDarkTheme: Boolean
-    get() = when (get<FeedPreferences>(FeedPreferences::class.java).overlayTheme.getValue()) {
-        "dark", "black"
-            -> true
-
-        "light"
-            -> false
-
-        else -> resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES // "auto_system"
-    }
+    get() =
+        when (get<FeedPreferences>(FeedPreferences::class.java).appTheme.getValue().nightMode) {
+            AppCompatDelegate.MODE_NIGHT_YES -> true
+            AppCompatDelegate.MODE_NIGHT_NO -> false
+            else ->
+                resources
+                    ?.configuration
+                    ?.uiMode
+                    ?.and(android.content.res.Configuration.UI_MODE_NIGHT_MASK) ==
+                    android.content.res.Configuration.UI_MODE_NIGHT_YES
+        }

@@ -13,6 +13,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toDrawable
@@ -102,7 +103,7 @@ class OverlayView(val context: Context) :
         AbstractFloatingView.closeAllOpenViews(context)
 
         themeHolder = OverlayThemeHolder(this)
-        setTheme(force = null)
+        setUpdatedTheme()
         val bgColor = themeHolder.currentTheme.get(CardTheme.Colors.OVERLAY_BG.ordinal)
         val color =
             (prefs.overlayTransparency.getValue() * 255.0f).toInt() shl 24 or (bgColor and 0x00ffffff)
@@ -126,9 +127,9 @@ class OverlayView(val context: Context) :
             }
         }
         syncScope.launch {
-            prefs.overlayTheme.get().collect {
+            prefs.appTheme.get().collect { theme ->
                 mainScope.launch {
-                    applyNewTheme(it)
+                    applyNewTheme()
                 }
             }
         }
@@ -169,21 +170,22 @@ class OverlayView(val context: Context) :
         }
     }
 
-    private fun updateTheme(force: String? = null) {
-        setTheme(force)
+    private fun updateTheme() {
+        setUpdatedTheme()
         applyPanelBackground()
         updateStubUi()
         adapter.setTheme(themeHolder.currentTheme)
     }
 
     private fun applyPanelBackground(opacity: Float = prefs.overlayTransparency.getValue()) {
-        val color = if (drawerPanelBackgroundEnabled) {
-            val bgColor = themeHolder.currentTheme.get(CardTheme.Colors.OVERLAY_BG.ordinal)
-            val alpha = opacity.coerceIn(0f, 1f)
-            ((alpha * 255.0f).toInt() shl 24) or (bgColor and 0x00ffffff)
-        } else {
-            Color.TRANSPARENT
-        }
+        val color =
+            if (drawerPanelBackgroundEnabled) {
+                val bgColor = themeHolder.currentTheme.get(CardTheme.Colors.OVERLAY_BG.ordinal)
+                val alpha = opacity.coerceIn(0f, 1f)
+                ((alpha * 255.0f).toInt() shl 24) or (bgColor and 0x00ffffff)
+            } else {
+                Color.TRANSPARENT
+            }
         rootView.findViewById<View>(R.id.overlay_root).setBackgroundColor(color)
     }
 
@@ -192,14 +194,17 @@ class OverlayView(val context: Context) :
         applyPanelBackground()
     }
 
-    private fun setTheme(force: String?) {
+    private fun setUpdatedTheme() {
+        val theme = prefs.appTheme.getValue()
+        val isSystemTheme = theme.nightMode == AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+        val isDarkTheme = theme.nightMode == AppCompatDelegate.MODE_NIGHT_YES
         themeHolder.setTheme(
-            when (force ?: prefs.overlayTheme.getValue()) {
-                "auto_system_black" -> CardTheme.getThemeBySystem(context, true)
-                "auto_system"       -> CardTheme.getThemeBySystem(context, false)
-                "dark"              -> CardTheme.defaultDarkThemeColors
-                "black"             -> CardTheme.defaultBlackThemeColors
-                else                -> CardTheme.defaultLightThemeColors
+            when {
+                isSystemTheme && theme.blackOnDark -> CardTheme.getThemeBySystem(context, true)
+                isSystemTheme -> CardTheme.getThemeBySystem(context, false)
+                isDarkTheme && theme.blackOnDark -> CardTheme.defaultBlackThemeColors
+                isDarkTheme -> CardTheme.defaultDarkThemeColors
+                else -> CardTheme.defaultLightThemeColors
             }
         )
         setCustomTheme()
@@ -463,8 +468,8 @@ class OverlayView(val context: Context) :
         }
     }
 
-    override fun applyNewTheme(value: String) {
-        updateTheme(value)
+    override fun applyNewTheme() {
+        updateTheme()
     }
 
     override fun applyNewTransparency(value: Float) {

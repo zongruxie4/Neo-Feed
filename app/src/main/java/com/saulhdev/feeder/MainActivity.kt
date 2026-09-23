@@ -12,7 +12,6 @@ import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResult
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -56,14 +55,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             navController = rememberNavController()
             TransparentSystemBars()
-            AppTheme(
-                themeColor = prefs.overlayTheme.getValue(),
-                darkTheme = when (prefs.overlayTheme.getValue()) {
-                    "auto_system" -> isSystemInDarkTheme()
-                    else          -> isDarkTheme
-                },
-                dynamicColor = prefs.dynamicColor.getValue(),
-            ) {
+            AppTheme(prefs.appTheme.getValue()) {
                 NavigationManager(
                     modifier = Modifier.imePadding(),
                     navController = navController,
@@ -98,7 +90,7 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     fun TransparentSystemBars() {
-        DisposableEffect(isDarkTheme, prefs.overlayTheme.getValue()) {
+        DisposableEffect(isDarkTheme, prefs.appTheme.getValue()) {
             enableEdgeToEdge(
                 statusBarStyle = SystemBarStyle.auto(
                     android.graphics.Color.TRANSPARENT,
@@ -114,22 +106,16 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun observePrefs() {
-        val oldTheme = prefs.overlayTheme.getValue()
+        val oldTheme = prefs.appTheme.getValue()
         val oldTransparency = prefs.overlayTransparency.getValue()
-        val dynamicColor = prefs.dynamicColor.getValue()
 
-        prefs.overlayTheme.get().asLiveData().observe(this) {
+        prefs.appTheme.get().asLiveData().observe(this) {
             if (it != oldTheme) {
                 recreate()
             }
         }
         prefs.overlayTransparency.get().asLiveData().observe(this) {
             if (it != oldTransparency) {
-                recreate()
-            }
-        }
-        prefs.dynamicColor.get().asLiveData().observe(this) {
-            if (it != dynamicColor) {
                 recreate()
             }
         }

@@ -8,7 +8,7 @@ class OverlayBridge {
     }
 
     interface OverlayBridgeCallback {
-        fun applyNewTheme(value: String)
+        fun applyNewTheme()
         fun applyCompactCard(value: Boolean)
         fun applyNewTransparency(value: Float)
         fun onClientMessage(action: String)

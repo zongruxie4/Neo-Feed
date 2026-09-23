@@ -1,70 +1,65 @@
 package com.saulhdev.feeder.ui.theme
 
+import android.content.Context
 import android.os.Build
+import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
-import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import com.materialkolor.PaletteStyle
+import com.materialkolor.dynamiccolor.ColorSpec
+import com.materialkolor.rememberDynamicColorScheme
+import com.saulhdev.feeder.data.entity.NeoTheme
+import com.saulhdev.feeder.manager.localrss.prefs
 
-private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
-)
-private val BlackColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80,
-    onPrimary = Color(0xFF381E72),
-    primaryContainer = Color(0xFF4F378B),
-    onPrimaryContainer = Color(0xFFEADDFF),
-    background = Color.Black,
-    onBackground = Color(0xFFE6E1E5),
-    surface = Color.Black,
-    onSurface = Color(0xFFE6E1E5),
-    surfaceContainer = Color.Black,
-    surfaceContainerHigh = Color(0xFF1C1B1F),
-    surfaceVariant = Color.Black,
-    onSurfaceVariant = Color(0xFFCAC4D0),
-
-    error = Color(0xFFF2B8B5),
-    onError = Color(0xFF601410)
-)
-
-private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
-)
+@RequiresApi(Build.VERSION_CODES.S)
+fun dynamicBlackColorScheme(context: Context) =
+    dynamicDarkColorScheme(context)
+        .copy(
+            background = Color.Black,
+            surfaceContainerLowest = Color.Black,
+        )
 
 @Composable
 fun AppTheme(
-    themeColor: String,
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    dynamicColor: Boolean = true,
-    content: @Composable () -> Unit
+    themePref: NeoTheme,
+    content: @Composable () -> Unit,
 ) {
-    val colorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context = LocalContext.current
-            if (darkTheme && themeColor == "black") BlackColorScheme
-            else if (darkTheme) dynamicDarkColorScheme(context)
-            else dynamicLightColorScheme(context)
+    val context = LocalContext.current
+    val darkTheme =
+        when (prefs.appTheme.getValue().nightMode) {
+            AppCompatDelegate.MODE_NIGHT_NO -> false
+            AppCompatDelegate.MODE_NIGHT_YES -> true
+            else -> isSystemInDarkTheme()
         }
 
-        darkTheme && themeColor == "black" -> BlackColorScheme
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
-    }
+    val colorScheme =
+        when {
+            themePref.dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
+                if (darkTheme && themePref.blackOnDark) dynamicBlackColorScheme(context)
+                else if (darkTheme) dynamicDarkColorScheme(context)
+                else dynamicLightColorScheme(context)
+            }
+
+            else ->
+                rememberDynamicColorScheme(
+                    seedColor = Color(themePref.seedColor),
+                    isDark = darkTheme,
+                    specVersion = ColorSpec.SpecVersion.SPEC_2025,
+                    contrastLevel = themePref.contrast,
+                    isAmoled = themePref.blackOnDark,
+                    style = PaletteStyle.entries[themePref.paletteStyle],
+                )
+        }
 
     MaterialTheme(
         colorScheme = colorScheme,
         typography = Typography,
-        content = content
+        content = content,
     )
 }
