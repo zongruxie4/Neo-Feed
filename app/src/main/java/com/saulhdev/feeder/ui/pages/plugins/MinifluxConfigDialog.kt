@@ -121,7 +121,7 @@ fun MinifluxConfigDialog(
                         value = serverUrl,
                         onValueChange = { serverUrl = it },
                         label = { Text(stringResource(id = R.string.nextcloud_server_url)) },
-                        placeholder = { Text("https://miniflux.example.com") },
+                        placeholder = { Text("https://reader.miniflux.app/v1/") },
                         singleLine = true,
                         modifier = Modifier.fillMaxWidth()
                     )
